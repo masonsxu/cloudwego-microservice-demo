@@ -1,0 +1,260 @@
+{
+  "Swagger GET List with Pagination": {
+    "prefix": "swag-get-list",
+    "description": "Swagger注释 - GET请求（列表查询 + 完整分页参数）",
+    "body": [
+      "// ${1:ListItems}",
+      "// @Summary ${2:获取列表}",
+      "// @Description ${3:分页查询列表，支持筛选和搜索}",
+      "// @Tags ${4:资源管理}",
+      "// @Accept json",
+      "// @Produce json",
+      "// @Security ApiKeyAuth",
+      "// @Param page query int false \"页码\" default(1)",
+      "// @Param limit query int false \"每页数量\" default(20)",
+      "// @Param search query string false \"搜索关键词\"",
+      "// @Param sort query string false \"排序规则\"",
+      "${5:// @Param status query int false \"状态筛选\"}",
+      "// @Success 200 {object} ${6:ResponseDTO} \"成功\"",
+      "// @Failure 400 {object} errors.Error \"请求参数错误\"",
+      "// @Failure 401 {object} errors.Error \"认证失败\"",
+      "// @Failure 500 {object} errors.Error \"内部错误\"",
+      "// @Router ${7:/api/v1/items} [GET]",
+      "$0"
+    ]
+  },
+  "Swagger GET Detail": {
+    "prefix": "swag-get-detail",
+    "description": "Swagger注释 - GET请求（详情查询 + 路径参数）",
+    "body": [
+      "// ${1:GetItem}",
+      "// @Summary ${2:获取详情}",
+      "// @Description ${3:根据ID获取资源详细信息}",
+      "// @Tags ${4:资源管理}",
+      "// @Accept json",
+      "// @Produce json",
+      "// @Security ApiKeyAuth",
+      "// @Param ${5:itemID} path string true \"${6:资源ID}\"",
+      "// @Success 200 {object} ${7:ItemResponseDTO} \"成功\"",
+      "// @Failure 400 {object} errors.Error \"请求参数错误\"",
+      "// @Failure 401 {object} errors.Error \"认证失败\"",
+      "// @Failure 404 {object} errors.Error \"资源未找到\"",
+      "// @Failure 500 {object} errors.Error \"内部错误\"",
+      "// @Router ${8:/api/v1/items/{itemID}} [GET]",
+      "$0"
+    ]
+  },
+  "Swagger POST": {
+    "prefix": "swag-post",
+    "description": "Swagger注释 - POST请求（创建资源）",
+    "body": [
+      "// ${1:CreateItem}",
+      "// @Summary ${2:创建资源}",
+      "// @Description ${3:创建新的资源}",
+      "// @Tags ${4:资源管理}",
+      "// @Accept json",
+      "// @Produce json",
+      "// @Security ApiKeyAuth",
+      "// @Param req body ${5:CreateItemRequestDTO} true \"请求体\"",
+      "// @Success 200 {object} ${6:ItemResponseDTO} \"成功\"",
+      "// @Failure 400 {object} errors.Error \"请求参数错误\"",
+      "// @Failure 401 {object} errors.Error \"认证失败\"",
+      "// @Failure 403 {object} errors.Error \"权限不足\"",
+      "// @Failure 500 {object} errors.Error \"内部错误\"",
+      "// @Router ${7:/api/v1/items} [POST]",
+      "$0"
+    ]
+  },
+  "Swagger PUT": {
+    "prefix": "swag-put",
+    "description": "Swagger注释 - PUT请求（更新资源）",
+    "body": [
+      "// ${1:UpdateItem}",
+      "// @Summary ${2:更新资源}",
+      "// @Description ${3:更新指定资源的信息}",
+      "// @Tags ${4:资源管理}",
+      "// @Accept json",
+      "// @Produce json",
+      "// @Security ApiKeyAuth",
+      "// @Param ${5:itemID} path string true \"${6:资源ID}\"",
+      "// @Param req body ${7:UpdateItemRequestDTO} true \"请求体\"",
+      "// @Success 200 {object} ${8:ItemResponseDTO} \"成功\"",
+      "// @Failure 400 {object} errors.Error \"请求参数错误\"",
+      "// @Failure 401 {object} errors.Error \"认证失败\"",
+      "// @Failure 403 {object} errors.Error \"权限不足\"",
+      "// @Failure 404 {object} errors.Error \"资源未找到\"",
+      "// @Failure 500 {object} errors.Error \"内部错误\"",
+      "// @Router ${9:/api/v1/items/{itemID}} [PUT]",
+      "$0"
+    ]
+  },
+  "Swagger DELETE": {
+    "prefix": "swag-delete",
+    "description": "Swagger注释 - DELETE请求（删除资源）",
+    "body": [
+      "// ${1:DeleteItem}",
+      "// @Summary ${2:删除资源}",
+      "// @Description ${3:删除指定的资源}",
+      "// @Tags ${4:资源管理}",
+      "// @Accept json",
+      "// @Produce json",
+      "// @Security ApiKeyAuth",
+      "// @Param ${5:itemID} path string true \"${6:资源ID}\"",
+      "// @Success 200 {object} http_base.OperationStatusResponseDTO \"成功\"",
+      "// @Failure 400 {object} errors.Error \"请求参数错误\"",
+      "// @Failure 401 {object} errors.Error \"认证失败\"",
+      "// @Failure 403 {object} errors.Error \"权限不足\"",
+      "// @Failure 404 {object} errors.Error \"资源未找到\"",
+      "// @Failure 500 {object} errors.Error \"内部错误\"",
+      "// @Router ${7:/api/v1/items/{itemID}} [DELETE]",
+      "$0"
+    ]
+  },
+  "Swagger Page Params (Full)": {
+    "prefix": "swag-page-params",
+    "description": "Swagger分页参数 - PageRequestDTO完整字段（7个）",
+    "body": [
+      "// @Param page query int false \"页码\" default(1)",
+      "// @Param limit query int false \"每页数量\" default(20)",
+      "// @Param search query string false \"搜索关键词\"",
+      "// @Param filter query string false \"字段级过滤\"",
+      "// @Param sort query string false \"排序规则\"",
+      "// @Param fields query string false \"指定返回字段\"",
+      "// @Param include_total query bool false \"是否返回总数\" default(false)",
+      "$0"
+    ]
+  },
+  "Swagger Page Params (Basic)": {
+    "prefix": "swag-page-basic",
+    "description": "Swagger分页参数 - 基础版（仅page和limit）",
+    "body": [
+      "// @Param page query int false \"页码\" default(1)",
+      "// @Param limit query int false \"每页数量\" default(20)",
+      "$0"
+    ]
+  },
+  "Swagger Page Params (Standard)": {
+    "prefix": "swag-page-standard",
+    "description": "Swagger分页参数 - 标准版（page/limit/search/sort）",
+    "body": [
+      "// @Param page query int false \"页码\" default(1)",
+      "// @Param limit query int false \"每页数量\" default(20)",
+      "// @Param search query string false \"搜索关键词\"",
+      "// @Param sort query string false \"排序规则\"",
+      "$0"
+    ]
+  },
+  "Swagger Common Responses": {
+    "prefix": "swag-responses",
+    "description": "Swagger通用响应状态码",
+    "body": [
+      "// @Success 200 {object} ${1:ResponseDTO} \"成功\"",
+      "// @Failure 400 {object} errors.Error \"请求参数错误\"",
+      "// @Failure 401 {object} errors.Error \"认证失败\"",
+      "// @Failure 500 {object} errors.Error \"内部错误\"",
+      "$0"
+    ]
+  },
+  "Swagger Common Responses (with 403)": {
+    "prefix": "swag-responses-auth",
+    "description": "Swagger响应状态码（包含权限检查）",
+    "body": [
+      "// @Success 200 {object} ${1:ResponseDTO} \"成功\"",
+      "// @Failure 400 {object} errors.Error \"请求参数错误\"",
+      "// @Failure 401 {object} errors.Error \"认证失败\"",
+      "// @Failure 403 {object} errors.Error \"权限不足\"",
+      "// @Failure 500 {object} errors.Error \"内部错误\"",
+      "$0"
+    ]
+  },
+  "Swagger Common Responses (with 404)": {
+    "prefix": "swag-responses-404",
+    "description": "Swagger响应状态码（包含资源未找到）",
+    "body": [
+      "// @Success 200 {object} ${1:ResponseDTO} \"成功\"",
+      "// @Failure 400 {object} errors.Error \"请求参数错误\"",
+      "// @Failure 401 {object} errors.Error \"认证失败\"",
+      "// @Failure 404 {object} errors.Error \"资源未找到\"",
+      "// @Failure 500 {object} errors.Error \"内部错误\"",
+      "$0"
+    ]
+  },
+  "Swagger Login (No Auth)": {
+    "prefix": "swag-login",
+    "description": "Swagger注释 - 登录接口（无需认证）",
+    "body": [
+      "// ${1:Login}",
+      "// @Summary ${2:用户登录}",
+      "// @Description ${3:验证用户凭据并返回访问令牌}",
+      "// @Tags ${4:认证管理}",
+      "// @Accept json",
+      "// @Produce json",
+      "// @Param req body ${5:LoginRequestDTO} true \"请求体\"",
+      "// @Success 200 {object} ${6:LoginResponseDTO} \"成功\"",
+      "// @Failure 400 {object} errors.Error \"请求参数错误\"",
+      "// @Failure 401 {object} errors.Error \"认证失败\"",
+      "// @Failure 500 {object} errors.Error \"内部错误\"",
+      "// @Router ${7:/api/v1/auth/login} [POST]",
+      "$0"
+    ]
+  },
+  "Swagger Query Param": {
+    "prefix": "swag-param-query",
+    "description": "Swagger单个查询参数",
+    "body": [
+      "// @Param ${1:name} query ${2:string} ${3:false} \"${4:参数说明}\"$0"
+    ]
+  },
+  "Swagger Path Param": {
+    "prefix": "swag-param-path",
+    "description": "Swagger单个路径参数",
+    "body": [
+      "// @Param ${1:id} path ${2:string} true \"${3:参数说明}\"$0"
+    ]
+  },
+  "Swagger Body Param": {
+    "prefix": "swag-param-body",
+    "description": "Swagger请求体参数",
+    "body": [
+      "// @Param req body ${1:RequestDTO} true \"请求体\"$0"
+    ]
+  },
+  "Swagger Complete Handler": {
+    "prefix": "swag-handler",
+    "description": "Swagger完整Handler模板（包含注释和函数签名）",
+    "body": [
+      "// ${1:HandlerName}",
+      "// @Summary ${2:接口摘要}",
+      "// @Description ${3:接口详细描述}",
+      "// @Tags ${4:标签}",
+      "// @Accept json",
+      "// @Produce json",
+      "// @Security ApiKeyAuth",
+      "${5:// @Param id path string true \"ID\"}",
+      "// @Success 200 {object} ${6:ResponseDTO} \"成功\"",
+      "// @Failure 400 {object} errors.Error \"请求参数错误\"",
+      "// @Failure 401 {object} errors.Error \"认证失败\"",
+      "// @Failure 500 {object} errors.Error \"内部错误\"",
+      "// @Router ${7:/api/v1/resource} [${8:GET}]",
+      "func ${1:HandlerName}(ctx context.Context, c *app.RequestContext) {",
+      "\tvar err error",
+      "\tvar req ${9:RequestDTO}",
+      "\terr = c.BindAndValidate(&req)",
+      "\tif err != nil {",
+      "\t\terrors.AbortWithError(c, errors.ErrInvalidParams.WithMessage(err.Error()))",
+      "\t\treturn",
+      "\t}",
+      "",
+      "\t// 调用业务服务层",
+      "\tresp, err := ${10:service}.${1:HandlerName}(ctx, &req)",
+      "\tif err != nil {",
+      "\t\terrors.HandleServiceError(c, err, \"${11:操作失败}\")",
+      "\t\treturn",
+      "\t}",
+      "",
+      "\tc.JSON(consts.StatusOK, resp)",
+      "}",
+      "$0"
+    ]
+  }
+}

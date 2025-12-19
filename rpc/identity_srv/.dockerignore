@@ -1,0 +1,72 @@
+# =============================================================================
+# .dockerignore for identity-service
+# =============================================================================
+# 用途：优化 Docker 构建缓存，避免不必要的文件触发重新编译
+#
+# 规则说明：
+# - 忽略所有不需要编译的文件（文档、配置、临时文件等）
+# - 保留必要的源代码和配置文件
+# - 确保 go.mod/go.sum 改变时才重新下载依赖
+# =============================================================================
+
+# 构建输出
+output/
+*.o
+*.a
+*.so
+
+# 环境变量文件（包含敏感信息）
+.env
+.env.*
+!.env.example
+
+# Docker 相关（避免递归）
+docker/
+Dockerfile
+.dockerignore
+
+# 日志文件
+*.log
+logs/
+log/
+
+# 测试文件和覆盖率报告
+*_test.go
+coverage.out
+*.test
+*.prof
+
+# 临时文件
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+*~
+
+# Git 相关
+.git/
+.gitignore
+.gitattributes
+
+# IDE 配置
+.vscode/
+.idea/
+*.iml
+.DS_Store
+
+# 文档
+README.md
+*.md
+!go.mod
+!go.sum
+
+# 构建脚本（容器内不需要）
+build.sh
+*.sh
+!script/*.sh
+
+# 其他不需要的文件
+.editorconfig
+.pre-commit-config.yaml
+menu.yaml

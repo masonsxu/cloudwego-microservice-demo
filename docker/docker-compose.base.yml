@@ -1,0 +1,348 @@
+# =============================================================================
+# Services - Base Configuration
+# =============================================================================
+# 基础配置文件，包含所有环境共享的服务定义
+#
+# 使用方式：
+#   开发环境: podman-compose -f docker-compose.base.yml -f docker-compose.dev.yml up
+#   生产环境: podman-compose -f docker-compose.base.yml -f docker-compose.prod.yml up
+#
+# 注意：此文件不应单独使用，必须配合 dev 或 prod 配置文件
+# =============================================================================
+
+version: "3.8"
+
+services:
+  # ===========================================================================
+  # 基础设施服务
+  # ===========================================================================
+
+  postgres:
+    image: m.daocloud.io/docker.io/library/postgres:17
+    container_name: postgres
+    hostname: postgres
+    environment:
+      POSTGRES_INITDB_ARGS: --encoding=UTF-8 --lc-collate=C --lc-ctype=C
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: ${POSTGRES_USER:-Admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-identity_srv}
+      TERM: xterm
+      POSTGRES_EXTENSIONS: hstore,uuid-ossp,pg_stat_statements
+      HOSTNAME: pg_network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts/postgres:/docker-entrypoint-initdb.d:ro
+    networks:
+      cloudwego-scaffold-network:
+        aliases:
+          - postgres
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-Admin} -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  etcd:
+    image: m.daocloud.io/docker.io/bitnami/etcd:latest
+    container_name: etcd
+    hostname: etcd
+    environment:
+      ALLOW_NONE_AUTHENTICATION: "yes"
+      ETCD_ADVERTISE_CLIENT_URLS: "http://etcd:2379"
+      ETCD_LISTEN_CLIENT_URLS: "http://0.0.0.0:2379"
+    networks:
+      cloudwego-scaffold-network:
+        aliases:
+          - etcd
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  rustfs:
+    image: m.daocloud.io/docker.io/rustfs/rustfs:1.0.0-alpha.72
+    container_name: rustfs
+    hostname: rustfs
+    environment:
+      RUSTFS_ACCESS_KEY: ${RUSTFS_ACCESS_KEY:-Admin}
+      RUSTFS_SECRET_KEY: ${RUSTFS_SECRET_KEY}
+      RUSTFS_CONSOLE_ENABLE: "${RUSTFS_CONSOLE_ENABLE:-true}"
+    # 注意：不设置 RUSTFS_SERVER_DOMAINS 以使用默认的 Path Style 模式
+    # 生产环境如需 Virtual Host Style，在 docker-compose.prod.yml 中覆盖配置
+    volumes:
+      - rustfs_data:/data
+    networks:
+      cloudwego-scaffold-network:
+        aliases:
+          - rustfs
+    healthcheck:
+      test: ["CMD-SHELL", "netstat -tuln | grep 9000 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  redis:
+    image: m.daocloud.io/docker.io/library/redis:8.4.0
+    container_name: redis
+    hostname: redis
+    command: >
+      sh -c "
+      if [ -n \"$$REDIS_PASSWORD\" ]; then
+        redis-server --appendonly yes --requirepass \"$$REDIS_PASSWORD\"
+      else
+        redis-server --appendonly yes
+      fi
+      "
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+    volumes:
+      - redis_data:/data
+    networks:
+      cloudwego-scaffold-network:
+        aliases:
+          - redis
+    healthcheck:
+      test: >
+        sh -c "
+        if [ -n \"$$REDIS_PASSWORD\" ]; then
+          redis-cli -a \"$$REDIS_PASSWORD\" ping | grep PONG || exit 1
+        else
+          redis-cli ping | grep PONG || exit 1
+        fi
+        "
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  jaeger:
+    image: m.daocloud.io/docker.io/jaegertracing/all-in-one:1.64
+    container_name: jaeger
+    hostname: jaeger
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "16686:16686"   # Jaeger UI
+      - "4317:4317"     # OTLP gRPC
+      - "4318:4318"     # OTLP HTTP
+    networks:
+      cloudwego-scaffold-network:
+        aliases:
+          - jaeger
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:16687 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ===========================================================================
+  # 应用服务
+  # ===========================================================================
+
+  identity_srv:
+    container_name: identity-srv
+    environment:
+      # 调试配置
+      SERVER_DEBUG: ${SERVER_DEBUG:-false}
+
+      # 服务器配置
+      SERVER_NAME: ${IDENTITY_SRV_NAME:-identity-service}
+      USER_SRV_HOST: ${IDENTITY_SRV_HOST:-0.0.0.0}
+      USER_SRV_PORT: ${IDENTITY_SRV_PORT:-8891}
+
+      # 健康检查配置
+      HEALTH_CHECK_PORT: ${IDENTITY_HEALTH_PORT:-10000}
+
+      # 数据库配置
+      DB_DRIVER: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: ${POSTGRES_USER:-Admin}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${IDENTITY_DB_NAME:-identity_srv}
+      DB_SSLMODE: disable
+      DB_TIMEZONE: ${DB_TIMEZONE:-Asia/Shanghai}
+      DB_MAX_IDLE_CONNS: ${DB_MAX_IDLE_CONNS:-10}
+      DB_MAX_OPEN_CONNS: ${DB_MAX_OPEN_CONNS:-100}
+      DB_CONN_MAX_LIFETIME: ${DB_CONN_MAX_LIFETIME:-1h}
+      DB_CONN_MAX_IDLE_TIME: ${DB_CONN_MAX_IDLE_TIME:-5m}
+
+      # 服务注册发现
+      ETCD_ADDRESS: etcd:2379
+      ETCD_TIMEOUT: ${ETCD_TIMEOUT:-5}
+
+      # 日志配置
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      LOG_FORMAT: ${LOG_FORMAT:-json}
+      LOG_OUTPUT: ${LOG_OUTPUT:-stdout}
+
+      # Casbin 配置
+      CASBIN_MODEL_PATH: ${CASBIN_MODEL_PATH:-./config/permission_model.conf}
+      CASBIN_ENABLE_LOG: ${CASBIN_ENABLE_LOG:-false}
+
+      # Logo 存储配置
+      LOGO_STORAGE_S3_ENDPOINT: ${LOGO_STORAGE_S3_ENDPOINT:-http://rustfs:9000}
+      LOGO_STORAGE_S3_PUBLIC_ENDPOINT: ${LOGO_STORAGE_S3_PUBLIC_ENDPOINT:-http://localhost:9000}
+      LOGO_STORAGE_S3_REGION: ${LOGO_STORAGE_S3_REGION:-us-east-1}
+      LOGO_STORAGE_S3_USE_SSL: ${LOGO_STORAGE_S3_USE_SSL:-false}
+      LOGO_STORAGE_USE_PATH_STYLE: ${LOGO_STORAGE_USE_PATH_STYLE:-true}
+      LOGO_STORAGE_ACCESS_KEY: ${RUSTFS_ACCESS_KEY:-Admin}
+      LOGO_STORAGE_SECRET_KEY: ${RUSTFS_SECRET_KEY}
+      LOGO_STORAGE_MAX_FILE_SIZE: ${LOGO_STORAGE_MAX_FILE_SIZE:-10485760}
+      LOGO_STORAGE_ALLOWED_FILE_TYPES: ${LOGO_STORAGE_ALLOWED_FILE_TYPES:-image/jpeg,image/png,image/gif,image/webp,image/svg+xml}
+
+      # OpenTelemetry 链路追踪配置
+      TRACING_ENABLED: ${TRACING_ENABLED:-true}
+      TRACING_SERVICE_NAME: ${IDENTITY_SRV_NAME:-identity-service}
+      TRACING_ENDPOINT: jaeger:4317
+      TRACING_SAMPLER_RATIO: ${TRACING_SAMPLER_RATIO:-1.0}
+
+      # Metrics 监控配置（Jaeger 不支持 OTLP Metrics，需要 Prometheus 后端）
+      METRICS_ENABLED: ${METRICS_ENABLED:-false}
+      METRICS_PORT: ${IDENTITY_METRICS_PORT:-9092}
+      METRICS_PATH: ${METRICS_PATH:-/metrics}
+    networks:
+      - cloudwego-scaffold-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+      rustfs:
+        condition: service_healthy
+      jaeger:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:10000/ready || exit 1"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+
+  api_gateway:
+    container_name: api-gateway
+    environment:
+      # 调试配置
+      SERVER_DEBUG: ${SERVER_DEBUG:-false}
+
+      # 服务器配置
+      SERVER_NAME: ${API_GATEWAY_SERVER_NAME:-api-gateway}
+      SERVER_HOST: ${API_GATEWAY_HOST:-0.0.0.0}
+      SERVER_PORT: ${API_GATEWAY_PORT:-8080}
+      SERVER_READ_TIMEOUT: ${SERVER_READ_TIMEOUT:-30s}
+      SERVER_WRITE_TIMEOUT: ${SERVER_WRITE_TIMEOUT:-30s}
+      SERVER_IDLE_TIMEOUT: ${SERVER_IDLE_TIMEOUT:-120s}
+
+      # 服务发现配置
+      ETCD_ADDRESS: etcd:2379
+      ETCD_TIMEOUT: ${ETCD_TIMEOUT:-5s}
+
+      # RPC 服务名称配置
+      IDENTITY_SRV_NAME: ${IDENTITY_SRV_NAME:-identity-service}
+      PERMISSION_SRV_NAME: ${PERMISSION_SRV_NAME:-permission-service}
+
+      # RPC 客户端配置
+      CLIENT_CONNECTION_TIMEOUT: ${CLIENT_CONNECTION_TIMEOUT:-2s}
+      CLIENT_REQUEST_TIMEOUT: ${CLIENT_REQUEST_TIMEOUT:-60s}
+      CLIENT_POOL_MAX_IDLE_PER_ADDRESS: ${CLIENT_POOL_MAX_IDLE_PER_ADDRESS:-10}
+      CLIENT_POOL_MAX_IDLE_GLOBAL: ${CLIENT_POOL_MAX_IDLE_GLOBAL:-100}
+      CLIENT_POOL_MAX_IDLE_TIMEOUT: ${CLIENT_POOL_MAX_IDLE_TIMEOUT:-5m}
+
+      # CORS 配置
+      CORS_ENABLED: ${CORS_ENABLED:-true}
+
+      # 限流配置
+      RATE_LIMIT_ENABLED: ${RATE_LIMIT_ENABLED:-false}
+      RATE_LIMIT_RPS: ${RATE_LIMIT_RPS:-1000}
+      RATE_LIMIT_BURST: ${RATE_LIMIT_BURST:-2000}
+
+      # JWT 认证配置
+      JWT_ENABLED: ${JWT_ENABLED:-true}
+      JWT_SIGNING_KEY: ${JWT_SIGNING_KEY}
+      JWT_TIMEOUT: ${JWT_TIMEOUT:-30m}
+      JWT_MAX_REFRESH: ${JWT_MAX_REFRESH:-168h}
+      JWT_REALM: ${JWT_REALM:-API Gateway}
+      JWT_TOKEN_LOOKUP: ${JWT_TOKEN_LOOKUP:-header:Authorization,cookie:auth_token,query:token}
+      JWT_TOKEN_HEAD_NAME: ${JWT_TOKEN_HEAD_NAME:-Bearer}
+      JWT_IDENTITY_KEY: ${JWT_IDENTITY_KEY:-identity}
+      JWT_SKIP_PATHS: ${JWT_SKIP_PATHS:-/api/v1/identity/auth/login,/api/v1/identity/auth/refresh,/ping,/health,/metrics,/swagger/*}
+
+      # Cookie 配置
+      JWT_COOKIE_SEND_COOKIE: ${JWT_COOKIE_SEND_COOKIE:-true}
+      JWT_COOKIE_COOKIE_NAME: ${JWT_COOKIE_COOKIE_NAME:-auth_token}
+      JWT_COOKIE_COOKIE_MAX_AGE: ${JWT_COOKIE_COOKIE_MAX_AGE:-168h}
+      JWT_COOKIE_COOKIE_DOMAIN: ${JWT_COOKIE_COOKIE_DOMAIN:-localhost}
+      JWT_COOKIE_COOKIE_PATH: ${JWT_COOKIE_COOKIE_PATH:-/}
+      JWT_COOKIE_COOKIE_SAME_SITE: ${JWT_COOKIE_COOKIE_SAME_SITE:-lax}
+      JWT_COOKIE_SECURE_COOKIE: ${JWT_COOKIE_SECURE_COOKIE:-false}
+      JWT_COOKIE_HTTP_ONLY: ${JWT_COOKIE_HTTP_ONLY:-true}
+
+      # 错误处理配置
+      ERROR_HANDLER_ENABLED: ${ERROR_HANDLER_ENABLED:-true}
+      ERROR_HANDLER_ENABLE_DETAILED_ERRORS: ${ERROR_HANDLER_ENABLE_DETAILED_ERRORS:-false}
+      ERROR_HANDLER_ENABLE_REQUEST_LOGGING: ${ERROR_HANDLER_ENABLE_REQUEST_LOGGING:-true}
+      ERROR_HANDLER_ENABLE_RESPONSE_LOGGING: ${ERROR_HANDLER_ENABLE_RESPONSE_LOGGING:-true}
+      ERROR_HANDLER_ENABLE_PANIC_RECOVERY: ${ERROR_HANDLER_ENABLE_PANIC_RECOVERY:-true}
+
+      # Casbin 权限控制
+      CASBIN_ENABLED: ${CASBIN_ENABLED:-false}
+      CASBIN_SKIP_PATHS: ${CASBIN_SKIP_PATHS:-/health,/metrics,/ping}
+
+      # 日志配置
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      LOG_FORMAT: ${LOG_FORMAT:-json}
+      LOG_OUTPUT: ${LOG_OUTPUT:-stdout}
+
+      # 链路追踪配置
+      TRACING_ENABLED: ${TRACING_ENABLED:-true}
+      TRACING_SERVICE_NAME: ${TRACING_SERVICE_NAME:-api-gateway}
+      TRACING_ENDPOINT: jaeger:4317
+      TRACING_SAMPLER_RATIO: ${TRACING_SAMPLER_RATIO:-1.0}
+
+      # 监控配置（Jaeger 不支持 OTLP Metrics，需要 Prometheus 后端）
+      METRICS_ENABLED: ${METRICS_ENABLED:-false}
+      METRICS_PORT: ${METRICS_PORT:-9091}
+      METRICS_PATH: ${METRICS_PATH:-/metrics}
+    networks:
+      - cloudwego-scaffold-network
+    depends_on:
+      identity_srv:
+        condition: service_healthy
+      permission_srv:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+      jaeger:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/ping || exit 1"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+
+# =============================================================================
+# 网络定义
+# =============================================================================
+networks:
+  cloudwego-scaffold-network:
+    driver: bridge
+    name: cloudwego-scaffold-network
+
+# =============================================================================
+# 卷定义
+# =============================================================================
+volumes:
+  postgres_data:
+    name: postgres-data
+  rustfs_data:
+    name: rustfs-data
+  redis_data:
+    name: redis-data

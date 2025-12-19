@@ -1,0 +1,26 @@
+# 优化后的前端菜单配置文件
+# 增加了 path, icon, component 字段以符合常见的前端框架使用规范
+menu:
+  - name: "系统设置"
+    id: "system_settings"
+    path: "/system-settings"
+    icon: "IconSystemSettings"
+    component: "Layout"
+    children:
+      - name: "组织管理"
+        id: "organization_management"
+        path: "organization-management"
+        icon: "IconOrganizationManagement"
+        component: "views/system-settings/OrganizationManagement"
+
+      - name: "角色权限"
+        id: "role_permissions"
+        path: "role-permissions"
+        icon: "IconRolePermissions"
+        component: "views/system-settings/RolePermissions"
+
+      - name: "账号管理"
+        id: "account_management"
+        path: "account-management"
+        icon: "IconAccountManagement"
+        component: "views/system-settings/AccountManagement"

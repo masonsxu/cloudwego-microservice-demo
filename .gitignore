@@ -1,0 +1,106 @@
+# Go 编译输出文件
+*.o
+*.a
+*.so
+_obj
+_test
+*.[568vq]
+[568vq].out
+*.cgo1.go
+*.cgo2.c
+_cgo_defun.c
+_cgo_gotypes.go
+_cgo_export.*
+_testmain.go
+*.exe
+*.exe~
+*.test
+*.prof
+
+# 压缩文件
+*.rar
+*.zip
+*.gz
+*.bz2
+# 其他文件
+*.psd
+*.bmd
+*.cfg
+*.pptx
+*nohup.out
+*settings.pyc
+*.sublime-project
+*.sublime-workspace
+!.gitkeep
+.DS_Store
+
+# IDE 配置
+/.idea
+
+# 日志文件
+*.log
+logs/
+*.log.*
+
+# 环境变量文件
+.env
+.env.local
+.env.*.local
+
+# 本地配置文件
+*.local.yml
+*.local.yaml
+config.local.*
+config.dev.*
+config.prod.*
+
+# 二进制输出目录
+/output
+output/bin/
+output/bin/*
+
+# 项目特定的输出目录
+rpc/*/output/
+rpc/*/output/bin/
+rpc/*/output/bin/*
+
+api/*/output/
+api/*/output/bin/
+api/*/output/bin/*
+
+# 依赖和缓存
+vendor/
+.cache/
+
+# 测试覆盖率文件
+coverage.out
+coverage.html
+*.cover
+
+# 临时文件
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+
+# 密钥和证书文件
+*.key
+*.pem
+*.crt
+*.p12
+*.jks
+secrets/
+
+# 文档构建输出
+gateway/docs/
+docs/_build/
+site/
+
+# 容器相关
+docker-compose.override.yml

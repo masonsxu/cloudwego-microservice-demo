@@ -1,0 +1,121 @@
+# =============================================================================
+# .dockerignore for gateway (项目根目录)
+# =============================================================================
+# 用途：优化 API Gateway 的 Docker 构建缓存
+#
+# 说明：
+# - api_gateway 的 Dockerfile context 是项目根目录
+# - 需要复制 gateway/ 和 rpc/*/kitex_gen/
+# - 忽略所有不需要的文件，避免触发缓存失效
+# =============================================================================
+
+# =============================================================================
+# 通用忽略规则
+# =============================================================================
+
+# Git 相关
+.git/
+.gitignore
+.gitattributes
+
+# IDE 配置
+.vscode/
+.idea/
+*.iml
+.DS_Store
+.lingma/
+
+# 环境变量文件（包含敏感信息）
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Docker 配置目录
+docker/
+
+# 日志文件
+*.log
+logs/
+log/
+**/logs/
+**/*.log
+
+# 测试文件和覆盖率报告
+*_test.go
+**/*_test.go
+coverage.out
+*.test
+*.prof
+
+# 临时文件
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+*~
+
+# 构建输出目录（所有服务）
+output/
+**/output/
+
+# 文档目录
+doc/
+docs/
+README.md
+*.md
+!gateway/**/*.md
+CLAUDE.md
+GEMINI.md
+
+# 配置文件
+.config.*
+menu.yaml
+.pre-commit-config.yaml
+.editorconfig
+.golangci.yml
+
+# Go workspace
+go.work
+go.work.sum
+
+# 其他
+tools/
+scripts/
+# 但保留 api_gateway 的 script 目录（包含 bootstrap.sh）
+!gateway/script/
+integration_test.go
+
+# =============================================================================
+# RPC 服务特定忽略规则
+# =============================================================================
+# 注意：保留 rpc/*/kitex_gen/ 因为 api_gateway 依赖它们
+# 但忽略 RPC 服务的其他源代码和配置
+
+# identity_srv - 忽略除 kitex_gen 外的所有文件
+rpc/identity_srv/*.go
+rpc/identity_srv/*.sh
+rpc/identity_srv/*.md
+rpc/identity_srv/*.yaml
+rpc/identity_srv/biz/
+rpc/identity_srv/config/
+rpc/identity_srv/docker/
+rpc/identity_srv/internal/
+rpc/identity_srv/models/
+rpc/identity_srv/output/
+rpc/identity_srv/pkg/
+rpc/identity_srv/script/
+rpc/identity_srv/wire/
+
+# =============================================================================
+# API Gateway - 保留所有必要文件
+# =============================================================================
+# gateway/ 下的所有文件都需要保留（通过 !api/ 规则）
+
+# 但忽略 api_gateway 的以下文件
+gateway/output/
+gateway/docker/
+gateway/*.md

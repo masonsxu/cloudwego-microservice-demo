@@ -1,0 +1,90 @@
+#!/bin/bash
+# pre-commit 挂钩，用于强制执行：
+# 1. 无非 ASCII 文件名（通过 hooks.allownonascii 可配置）
+# 2. 文件大小限制（通过 hooks.maxfilesize 可配置，默认 10MB）
+
+echo "运行 pre-commit 挂钩..." >&2
+
+# --------------------------
+# 检查非 ASCII 文件名
+# --------------------------
+if git rev-parse --verify HEAD >/dev/null 2>&1; then
+    against=HEAD
+else
+    # 初始提交：与空树对象比较
+    against=$(git hash-object -t tree /dev/null)
+    if [ -z "$against" ]; then
+        echo "错误：无法创建空树对象。" >&2
+        exit 1
+    fi
+fi
+
+allownonascii=$(git config --type=bool hooks.allownonascii)
+
+if [ "$allownonascii" != "true" ]; then
+    echo "检查非 ASCII 文件名..." >&2
+    if git diff-index --cached --name-only --diff-filter=A -z "$against" | LC_ALL=C tr -d '[ -~]\0' | grep -q .; then
+        cat <<EOF >&2
+错误：尝试添加包含非 ASCII 文件名的文件。
+
+非 ASCII 文件名可能在某些平台上引起问题。要允许非 ASCII 文件名，请运行：
+
+  git config hooks.allownonascii true
+
+EOF
+        exit 1
+    fi
+fi
+
+# --------------------------
+# 检查文件大小限制
+# --------------------------
+# 如果未设置，默认 10MB
+MAX_SIZE=$(git config --type=int hooks.maxfilesize || echo $((10 * 1024 * 1024)))
+
+echo "检查文件大小限制（最大 $((MAX_SIZE / 1024 / 1024)) MB）..." >&2
+
+# 获取暂存文件列表（添加、复制、修改、重命名）
+while IFS= read -r -d '' file; do
+    if [ -n "$file" ]; then
+        echo "检查文件：'$file'" >&2
+        # 从 Git 索引获取暂存内容的大小
+        size=$(git cat-file -s ":${file}" 2>/dev/null || echo 0)
+        if [ "$size" -eq 0 ]; then
+            echo "警告：无法确定 '$file' 的大小，可能文件未正确暂存。跳过大小检查。" >&2
+            continue
+        fi
+        if [ "$size" -gt "$MAX_SIZE" ]; then
+            size_mb=$((size / 1024 / 1024))
+            max_size_mb=$((MAX_SIZE / 1024 / 1024))
+            cat <<EOF >&2
+错误：文件 '$file' 大小为 $size_mb MB，超过了 $max_size_mb MB 限制。
+
+要提交更大文件，请考虑使用 Git LFS 或通过以下命令增加限制：
+
+  git config hooks.maxfilesize <大小-字节>
+
+EOF
+            exit 1
+        fi
+    fi
+done < <(git diff-index --cached --name-only --diff-filter=ACMR -z "$against" || {
+    echo "错误：无法获取暂存文件列表。" >&2
+    exit 1
+})
+
+# --------------------------
+# 最终 diff-index 检查
+# --------------------------
+echo "执行最终 diff-index 检查..." >&2
+if ! git diff-index --check --cached "$against" --; then
+    cat <<EOF >&2
+错误：检测到提交内容问题（例如空白错误、行尾问题）。
+
+请检查暂存文件并修正问题后重新提交。
+EOF
+    exit 1
+fi
+
+echo "pre-commit 检查通过。" >&2
+exit 0
