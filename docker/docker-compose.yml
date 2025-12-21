@@ -1,0 +1,187 @@
+# =============================================================================
+# CloudWeGo 微服务基础设施 - Docker Compose 配置
+# =============================================================================
+# 用途：本地开发环境基础设施服务
+# 包含：PostgreSQL、etcd、Redis、RustFS、Jaeger
+#
+# 使用方式：
+#   ./deploy.sh up      # 启动所有基础设施服务
+#   ./deploy.sh down    # 停止所有服务
+#   ./deploy.sh ps      # 查看服务状态
+#   ./deploy.sh logs    # 查看日志
+#
+# 注意：Go 应用服务请在本地启动调试
+# =============================================================================
+
+version: "3.8"
+
+services:
+  # ===========================================================================
+  # PostgreSQL 数据库
+  # ===========================================================================
+  postgres:
+    image: m.daocloud.io/docker.io/library/postgres:17
+    container_name: postgres
+    hostname: postgres
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_INITDB_ARGS: --encoding=UTF-8 --lc-collate=C --lc-ctype=C
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: ${POSTGRES_USER:-Admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-identity_srv}
+      TERM: xterm
+      POSTGRES_EXTENSIONS: hstore,uuid-ossp,pg_stat_statements
+      HOSTNAME: pg_network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts/postgres:/docker-entrypoint-initdb.d:ro
+    networks:
+      cloudwego-scaffold-network:
+        aliases:
+          - postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-Admin} -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  # ===========================================================================
+  # etcd 服务注册与发现
+  # ===========================================================================
+  etcd:
+    image: m.daocloud.io/docker.io/bitnami/etcd:latest
+    container_name: etcd
+    hostname: etcd
+    ports:
+      - "${ETCD_PORT:-2379}:2379"
+    environment:
+      ALLOW_NONE_AUTHENTICATION: "yes"
+      ETCD_ADVERTISE_CLIENT_URLS: "http://etcd:2379"
+      ETCD_LISTEN_CLIENT_URLS: "http://0.0.0.0:2379"
+    networks:
+      cloudwego-scaffold-network:
+        aliases:
+          - etcd
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  # ===========================================================================
+  # RustFS 对象存储
+  # ===========================================================================
+  rustfs:
+    image: m.daocloud.io/docker.io/rustfs/rustfs:1.0.0-alpha.72
+    container_name: rustfs
+    hostname: rustfs
+    ports:
+      - "${RUSTFS_API_PORT:-9000}:9000"
+      - "${RUSTFS_CONSOLE_PORT:-9001}:9001"
+    environment:
+      RUSTFS_ACCESS_KEY: ${RUSTFS_ACCESS_KEY:-Admin}
+      RUSTFS_SECRET_KEY: ${RUSTFS_SECRET_KEY}
+      RUSTFS_CONSOLE_ENABLE: "${RUSTFS_CONSOLE_ENABLE:-true}"
+    volumes:
+      - rustfs_data:/data
+    networks:
+      cloudwego-scaffold-network:
+        aliases:
+          - rustfs
+    healthcheck:
+      test: ["CMD-SHELL", "netstat -tuln | grep 9000 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+  # ===========================================================================
+  # Redis 缓存数据库
+  # ===========================================================================
+  redis:
+    image: m.daocloud.io/docker.io/library/redis:8.4.0
+    container_name: redis
+    hostname: redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: >
+      sh -c "
+      if [ -n \"$$REDIS_PASSWORD\" ]; then
+        redis-server --appendonly yes --requirepass \"$$REDIS_PASSWORD\"
+      else
+        redis-server --appendonly yes
+      fi
+      "
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+    volumes:
+      - redis_data:/data
+    networks:
+      cloudwego-scaffold-network:
+        aliases:
+          - redis
+    healthcheck:
+      test: >
+        sh -c "
+        if [ -n \"$$REDIS_PASSWORD\" ]; then
+          redis-cli -a \"$$REDIS_PASSWORD\" ping | grep PONG || exit 1
+        else
+          redis-cli ping | grep PONG || exit 1
+        fi
+        "
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  # ===========================================================================
+  # Jaeger 链路追踪
+  # ===========================================================================
+  jaeger:
+    image: m.daocloud.io/docker.io/jaegertracing/jaeger:2.12.0
+    container_name: jaeger
+    hostname: jaeger
+    ports:
+      - "16686:16686"   # Jaeger UI
+      - "4317:4317"     # OTLP gRPC
+      - "4318:4318"     # OTLP HTTP
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    networks:
+      cloudwego-scaffold-network:
+        aliases:
+          - jaeger
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:16687 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+# =============================================================================
+# 网络定义
+# =============================================================================
+networks:
+  cloudwego-scaffold-network:
+    driver: bridge
+    name: cloudwego-scaffold-network
+
+# =============================================================================
+# 卷定义
+# =============================================================================
+volumes:
+  postgres_data:
+    name: postgres-data
+  rustfs_data:
+    name: rustfs-data
+  redis_data:
+    name: redis-data
