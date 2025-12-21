@@ -166,7 +166,7 @@ func mapLogEnvVars(v *viper.Viper) {
 // mapTracingEnvVars 映射链路追踪相关环境变量
 func mapTracingEnvVars(v *viper.Viper) {
 	mapToViper(v, "TRACING_ENABLED", "tracing.enabled", func(value string) interface{} {
-		return value == "false"
+		return value == "true"
 	})
 	mapToViper(v, "TRACING_ENDPOINT", "tracing.endpoint", nil)
 	mapToViper(v, "TRACING_SAMPLER_RATIO", "tracing.sampler_ratio", func(value string) interface{} {
