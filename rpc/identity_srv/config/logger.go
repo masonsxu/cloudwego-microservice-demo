@@ -110,9 +110,14 @@ func createLogWriter(cfg *Config) (*lumberjack.Logger, error) {
 		return nil, fmt.Errorf("failed to create log directory %s: %w", logDir, err)
 	}
 
-	// 如果日志文件已存在，检查权限
-	if _, err := os.Stat(cfg.Log.FilePath); err == nil {
-		// 文件存在，尝试以追加模式打开以验证权限
+	// 如果日志文件已存在，检查是否为常规文件并验证权限
+	if fileInfo, err := os.Stat(cfg.Log.FilePath); err == nil {
+		// 检查是否为目录
+		if fileInfo.IsDir() {
+			return nil, fmt.Errorf("log path %s is a directory, not a file", cfg.Log.FilePath)
+		}
+
+		// 文件存在且是常规文件，尝试以追加模式打开以验证权限
 		file, err := os.OpenFile(cfg.Log.FilePath, os.O_WRONLY|os.O_APPEND, 0o644)
 		if err != nil {
 			return nil, fmt.Errorf("cannot write to existing log file %s: %w", cfg.Log.FilePath, err)

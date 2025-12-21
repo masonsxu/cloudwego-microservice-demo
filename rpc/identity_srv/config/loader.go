@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -45,9 +46,10 @@ func postProcessConfig(config *Config) {
 		config.Server.Address = fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port)
 	}
 
-	// 确保日志目录存在
-	if config.Log.Output == "file" {
-		if err := os.MkdirAll(config.Log.FilePath, 0o755); err != nil {
+	// 确保日志目录存在（只创建目录，不包括文件名）
+	if config.Log.Output == "file" && config.Log.FilePath != "" {
+		logDir := filepath.Dir(config.Log.FilePath)
+		if err := os.MkdirAll(logDir, 0o755); err != nil {
 			// 日志目录创建失败，降级到标准输出
 			config.Log.Output = "stdout"
 		}
