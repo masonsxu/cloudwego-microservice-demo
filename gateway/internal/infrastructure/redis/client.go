@@ -28,6 +28,10 @@ func NewClient(cfg *config.RedisConfig) (*Client, error) {
 		ReadTimeout:  cfg.ReadTimeout,
 		WriteTimeout: cfg.WriteTimeout,
 		PoolTimeout:  cfg.PoolTimeout,
+
+		// 使用 RESP2 协议以避免 MAINT_NOTIFICATIONS 警告
+		// MAINT_NOTIFICATIONS 仅在 RESP3 中可用
+		Protocol: 2,
 	})
 
 	// 测试连接
