@@ -39,5 +39,6 @@ func WithRequestIDZerolog(ctx context.Context, logger *zerolog.Logger) *zerolog.
 	}
 
 	contextLogger := logger.With().Str("request_id", requestID).Logger()
+
 	return &contextLogger
 }

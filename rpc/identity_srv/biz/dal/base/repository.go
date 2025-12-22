@@ -16,9 +16,9 @@ import (
 // 错误定义
 // ============================================================================
 
-var (
-	// ErrConflictingQueryOptions 查询选项冲突错误
-	ErrConflictingQueryOptions = errors.New("conflicting query options: DeletedOnly and IncludeDeleted cannot both be true")
+// ErrConflictingQueryOptions 查询选项冲突错误
+var ErrConflictingQueryOptions = errors.New(
+	"conflicting query options: DeletedOnly and IncludeDeleted cannot both be true",
 )
 
 // ============================================================================
@@ -41,6 +41,7 @@ var modelSchemaCache sync.Map
 // 使用 GORM 的 Schema API 动态获取字段信息
 func parseModelSchema[T any](db *gorm.DB) *modelSchema {
 	var model T
+
 	modelType := reflect.TypeOf(model)
 
 	// 处理指针类型
@@ -70,6 +71,7 @@ func parseModelSchema[T any](db *gorm.DB) *modelSchema {
 			if field.Name == "DeletedAt" {
 				s.hasSoftDelete = true
 				s.deletedAtColumn = field.DBName
+
 				break
 			}
 		}

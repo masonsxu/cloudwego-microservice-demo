@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"time"
 
+	kitexzerolog "github.com/kitex-contrib/obs-opentelemetry/logging/zerolog"
 	"github.com/rs/zerolog"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -46,11 +47,13 @@ func CreateLogger(cfg *Config) (*zerolog.Logger, error) {
 
 	// 创建文件 writer（如果配置了文件输出）
 	var fileWriter io.Writer
+
 	if cfg.Log.Output == "file" && cfg.Log.FilePath != "" {
 		fw, err := createLogWriter(cfg)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create log writer: %w", err)
 		}
+
 		fileWriter = fw
 	}
 
@@ -106,8 +109,16 @@ func CreateLogger(cfg *Config) (*zerolog.Logger, error) {
 func createLogWriter(cfg *Config) (*lumberjack.Logger, error) {
 	// 确保日志目录存在
 	logDir := filepath.Dir(cfg.Log.FilePath)
-	if err := os.MkdirAll(logDir, 0o755); err != nil {
-		return nil, fmt.Errorf("failed to create log directory %s: %w", logDir, err)
+
+	// 检查路径是否存在以及它的类型
+	if stat, err := os.Stat(logDir); err != nil {
+		// 路径不存在，创建目录
+		if err := os.MkdirAll(logDir, 0o755); err != nil {
+			return nil, fmt.Errorf("failed to create log directory %s: %w", logDir, err)
+		}
+	} else if !stat.IsDir() {
+		// 路径存在但不是目录，这是一个错误状态
+		return nil, fmt.Errorf("log directory path %s exists but is not a directory", logDir)
 	}
 
 	// 如果日志文件已存在，检查是否为常规文件并验证权限
@@ -120,8 +131,13 @@ func createLogWriter(cfg *Config) (*lumberjack.Logger, error) {
 		// 文件存在且是常规文件，尝试以追加模式打开以验证权限
 		file, err := os.OpenFile(cfg.Log.FilePath, os.O_WRONLY|os.O_APPEND, 0o644)
 		if err != nil {
-			return nil, fmt.Errorf("cannot write to existing log file %s: %w", cfg.Log.FilePath, err)
+			return nil, fmt.Errorf(
+				"cannot write to existing log file %s: %w",
+				cfg.Log.FilePath,
+				err,
+			)
 		}
+
 		file.Close()
 	}
 
@@ -137,4 +153,23 @@ func createLogWriter(cfg *Config) (*lumberjack.Logger, error) {
 	}
 
 	return writer, nil
+}
+
+// CreateKitexLogger 根据配置创建 Kitex logger 实例
+// 使用 kitex-contrib/obs-opentelemetry/logging/zerolog 集成
+// 返回的 logger 可以直接通过 klog.SetLogger() 设置到 Kitex
+func CreateKitexLogger(cfg *Config) (*kitexzerolog.Logger, error) {
+	// 先创建基础的 zerolog.Logger
+	zerologLoggerPtr, err := CreateLogger(cfg)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create zerolog logger: %w", err)
+	}
+
+	// 使用 kitexzerolog.NewLogger 包装，传入自定义的 zerolog.Logger
+	// WithLogger 需要 *zerolog.Logger 类型
+	kitexLogger := kitexzerolog.NewLogger(
+		kitexzerolog.WithLogger(zerologLoggerPtr),
+	)
+
+	return kitexLogger, nil
 }

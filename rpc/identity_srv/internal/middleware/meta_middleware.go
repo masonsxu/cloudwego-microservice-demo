@@ -91,6 +91,7 @@ func (m *MetaInfoMiddleware) getMethodName(ctx context.Context) string {
 	if ri != nil {
 		return ri.Invocation().MethodName()
 	}
+
 	return "unknown"
 }
 
@@ -111,7 +112,11 @@ func (m *MetaInfoMiddleware) logTraceInfo(ctx context.Context) {
 }
 
 // logRequestComplete 记录请求完成和性能指标
-func (m *MetaInfoMiddleware) logRequestComplete(ctx context.Context, duration time.Duration, err error) {
+func (m *MetaInfoMiddleware) logRequestComplete(
+	ctx context.Context,
+	duration time.Duration,
+	err error,
+) {
 	requestID := GetRequestID(ctx)
 	methodName := m.getMethodName(ctx)
 

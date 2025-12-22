@@ -28,18 +28,18 @@ const (
 	ErrorCodeOperationFailed = 200101 // 操作失败（通用）
 
 	// 用户相关错误 (201xxx)
-	ErrorCodeUserNotFound           = 201001
-	ErrorCodeUserAlreadyExists      = 201002
-	ErrorCodeUsernameAlreadyExists  = 201003
-	ErrorCodeEmailAlreadyExists     = 201004
-	ErrorCodePhoneAlreadyExists     = 201005
-	ErrorCodeInvalidPassword        = 201007
-	ErrorCodeUserInactive           = 201012
-	ErrorCodePhoneNumberAlreadyUsed = 201014
-	ErrorCodeInvalidAccountType     = 201015
-	ErrorCodeInvalidCredentials     = 201016
-	ErrorCodeUserSuspended          = 201017
-	ErrorCodeMustChangePassword     = 201018
+	ErrorCodeUserNotFound              = 201001
+	ErrorCodeUserAlreadyExists         = 201002
+	ErrorCodeUsernameAlreadyExists     = 201003
+	ErrorCodeEmailAlreadyExists        = 201004
+	ErrorCodePhoneAlreadyExists        = 201005
+	ErrorCodeInvalidPassword           = 201007
+	ErrorCodeUserInactive              = 201012
+	ErrorCodePhoneNumberAlreadyUsed    = 201014
+	ErrorCodeInvalidAccountType        = 201015
+	ErrorCodeInvalidCredentials        = 201016
+	ErrorCodeUserSuspended             = 201017
+	ErrorCodeMustChangePassword        = 201018
 	ErrorCodeSystemUserCannotDelete    = 201019 // 系统用户无法删除
 	ErrorCodeSystemUserCannotModifyKey = 201020 // 系统用户关键属性无法修改
 

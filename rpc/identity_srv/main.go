@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/server"
@@ -98,6 +99,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to init OpenTelemetry provider: %v", err)
 	}
+
 	defer func() {
 		if err := otelProvider.Shutdown(context.Background()); err != nil {
 			log.Printf("failed to shutdown OpenTelemetry provider: %v", err)
@@ -139,6 +141,28 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to initialize logger: %v", err)
 	}
+	// 初始化 Kitex logger（用于 Kitex 框架日志）
+	kitexLogger, err := config.CreateKitexLogger(cfg)
+	if err != nil {
+		log.Fatalf("failed to create Kitex logger: %v", err)
+	}
+
+	// 设置 Kitex 全局 logger
+	klog.SetLogger(kitexLogger)
+
+	// 根据配置设置日志级别
+	switch cfg.Log.Level {
+	case "debug":
+		klog.SetLevel(klog.LevelDebug)
+	case "info":
+		klog.SetLevel(klog.LevelInfo)
+	case "warn":
+		klog.SetLevel(klog.LevelWarn)
+	case "error":
+		klog.SetLevel(klog.LevelError)
+	default:
+		klog.SetLevel(klog.LevelInfo)
+	}
 
 	// 创建MetaInfo中间件
 	metaMiddleware := middleware.NewMetaInfoMiddleware(logger)
@@ -155,6 +179,8 @@ func main() {
 	// 添加 OpenTelemetry tracing Suite (如果启用)
 	if otelProvider.IsEnabled() {
 		serverOpts = append(serverOpts, server.WithSuite(kitextracing.NewServerSuite()))
+
+		klog.Infof("OpenTelemetry tracing enabled, endpoint: %s", cfg.Tracing.Endpoint)
 	}
 
 	// 创建并配置 Kitex Server

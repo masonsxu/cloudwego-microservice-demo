@@ -14,6 +14,7 @@ import (
 func TestWithRequestID(t *testing.T) {
 	t.Run("adds request_id when present", func(t *testing.T) {
 		var buf bytes.Buffer
+
 		baseLogger := slog.New(slog.NewJSONHandler(&buf, nil))
 
 		ctx := metainfo.WithPersistentValue(context.Background(), "request_id", "test-request-id")
@@ -28,6 +29,7 @@ func TestWithRequestID(t *testing.T) {
 
 	t.Run("returns original logger when request_id is empty", func(t *testing.T) {
 		var buf bytes.Buffer
+
 		baseLogger := slog.New(slog.NewJSONHandler(&buf, nil))
 
 		ctx := context.Background()
@@ -44,6 +46,7 @@ func TestWithRequestID(t *testing.T) {
 func TestWithRequestIDZerolog(t *testing.T) {
 	t.Run("adds request_id when present", func(t *testing.T) {
 		var buf bytes.Buffer
+
 		baseLogger := zerolog.New(&buf).With().Timestamp().Logger()
 
 		ctx := metainfo.WithPersistentValue(context.Background(), "request_id", "test-request-id")
@@ -58,6 +61,7 @@ func TestWithRequestIDZerolog(t *testing.T) {
 
 	t.Run("returns original logger when request_id is empty", func(t *testing.T) {
 		var buf bytes.Buffer
+
 		baseLogger := zerolog.New(&buf).With().Timestamp().Logger()
 
 		ctx := context.Background()
@@ -72,6 +76,7 @@ func TestWithRequestIDZerolog(t *testing.T) {
 
 	t.Run("preserves other logger fields", func(t *testing.T) {
 		var buf bytes.Buffer
+
 		baseLogger := zerolog.New(&buf).With().
 			Str("service", "test-service").
 			Timestamp().
