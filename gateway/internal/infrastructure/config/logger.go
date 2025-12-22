@@ -118,8 +118,16 @@ func CreateLogger(cfg *Configuration) (*hertzZerolog.Logger, error) {
 func createLogWriter(cfg *Configuration) (*lumberjack.Logger, error) {
 	// 确保日志目录存在
 	logDir := filepath.Dir(cfg.Log.FilePath)
-	if err := os.MkdirAll(logDir, 0o755); err != nil {
-		return nil, fmt.Errorf("failed to create log directory %s: %w", logDir, err)
+
+	// 检查路径是否存在以及它的类型
+	if stat, err := os.Stat(logDir); err != nil {
+		// 路径不存在，创建目录
+		if err := os.MkdirAll(logDir, 0o755); err != nil {
+			return nil, fmt.Errorf("failed to create log directory %s: %w", logDir, err)
+		}
+	} else if !stat.IsDir() {
+		// 路径存在但不是目录，这是一个错误状态
+		return nil, fmt.Errorf("log directory path %s exists but is not a directory", logDir)
 	}
 
 	// 如果日志文件已存在，检查权限

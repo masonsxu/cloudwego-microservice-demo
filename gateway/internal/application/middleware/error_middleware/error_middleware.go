@@ -11,12 +11,14 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/context/auth_context"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/errors"
+	tracelog "github.com/masonsxu/cloudwego-microservice-demo/gateway/pkg/log"
+	"github.com/rs/zerolog"
 )
 
 // ErrorHandlerMiddlewareImpl 错误处理中间件实现
 type ErrorHandlerMiddlewareImpl struct {
 	config *config.ErrorHandlerConfig
-	logger *hertzZerolog.Logger
+	logger *zerolog.Logger
 }
 
 // NewErrorHandlerMiddleware 创建新的错误处理中间件实例
@@ -24,14 +26,21 @@ func NewErrorHandlerMiddleware(
 	config *config.ErrorHandlerConfig,
 	logger *hertzZerolog.Logger,
 ) ErrorHandlerMiddlewareService {
-	if logger == nil {
-		// 如果 logger 为 nil，创建一个默认的 logger
-		logger = hertzZerolog.New()
+	var zlog *zerolog.Logger
+
+	if logger != nil {
+		// 从 hertzZerolog.Logger 获取底层 zerolog.Logger
+		unwrapped := logger.Unwrap()
+		zlog = &unwrapped
+	} else {
+		// 如果 logger 为 nil，创建一个默认的 nop logger
+		nopLogger := zerolog.Nop()
+		zlog = &nopLogger
 	}
 
 	return &ErrorHandlerMiddlewareImpl{
 		config: config,
-		logger: logger,
+		logger: zlog,
 	}
 }
 
@@ -65,8 +74,11 @@ func (ehm *ErrorHandlerMiddlewareImpl) MiddlewareFunc() app.HandlerFunc {
 		c.Next(ctx)
 
 		if c.Response.StatusCode() == 500 && len(c.Response.Body()) == 0 {
-			ehm.logger.Warnf("Casbin permission denied: method=%s, path=%s",
-				string(c.Method()), string(c.Request.Path()))
+			tracelog.Event(ctx, ehm.logger.Warn()).
+				Str("component", "error_middleware").
+				Str("method", string(c.Method())).
+				Str("path", string(c.Request.Path())).
+				Msg("Casbin permission denied")
 			c.SetStatusCode(403)
 			c.JSON(403, map[string]string{"msg": "权限不足"})
 
@@ -108,16 +120,16 @@ func (ehm *ErrorHandlerMiddlewareImpl) handlePanicError(
 	n := runtime.Stack(buf, false)
 	stackTrace := string(buf[:n])
 
-	// 记录详细的panic日志
-	ehm.logger.Errorf(
-		"Panic recovered in error handler: panic=%v, path=%s, method=%s, user_agent=%s, remote_addr=%s, stack_trace=%s",
-		r,
-		string(c.Request.Path()),
-		string(c.Method()),
-		string(c.UserAgent()),
-		c.RemoteAddr(),
-		stackTrace,
-	)
+	// 使用结构化日志记录 panic 详情
+	tracelog.Event(ctx, ehm.logger.Error()).
+		Str("component", "error_middleware").
+		Str("path", string(c.Request.Path())).
+		Str("method", string(c.Method())).
+		Str("user_agent", string(c.UserAgent())).
+		Str("remote_addr", c.RemoteAddr().String()).
+		Interface("panic", r).
+		Str("stack_trace", stackTrace).
+		Msg("Panic recovered in error handler")
 
 	// 构建错误响应
 	bizErr := errors.ErrInternal
@@ -135,55 +147,56 @@ func (ehm *ErrorHandlerMiddlewareImpl) handleHTTPStatusError(
 	c *app.RequestContext,
 	statusCode int,
 ) {
-	// 记录用户信息（如果有的话）
-	logMsg := fmt.Sprintf("HTTP status error: status_code=%d, path=%s, method=%s",
-		statusCode, string(c.Request.Path()), string(c.Method()))
+	// 使用结构化日志记录 HTTP 状态错误
+	event := tracelog.Event(ctx, ehm.logger.Warn()).
+		Str("component", "error_middleware").
+		Int("status_code", statusCode).
+		Str("path", string(c.Request.Path())).
+		Str("method", string(c.Method()))
 
 	// 如果有用户上下文，记录用户信息
 	if userID, ok := auth_context.GetCurrentUserProfileID(c); ok && userID != "" {
-		logMsg += fmt.Sprintf(", user_id=%s", userID)
+		event = event.Str("user_id", userID)
 	}
 
 	if orgID, ok := auth_context.GetCurrentOrganizationID(c); ok && orgID != "" {
-		logMsg += fmt.Sprintf(", org_id=%s", orgID)
+		event = event.Str("org_id", orgID)
 	}
 
-	ehm.logger.Warnf("%s", logMsg)
-
-	// 如果启用了详细错误信息，可以在这里添加更多上下文
+	// 如果启用了详细错误信息，添加更多上下文
 	if ehm.config.EnableDetailedErrors {
-		// 可以在这里添加更详细的错误信息处理
-		ehm.logger.Debugf("Detailed error context: remote_addr=%s, user_agent=%s",
-			c.RemoteAddr(), string(c.UserAgent()))
+		event = event.
+			Str("remote_addr", c.RemoteAddr().String()).
+			Str("user_agent", string(c.UserAgent()))
 	}
+
+	event.Msg("HTTP status error")
 
 	errors.HandleHTTPStatusError(c, statusCode)
 }
 
 // logRequestInfo 记录请求信息
 func (ehm *ErrorHandlerMiddlewareImpl) logRequestInfo(ctx context.Context, c *app.RequestContext) {
-	UserID, hasUserID := auth_context.GetCurrentUserProfileID(c)
+	userID, hasUserID := auth_context.GetCurrentUserProfileID(c)
 	orgID, hasOrg := auth_context.GetCurrentOrganizationID(c)
 
-	logMsg := fmt.Sprintf(
-		"Request started: method=%s, path=%s, query=%s, remote_addr=%s",
-		string(
-			c.Method(),
-		),
-		string(c.Request.Path()),
-		string(c.Request.QueryString()),
-		c.RemoteAddr(),
-	)
+	// 使用结构化日志记录请求开始
+	event := tracelog.Event(ctx, ehm.logger.Info()).
+		Str("component", "error_middleware").
+		Str("method", string(c.Method())).
+		Str("path", string(c.Request.Path())).
+		Str("query", string(c.Request.QueryString())).
+		Str("remote_addr", c.RemoteAddr().String())
 
-	if hasUserID && UserID != "" {
-		logMsg += fmt.Sprintf(", user_id=%s", UserID)
+	if hasUserID && userID != "" {
+		event = event.Str("user_id", userID)
 	}
 
 	if hasOrg && orgID != "" {
-		logMsg += fmt.Sprintf(", org_id=%s", orgID)
+		event = event.Str("org_id", orgID)
 	}
 
-	ehm.logger.Infof("%s", logMsg)
+	event.Msg("Request started")
 }
 
 // logResponseInfo 记录响应信息
@@ -195,20 +208,26 @@ func (ehm *ErrorHandlerMiddlewareImpl) logResponseInfo(
 	duration := time.Since(startTime)
 	statusCode := c.Response.StatusCode()
 
-	logMsg := fmt.Sprintf(
-		"Request completed: method=%s, path=%s, status_code=%d, duration_ms=%d, response_size=%d",
-		string(
-			c.Method(),
-		),
-		string(c.Request.Path()),
-		statusCode,
-		duration.Milliseconds(),
-		len(c.Response.Body()),
-	)
-
-	if userID, ok := auth_context.GetCurrentUserProfileID(c); ok && userID != "" {
-		logMsg += fmt.Sprintf(", user_id=%s", userID)
+	// 选择日志级别：慢请求使用 Warn
+	var event *zerolog.Event
+	if duration > 100*time.Millisecond {
+		event = ehm.logger.Warn()
+	} else {
+		event = ehm.logger.Info()
 	}
 
-	ehm.logger.Infof("%s", logMsg)
+	// 使用结构化日志记录请求完成
+	event = tracelog.Event(ctx, event).
+		Str("component", "error_middleware").
+		Str("method", string(c.Method())).
+		Str("path", string(c.Request.Path())).
+		Int("status_code", statusCode).
+		Dur("duration_ms", duration).
+		Int("response_size", len(c.Response.Body()))
+
+	if userID, ok := auth_context.GetCurrentUserProfileID(c); ok && userID != "" {
+		event = event.Str("user_id", userID)
+	}
+
+	event.Msg("Request completed")
 }

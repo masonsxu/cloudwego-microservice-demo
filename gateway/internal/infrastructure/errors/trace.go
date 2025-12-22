@@ -1,11 +1,12 @@
 // Package errors 提供了 Hertz 网关层的统一错误处理机制
-// 本文件提供 RequestID 在 RPC 调用链中的传播功能
+// 本文件提供 RequestID 和 TraceID 在 RPC 调用链中的传播功能
 package errors
 
 import (
 	"context"
 
 	"github.com/bytedance/gopkg/cloud/metainfo"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // InjectRequestIDToContext 将 RequestID 注入到 context 中（用于 RPC 调用）
@@ -21,6 +22,25 @@ func InjectRequestIDToContext(ctx context.Context, requestID string) context.Con
 	return ctx
 }
 
+// InjectTraceToContext 将 OpenTelemetry TraceID 注入到 metainfo 中
+// 用于在 RPC 调用链中传播追踪信息
+func InjectTraceToContext(ctx context.Context) context.Context {
+	span := trace.SpanFromContext(ctx)
+	if !span.SpanContext().IsValid() {
+		return ctx
+	}
+
+	// 注入 trace_id 到 metainfo，确保通过 TTHeader 传递到 RPC 服务
+	traceID := span.SpanContext().TraceID().String()
+	ctx = metainfo.WithPersistentValue(ctx, "trace_id", traceID)
+
+	// 注入 span_id（可选，用于日志关联）
+	spanID := span.SpanContext().SpanID().String()
+	ctx = metainfo.WithPersistentValue(ctx, "span_id", spanID)
+
+	return ctx
+}
+
 // GetRequestIDFromContext 从 context 中获取 request_id（辅助函数）
 // 优先从 metainfo 读取，如果没有则从普通 context 读取
 func GetRequestIDFromContext(ctx context.Context) string {
@@ -32,6 +52,39 @@ func GetRequestIDFromContext(ctx context.Context) string {
 	// 如果 metainfo 中没有，尝试从普通 context 提取
 	if requestID, ok := ctx.Value("request_id").(string); ok {
 		return requestID
+	}
+
+	return ""
+}
+
+// GetTraceIDFromContext 从 context 中获取 trace_id
+// 优先从 OpenTelemetry span 提取，然后从 metainfo 提取
+func GetTraceIDFromContext(ctx context.Context) string {
+	// 优先从 OTel span 提取
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		return span.SpanContext().TraceID().String()
+	}
+
+	// 从 metainfo 提取
+	if traceID, ok := metainfo.GetPersistentValue(ctx, "trace_id"); ok && traceID != "" {
+		return traceID
+	}
+
+	return ""
+}
+
+// GetSpanIDFromContext 从 context 中获取 span_id
+func GetSpanIDFromContext(ctx context.Context) string {
+	// 优先从 OTel span 提取
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		return span.SpanContext().SpanID().String()
+	}
+
+	// 从 metainfo 提取
+	if spanID, ok := metainfo.GetPersistentValue(ctx, "span_id"); ok && spanID != "" {
+		return spanID
 	}
 
 	return ""

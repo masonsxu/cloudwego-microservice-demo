@@ -60,12 +60,10 @@ func main() {
 
 	h := server.New(serverOpts...)
 
-	// Add OpenTelemetry tracing middleware
-	h.Use(hertztracing.ServerMiddleware(tracerCfg))
-
 	// 初始化其他中间件
 	middleware.DefaultMiddleware(
 		h,
+		tracerCfg,
 		app.Middlewares.TraceMiddleware,
 		app.Middlewares.CORSMiddleware,
 		app.Middlewares.ErrorHandlerMiddleware,
