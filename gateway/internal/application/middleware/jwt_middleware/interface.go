@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/cloudwego/hertz/pkg/app"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/redis"
 )
 

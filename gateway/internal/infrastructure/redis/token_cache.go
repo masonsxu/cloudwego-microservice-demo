@@ -9,6 +9,7 @@ import (
 	"time"
 
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 )
 

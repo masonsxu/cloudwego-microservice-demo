@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"github.com/hertz-contrib/jwt"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/http_base"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/identity"
 )

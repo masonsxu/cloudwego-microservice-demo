@@ -9,17 +9,13 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/config"
 )
 
-// Provider wraps the OpenTelemetry provider for dependency injection.
-type Provider struct {
-	provider provider.OtelProvider
-	enabled  bool
-}
-
 // NewProvider creates a new OpenTelemetry provider based on configuration.
 // If tracing is disabled, it returns a no-op provider.
-func NewProvider(cfg *config.Config) (*Provider, error) {
+func NewProvider(cfg *config.Config) (func(context.Context) error, error) {
 	if !cfg.Tracing.Enabled {
-		return &Provider{enabled: false}, nil
+		return func(ctx context.Context) error {
+			return nil
+		}, nil
 	}
 
 	opts := []provider.Option{
@@ -31,22 +27,5 @@ func NewProvider(cfg *config.Config) (*Provider, error) {
 
 	p := provider.NewOpenTelemetryProvider(opts...)
 
-	return &Provider{
-		provider: p,
-		enabled:  true,
-	}, nil
-}
-
-// Shutdown gracefully shuts down the OpenTelemetry provider.
-func (p *Provider) Shutdown(ctx context.Context) error {
-	if !p.enabled || p.provider == nil {
-		return nil
-	}
-
-	return p.provider.Shutdown(ctx)
-}
-
-// IsEnabled returns whether OpenTelemetry is enabled.
-func (p *Provider) IsEnabled() bool {
-	return p.enabled
+	return p.Shutdown, nil
 }

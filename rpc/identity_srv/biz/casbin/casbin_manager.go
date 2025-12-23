@@ -7,7 +7,7 @@ import (
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/config"
-	pkglogger "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/pkg/logger"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/pkg/log"
 	"github.com/rs/zerolog"
 	"gorm.io/gorm"
 
@@ -99,8 +99,8 @@ func (cm *CasbinManager) AddUserRole(userID, roleID string) error {
 // AddUserRoleWithContext 为用户添加角色（带追踪ID的示例方法）
 // 这是一个展示如何在业务逻辑中集成追踪 ID 的示例方法
 func (cm *CasbinManager) AddUserRoleWithContext(ctx context.Context, userID, roleID string) error {
-	// 创建带追踪 ID 的日志记录器
-	logger := pkglogger.WithRequestIDZerolog(ctx, cm.logger)
+	// 使用 log.Ctx 获取带追踪信息的 logger
+	logger := log.Ctx(ctx)
 
 	added, err := cm.enforcer.AddRoleForUser(userID, roleID)
 	if err != nil {

@@ -12,6 +12,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol"
 	"github.com/hertz-contrib/jwt"
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
+
 	authservice "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/identity"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 )

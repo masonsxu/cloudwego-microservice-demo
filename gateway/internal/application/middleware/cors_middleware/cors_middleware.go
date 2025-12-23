@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 )
 

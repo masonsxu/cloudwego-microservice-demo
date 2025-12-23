@@ -3,7 +3,6 @@ package assignment
 import (
 	"context"
 	"fmt"
-	"log/slog"
 
 	"github.com/google/uuid"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter"
@@ -13,6 +12,7 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/pkg/errno"
+	tracelog "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/pkg/log"
 )
 
 // LogicImpl 用户角色分配业务逻辑实现
@@ -157,11 +157,11 @@ func (l *LogicImpl) RevokeRoleFromUser(
 		}
 
 		if role.IsSystemRole {
-			slog.WarnContext(ctx, "尝试撤销系统用户的系统角色被拒绝",
-				"user_id", userID,
-				"role_id", roleID,
-				"role_name", role.Name,
-			)
+			tracelog.Ctx(ctx).Warn().
+				Str("user_id", userID).
+				Str("role_id", roleID).
+				Str("role_name", role.Name).
+				Msg("尝试撤销系统用户的系统角色被拒绝")
 
 			return errno.ErrSystemRoleCannotRevoke.WithMessage(
 				fmt.Sprintf("系统用户的系统角色 '%s' 不能被撤销", role.Name),
@@ -185,10 +185,10 @@ func (l *LogicImpl) RevokeRoleFromUser(
 	}
 
 	// 5. 审计日志
-	slog.InfoContext(ctx, "角色撤销成功",
-		"user_id", userID,
-		"role_id", roleID,
-	)
+	tracelog.Ctx(ctx).Info().
+		Str("user_id", userID).
+		Str("role_id", roleID).
+		Msg("角色撤销成功")
 
 	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/http_base"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/identity"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/permission"

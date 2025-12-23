@@ -13,7 +13,7 @@ import (
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/pkg/transmeta"
 	"github.com/cloudwego/kitex/server"
-	kitextracing "github.com/kitex-contrib/obs-opentelemetry/tracing"
+	"github.com/kitex-contrib/obs-opentelemetry/tracing"
 	etcd "github.com/kitex-contrib/registry-etcd"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/config"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/internal/middleware"
@@ -87,7 +87,7 @@ func main() {
 	// 1. 加载配置
 	cfg, err := config.LoadConfig()
 	if err != nil {
-		log.Fatalf("failed to load config: %v", err)
+		klog.Fatalf("failed to load config: %v", err)
 	}
 
 	// 在独立的 goroutine 中启动健康检查服务器
@@ -95,27 +95,27 @@ func main() {
 	go runHealthCheckServer(cfg.HealthCheck.Port)
 
 	// 2. 初始化 OpenTelemetry Provider
-	otelProvider, err := otel.NewProvider(cfg)
+	shutdown, err := otel.NewProvider(cfg)
 	if err != nil {
-		log.Fatalf("failed to init OpenTelemetry provider: %v", err)
+		klog.Fatalf("failed to init OpenTelemetry provider: %v", err)
 	}
 
 	defer func() {
-		if err := otelProvider.Shutdown(context.Background()); err != nil {
-			log.Printf("failed to shutdown OpenTelemetry provider: %v", err)
+		if err := shutdown(context.Background()); err != nil {
+			klog.Fatalf("failed to shutdown OpenTelemetry provider: %v", err)
 		}
 	}()
 
 	// 3. 创建 handler 实例并获取数据库连接
 	serviceImpl, serviceWithDB, err := NewIdentityServiceImplWithDB()
 	if err != nil {
-		log.Fatalf("failed to create service impl: %v", err)
+		klog.Fatalf("failed to create service impl: %v", err)
 	}
 
 	// 从 GORM 获取底层的 *sql.DB 用于健康检查
 	sqlDB, err := serviceWithDB.DB.DB()
 	if err != nil {
-		log.Fatalf("failed to get sql.DB from gorm: %v", err)
+		klog.Fatalf("failed to get sql.DB from gorm: %v", err)
 	}
 
 	dbForHealthCheck = sqlDB
@@ -124,7 +124,7 @@ func main() {
 	// 解析监听地址
 	addr, err := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port))
 	if err != nil {
-		log.Fatalf("failed to resolve server address: %v", err)
+		klog.Fatalf("failed to resolve server address: %v", err)
 	}
 
 	// 服务注册名称（用于服务发现）
@@ -133,18 +133,18 @@ func main() {
 	// 构建 Etcd 注册中心实例（用于服务注册与发现）
 	r, err := etcd.NewEtcdRegistry([]string{cfg.Etcd.Address})
 	if err != nil {
-		log.Fatal(err)
+		klog.Fatal(err)
 	}
 
 	// 初始化 logger
 	logger, err := wire.InitializeLogger()
 	if err != nil {
-		log.Fatalf("failed to initialize logger: %v", err)
+		klog.Fatalf("failed to initialize logger: %v", err)
 	}
 	// 初始化 Kitex logger（用于 Kitex 框架日志）
 	kitexLogger, err := config.CreateKitexLogger(cfg)
 	if err != nil {
-		log.Fatalf("failed to create Kitex logger: %v", err)
+		klog.Fatalf("failed to create Kitex logger: %v", err)
 	}
 
 	// 设置 Kitex 全局 logger
@@ -173,22 +173,24 @@ func main() {
 		server.WithRegistry(r),
 		server.WithServiceAddr(addr),
 		server.WithMetaHandler(transmeta.ServerTTHeaderHandler),
-		server.WithMiddleware(metaMiddleware.ServerMiddleware()),
 	}
 
-	// 添加 OpenTelemetry tracing Suite (如果启用)
-	if otelProvider.IsEnabled() {
-		serverOpts = append(serverOpts, server.WithSuite(kitextracing.NewServerSuite()))
-
+	// 6. 如果启用追踪，添加 OpenTelemetry Suite（必须在 MetaInfoMiddleware 之前）
+	// 这样 OTel 会先创建 span，MetaInfoMiddleware 才能提取 trace_id/span_id
+	if cfg.Tracing.Enabled {
+		serverOpts = append(serverOpts, server.WithSuite(tracing.NewServerSuite()))
 		klog.Infof("OpenTelemetry tracing enabled, endpoint: %s", cfg.Tracing.Endpoint)
 	}
+
+	// 7. 添加 MetaInfoMiddleware（在 OTel Suite 之后，确保 span 已创建）
+	serverOpts = append(serverOpts, server.WithMiddleware(metaMiddleware.ServerMiddleware()))
 
 	// 创建并配置 Kitex Server
 	svr := identityservice.NewServer(serviceImpl, serverOpts...)
 
-	log.Printf("Identity service starting on %s", addr.String())
+	klog.Infof("Identity service starting on %s", addr.String())
 
 	if err := svr.Run(); err != nil {
-		log.Fatalf("server stopped with error: %v", err)
+		klog.Fatalf("server stopped with error: %v", err)
 	}
 }

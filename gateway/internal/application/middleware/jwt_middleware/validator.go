@@ -5,6 +5,7 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/jwt"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/core"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/http_base"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/identity"

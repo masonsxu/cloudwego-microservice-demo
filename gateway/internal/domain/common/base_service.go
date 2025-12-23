@@ -5,8 +5,9 @@ import (
 	"fmt"
 
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
-	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/errors"
 	"github.com/rs/zerolog"
+
+	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/errors"
 )
 
 // BaseService 基础服务结构

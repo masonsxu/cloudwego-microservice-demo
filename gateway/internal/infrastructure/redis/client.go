@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 	"github.com/redis/go-redis/v9"
+
+	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 )
 
 // Client Redis客户端封装

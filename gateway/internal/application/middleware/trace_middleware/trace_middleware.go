@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/requestid"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/errors"
 )
 

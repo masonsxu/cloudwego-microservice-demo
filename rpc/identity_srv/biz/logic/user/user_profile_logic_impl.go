@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"log/slog"
 
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal"
@@ -11,6 +10,7 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/rpc_base"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/pkg/errno"
+	tracelog "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/pkg/log"
 )
 
 // LogicImpl 用户档案业务逻辑实现
@@ -98,7 +98,10 @@ func (l *LogicImpl) CreateUser(
 	// 填充关联字段（主组织、主部门）
 	if err := l.enrichUserProfileWithRelations(ctx, userProfileDTO); err != nil {
 		// 记录警告但不影响主要结果
-		slog.WarnContext(ctx, "填充用户关联信息失败", "error", err, "userID", userProfileDTO.ID)
+		tracelog.Ctx(ctx).Warn().
+			Err(err).
+			Str("user_id", *userProfileDTO.ID).
+			Msg("填充用户关联信息失败")
 	}
 
 	return userProfileDTO, nil
@@ -128,7 +131,10 @@ func (l *LogicImpl) GetUser(
 	// 填充关联字段（主组织、主部门）
 	if err := l.enrichUserProfileWithRelations(ctx, userProfile); err != nil {
 		// 记录警告但不影响主要结果
-		slog.WarnContext(ctx, "填充用户关联信息失败", "error", err, "userID", *req.UserID)
+		tracelog.Ctx(ctx).Warn().
+			Err(err).
+			Str("user_id", *req.UserID).
+			Msg("填充用户关联信息失败")
 	}
 
 	return userProfile, nil
@@ -158,11 +164,11 @@ func (l *LogicImpl) UpdateUser(
 		// 记录系统用户修改操作（用于审计）
 		// 注意：UpdateUserRequest 本身不包含 username 和 status 字段，
 		// 这些关键属性无法通过此接口修改，已从设计上保护
-		slog.InfoContext(ctx, "修改系统用户信息",
-			"user_id", *req.UserID,
-			"username", existingProfile.Username,
-			"modified_fields", getModifiedFields(req),
-		)
+		tracelog.Ctx(ctx).Info().
+			Str("user_id", *req.UserID).
+			Str("username", existingProfile.Username).
+			Strs("modified_fields", getModifiedFields(req)).
+			Msg("修改系统用户信息")
 	}
 
 	// 检查唯一性约束
@@ -191,7 +197,10 @@ func (l *LogicImpl) UpdateUser(
 	// 填充关联字段（主组织、主部门）
 	if err := l.enrichUserProfileWithRelations(ctx, userProfileDTO); err != nil {
 		// 记录警告但不影响主要结果
-		slog.WarnContext(ctx, "填充用户关联信息失败", "error", err, "userID", *req.UserID)
+		tracelog.Ctx(ctx).Warn().
+			Err(err).
+			Str("user_id", *req.UserID).
+			Msg("填充用户关联信息失败")
 	}
 
 	return userProfileDTO, nil
@@ -218,10 +227,10 @@ func (l *LogicImpl) DeleteUser(
 
 	// 2. 系统用户保护检查
 	if user.IsSystemUser {
-		slog.WarnContext(ctx, "尝试删除系统用户被拒绝",
-			"user_id", *req.UserID,
-			"username", user.Username,
-		)
+		tracelog.Ctx(ctx).Warn().
+			Str("user_id", *req.UserID).
+			Str("username", user.Username).
+			Msg("尝试删除系统用户被拒绝")
 
 		return errno.ErrSystemUserCannotDelete
 	}
@@ -235,10 +244,10 @@ func (l *LogicImpl) DeleteUser(
 	}
 
 	// 4. 审计日志
-	slog.InfoContext(ctx, "用户删除成功",
-		"user_id", *req.UserID,
-		"username", user.Username,
-	)
+	tracelog.Ctx(ctx).Info().
+		Str("user_id", *req.UserID).
+		Str("username", user.Username).
+		Msg("用户删除成功")
 
 	return nil
 }
@@ -285,7 +294,9 @@ func (l *LogicImpl) ListUsers(
 	// 批量填充组织和部门信息
 	if err := l.enrichUserProfilesWithRelationsBatch(ctx, userProfiles); err != nil {
 		// 记录警告但不影响主要结果
-		slog.WarnContext(ctx, "批量填充用户关联信息失败", "error", err)
+		tracelog.Ctx(ctx).Warn().
+			Err(err).
+			Msg("批量填充用户关联信息失败")
 	}
 
 	return &identity_srv.ListUsersResponse{
@@ -299,24 +310,6 @@ func (l *LogicImpl) SearchUsers(
 	ctx context.Context,
 	req *identity_srv.SearchUsersRequest,
 ) (*identity_srv.SearchUsersResponse, error) {
-	// 调试日志：记录请求参数
-	slog.InfoContext(ctx, "SearchUsers 开始执行",
-		"organizationID", func() string {
-			if req.OrganizationID != nil {
-				return *req.OrganizationID
-			}
-
-			return "null"
-		}(),
-		"search", func() string {
-			if req.Page != nil && req.Page.Search != nil {
-				return *req.Page.Search
-			}
-
-			return "null"
-		}(),
-	)
-
 	// 使用 Base Converter 转换分页参数
 	opts := l.converter.Base().PageRequestToQueryOptions(req.Page)
 
@@ -342,7 +335,9 @@ func (l *LogicImpl) SearchUsers(
 	// 批量填充组织和部门信息
 	if err := l.enrichUserProfilesWithRelationsBatch(ctx, userProfiles); err != nil {
 		// 记录警告但不影响主要结果
-		slog.WarnContext(ctx, "批量填充用户关联信息失败", "error", err)
+		tracelog.Ctx(ctx).Warn().
+			Err(err).
+			Msg("批量填充用户关联信息失败")
 	}
 
 	return &identity_srv.SearchUsersResponse{

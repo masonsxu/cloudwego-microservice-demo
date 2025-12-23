@@ -11,6 +11,7 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/pkg/errno"
+	tracelog "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/pkg/log"
 )
 
 // LogicImpl 用户认证逻辑实现
@@ -100,8 +101,12 @@ func (l *LogicImpl) Login(
 		return nil
 	})
 	if err != nil {
-		// 记录日志但不影响登录流程
-		// TODO: 添加日志记录
+		// 记录错误但不影响登录流程
+		tracelog.Ctx(ctx).Warn().
+			Err(err).
+			Str("user_id", userProfile.ID.String()).
+			Str("username", userProfile.Username).
+			Msg("更新登录时间或重置登录失败次数失败")
 	}
 
 	// 构建登录响应

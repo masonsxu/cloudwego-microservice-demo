@@ -91,7 +91,7 @@ func CreateLogger(cfg *Config) (*zerolog.Logger, error) {
 
 	// 记录日志初始化信息
 	logger.Info().
-		Str("level", logLevel).
+		Str("log_level", logLevel).
 		Str("format", cfg.Log.Format).
 		Str("output", cfg.Log.Output).
 		Str("file_path", cfg.Log.FilePath).

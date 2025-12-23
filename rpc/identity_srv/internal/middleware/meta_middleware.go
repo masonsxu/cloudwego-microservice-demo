@@ -9,6 +9,7 @@ import (
 	"github.com/cloudwego/kitex/pkg/endpoint"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/google/uuid"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/pkg/log"
 	"github.com/rs/zerolog"
 )
 
@@ -16,12 +17,12 @@ import (
 // 职责：
 // 1. 从 metainfo 提取 request_id
 // 2. 如果不存在，自动生成并注入到 metainfo
-// 3. 记录追踪信息日志
+// 3. 记录追踪信息日志（包含 trace_id, span_id）
 //
 // 设计原则：
 // - 直接使用 metainfo，不使用 context.WithValue（避免重复存储）
 // - 确保每个请求都有完整的追踪 ID（自动生成缺失的）
-// - 聚焦核心功能（只处理 request_id）
+// - 聚焦核心功能（处理 request_id 和 OTel trace 信息）
 type MetaInfoMiddleware struct {
 	logger *zerolog.Logger
 }
@@ -47,20 +48,32 @@ func (m *MetaInfoMiddleware) ServerMiddleware() endpoint.Middleware {
 
 			// 确保追踪 ID 存在，不存在则自动生成
 			ctx = m.ensureRequestID(ctx)
+			// 将带 request_id 的 logger 绑定到 ctx，供业务逻辑使用
+			ctx = m.bindLoggerToContext(ctx)
 
-			// 记录请求开始
+			// 记录请求开始（此时 OpenTelemetry Span 可能还未创建）
 			m.logTraceInfo(ctx)
 
-			// 执行业务逻辑
+			// 执行业务逻辑（OpenTelemetry Suite 会在这里创建 Span）
 			err := next(ctx, req, resp)
 
-			// 记录请求结束和耗时
+			// 记录请求结束和耗时（此时应该能获取到 trace_id）
 			duration := time.Since(start)
 			m.logRequestComplete(ctx, duration, err)
 
 			return err
 		}
 	}
+}
+
+// bindLoggerToContext 将带追踪信息的 logger 绑定到 ctx
+// 包含 request_id, trace_id, span_id, service, method 等字段
+// 业务代码可通过 zerolog.Ctx(ctx) 或 log.Ctx(ctx) 获取带追踪字段的 logger
+func (m *MetaInfoMiddleware) bindLoggerToContext(ctx context.Context) context.Context {
+	methodName := m.getMethodName(ctx)
+
+	// 使用 log 包绑定完整追踪信息
+	return log.BindToContext(ctx, *m.logger, "identity_srv", methodName)
 }
 
 // ensureRequestID 确保追踪 ID 存在，不存在则自动生成
@@ -76,11 +89,6 @@ func (m *MetaInfoMiddleware) ensureRequestID(ctx context.Context) context.Contex
 	// 生成新的 request_id
 	requestID := uuid.New().String()
 	ctx = metainfo.WithPersistentValue(ctx, "request_id", requestID)
-
-	m.logger.Warn().
-		Str("request_id", requestID).
-		Str("service", "identity_srv").
-		Msg("Generated missing request_id")
 
 	return ctx
 }
@@ -104,9 +112,8 @@ func (m *MetaInfoMiddleware) logTraceInfo(ctx context.Context) {
 
 	methodName := m.getMethodName(ctx)
 
-	m.logger.Info().
-		Str("request_id", requestID).
-		Str("service", "identity_srv").
+	// 使用 log.Event 动态提取追踪信息（包括 OpenTelemetry trace_id/span_id）
+	log.Event(ctx, m.logger.Info()).
 		Str("method", methodName).
 		Msg("RPC request started")
 }
@@ -117,7 +124,6 @@ func (m *MetaInfoMiddleware) logRequestComplete(
 	duration time.Duration,
 	err error,
 ) {
-	requestID := GetRequestID(ctx)
 	methodName := m.getMethodName(ctx)
 
 	event := m.logger.Info()
@@ -125,9 +131,8 @@ func (m *MetaInfoMiddleware) logRequestComplete(
 		event = m.logger.Warn() // 慢调用使用 Warn 级别
 	}
 
-	event = event.
-		Str("request_id", requestID).
-		Str("service", "identity_srv").
+	// 使用 log.Event 添加追踪字段
+	event = log.Event(ctx, event).
 		Str("method", methodName).
 		Dur("duration_ms", duration)
 
@@ -153,13 +158,19 @@ func GetRequestID(ctx context.Context) string {
 }
 
 // LoggingAttrs 返回用于结构化日志的属性
+// 包含 request_id, trace_id, span_id
 // 返回 map[string]interface{} 用于 zerolog
 func LoggingAttrs(ctx context.Context) map[string]interface{} {
-	attrs := make(map[string]interface{})
+	// 使用 log 包获取完整追踪字段
+	return log.TraceFields(ctx)
+}
 
-	if requestID := GetRequestID(ctx); requestID != "" {
-		attrs["request_id"] = requestID
-	}
+// GetTraceID 从 context 获取 OpenTelemetry TraceID
+func GetTraceID(ctx context.Context) string {
+	return log.GetTraceID(ctx)
+}
 
-	return attrs
+// GetSpanID 从 context 获取 OpenTelemetry SpanID
+func GetSpanID(ctx context.Context) string {
+	return log.GetSpanID(ctx)
 }

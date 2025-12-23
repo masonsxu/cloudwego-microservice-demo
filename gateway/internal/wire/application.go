@@ -3,6 +3,7 @@ package wire
 
 import (
 	"github.com/google/wire"
+
 	identityassembler "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/identity"
 	permissionassembler "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/permission"
 )

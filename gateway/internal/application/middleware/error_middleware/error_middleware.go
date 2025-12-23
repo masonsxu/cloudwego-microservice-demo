@@ -8,11 +8,12 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
+	"github.com/rs/zerolog"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/context/auth_context"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/errors"
 	tracelog "github.com/masonsxu/cloudwego-microservice-demo/gateway/pkg/log"
-	"github.com/rs/zerolog"
 )
 
 // ErrorHandlerMiddlewareImpl 错误处理中间件实现

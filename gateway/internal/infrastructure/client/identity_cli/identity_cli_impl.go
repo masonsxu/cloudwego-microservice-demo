@@ -11,6 +11,7 @@ import (
 	"github.com/cloudwego/kitex/transport"
 	kitextracing "github.com/kitex-contrib/obs-opentelemetry/tracing"
 	etcd "github.com/kitex-contrib/registry-etcd"
+
 	conf "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv/identityservice"
 )

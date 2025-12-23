@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/wire"
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
+
 	identitycli "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/client/identity_cli"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/redis"

@@ -3,6 +3,7 @@ package wire
 
 import (
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
+
 	identityService "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/identity"
 	permissionService "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/permission"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"

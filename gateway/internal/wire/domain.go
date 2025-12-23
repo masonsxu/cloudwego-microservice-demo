@@ -4,6 +4,7 @@ package wire
 import (
 	"github.com/google/wire"
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
+
 	identityassembler "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/identity"
 	permissionConv "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/permission"
 	identityservice "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/identity"

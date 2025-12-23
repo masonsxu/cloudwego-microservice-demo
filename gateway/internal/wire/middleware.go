@@ -4,6 +4,7 @@ package wire
 import (
 	"github.com/google/wire"
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
+
 	corsmdw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/cors_middleware"
 	errormw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/error_middleware"
 	jwtmdw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/jwt_middleware"

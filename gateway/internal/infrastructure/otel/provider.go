@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/hertz-contrib/obs-opentelemetry/provider"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 )
 
