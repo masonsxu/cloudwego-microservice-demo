@@ -51,12 +51,12 @@ graph TD
         A[用户/浏览器]
     end
 
-    subgraph Gateway [API 网关 (Hertz)]
+    subgraph Gateway ["API 网关 (Hertz)"]
         direction LR
         B(JWT 认证) --> C(Casbin 授权) --> D(链路追踪) --> E(服务代理)
     end
 
-    subgraph Services [RPC 服务 (Kitex)]
+    subgraph Services ["RPC 服务 (Kitex)"]
         F[身份服务]
     end
 
