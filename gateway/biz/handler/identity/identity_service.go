@@ -43,9 +43,9 @@ func SetIdentityService(service identityservice.Service, middleware jwtMw.JWTMid
 // @Produce json
 // @Param req body identity.LoginRequestDTO true "请求体"
 // @Success 200 {object} identity.LoginResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/auth/login [POST]
 func Login(ctx context.Context, c *app.RequestContext) {
 	// 使用全局JWT中间件实例的登录处理器
@@ -60,9 +60,9 @@ func Login(ctx context.Context, c *app.RequestContext) {
 // @Produce json
 // @Param req body identity.LogoutRequestDTO true "请求体"
 // @Success 200 {object} http_base.OperationStatusResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/auth/logout [POST]
 func Logout(ctx context.Context, c *app.RequestContext) {
 	// 使用全局JWT中间件实例的登出处理器
@@ -78,9 +78,9 @@ func Logout(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param req body identity.ChangePasswordRequestDTO true "请求体"
 // @Success 200 {object} http_base.OperationStatusResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/auth/password [PUT]
 func ChangePassword(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -119,10 +119,10 @@ func ChangePassword(ctx context.Context, c *app.RequestContext) {
 // @Param userID path string true "用户ID"
 // @Param req body identity.ResetPasswordRequestDTO true "请求体"
 // @Success 200 {object} http_base.OperationStatusResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 403 {object} errors.Error "权限不足"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 403 {object} http_base.OperationStatusResponseDTO "权限不足"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/auth/password/reset [POST]
 func ResetPassword(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -153,10 +153,10 @@ func ResetPassword(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param req body identity.ForcePasswordChangeRequestDTO true "请求体"
 // @Success 200 {object} http_base.OperationStatusResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 403 {object} errors.Error "权限不足"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 403 {object} http_base.OperationStatusResponseDTO "权限不足"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/auth/password/force-change [PUT]
 func ForcePasswordChange(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -186,9 +186,9 @@ func ForcePasswordChange(ctx context.Context, c *app.RequestContext) {
 // @Produce json
 // @Param req body identity.RefreshTokenRequestDTO true "请求体"
 // @Success 200 {object} identity.RefreshTokenResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/auth/refresh [POST]
 func RefreshToken(ctx context.Context, c *app.RequestContext) {
 	// 使用全局JWT中间件实例的刷新令牌处理器
@@ -204,10 +204,10 @@ func RefreshToken(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param req body identity.CreateUserRequestDTO true "请求体"
 // @Success 200 {object} identity.UserProfileResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 403 {object} errors.Error "权限不足"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 403 {object} http_base.OperationStatusResponseDTO "权限不足"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/users [POST]
 func CreateUser(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -245,10 +245,10 @@ func CreateUser(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param userID path string true "用户ID"
 // @Success 200 {object} identity.UserProfileResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 404 {object} errors.Error "用户未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "用户未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/users/{userID} [GET]
 func GetUser(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -278,8 +278,8 @@ func GetUser(ctx context.Context, c *app.RequestContext) {
 // @Produce json
 // @Security ApiKeyAuth
 // @Success 200 {object} identity.UserProfileResponseDTO "成功"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/users/me [GET]
 func GetMe(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -311,11 +311,11 @@ func GetMe(ctx context.Context, c *app.RequestContext) {
 // @Param userID path string true "用户ID"
 // @Param req body identity.UpdateUserRequestDTO true "请求体"
 // @Success 200 {object} identity.UserProfileResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 403 {object} errors.Error "权限不足"
-// @Failure 404 {object} errors.Error "用户未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 403 {object} http_base.OperationStatusResponseDTO "权限不足"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "用户未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/users/{userID} [PUT]
 func UpdateUser(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -352,9 +352,9 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param req body identity.UpdateMeRequestDTO true "请求体"
 // @Success 200 {object} identity.UserProfileResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/users/me [PUT]
 func UpdateMe(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -393,11 +393,11 @@ func UpdateMe(ctx context.Context, c *app.RequestContext) {
 // @Param userID path string true "用户ID"
 // @Param req body identity.DeleteUserRequestDTO false "请求体"
 // @Success 200 {object} http_base.OperationStatusResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 403 {object} errors.Error "权限不足"
-// @Failure 404 {object} errors.Error "用户未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 403 {object} http_base.OperationStatusResponseDTO "权限不足"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "用户未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/users/{userID} [DELETE]
 func DeleteUser(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -437,9 +437,9 @@ func DeleteUser(ctx context.Context, c *app.RequestContext) {
 // @Param status query int false "按用户状态筛选"
 // @Param fetch_all query bool false "是否获取所有数据（不分页）" default(false)
 // @Success 200 {object} identity.ListUsersResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/users [GET]
 func ListUsers(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -493,9 +493,9 @@ func ListUsers(ctx context.Context, c *app.RequestContext) {
 // @Param include_total query bool false "是否返回总数" default(false)
 // @Param organization_id query string false "按组织ID筛选"
 // @Success 200 {object} identity.SearchUsersResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/users/search [GET]
 func SearchUsers(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -527,11 +527,11 @@ func SearchUsers(ctx context.Context, c *app.RequestContext) {
 // @Param userID path string true "用户ID"
 // @Param req body identity.ChangeUserStatusRequestDTO true "请求体"
 // @Success 200 {object} http_base.OperationStatusResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 403 {object} errors.Error "权限不足"
-// @Failure 404 {object} errors.Error "用户未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 403 {object} http_base.OperationStatusResponseDTO "权限不足"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "用户未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/users/{userID}/status [PUT]
 func ChangeUserStatus(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -563,11 +563,11 @@ func ChangeUserStatus(ctx context.Context, c *app.RequestContext) {
 // @Param userID path string true "用户ID"
 // @Param req body identity.UnlockUserRequestDTO true "请求体"
 // @Success 200 {object} http_base.OperationStatusResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 403 {object} errors.Error "权限不足"
-// @Failure 404 {object} errors.Error "用户未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 403 {object} http_base.OperationStatusResponseDTO "权限不足"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "用户未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/users/{userID}/unlock [PUT]
 func UnlockUser(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -605,10 +605,10 @@ func UnlockUser(ctx context.Context, c *app.RequestContext) {
 // @Param fields query string false "指定返回字段"
 // @Param include_total query bool false "是否返回总数" default(false)
 // @Success 200 {object} identity.GetUserMembershipsResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 404 {object} errors.Error "用户未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "用户未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/users/{userID}/memberships [GET]
 func GetUserMemberships(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -639,10 +639,10 @@ func GetUserMemberships(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param req body identity.CreateOrganizationRequestDTO true "请求体"
 // @Success 200 {object} identity.OrganizationResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 403 {object} errors.Error "权限不足"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 403 {object} http_base.OperationStatusResponseDTO "权限不足"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/organizations [POST]
 func CreateOrganization(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -673,10 +673,10 @@ func CreateOrganization(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param organizationID path string true "组织ID"
 // @Success 200 {object} identity.OrganizationResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 404 {object} errors.Error "组织未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "组织未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/organizations/{organizationID} [GET]
 func GetOrganization(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -708,11 +708,11 @@ func GetOrganization(ctx context.Context, c *app.RequestContext) {
 // @Param organizationID path string true "组织ID"
 // @Param req body identity.UpdateOrganizationRequestDTO true "请求体"
 // @Success 200 {object} identity.OrganizationResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 403 {object} errors.Error "权限不足"
-// @Failure 404 {object} errors.Error "组织未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 403 {object} http_base.OperationStatusResponseDTO "权限不足"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "组织未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/organizations/{organizationID} [PUT]
 func UpdateOrganization(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -743,11 +743,11 @@ func UpdateOrganization(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param req body identity.DeleteOrganizationRequestDTO true "请求体"
 // @Success 200 {object} http_base.OperationStatusResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 403 {object} errors.Error "权限不足"
-// @Failure 404 {object} errors.Error "组织未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 403 {object} http_base.OperationStatusResponseDTO "权限不足"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "组织未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/organizations/{organizationID} [DELETE]
 func DeleteOrganization(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -785,9 +785,9 @@ func DeleteOrganization(ctx context.Context, c *app.RequestContext) {
 // @Param include_total query bool false "是否返回总数" default(false)
 // @Param parent_id query string false "按父组织ID筛选"
 // @Success 200 {object} identity.ListOrganizationsResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/organizations [GET]
 func ListOrganizations(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -818,10 +818,10 @@ func ListOrganizations(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param req body identity.CreateDepartmentRequestDTO true "请求体"
 // @Success 200 {object} identity.DepartmentResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 403 {object} errors.Error "权限不足"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 403 {object} http_base.OperationStatusResponseDTO "权限不足"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/departments [POST]
 func CreateDepartment(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -852,10 +852,10 @@ func CreateDepartment(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param departmentID path string true "部门ID"
 // @Success 200 {object} identity.DepartmentResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 404 {object} errors.Error "部门未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "部门未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/departments/{departmentID} [GET]
 func GetDepartment(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -887,11 +887,11 @@ func GetDepartment(ctx context.Context, c *app.RequestContext) {
 // @Param departmentID path string true "部门ID"
 // @Param req body identity.UpdateDepartmentRequestDTO true "请求体"
 // @Success 200 {object} identity.DepartmentResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 403 {object} errors.Error "权限不足"
-// @Failure 404 {object} errors.Error "部门未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 403 {object} http_base.OperationStatusResponseDTO "权限不足"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "部门未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/departments/{departmentID} [PUT]
 func UpdateDepartment(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -923,11 +923,11 @@ func UpdateDepartment(ctx context.Context, c *app.RequestContext) {
 // @Param departmentID path string true "部门ID"
 // @Param req body identity.DeleteDepartmentRequestDTO true "请求体"
 // @Success 200 {object} http_base.OperationStatusResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 403 {object} errors.Error "权限不足"
-// @Failure 404 {object} errors.Error "部门未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 403 {object} http_base.OperationStatusResponseDTO "权限不足"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "部门未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/departments/{departmentID} [DELETE]
 func DeleteDepartment(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -965,10 +965,10 @@ func DeleteDepartment(ctx context.Context, c *app.RequestContext) {
 // @Param fields query string false "指定返回字段"
 // @Param include_total query bool false "是否返回总数" default(false)
 // @Success 200 {object} identity.GetOrganizationDepartmentsResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 404 {object} errors.Error "组织未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "组织未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/organizations/{organizationID}/departments [GET]
 func GetOrganizationDepartments(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -999,11 +999,11 @@ func GetOrganizationDepartments(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param req body identity.GetPrimaryMembershipRequestDTO true "请求体"
 // @Success 200 {object} identity.UserMembershipResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 403 {object} errors.Error "权限不足"
-// @Failure 404 {object} errors.Error "主成员关系未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 403 {object} http_base.OperationStatusResponseDTO "权限不足"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "主成员关系未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/users/{userID}/primary-membership [GET]
 func GetPrimaryMembership(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -1035,11 +1035,11 @@ func GetPrimaryMembership(ctx context.Context, c *app.RequestContext) {
 // @Param file_content formData file true "文件内容"
 // @Param mime_type formData string false "MIME类型"
 // @Success 200 {object} identity.OrganizationLogoResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 413 {object} errors.Error "文件过大"
-// @Failure 415 {object} errors.Error "不支持的文件类型"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 413 {object} http_base.OperationStatusResponseDTO "文件过大"
+// @Failure 415 {object} http_base.OperationStatusResponseDTO "不支持的文件类型"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/organization-logos/temporary [POST]
 func UploadTemporaryLogo(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -1096,10 +1096,10 @@ func UploadTemporaryLogo(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param logoID path string true "Logo ID"
 // @Success 200 {object} identity.OrganizationLogoResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 404 {object} errors.Error "Logo未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "Logo未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/organization-logos/{logoID} [GET]
 func GetOrganizationLogo(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -1129,11 +1129,11 @@ func GetOrganizationLogo(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param logoID path string true "Logo ID"
 // @Success 200 {object} http_base.OperationStatusResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 403 {object} errors.Error "权限不足"
-// @Failure 404 {object} errors.Error "Logo未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 403 {object} http_base.OperationStatusResponseDTO "权限不足"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "Logo未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/organization-logos/{logoID} [DELETE]
 func DeleteOrganizationLogo(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -1164,11 +1164,11 @@ func DeleteOrganizationLogo(ctx context.Context, c *app.RequestContext) {
 // @Param organizationID path string true "组织ID"
 // @Param req body identity.BindLogoToOrganizationRequestDTO true "请求体"
 // @Success 200 {object} identity.OrganizationResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 403 {object} errors.Error "权限不足"
-// @Failure 404 {object} errors.Error "Logo或组织未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 403 {object} http_base.OperationStatusResponseDTO "权限不足"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "Logo或组织未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/identity/organizations/{organizationID}/logo [PUT]
 func BindLogoToOrganization(ctx context.Context, c *app.RequestContext) {
 	var err error

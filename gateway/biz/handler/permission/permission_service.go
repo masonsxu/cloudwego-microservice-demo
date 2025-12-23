@@ -8,6 +8,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 
+	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/http_base"
 	permission "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/permission"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/context/auth_context"
 	permissionservice "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/permission"
@@ -16,6 +17,9 @@ import (
 
 // 全局权限服务实例（通过Wire注入）
 var permissionService permissionservice.Service
+
+// 用于解决 http_base 包导入但未使用的问题
+var _ http_base.OperationStatusResponseDTO
 
 // SetPermissionService 设置权限服务实例（由Wire在启动时调用）
 func SetPermissionService(service permissionservice.Service) {
@@ -31,9 +35,9 @@ func SetPermissionService(service permissionservice.Service) {
 // @Security ApiKeyAuth
 // @Param req body permission.RoleDefinitionCreateRequestDTO true "请求体"
 // @Success 200 {object} permission.RoleDefinitionCreateResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/permission/roles [POST]
 func CreateRoleDefinition(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -66,9 +70,9 @@ func CreateRoleDefinition(ctx context.Context, c *app.RequestContext) {
 // @Param roleDefinitionID path string true "角色定义ID"
 // @Param req body permission.RoleDefinitionUpdateRequestDTO true "请求体"
 // @Success 200 {object} permission.RoleDefinitionUpdateResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/permission/roles/{roleDefinitionID} [PUT]
 func UpdateRoleDefinition(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -100,10 +104,10 @@ func UpdateRoleDefinition(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param roleID path string true "角色ID"
 // @Success 200 {object} http_base.OperationStatusResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 404 {object} errors.Error "角色未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "角色未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/permission/roles/{roleID} [DELETE]
 func DeleteRoleDefinition(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -135,10 +139,10 @@ func DeleteRoleDefinition(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param roleID path string true "角色ID"
 // @Success 200 {object} permission.RoleDefinitionGetResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 404 {object} errors.Error "角色未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "角色未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/permission/roles/{roleID} [GET]
 func GetRoleDefinition(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -180,9 +184,9 @@ func GetRoleDefinition(ctx context.Context, c *app.RequestContext) {
 // @Param is_system_role query bool false "是否为系统角色"
 // @Param fetch_all query bool false "是否获取所有数据（不分页）" default(false)
 // @Success 200 {object} permission.RoleDefinitionListResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @router /api/v1/permission/roles [GET]
 func ListRoleDefinitions(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -215,10 +219,10 @@ func ListRoleDefinitions(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param userID path string true "用户ID"
 // @Success 200 {object} permission.AssignRoleToUserResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 404 {object} errors.Error "分配未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "分配未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/permission/users/{userID}/roles/latest [GET]
 func GetLastUserRoleAssignment(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -259,9 +263,9 @@ func GetLastUserRoleAssignment(ctx context.Context, c *app.RequestContext) {
 // @Param user_id query string false "用户ID"
 // @Param role_id query string false "角色ID"
 // @Success 200 {object} permission.UserRoleListResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/permission/user-roles [GET]
 func ListUserRoleAssignments(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -295,9 +299,9 @@ func ListUserRoleAssignments(ctx context.Context, c *app.RequestContext) {
 // @Param roleID path string true "角色ID"
 // @Param req body permission.ConfigureRoleMenusRequestDTO true "请求体"
 // @Success 200 {object} permission.ConfigureRoleMenusResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/permission/roles/{roleID}/menus [POST]
 func ConfigureRoleMenus(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -335,9 +339,9 @@ func ConfigureRoleMenus(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param roleID path string true "角色ID"
 // @Success 200 {object} permission.GetRoleMenuTreeResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/permission/roles/{roleID}/menu-tree [GET]
 func GetRoleMenuTree(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -368,9 +372,9 @@ func GetRoleMenuTree(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param userID path string true "用户ID"
 // @Success 200 {object} permission.GetUserMenuTreeResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/permission/users/{userID}/menu-tree [GET]
 func GetUserMenuTree(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -401,9 +405,9 @@ func GetUserMenuTree(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param roleID path string true "角色ID"
 // @Success 200 {object} permission.GetRoleMenuPermissionsResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/permission/roles/{roleID}/menu-permissions [GET]
 func GetRoleMenuPermissions(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -435,9 +439,9 @@ func GetRoleMenuPermissions(ctx context.Context, c *app.RequestContext) {
 // @Param roleID path string true "角色ID"
 // @Param req body permission.HasMenuPermissionRequestDTO true "请求体"
 // @Success 200 {object} permission.HasMenuPermissionResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/permission/roles/{roleID}/check-menu-permission [POST]
 func HasMenuPermission(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -468,9 +472,9 @@ func HasMenuPermission(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param menu_file formData file true "YAML格式的菜单配置文件"
 // @Success 200 {object} permission.GetMenuTreeResponseDTO "菜单上传成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/permission/menu/upload [POST]
 func UploadMenu(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -521,9 +525,9 @@ func UploadMenu(ctx context.Context, c *app.RequestContext) {
 // @Produce json
 // @Security ApiKeyAuth
 // @Success 200 {object} permission.GetMenuTreeResponseDTO "成功返回菜单树结构"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/permission/menu/tree [GET]
 func GetMenuTree(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -548,10 +552,10 @@ func GetMenuTree(ctx context.Context, c *app.RequestContext) {
 // @Security ApiKeyAuth
 // @Param roleID path string true "角色ID"
 // @Success 200 {object} permission.GetUsersByRoleResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 404 {object} errors.Error "角色未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "角色未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/permission/roles/{roleID}/users [GET]
 func GetUsersByRole(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -583,10 +587,10 @@ func GetUsersByRole(ctx context.Context, c *app.RequestContext) {
 // @Param roleID path string true "角色ID"
 // @Param req body permission.BatchBindUsersToRoleRequestDTO true "请求体"
 // @Success 200 {object} permission.BatchBindUsersToRoleResponseDTO "成功"
-// @Failure 400 {object} errors.Error "请求参数错误"
-// @Failure 401 {object} errors.Error "认证失败"
-// @Failure 404 {object} errors.Error "角色未找到"
-// @Failure 500 {object} errors.Error "内部错误"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "角色未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @Router /api/v1/permission/roles/{roleID}/users/batch-bind [POST]
 func BatchBindUsersToRole(ctx context.Context, c *app.RequestContext) {
 	var err error
