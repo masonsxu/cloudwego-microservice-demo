@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 	"github.com/rs/zerolog"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 )
 
 // InitDB 初始化数据库连接，提供给wire使用的函数

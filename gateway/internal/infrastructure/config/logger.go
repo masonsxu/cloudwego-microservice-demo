@@ -61,29 +61,7 @@ func CreateLogger(cfg *Configuration) (*hertzZerolog.Logger, error) {
 	}
 
 	// 根据调试模式决定输出目标
-	if cfg.Server.Debug {
-		// 调试模式：同时输出到终端（美化格式）和文件（如果配置了）
-		consoleWriter := zerolog.ConsoleWriter{
-			Out:        os.Stdout,
-			TimeFormat: "2006-01-02 15:04:05",
-			NoColor:    false,
-		}
-
-		if fileWriter != nil {
-			// 同时输出到终端和文件
-			outputWriter = io.MultiWriter(consoleWriter, fileWriter)
-		} else {
-			// 只输出到终端
-			outputWriter = consoleWriter
-		}
-	} else {
-		// 生产模式：只输出到文件（如果配置了），否则输出到标准输出
-		if fileWriter != nil {
-			outputWriter = fileWriter
-		} else {
-			outputWriter = os.Stdout
-		}
-	}
+	outputWriter = buildOutputWriter(cfg.Server.Debug, fileWriter)
 
 	// 创建 zerolog logger 选项
 	opts := []hertzZerolog.Opt{
@@ -101,7 +79,8 @@ func CreateLogger(cfg *Configuration) (*hertzZerolog.Logger, error) {
 
 	// 记录日志初始化信息（使用 hlog 接口）
 	logger.Infof(
-		"Logger initialized: level=%s, format=%s, output=%s, file_path=%s, debug_mode=%v, max_size_mb=%d, max_age_days=%d, max_backups=%d",
+		"Logger initialized: level=%s, format=%s, output=%s, file_path=%s, "+
+			"debug_mode=%v, max_size_mb=%d, max_age_days=%d, max_backups=%d",
 		logLevel,
 		cfg.Log.Format,
 		cfg.Log.Output,
@@ -113,6 +92,31 @@ func CreateLogger(cfg *Configuration) (*hertzZerolog.Logger, error) {
 	)
 
 	return logger, nil
+}
+
+// buildOutputWriter 根据调试模式和文件writer构建输出目标
+func buildOutputWriter(debugMode bool, fileWriter io.Writer) io.Writer {
+	if debugMode {
+		// 调试模式：同时输出到终端（美化格式）和文件（如果配置了）
+		consoleWriter := zerolog.ConsoleWriter{
+			Out:        os.Stdout,
+			TimeFormat: "2006-01-02 15:04:05",
+			NoColor:    false,
+		}
+
+		if fileWriter != nil {
+			return io.MultiWriter(consoleWriter, fileWriter)
+		}
+
+		return consoleWriter
+	}
+
+	// 生产模式：只输出到文件（如果配置了），否则输出到标准输出
+	if fileWriter != nil {
+		return fileWriter
+	}
+
+	return os.Stdout
 }
 
 // createLogWriter 创建支持轮转的日志writer
