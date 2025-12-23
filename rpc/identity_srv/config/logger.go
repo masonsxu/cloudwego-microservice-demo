@@ -5,7 +5,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"time"
 
 	kitexzerolog "github.com/kitex-contrib/obs-opentelemetry/logging/zerolog"
 	"github.com/rs/zerolog"
@@ -19,6 +18,9 @@ import (
 //   - SERVER_DEBUG=false（生产环境）：只输出到文件（JSON 格式）
 //   - SERVER_DEBUG=true（开发环境）：同时输出到终端（美化格式）和文件（JSON 格式）
 func CreateLogger(cfg *Config) (*zerolog.Logger, error) {
+	// 设置 zerolog 全局时间格式（影响 JSON 输出）
+	zerolog.TimeFieldFormat = "2006-01-02 15:04:05"
+
 	// 解析日志级别
 	logLevel := cfg.Log.Level
 
@@ -58,29 +60,7 @@ func CreateLogger(cfg *Config) (*zerolog.Logger, error) {
 	}
 
 	// 根据调试模式决定输出目标
-	if cfg.Server.Debug {
-		// 调试模式：同时输出到终端（美化格式）和文件（如果配置了）
-		consoleWriter := zerolog.ConsoleWriter{
-			Out:        os.Stdout,
-			TimeFormat: time.RFC3339,
-			NoColor:    false,
-		}
-
-		if fileWriter != nil {
-			// 同时输出到终端和文件
-			outputWriter = io.MultiWriter(consoleWriter, fileWriter)
-		} else {
-			// 只输出到终端
-			outputWriter = consoleWriter
-		}
-	} else {
-		// 生产模式：只输出到文件（如果配置了），否则输出到标准输出
-		if fileWriter != nil {
-			outputWriter = fileWriter
-		} else {
-			outputWriter = os.Stdout
-		}
-	}
+	outputWriter = buildOutputWriter(cfg.Server.Debug, fileWriter)
 
 	// 创建 zerolog logger
 	logger := zerolog.New(outputWriter).With().
@@ -102,6 +82,29 @@ func CreateLogger(cfg *Config) (*zerolog.Logger, error) {
 		Msg("Logger initialized")
 
 	return &logger, nil
+}
+
+// buildOutputWriter 根据调试模式和文件writer构建输出目标
+func buildOutputWriter(debugMode bool, fileWriter io.Writer) io.Writer {
+	if debugMode {
+		// 调试模式：同时输出到终端（美化格式）和文件（如果配置了）
+		consoleWriter := zerolog.ConsoleWriter{
+			Out:        os.Stdout,
+			TimeFormat: "2006-01-02 15:04:05",
+			NoColor:    false,
+		}
+
+		if fileWriter != nil {
+			return io.MultiWriter(consoleWriter, fileWriter)
+		}
+		return consoleWriter
+	}
+
+	// 生产模式：只输出到文件（如果配置了），否则输出到标准输出
+	if fileWriter != nil {
+		return fileWriter
+	}
+	return os.Stdout
 }
 
 // createLogWriter 创建支持轮转的日志writer

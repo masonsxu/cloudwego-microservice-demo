@@ -5,7 +5,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
@@ -20,6 +19,9 @@ import (
 //   - SERVER_DEBUG=false（生产环境）：只输出到文件（JSON 格式）
 //   - SERVER_DEBUG=true（开发环境）：同时输出到终端（美化格式）和文件（JSON 格式）
 func CreateLogger(cfg *Configuration) (*hertzZerolog.Logger, error) {
+	// 设置 zerolog 全局时间格式（影响 JSON 输出）
+	zerolog.TimeFieldFormat = "2006-01-02 15:04:05"
+
 	// 解析日志级别
 	var level hlog.Level
 
@@ -63,7 +65,7 @@ func CreateLogger(cfg *Configuration) (*hertzZerolog.Logger, error) {
 		// 调试模式：同时输出到终端（美化格式）和文件（如果配置了）
 		consoleWriter := zerolog.ConsoleWriter{
 			Out:        os.Stdout,
-			TimeFormat: time.RFC3339,
+			TimeFormat: "2006-01-02 15:04:05",
 			NoColor:    false,
 		}
 
