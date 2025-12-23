@@ -65,6 +65,7 @@ func GetTraceID(ctx context.Context) string {
 	if span.SpanContext().IsValid() {
 		return span.SpanContext().TraceID().String()
 	}
+
 	return ""
 }
 
@@ -74,6 +75,7 @@ func GetSpanID(ctx context.Context) string {
 	if span.SpanContext().IsValid() {
 		return span.SpanContext().SpanID().String()
 	}
+
 	return ""
 }
 
@@ -82,6 +84,7 @@ func GetRequestID(ctx context.Context) string {
 	if id, ok := metainfo.GetPersistentValue(ctx, FieldRequestID); ok {
 		return id
 	}
+
 	return ""
 }
 
@@ -105,6 +108,7 @@ func Ctx(ctx context.Context) *zerolog.Logger {
 		Timestamp().
 		Fields(TraceFields(ctx)).
 		Logger()
+
 	return &l
 }
 

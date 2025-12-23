@@ -3,9 +3,10 @@ package definition
 import (
 	"context"
 
+	"gorm.io/gorm"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/base"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
-	"gorm.io/gorm"
 )
 
 // RoleDefinitionRepositoryImpl 角色定义仓储实现

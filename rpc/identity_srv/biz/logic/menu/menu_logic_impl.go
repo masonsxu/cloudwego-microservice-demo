@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	"gorm.io/gorm"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/casbin"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/convutil"
@@ -16,7 +18,6 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/pkg/errno"
-	"gorm.io/gorm"
 )
 
 // LogicImpl 菜单管理逻辑实现

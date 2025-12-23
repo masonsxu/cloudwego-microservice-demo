@@ -4,8 +4,9 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 	"gopkg.in/yaml.v3"
+
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 )
 
 // YamlMenuNode 定义了 menu.yaml 文件中单个节点的结构。

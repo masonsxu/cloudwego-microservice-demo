@@ -5,11 +5,12 @@ import (
 	"log"
 
 	"github.com/google/uuid"
-	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
-	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/pkg/password"
 	"github.com/rs/zerolog"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/pkg/password"
 )
 
 // SeedDatabase 初始化数据库种子数据

@@ -14,6 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/aws/smithy-go"
 	"github.com/google/uuid"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/config"
 )
 

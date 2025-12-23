@@ -3,6 +3,8 @@ package dal
 import (
 	"context"
 
+	"gorm.io/gorm"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/assignment"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/base"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/definition"
@@ -12,7 +14,6 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/menu"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/organization"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/user"
-	"gorm.io/gorm"
 )
 
 // DALImpl DAL统一实现

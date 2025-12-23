@@ -15,6 +15,7 @@ import (
 	"github.com/cloudwego/kitex/server"
 	"github.com/kitex-contrib/obs-opentelemetry/tracing"
 	etcd "github.com/kitex-contrib/registry-etcd"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/config"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/internal/middleware"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/internal/otel"
@@ -179,6 +180,7 @@ func main() {
 	// 这样 OTel 会先创建 span，MetaInfoMiddleware 才能提取 trace_id/span_id
 	if cfg.Tracing.Enabled {
 		serverOpts = append(serverOpts, server.WithSuite(tracing.NewServerSuite()))
+
 		klog.Infof("OpenTelemetry tracing enabled, endpoint: %s", cfg.Tracing.Endpoint)
 	}
 

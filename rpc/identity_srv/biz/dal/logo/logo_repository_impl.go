@@ -6,10 +6,11 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/base"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/pkg/errno"
-	"gorm.io/gorm"
 )
 
 // logoRepository 组织Logo仓储实现

@@ -4,9 +4,10 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/base"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
-	"gorm.io/gorm"
 )
 
 // UserRoleAssignmentRepositoryImpl 用户角色分配仓储实现

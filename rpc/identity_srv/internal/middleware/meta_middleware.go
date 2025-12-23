@@ -9,8 +9,9 @@ import (
 	"github.com/cloudwego/kitex/pkg/endpoint"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/google/uuid"
-	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/pkg/log"
 	"github.com/rs/zerolog"
+
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/pkg/log"
 )
 
 // MetaInfoMiddleware RPC服务端追踪中间件

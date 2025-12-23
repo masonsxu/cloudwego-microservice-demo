@@ -8,8 +8,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 	"gorm.io/gorm"
+
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 )
 
 // ============================================================================

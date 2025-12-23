@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/kitex-contrib/obs-opentelemetry/provider"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/config"
 )
 

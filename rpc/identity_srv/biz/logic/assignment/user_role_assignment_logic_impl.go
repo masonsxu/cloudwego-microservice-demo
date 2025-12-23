@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/convutil"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal"

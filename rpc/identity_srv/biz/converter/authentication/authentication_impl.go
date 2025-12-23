@@ -2,6 +2,7 @@ package authentication
 
 import (
 	"github.com/google/uuid"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 )

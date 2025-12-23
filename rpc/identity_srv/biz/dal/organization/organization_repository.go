@@ -5,9 +5,10 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/base"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
-	"gorm.io/gorm"
 )
 
 // OrganizationRepositoryImpl 组织仓储实现（简化版）

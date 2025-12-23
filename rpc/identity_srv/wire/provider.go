@@ -1,9 +1,10 @@
 package wire
 
 import (
-	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/config"
 	"github.com/rs/zerolog"
 	"gorm.io/gorm"
+
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/config"
 )
 
 // =============================================================================

@@ -3,9 +3,10 @@ package parser
 import (
 	"testing"
 
-	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 )
 
 func TestParseAndFlattenMenu_WithSemanticID(t *testing.T) {

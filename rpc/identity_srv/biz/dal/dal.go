@@ -3,6 +3,8 @@ package dal
 import (
 	"context"
 
+	"gorm.io/gorm"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/assignment"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/definition"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/department"
@@ -11,7 +13,6 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/menu"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/organization"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/user"
-	"gorm.io/gorm"
 )
 
 // DAL 数据访问层统一接口

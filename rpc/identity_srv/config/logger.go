@@ -97,6 +97,7 @@ func buildOutputWriter(debugMode bool, fileWriter io.Writer) io.Writer {
 		if fileWriter != nil {
 			return io.MultiWriter(consoleWriter, fileWriter)
 		}
+
 		return consoleWriter
 	}
 
@@ -104,6 +105,7 @@ func buildOutputWriter(debugMode bool, fileWriter io.Writer) io.Writer {
 	if fileWriter != nil {
 		return fileWriter
 	}
+
 	return os.Stdout
 }
 
