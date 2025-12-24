@@ -93,6 +93,7 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("tracing.enabled", false)
 	v.SetDefault("tracing.endpoint", "jaeger:4317")
 	v.SetDefault("tracing.sampler_ratio", 0.1)
+	v.SetDefault("tracing.ignore_paths", []string{"/health", "/metrics", "/ping", "/swagger/*"})
 
 	// ErrorHandler 中间件默认配置
 	v.SetDefault("middleware.error_handler.enabled", true)

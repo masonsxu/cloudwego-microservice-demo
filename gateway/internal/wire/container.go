@@ -2,6 +2,7 @@
 package wire
 
 import (
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
 
 	identityService "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/identity"
@@ -12,10 +13,11 @@ import (
 // AppContainer 应用容器
 // 统一管理所有依赖实例，避免重复初始化
 type AppContainer struct {
-	Config      *config.Configuration
-	Logger      *hertzZerolog.Logger
-	Services    *ServiceContainer
-	Middlewares *MiddlewareContainer
+	Config          *config.Configuration
+	Logger          *hertzZerolog.Logger
+	Services        *ServiceContainer
+	Middlewares     *MiddlewareContainer
+	HandlerRegistry *HandlerRegistry
 }
 
 // NewAppContainer 创建应用容器
@@ -24,12 +26,17 @@ func NewAppContainer(
 	logger *hertzZerolog.Logger,
 	services *ServiceContainer,
 	middlewares *MiddlewareContainer,
+	handlerRegistry *HandlerRegistry,
 ) *AppContainer {
+	// 设置 hlog 使用统一的 logger
+	hlog.SetLogger(logger)
+
 	return &AppContainer{
-		Config:      cfg,
-		Logger:      logger,
-		Services:    services,
-		Middlewares: middlewares,
+		Config:          cfg,
+		Logger:          logger,
+		Services:        services,
+		Middlewares:     middlewares,
+		HandlerRegistry: handlerRegistry,
 	}
 }
 

@@ -23,6 +23,7 @@ require (
 	github.com/spf13/viper v1.21.0
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/swag v1.16.6
+	go.opentelemetry.io/otel/trace v1.37.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 
@@ -102,7 +103,6 @@ require (
 	go.opentelemetry.io/otel/metric v1.37.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.37.0 // indirect
 	go.opentelemetry.io/otel/sdk/metric v1.37.0 // indirect
-	go.opentelemetry.io/otel/trace v1.37.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.5.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
@@ -126,5 +126,6 @@ require (
 
 replace (
 	github.com/apache/thrift => github.com/apache/thrift v0.13.0
+	github.com/hertz-contrib/obs-opentelemetry/tracing => github.com/masonsxu/obs-opentelemetry/tracing v0.3.1-fix-datarace
 	github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv => ../rpc/identity_srv
 )

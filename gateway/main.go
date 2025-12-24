@@ -3,20 +3,9 @@
 package main
 
 import (
-	"context"
-	"fmt"
 	"log"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/app/server"
-	"github.com/cloudwego/hertz/pkg/common/config"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"github.com/cloudwego/hertz/pkg/common/tracer/stats"
-	hertztracing "github.com/hertz-contrib/obs-opentelemetry/tracing"
-	identityHandler "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/handler/identity"
-	permissionHandler "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/handler/permission"
-	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware"
-	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/otel"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/wire"
 )
 
@@ -25,56 +14,18 @@ var _ app.HandlerFunc
 
 func main() {
 	// 统一初始化所有依赖（只初始化一次）
-	app, err := wire.InitializeApp()
+	// Wire 自动管理依赖图和生命周期
+	container, cleanup, err := wire.InitializeApp()
 	if err != nil {
 		log.Fatalf("failed to init app: %v", err)
 	}
+	defer cleanup()
 
-	// 设置 hlog 使用统一的 logger
-	hlog.SetLogger(app.Logger)
+	// 初始化中间件和 Handler 依赖
+	container.HandlerRegistry.Initialize()
 
-	// init OpenTelemetry provider
-	shutdown, err := otel.NewProvider(app.Config)
-	if err != nil {
-		log.Fatalf("failed to init OpenTelemetry: %v", err)
-	}
-	defer func() {
-		if err := shutdown(context.Background()); err != nil {
-			log.Printf("failed to shutdown OpenTelemetry: %v", err)
-		}
-	}()
-
-	// init server with OpenTelemetry tracing
-	addr := fmt.Sprintf("%s:%d", app.Config.Server.Host, app.Config.Server.Port)
-
-	// init tracer
-	tracer, tracerCfg := hertztracing.NewServerTracer()
-
-	// init server options
-	serverOpts := []config.Option{
-		server.WithHostPorts(addr),
-		server.WithMaxRequestBodySize(100 * 1024 * 1024),
-		server.WithTraceLevel(stats.LevelBase),
-		tracer,
-	}
-
-	h := server.New(serverOpts...)
-
-	// 初始化其他中间件
-	middleware.DefaultMiddleware(
-		h,
-		tracerCfg,
-		app.Middlewares.TraceMiddleware,
-		app.Middlewares.CORSMiddleware,
-		app.Middlewares.ErrorHandlerMiddleware,
-		app.Middlewares.JWTMiddleware,
-		app.Middlewares.ResponseHeaderMiddleware,
-	)
-
-	// 初始化handler层的服务实例
-	identityHandler.SetIdentityService(app.Services.IdentityService, app.Middlewares.JWTMiddleware)
-	permissionHandler.SetPermissionService(app.Services.PermissionService)
-
+	// 注册路由并启动服务器
+	h := container.HandlerRegistry.Server()
 	register(h)
 	h.Spin()
 }

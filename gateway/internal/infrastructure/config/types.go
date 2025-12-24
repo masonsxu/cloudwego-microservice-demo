@@ -145,9 +145,10 @@ type LogConfig struct {
 // TracingConfig 链路追踪配置
 // 当 Enabled=true 时，向 Endpoint 上报链路数据；SamplerRatio 控制采样率[0.0,1.0]
 type TracingConfig struct {
-	Enabled      bool    `mapstructure:"enabled"`
-	Endpoint     string  `mapstructure:"endpoint"`
-	SamplerRatio float64 `mapstructure:"sampler_ratio"`
+	Enabled      bool     `mapstructure:"enabled"`
+	Endpoint     string   `mapstructure:"endpoint"`
+	SamplerRatio float64  `mapstructure:"sampler_ratio"`
+	IgnorePaths  []string `mapstructure:"ignore_paths"`
 }
 
 // ErrorHandlerConfig 错误处理中间件配置

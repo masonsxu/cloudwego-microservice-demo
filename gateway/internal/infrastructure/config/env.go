@@ -380,6 +380,9 @@ func mapTracingEnvVars(v *viper.Viper) {
 
 		return 0.1 // 默认采样率0.1
 	})
+	mapToViper(v, "TRACING_IGNORE_PATHS", "tracing.ignore_paths", func(value string) interface{} {
+		return splitAndTrim(value, ",")
+	})
 }
 
 // loadDotEnvFirst 在给定路径列表中查找首个 .env 并加载到环境变量（若未找到则忽略）。

@@ -9,7 +9,7 @@ import (
 )
 
 // AllSet 所有依赖注入集合
-// 按照分层架构组织：基础设施层 -> 应用层 -> 领域层 -> 中间件层
+// 按照分层架构组织：基础设施层 -> 应用层 -> 领域层 -> 中间件层 -> 服务器层
 var AllSet = wire.NewSet(
 	// 基础设施层
 	InfrastructureSet,
@@ -23,6 +23,9 @@ var AllSet = wire.NewSet(
 	// 中间件层
 	MiddlewareSet,
 
+	// 服务器层（包含 OpenTelemetry、Tracer、Server、Handler 注册器）
+	ServerSet,
+
 	// 容器
 	NewServiceContainer,
 	NewAppContainer,
@@ -30,7 +33,7 @@ var AllSet = wire.NewSet(
 
 // InitializeApp 初始化应用容器
 // 统一初始化所有依赖，避免重复创建 Logger 等实例
-func InitializeApp() (*AppContainer, error) {
+func InitializeApp() (*AppContainer, func(), error) {
 	wire.Build(AllSet)
-	return &AppContainer{}, nil
+	return &AppContainer{}, nil, nil
 }

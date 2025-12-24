@@ -1,3 +1,7 @@
+// Package middleware 提供中间件相关功能
+//
+// Deprecated: 此文件已废弃，中间件注册已迁移至 wire/server.go 中的 HandlerRegistry。
+// 保留此文件仅供参考，将在未来版本中删除。
 package middleware
 
 import (
@@ -14,7 +18,9 @@ import (
 )
 
 // DefaultMiddleware 默认中间件注册
-// 注意：Casbin 权限中间件不在此注册，应在具体路由组或路由上使用
+//
+// Deprecated: 请使用 wire.HandlerRegistry.RegisterMiddlewares() 代替。
+// 此函数将在未来版本中删除。
 func DefaultMiddleware(
 	h *server.Hertz,
 	tracerCfg *hertztracing.Config,
@@ -33,10 +39,5 @@ func DefaultMiddleware(
 		errorMiddleware.MiddlewareFunc(),          // 错误处理：后续所有错误均由其捕获
 		jwtMiddleware.MiddlewareFunc(),            // 认证：解析用户身份，存入上下文
 		etag.New(),                                // ETag：计算和验证 ETag
-		// 注意：Casbin 权限校验不在全局注册
-		// 应在需要权限的路由组或路由上使用：
-		// - casbinMiddleware.RequiresPermissions("users:read")  // 推荐
-		// - casbinMiddleware.RequiresRoles("admin")            // 推荐
-		// - casbinMiddleware.MiddlewareFunc()                  // 仅限路由组
 	)
 }

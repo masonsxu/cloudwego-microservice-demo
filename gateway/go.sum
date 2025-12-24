@@ -162,8 +162,6 @@ github.com/hertz-contrib/logger/zerolog v1.0.0 h1:lMXqE3yN487MDPkjwAntQFjUvD7vEq
 github.com/hertz-contrib/logger/zerolog v1.0.0/go.mod h1:GieP9vSEQR5CO5QgJCXy27GXr4GxgM9VqqFG7u+Q3h4=
 github.com/hertz-contrib/obs-opentelemetry/provider v0.3.0 h1:qg2pljZC8Udaj7H1F/6H/8iDAG6BVucgWGQbFTGlnNI=
 github.com/hertz-contrib/obs-opentelemetry/provider v0.3.0/go.mod h1:aMTZ5ZTK/0caxQphajqtWC/520NqA+X2J1eXVPiXT5Y=
-github.com/hertz-contrib/obs-opentelemetry/tracing v0.4.1 h1:YOv/UcSHjeAg1CwvcXi1zsNz5xFKf1iAKlEKAt7k31I=
-github.com/hertz-contrib/obs-opentelemetry/tracing v0.4.1/go.mod h1:u+EVWM4dDcudoXY4bCia0EyhaBOsPgRah+FvM75DM7s=
 github.com/hertz-contrib/requestid v1.1.0 h1:+y1cuNlNX2KUoEC1SnBJ6M55/TlMTx3M9yxkqi0oTkk=
 github.com/hertz-contrib/requestid v1.1.0/go.mod h1:+l5CbZl//cSUoos421fnDFKQ6YYlVHcYc3Ri7AS8DUA=
 github.com/hertz-contrib/swagger v0.1.1 h1:7MiJj95n/Mq9uKycz5QPXhNVx3BBjd+iLbFQcxltosg=
@@ -204,6 +202,8 @@ github.com/mailru/easyjson v0.0.0-20190626092158-b2ccc519800e/go.mod h1:C1wdFJiN
 github.com/mailru/easyjson v0.7.6/go.mod h1:xzfreul335JAWq5oZzymOObrkdz5UnU4kGfJJLY9Nlc=
 github.com/mailru/easyjson v0.7.7 h1:UGYAvKxe3sBsEDzO8ZeWOSlIQfWFlxbzLZe7hwFURr0=
 github.com/mailru/easyjson v0.7.7/go.mod h1:xzfreul335JAWq5oZzymOObrkdz5UnU4kGfJJLY9Nlc=
+github.com/masonsxu/obs-opentelemetry/tracing v0.3.1-fix-datarace h1:0gsItH3q7cS1QjH774LNGGyMZSTyYhGkHMfvT885Fxw=
+github.com/masonsxu/obs-opentelemetry/tracing v0.3.1-fix-datarace/go.mod h1:kUXcQXJKvPh4jdybefPSlmGoDWlbGMlLsPFcsZUYQO4=
 github.com/mattn/go-colorable v0.1.13 h1:fFA4WZxdEF4tXPZVKMLwD8oUnCTTo08duU7wxecdEvA=
 github.com/mattn/go-colorable v0.1.13/go.mod h1:7S9/ev0klgBDR4GtXTXX8a3vIGJpMovkB8vQcUbaXHg=
 github.com/mattn/go-isatty v0.0.16/go.mod h1:kYGgaQfpe5nmfYZH+SKPsOc2e4SrIfOl2e/yFXSvRLM=

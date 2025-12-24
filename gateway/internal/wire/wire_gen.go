@@ -16,7 +16,7 @@ import (
 
 // InitializeApp 初始化应用容器
 // 统一初始化所有依赖，避免重复创建 Logger 等实例
-func InitializeApp() (*AppContainer, error) {
+func InitializeApp() (*AppContainer, func(), error) {
 	configuration := ProvideConfig()
 	logger := ProvideLogger(configuration)
 	identityClient := ProvideIdentityClient(logger)
@@ -51,20 +51,29 @@ func InitializeApp() (*AppContainer, error) {
 	redisConfig := ProvideRedisConfig(configuration)
 	client, err := ProvideRedisClient(redisConfig)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	tokenCacheService := ProvideTokenCache(client, logger)
 	jwtMiddlewareService := ProvideJWTMiddleware(service, jwtConfig, tokenCacheService, logger)
 	responseHeaderMiddlewareService := ProvideResponseHeaderMiddleware()
 	middlewareContainer := NewMiddlewareContainer(traceMiddlewareService, corsMiddlewareService, errorHandlerMiddlewareService, jwtMiddlewareService, responseHeaderMiddlewareService)
-	appContainer := NewAppContainer(configuration, logger, serviceContainer, middlewareContainer)
-	return appContainer, nil
+	tracer := ProvideTracer(configuration)
+	provider, cleanup, err := ProvideOtelProvider(configuration)
+	if err != nil {
+		return nil, nil, err
+	}
+	serverFactory := ProvideServerFactory(configuration, tracer, provider)
+	handlerRegistry := ProvideHandlerRegistry(serverFactory, tracer, middlewareContainer, serviceContainer, logger)
+	appContainer := NewAppContainer(configuration, logger, serviceContainer, middlewareContainer, handlerRegistry)
+	return appContainer, func() {
+		cleanup()
+	}, nil
 }
 
 // wire.go:
 
 // AllSet 所有依赖注入集合
-// 按照分层架构组织：基础设施层 -> 应用层 -> 领域层 -> 中间件层
+// 按照分层架构组织：基础设施层 -> 应用层 -> 领域层 -> 中间件层 -> 服务器层
 var AllSet = wire.NewSet(
 
 	InfrastructureSet,
@@ -74,6 +83,8 @@ var AllSet = wire.NewSet(
 	DomainServiceSet,
 
 	MiddlewareSet,
+
+	ServerSet,
 
 	NewServiceContainer,
 	NewAppContainer,
