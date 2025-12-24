@@ -10,7 +10,6 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/config"
 	"github.com/rs/zerolog"
-	"gorm.io/gorm"
 )
 
 // =============================================================================
@@ -48,6 +47,7 @@ var LogicSet = wire.NewSet(
 )
 
 // ApplicationSet 完整应用 Provider 集合
+// 包含业务逻辑相关的所有依赖
 var ApplicationSet = wire.NewSet(
 	InfrastructureSet,
 	ConverterSet,
@@ -56,57 +56,29 @@ var ApplicationSet = wire.NewSet(
 	LogicSet,
 )
 
-// TestSet 测试环境专用 Provider 集合
-var TestSet = wire.NewSet(
-	InfrastructureSet,
-	ConverterSet,
-	CasbinSet,
-	DALSet,
-	LogicSet,
+// AllSet 所有依赖注入集合
+// 按照分层架构组织：基础设施层 -> 业务层 -> 服务器层 -> 健康检查层
+var AllSet = wire.NewSet(
+	ApplicationSet,
+	ServerSet,
+	HealthCheckSet,
+	NewAppContainer,
 )
 
 // =============================================================================
 // Injector Functions - 依赖注入函数
 // =============================================================================
 
-// InitializeService 初始化服务，返回业务逻辑层实例
-func InitializeService() (logic.Logic, error) {
-	wire.Build(ApplicationSet)
-	return nil, nil
+// InitializeApp 初始化应用容器
+// 统一初始化所有依赖，避免重复创建实例
+// 返回 cleanup 函数用于资源清理（如 OpenTelemetry shutdown）
+func InitializeApp() (*AppContainer, func(), error) {
+	wire.Build(AllSet)
+	return nil, nil, nil
 }
 
 // InitializeLogger 仅初始化日志器
 func InitializeLogger() (*zerolog.Logger, error) {
 	wire.Build(InfrastructureSet)
-	return nil, nil
-}
-
-// InitializeTestService 初始化测试环境服务
-func InitializeTestService() (logic.Logic, error) {
-	wire.Build(TestSet)
-	return nil, nil
-}
-
-// ServiceWithDB 包含服务逻辑和数据库连接的包装结构
-// 用于需要同时访问服务和数据库的场景（如健康检查）
-type ServiceWithDB struct {
-	Service logic.Logic
-	DB      *gorm.DB
-}
-
-// ProvideServiceWithDB 提供包含服务和数据库的包装结构
-func ProvideServiceWithDB(service logic.Logic, db *gorm.DB) *ServiceWithDB {
-	return &ServiceWithDB{
-		Service: service,
-		DB:      db,
-	}
-}
-
-// InitializeServiceWithDB 初始化服务并返回 DB 连接（用于健康检查）
-func InitializeServiceWithDB() (*ServiceWithDB, error) {
-	wire.Build(
-		ApplicationSet,
-		ProvideServiceWithDB,
-	)
 	return nil, nil
 }

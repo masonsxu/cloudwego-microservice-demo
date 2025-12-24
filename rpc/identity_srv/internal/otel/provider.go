@@ -10,13 +10,17 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/config"
 )
 
+// Provider 封装 OpenTelemetry Provider，支持 Wire 依赖注入
+type Provider struct {
+	shutdown func(context.Context) error
+	enabled  bool
+}
+
 // NewProvider creates a new OpenTelemetry provider based on configuration.
-// If tracing is disabled, it returns a no-op provider.
-func NewProvider(cfg *config.Config) (func(context.Context) error, error) {
+// Returns Provider wrapper and cleanup function for Wire.
+func NewProvider(cfg *config.Config) (*Provider, func(), error) {
 	if !cfg.Tracing.Enabled {
-		return func(ctx context.Context) error {
-			return nil
-		}, nil
+		return &Provider{enabled: false}, func() {}, nil
 	}
 
 	opts := []provider.Option{
@@ -28,5 +32,21 @@ func NewProvider(cfg *config.Config) (func(context.Context) error, error) {
 
 	p := provider.NewOpenTelemetryProvider(opts...)
 
-	return p.Shutdown, nil
+	otelProvider := &Provider{
+		shutdown: p.Shutdown,
+		enabled:  true,
+	}
+
+	cleanup := func() {
+		if otelProvider.shutdown != nil {
+			_ = otelProvider.shutdown(context.Background())
+		}
+	}
+
+	return otelProvider, cleanup, nil
+}
+
+// IsEnabled returns whether tracing is enabled.
+func (p *Provider) IsEnabled() bool {
+	return p.enabled
 }

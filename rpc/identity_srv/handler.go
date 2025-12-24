@@ -15,29 +15,11 @@ type IdentityServiceImpl struct {
 	logic logic.Logic
 }
 
-// NewIdentityServiceImpl 创建新的IdentityServiceImpl实例
-func NewIdentityServiceImpl() (*IdentityServiceImpl, error) {
-	logicImpl, err := wire.InitializeService()
-	if err != nil {
-		return nil, err
-	}
-
+// NewIdentityServiceImpl 从应用容器创建 IdentityServiceImpl 实例
+func NewIdentityServiceImpl(container *wire.AppContainer) *IdentityServiceImpl {
 	return &IdentityServiceImpl{
-		logic: logicImpl,
-	}, nil
-}
-
-// NewIdentityServiceImplWithDB 创建新的 IdentityServiceImpl 实例并返回 DB 连接
-// 用于需要访问数据库连接的场景（如健康检查）
-func NewIdentityServiceImplWithDB() (*IdentityServiceImpl, *wire.ServiceWithDB, error) {
-	serviceWithDB, err := wire.InitializeServiceWithDB()
-	if err != nil {
-		return nil, nil, err
+		logic: container.Logic,
 	}
-
-	return &IdentityServiceImpl{
-		logic: serviceWithDB.Service,
-	}, serviceWithDB, nil
 }
 
 // ===========================================================================
