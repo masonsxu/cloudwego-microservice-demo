@@ -156,6 +156,16 @@ DB_MAX_IDLE_CONNS=20
 DB_MAX_OPEN_CONNS=200
 DB_CONN_MAX_LIFETIME=1h
 
+# Redis 配置
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_PASSWORD=your-redis-password
+REDIS_POOL_SIZE=20
+REDIS_MIN_IDLE_CONNS=5
+REDIS_DIAL_TIMEOUT=5s
+REDIS_READ_TIMEOUT=3s
+REDIS_WRITE_TIMEOUT=3s
+
 # JWT 配置
 JWT_ENABLED=true
 JWT_SIGNING_KEY=your-32-character-or-longer-secret-key
@@ -167,6 +177,13 @@ JWT_COOKIE_SECURE_COOKIE=true
 # etcd 配置
 ETCD_ADDRESS=etcd:2379
 ETCD_TIMEOUT=5s
+
+# OpenTelemetry 配置
+OTEL_ENABLED=true
+OTEL_EXPORTER_ENDPOINT=jaeger:4317
+OTEL_EXPORTER_INSECURE=false
+OTEL_SAMPLER_RATIO=0.1
+OTEL_RESOURCE_ATTRIBUTES=service.version=1.0.0,deployment.environment=production
 ```
 
 ---
@@ -211,8 +228,11 @@ ETCD_TIMEOUT=5s
 | identity_srv | 8891 | RPC 服务 |
 | identity_srv | 10000 | 健康检查 |
 | PostgreSQL | 5432 | 数据库 |
+| Redis | 6379 | 缓存 |
 | etcd | 2379 | 服务发现 |
 | RustFS | 9000 | 对象存储 |
+| Jaeger | 16686 | 链路追踪 UI |
+| Jaeger Collector | 4317 | OTLP 接收 |
 
 ---
 

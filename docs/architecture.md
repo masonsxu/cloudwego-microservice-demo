@@ -52,8 +52,10 @@ flowchart TB
 
     subgraph InfrastructureLayer["基础设施层"]
         PostgreSQL[(PostgreSQL 16<br/>Port :5432)]
+        Redis[(Redis<br/>Port :6379)]
         Etcd[(etcd<br/>Port :2379)]
         RustFS[(RustFS<br/>Port :9000)]
+        Jaeger[(Jaeger<br/>Port :16686)]
     end
 
     %% 客户端到网关
@@ -72,8 +74,11 @@ flowchart TB
 
     %% 服务到基础设施
     IdentitySrv -->|GORM| PostgreSQL
+    IdentitySrv -->|缓存| Redis
     IdentitySrv -->|服务注册| Etcd
     IdentitySrv -->|S3 API| RustFS
+    IdentitySrv -.->|链路追踪| Jaeger
+    Gateway -.->|链路追踪| Jaeger
 ```
 
 ### 架构特点
@@ -218,10 +223,12 @@ gateway/
 
 | 组件 | 技术 | 说明 |
 |------|------|------|
-| 数据库 | PostgreSQL 16 + GORM | 关系型数据库 |
-| 服务发现 | etcd | 服务注册与发现 |
-| 对象存储 | RustFS | S3 兼容存储 |
-| 依赖注入 | Google Wire | 编译时 DI |
+| 数据库 | PostgreSQL 16 + GORM | 关系型数据库，支持事务和复杂查询 |
+| 缓存 | Redis | 高性能缓存，支持会话管理和数据缓存 |
+| 服务发现 | etcd | 服务注册与发现，配置管理 |
+| 对象存储 | RustFS | S3 兼容存储，用于文件上传 |
+| 链路追踪 | Jaeger + OpenTelemetry | 分布式链路追踪和监控 |
+| 依赖注入 | Google Wire | 编译时依赖注入，类型安全 |
 
 ---
 
@@ -263,6 +270,36 @@ gateway/
 - 类型安全，编译时检查
 - 无运行时反射开销
 - 依赖关系清晰可追踪
+
+### 5. Redis 缓存层设计
+
+**决策**：在网关层引入 Redis 缓存，用于会话管理和热点数据缓存。
+
+**原因**：
+- 减少数据库访问压力
+- 提升认证和授权性能
+- 支持分布式会话管理
+- 便于实现限流和防重复提交
+
+### 6. OpenTelemetry 链路追踪
+
+**决策**：集成 OpenTelemetry 和 Jaeger 实现端到端链路追踪。
+
+**原因**：
+- 分布式系统调用链可视化
+- 性能瓶颈快速定位
+- 错误根因分析
+- 服务依赖关系监控
+
+### 7. 安全分层设计
+
+**决策**：采用多层安全策略，包括网关认证、服务授权和数据加密。
+
+**原因**：
+- 纵深防御，单点突破不影响整体
+- 职责分离，便于安全审计
+- 统一安全策略管理
+- 支持细粒度权限控制
 
 ---
 

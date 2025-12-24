@@ -94,6 +94,29 @@ cd gateway && cp .env.example .env
 
 ---
 
+## Redis 缓存配置
+
+| 变量名 | 说明 | 默认值 | 示例 |
+|--------|------|--------|------|
+| `REDIS_HOST` | Redis 主机 | `127.0.0.1` | `redis`（Docker） |
+| `REDIS_PORT` | Redis 端口 | `6379` | `6379` |
+| `REDIS_PASSWORD` | Redis 密码 | - | `your-redis-password` |
+| `REDIS_DB` | Redis 数据库 | `0` | `0` |
+| `REDIS_POOL_SIZE` | 连接池大小 | `10` | `10` |
+| `REDIS_MIN_IDLE_CONNS` | 最小空闲连接 | `5` | `5` |
+| `REDIS_DIAL_TIMEOUT` | 连接超时 | `5s` | `5s` |
+| `REDIS_READ_TIMEOUT` | 读取超时 | `3s` | `3s` |
+| `REDIS_WRITE_TIMEOUT` | 写入超时 | `3s` | `3s` |
+
+### Redis 使用场景
+
+- **会话管理**: JWT Token 黑名单、用户会话状态
+- **热点数据缓存**: 用户信息、权限数据
+- **限流计数**: API 调用频率限制
+- **分布式锁**: 防止重复操作
+
+---
+
 ## 服务注册发现
 
 | 变量名 | 说明 | 默认值 | 示例 |
@@ -159,6 +182,19 @@ JWT_SKIP_PATHS=/api/v1/identity/auth/login,/api/v1/identity/auth/refresh,/ping,/
 
 ---
 
+## OpenTelemetry 链路追踪配置
+
+| 变量名 | 说明 | 默认值 | 示例 |
+|--------|------|--------|------|
+| `OTEL_ENABLED` | 启用链路追踪 | `true` | `true` |
+| `OTEL_SERVICE_NAME` | 服务名称 | - | `identity-srv` |
+| `OTEL_EXPORTER_ENDPOINT` | Collector 端点 | `localhost:4317` | `jaeger:4317` |
+| `OTEL_EXPORTER_INSECURE` | 跳过 TLS 验证 | `true` | `false`（生产环境） |
+| `OTEL_SAMPLER_RATIO` | 采样率 | `1.0` | `0.1`（生产环境） |
+| `OTEL_RESOURCE_ATTRIBUTES` | 资源属性 | - | `service.version=1.0.0` |
+
+---
+
 ## 环境差异对照
 
 | 配置项 | 开发环境 | 生产环境 |
@@ -166,9 +202,12 @@ JWT_SKIP_PATHS=/api/v1/identity/auth/login,/api/v1/identity/auth/refresh,/ping,/
 | `SERVER_DEBUG` | `true` | `false` |
 | `LOG_LEVEL` | `debug` | `info`/`warn` |
 | `DB_PASSWORD` | 简单密码 | **强密码** |
+| `REDIS_PASSWORD` | 无或简单 | **强密码** |
 | `JWT_SIGNING_KEY` | 简单字符串 | **32+ 字符强密钥** |
 | `JWT_COOKIE_SECURE_COOKIE` | `false` | `true`（需 HTTPS） |
 | `DB_SSLMODE` | `disable` | `require`/`verify-full` |
+| `OTEL_SAMPLER_RATIO` | `1.0` | `0.1` |
+| `OTEL_EXPORTER_INSECURE` | `true` | `false` |
 
 ---
 

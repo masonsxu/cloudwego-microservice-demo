@@ -42,7 +42,7 @@ cp .env.dev.example .env
 
 # 6. 查看日志
 ./deploy.sh dev logs              # 所有日志
-./deploy.sh follow identity_srv   # 实时跟踪特定服务
+./deploy.sh dev follow identity_srv   # 实时跟踪特定服务
 ```
 
 服务启动后访问：
@@ -51,7 +51,8 @@ cp .env.dev.example .env
 |------|------|
 | HTTP API | http://localhost:8080 |
 | Swagger 文档 | http://localhost:8080/swagger/index.html |
-| 健康检查 | http://localhost:8080/health |
+| 健康检查 | http://localhost:8080/ping |
+| Jaeger 链路追踪 | http://localhost:16686 |
 
 ## 方式二：本地开发模式
 
@@ -100,10 +101,10 @@ sh build.sh && sh output/bootstrap.sh
 
 ```bash
 # 健康检查
-curl http://localhost:8080/health
+curl http://localhost:8080/ping
 
 # 预期输出
-{"status":"ok"}
+{"message":"pong"}
 ```
 
 ## API 示例

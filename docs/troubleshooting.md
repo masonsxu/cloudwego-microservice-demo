@@ -151,6 +151,32 @@ wire: cycle detected in provider set
 
 ## 运行时问题
 
+### Redis 连接失败
+
+**错误信息**：
+```
+dial tcp 127.0.0.1:6379: connect: connection refused
+redis: nil
+```
+
+**诊断方法**：
+```bash
+# 检查 Redis 是否运行
+cd docker && ./deploy.sh ps
+
+# 测试连接
+redis-cli -h localhost -p 6379 ping
+
+# Docker 环境测试
+docker exec redis redis-cli ping
+```
+
+**解决方法**：
+1. 启动 Redis：`cd docker && ./deploy.sh dev up-base`
+2. 检查 `.env` 配置中的 `REDIS_HOST`、`REDIS_PORT`
+3. 验证 Redis 密码配置
+4. 检查防火墙设置
+
 ### 自动迁移失败
 
 **错误信息**：
@@ -207,6 +233,50 @@ token is expired
    ```
 2. 确保签名密钥一致
 3. 检查 Token 格式：`Authorization: Bearer <token>`
+
+### 链路追踪数据丢失
+
+**错误信息**：
+```
+Jaeger UI 中看不到 trace 数据
+```
+
+**诊断方法**：
+```bash
+# 检查 Jaeger 服务状态
+cd docker && ./deploy.sh ps | grep jaeger
+
+# 检查 Collector 日志
+./deploy.sh follow jaeger
+
+# 测试 OTLP 端点
+curl http://localhost:4317/metrics
+```
+
+**解决方法**：
+1. 检查 OTEL 配置：
+   ```env
+   OTEL_ENABLED=true
+   OTEL_EXPORTER_ENDPOINT=jaeger:4317
+   OTEL_EXPORTER_INSECURE=true
+   ```
+2. 验证服务名称配置正确
+3. 检查采样率设置（生产环境建议 0.1）
+4. 重启相关服务
+
+### 缓存穿透问题
+
+**现象**：
+- 大量请求直接打到数据库
+- Redis 命中率极低
+- 数据库负载过高
+
+**解决方法**：
+1. 检查缓存键名是否正确
+2. 验证缓存过期时间设置
+3. 添加缓存预热逻辑
+4. 实现布隆过滤器防止穿透
+5. 检查 Redis 连接池配置
 
 ---
 
@@ -329,6 +399,20 @@ A: 项目采用环境变量驱动配置，便于容器化部署和环境隔离�
 
 A: 支持多种格式：`1h`、`30m`、`3600s` 或纯数字 `3600`。
 
+### Q: Redis 连接池应该如何配置？
+
+A: 根据并发量调整：
+- 开发环境：`REDIS_POOL_SIZE=10`, `REDIS_MIN_IDLE_CONNS=5`
+- 生产环境：`REDIS_POOL_SIZE=50+`, `REDIS_MIN_IDLE_CONNS=10`
+
+### Q: 链路追踪数据量太大怎么办？
+
+A: 调整采样率和配置：
+```env
+OTEL_SAMPLER_RATIO=0.1  # 生产环境建议 10%
+OTEL_RESOURCE_ATTRIBUTES=service.namespace=prod
+```
+
 ### Q: 如何添加新的数据模型？
 
 A:
@@ -342,6 +426,22 @@ A:
 1. 检查 Provider 函数签名
 2. 确保所有依赖都有 Provider
 3. 删除 `wire_gen.go` 后重新生成
+
+### Q: 如何监控 Redis 性能？
+
+A:
+1. 使用 `redis-cli --latency` 监控延迟
+2. 检查 `INFO memory` 内存使用情况
+3. 监控 `INFO stats` 命令统计
+4. 设置慢查询日志：`CONFIG SET slowlog-log-slower-than 10000`
+
+### Q: JWT Token 如何安全存储？
+
+A:
+1. 使用 HttpOnly Cookie 防止 XSS
+2. 生产环境启用 Secure Cookie
+3. 设置合理的过期时间
+4. 实现 Token 刷新机制
 
 ---
 
