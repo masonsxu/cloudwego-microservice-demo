@@ -247,11 +247,18 @@ gateway/
 │   ├── infrastructure/   # 基础设施层
 │   │   ├── client/       # RPC 客户端封装
 │   │   ├── config/       # 配置管理
+│   │   ├── otel/         # OpenTelemetry 追踪（Provider, Tracer, ServerFactory）
 │   │   └── errors/       # 统一错误处理
 │   └── wire/             # 依赖注入配置
+│       ├── wire.go       # Wire 入口和 Provider Sets
+│       ├── server.go     # 服务器层 Provider（Otel, Tracer, Server, HandlerRegistry）
+│       ├── middleware.go # 中间件层 Provider
+│       ├── domain.go     # 领域层 Provider
+│       ├── infrastructure.go # 基础设施层 Provider
+│       └── container.go  # 容器定义
 ├── docs/                 # Swagger 文档（自动生成）
 ├── pkg/                  # 工具包
-└── main.go
+└── main.go               # 入口（仅启动逻辑，依赖由 Wire 管理）
 ```
 
 ## 开发规范
@@ -320,24 +327,68 @@ mapToViper(v, "DB_CONN_MAX_LIFETIME", "database.conn_max_lifetime", func(value s
 - 运行 `wire` 命令生成 `wire_gen.go` 文件
 - 遵循接口化原则，便于测试和解耦
 
+**Gateway Wire 架构**：
+
+Gateway 采用分层 Provider Sets 组织依赖注入：
+
+```
+AllSet (wire.go)
+├── InfrastructureSet    # 基础设施层：Config, Logger, RPC Client, Redis
+├── ApplicationSet       # 应用层：Assemblers
+├── DomainServiceSet     # 领域层：Identity Service, Permission Service
+├── MiddlewareSet        # 中间件层：JWT, CORS, Error Handler, Trace
+├── ServerSet            # 服务器层：Otel Provider, Tracer, Server, HandlerRegistry
+└── Containers           # 容器：ServiceContainer, MiddlewareContainer, AppContainer
+```
+
+**ServerSet 核心组件**（`wire/server.go`）：
+
+| Provider | 返回类型 | 职责 |
+|----------|---------|------|
+| `ProvideOtelProvider` | `*otel.Provider, func()` | OpenTelemetry 初始化，返回 cleanup 函数 |
+| `ProvideTracer` | `*otel.Tracer` | Hertz Server Tracer 封装 |
+| `ProvideServerFactory` | `*otel.ServerFactory` | Hertz Server 创建工厂 |
+| `ProvideHandlerRegistry` | `*HandlerRegistry` | 中间件和 Handler 依赖注册器 |
+
+**HandlerRegistry 设计**：
+
+`HandlerRegistry` 负责将所有依赖注入到 Handler 层并注册中间件：
+
+```go
+// 使用方式（main.go）
+container, cleanup, err := wire.InitializeApp()
+defer cleanup()  // Wire 自动管理 OpenTelemetry 生命周期
+
+container.HandlerRegistry.Initialize()  // 注册中间件 + Handler 依赖
+
+h := container.HandlerRegistry.Server()
+register(h)
+h.Spin()
+```
+
 **Wire 最佳实践**：
 
 - **Provider 职责单一**：每个 Provider 函数只负责创建一个依赖
 - **委托 config 层**：数据库初始化等逻辑应在 `config` 层实现，Wire 层只调用
 - **参数传递完整**：确保所有依赖参数（如 logger）正确传递
 - **避免重复逻辑**：不在 Provider 中重复配置已在 config 层完成的初始化
+- **使用 cleanup 函数**：需要清理的资源（如 OpenTelemetry）返回 cleanup 函数，Wire 自动管理生命周期
 
 **示例**：
 
 ```go
-// wire/provider.go - 正确做法
-func ProvideDB(cfg *config.Config, logger *slog.Logger) (*gorm.DB, error) {
-    return config.InitDB(cfg, logger)  // 委托给 config 层
+// wire/server.go - OpenTelemetry Provider with cleanup
+func ProvideOtelProvider(cfg *config.Configuration) (*otel.Provider, func(), error) {
+    return otel.NewProvider(cfg)  // 返回 Provider 和 cleanup 函数
 }
 
-// config/database.go - 完整的初始化逻辑
-func InitDB(cfg *Config, logger *slog.Logger) (*gorm.DB, error) {
-    // 连接创建、连接池配置、自动迁移等所有逻辑
+// infrastructure/otel/provider.go - 实现
+func NewProvider(cfg *config.Configuration) (*Provider, func(), error) {
+    p := provider.NewOpenTelemetryProvider(opts...)
+    cleanup := func() {
+        _ = p.Shutdown(context.Background())
+    }
+    return &Provider{...}, cleanup, nil
 }
 ```
 
