@@ -1,6 +1,6 @@
 # 部署指南
 
-本文档介绍 CloudWeGo Scaffold 的部署方式和生产环境配置。
+本文档介绍项目的部署方式和生产环境配置。
 
 ## 目录
 
@@ -8,6 +8,7 @@
 - [部署命令参考](#部署命令参考)
 - [生产环境配置](#生产环境配置)
 - [生产环境检查清单](#生产环境检查清单)
+- [服务端口参考](#服务端口参考)
 
 ---
 
@@ -16,86 +17,50 @@
 ### 开发环境
 
 ```bash
-cd docker
+# 1. 启动基础设施
+cd docker && ./deploy.sh up
 
-# 启动所有服务
-./deploy.sh dev up
+# 2. 启动 RPC 服务（新终端）
+cd rpc/identity_srv
+cp .env.example .env
+sh build.sh && sh output/bootstrap.sh
 
-# 查看状态
-./deploy.sh dev ps
+# 3. 启动网关服务（新终端）
+cd gateway
+cp .env.example .env
+sh build.sh && sh output/bootstrap.sh
+
+# 查看基础设施状态
+./deploy.sh ps
 
 # 查看日志
-./deploy.sh dev logs
+./deploy.sh logs
 ```
 
 ### 生产环境
 
-```bash
-cd docker
-
-# 1. 配置生产环境变量
-cp .env.dev.example .env.prod
-vim .env.prod  # 修改为生产配置
-
-# 2. 构建生产镜像
-./deploy.sh prod build
-
-# 3. 启动生产环境
-./deploy.sh prod up -d
-
-# 4. 查看状态
-./deploy.sh prod ps
-
-# 5. 查看日志
-./deploy.sh prod logs
-```
+生产环境建议使用容器编排工具（如 Kubernetes）部署应用服务，基础设施使用托管服务。
 
 ---
 
 ## 部署命令参考
 
-### 服务管理
+### 基础设施管理
 
 ```bash
-# 启动所有服务
-./deploy.sh dev up
-
-# 仅启动基础设施（postgres, etcd, rustfs）
-./deploy.sh dev up-base
-
-# 仅启动应用服务（identity_srv, gateway）
-./deploy.sh dev up-apps
-
-# 后台启动
-./deploy.sh dev up -d
-
-# 停止所有服务
-./deploy.sh dev down
+./deploy.sh up              # 启动基础设施
+./deploy.sh down            # 停止基础设施
+./deploy.sh restart         # 重启基础设施
+./deploy.sh ps              # 查看服务状态
+./deploy.sh clean           # 清理环境（删除数据）
 ```
 
 ### 日志查看
 
 ```bash
-# 所有日志
-./deploy.sh dev logs
-
-# 特定服务日志
-./deploy.sh dev logs identity_srv
-./deploy.sh dev logs gateway
-
-# 实时跟踪日志
-./deploy.sh follow identity_srv
-```
-
-### 镜像构建
-
-```bash
-# 重新构建所有镜像
-./deploy.sh dev rebuild
-
-# 构建特定服务
-./deploy.sh dev build identity_srv
-./deploy.sh dev build gateway
+./deploy.sh logs            # 所有日志
+./deploy.sh logs postgres   # 特定服务日志
+./deploy.sh logs redis      # Redis 日志
 ```
 
 ---
@@ -112,6 +77,7 @@ JWT_SIGNING_KEY=your-very-long-and-secure-random-string-here
 ```
 
 生成强密钥：
+
 ```bash
 openssl rand -base64 32
 ```
@@ -161,10 +127,6 @@ REDIS_HOST=redis
 REDIS_PORT=6379
 REDIS_PASSWORD=your-redis-password
 REDIS_POOL_SIZE=20
-REDIS_MIN_IDLE_CONNS=5
-REDIS_DIAL_TIMEOUT=5s
-REDIS_READ_TIMEOUT=3s
-REDIS_WRITE_TIMEOUT=3s
 
 # JWT 配置
 JWT_ENABLED=true
@@ -183,7 +145,6 @@ OTEL_ENABLED=true
 OTEL_EXPORTER_ENDPOINT=jaeger:4317
 OTEL_EXPORTER_INSECURE=false
 OTEL_SAMPLER_RATIO=0.1
-OTEL_RESOURCE_ATTRIBUTES=service.version=1.0.0,deployment.environment=production
 ```
 
 ---
@@ -193,7 +154,7 @@ OTEL_RESOURCE_ATTRIBUTES=service.version=1.0.0,deployment.environment=production
 ### 安全配置
 
 - [ ] 修改 `JWT_SIGNING_KEY` 为强随机密钥（至少 32 字符）
-- [ ] 修改所有默认密码（数据库、对象存储等）
+- [ ] 修改所有默认密码（数据库、Redis、对象存储）
 - [ ] 启用 `JWT_COOKIE_SECURE_COOKIE=true`（需要 HTTPS）
 - [ ] 启用 `JWT_COOKIE_HTTP_ONLY=true`（防止 XSS）
 - [ ] 设置 `DB_SSLMODE=require` 或 `verify-full`
@@ -220,7 +181,7 @@ OTEL_RESOURCE_ATTRIBUTES=service.version=1.0.0,deployment.environment=production
 
 ---
 
-## 服务端口
+## 服务端口参考
 
 | 服务 | 端口 | 说明 |
 |------|------|------|
@@ -238,5 +199,5 @@ OTEL_RESOURCE_ATTRIBUTES=service.version=1.0.0,deployment.environment=production
 
 ## 下一步
 
-- [配置说明](configuration.md) - 详细配置参考
-- [故障排查](troubleshooting.md) - 部署问题诊断
+- [04-配置参考](04-configuration.md) - 详细配置参考
+- [06-故障排查](06-troubleshooting.md) - 部署问题诊断

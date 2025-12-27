@@ -1,0 +1,139 @@
+# 快速开始
+
+本文档帮助你在 5 分钟内启动和运行项目。
+
+## 环境要求
+
+| 依赖 | 版本 | 下载链接 |
+|------|------|----------|
+| Go | 1.24+ | [下载](https://go.dev/dl/) |
+| Docker | 20.10+ | [安装](https://docs.docker.com/get-docker/) |
+| Docker Compose | 2.0+ | [安装](https://docs.docker.com/compose/install/) |
+
+## Docker 快速启动（推荐）
+
+这是最简单的启动方式，适合快速体验和开发。
+
+```bash
+# 1. 克隆项目
+git clone https://github.com/masonsxu/cloudwego-microservice-demo.git
+cd cloudwego-microservice-demo
+
+# 2. 启动基础设施（PostgreSQL、etcd、Redis、RustFS、Jaeger）
+cd docker && ./deploy.sh up
+
+# 3. 启动 RPC 服务（新终端）
+cd rpc/identity_srv
+cp .env.example .env    # 首次运行需要配置
+sh build.sh && sh output/bootstrap.sh
+
+# 4. 启动网关服务（新终端）
+cd gateway
+cp .env.example .env    # 首次运行需要配置
+sh build.sh && sh output/bootstrap.sh
+
+# 5. 验证服务
+curl http://localhost:8080/ping
+# 预期返回: {"message":"pong"}
+```
+
+### 服务访问入口
+
+| 服务 | 地址 |
+|------|------|
+| API 网关 | http://localhost:8080 |
+| Swagger 文档 | http://localhost:8080/swagger/index.html |
+| 健康检查 | http://localhost:8080/ping |
+| Jaeger 链路追踪 | http://localhost:16686 |
+
+### 常用基础设施命令
+
+```bash
+./deploy.sh up          # 启动基础设施
+./deploy.sh down        # 停止基础设施
+./deploy.sh ps          # 查看服务状态
+./deploy.sh logs        # 查看日志
+./deploy.sh logs postgres  # 查看特定服务日志
+```
+
+## 本地开发模式
+
+适合需要调试代码的场景。
+
+### 1. 安装开发工具
+
+```bash
+go install github.com/cloudwego/kitex/tool/cmd/kitex@latest
+go install github.com/cloudwego/thriftgo@latest
+go install github.com/cloudwego/hertz/cmd/hz@latest
+go install github.com/google/wire/cmd/wire@latest
+
+# 确保 PATH 包含 GOPATH/bin
+export PATH=$PATH:$(go env GOPATH)/bin
+```
+
+### 2. 启动基础设施
+
+```bash
+cd docker
+./deploy.sh up-base
+```
+
+### 3. 启动 RPC 服务
+
+```bash
+cd rpc/identity_srv
+cp .env.example .env    # 配置环境变量
+sh build.sh && sh output/bootstrap.sh
+```
+
+### 4. 启动网关服务
+
+```bash
+# 新终端
+cd gateway
+cp .env.example .env
+sh build.sh && sh output/bootstrap.sh
+```
+
+## API 示例
+
+### 用户登录
+
+```bash
+curl -X POST http://localhost:8080/api/v1/identity/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "admin",
+    "password": "password123"
+  }'
+```
+
+响应示例：
+
+```json
+{
+    "base_resp": {
+        "code": 0,
+        "message": "success"
+    },
+    "data": {
+        "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+        "token_type": "Bearer",
+        "expires_in": 1800
+    }
+}
+```
+
+### 获取用户信息
+
+```bash
+curl -X GET http://localhost:8080/api/v1/identity/users/me \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+## 下一步
+
+- [02-架构设计](02-architecture.md) - 了解项目整体架构
+- [03-开发指南](03-development.md) - 开始开发新功能
+- [04-配置参考](04-configuration.md) - 详细配置说明

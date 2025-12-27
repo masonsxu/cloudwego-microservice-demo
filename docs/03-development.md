@@ -1,6 +1,6 @@
 # 开发指南
 
-本文档介绍 CloudWeGo Scaffold 的开发规范和常用命令。
+本文档介绍项目的开发规范和常用命令。
 
 ## 目录
 
@@ -34,19 +34,14 @@
 # 1. 修改 IDL 文件
 vim idl/rpc/identity_srv/identity_service.thrift
 
-# 添加新的接口定义
-# service IdentityService {
-#     CreateRoleResp CreateRole(1: CreateRoleReq req)
-# }
-
 # 2. 生成 Kitex 代码
 cd rpc/identity_srv
 ./script/gen_kitex_code.sh
 
 # 3. 实现业务逻辑
-# 在 biz/logic/role/ 目录创建业务逻辑
-# 在 biz/dal/role/ 目录创建数据访问层
-# 在 biz/converter/role/ 目录创建转换器
+# - biz/logic/role/ 业务逻辑
+# - biz/dal/role/ 数据访问层
+# - biz/converter/role/ 转换器
 
 # 4. 在 handler.go 中实现接口
 vim handler.go
@@ -125,7 +120,6 @@ func (s *IdentityServiceImpl) CreateUser(ctx context.Context, req *identity_srv.
 ```go
 type UserLogic struct {
     userDAL *dal.UserDAL
-    orgDAL  *dal.OrganizationDAL
 }
 
 func (l *UserLogic) CreateUser(ctx context.Context, user *models.User) (*models.User, error) {
@@ -265,19 +259,19 @@ Handler 层: errno.ToKitexError() → BizStatusError
 ### 服务启动
 
 ```bash
-# Docker 环境
-cd docker
-./deploy.sh dev up          # 启动所有服务
-./deploy.sh dev up-base     # 仅启动基础设施
-./deploy.sh dev up-apps     # 仅启动应用
-./deploy.sh dev down        # 停止所有服务
-./deploy.sh dev ps          # 查看状态
-./deploy.sh dev logs        # 查看日志
-./deploy.sh dev follow <service> # 实时跟踪日志
+# 1. 启动基础设施（PostgreSQL、etcd、Redis、RustFS、Jaeger）
+cd docker && ./deploy.sh up
 
-# 本地开发
+# 2. 启动 RPC 服务（新终端）
 cd rpc/identity_srv && sh build.sh && sh output/bootstrap.sh
+
+# 3. 启动网关服务（新终端）
 cd gateway && sh build.sh && sh output/bootstrap.sh
+
+# 基础设施管理
+./deploy.sh down            # 停止基础设施
+./deploy.sh ps              # 查看状态
+./deploy.sh logs            # 查看日志
 ```
 
 ### 测试命令
@@ -346,30 +340,24 @@ ln -s -f ../../scripts/git-hooks/pre-commit .git/hooks/pre-commit
 
 ## 可观测性开发
 
-### 链路追踪规范
-
-项目集成 OpenTelemetry 实现端到端链路追踪：
+### 链路追踪
 
 ```go
 // 在 Handler 中添加自定义 span
 func (s *IdentityServiceImpl) CreateUser(ctx context.Context, req *identity_srv.CreateUserReq) (*identity_srv.CreateUserResp, error) {
-    // 创建自定义 span
     ctx, span := otel.Tracer("identity-service").Start(ctx, "CreateUser")
     defer span.End()
-    
-    // 设置 span 属性
+
     span.SetAttributes(
         attribute.String("user.username", req.Username),
         attribute.String("operation", "create_user"),
     )
-    
+
     // 业务逻辑...
 }
 ```
 
-### 日志规范
-
-使用结构化日志，包含 trace_id 便于链路追踪：
+### 结构化日志
 
 ```go
 import "github.com/rs/zerolog/log"
@@ -381,20 +369,10 @@ log.Info().
     Msg("User created successfully")
 ```
 
-### 监控指标
-
-关键业务指标监控：
-
-- **用户注册成功率**: `user_registration_success_total`
-- **API 响应时间**: `http_request_duration_seconds`
-- **数据库连接池**: `db_connections_active`
-- **Redis 缓存命中率**: `redis_cache_hit_ratio`
-
 ---
 
 ## 下一步
 
-- [配置说明](configuration.md) - 环境变量详解
-- [部署指南](deployment.md) - 生产环境部署
-- [故障排查](troubleshooting.md) - 常见问题处理
-- [可观测性实践](kitex/tutorials/observability.md) - Kitex 框架监控集成
+- [04-配置参考](04-configuration.md) - 环境变量详解
+- [05-部署指南](05-deployment.md) - 生产环境部署
+- [06-故障排查](06-troubleshooting.md) - 常见问题处理

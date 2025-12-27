@@ -1,96 +1,74 @@
 # CloudWeGo 微服务实践项目文档
 
-欢迎阅读 CloudWeGo 微服务实践项目文档。这是一个基于 CloudWeGo 生态构建的生产级微服务架构演示项目，采用 Kitex (RPC) + Hertz (HTTP) 框架，实现了以网关为核心的微服务体系。
+欢迎阅读 CloudWeGo 微服务实践项目文档。本项目是一个基于 CloudWeGo 生态构建的生产级微服务架构 Demo，采用 Kitex (RPC) + Hertz (HTTP) 框架，实现了以网关为核心的星型微服务体系。
 
 ## 文档目录
 
 | 文档 | 说明 | 适合读者 |
 |------|------|----------|
-| [快速开始](getting-started.md) | 环境配置、项目初始化、首次运行 | 新用户 |
-| [架构设计](architecture.md) | 微服务架构、分层设计、技术选型 | 架构师、高级开发者 |
-| [开发指南](development-guide.md) | IDL-First 流程、代码生成、分层规范 | 开发者 |
-| [配置说明](configuration.md) | 环境变量、数据库、JWT、Redis、存储配置 | 运维、开发者 |
-| [部署指南](deployment.md) | Docker 部署、生产环境配置 | 运维 |
-| [故障排查](troubleshooting.md) | 常见问题、错误诊断、日志调试 | 所有人 |
+| [01-快速开始](01-getting-started.md) | 环境配置、项目启动、首次运行 | 新用户 |
+| [02-架构设计](02-architecture.md) | 微服务架构、分层设计、技术选型 | 架构师、高级开发者 |
+| [03-开发指南](03-development.md) | IDL-First 流程、代码生成、分层规范 | 开发者 |
+| [04-配置参考](04-configuration.md) | 环境变量、数据库、JWT、Redis 配置 | 运维、开发者 |
+| [05-部署指南](05-deployment.md) | Docker 部署、生产环境配置 | 运维 |
+| [06-故障排查](06-troubleshooting.md) | 常见问题、错误诊断、日志调试 | 所有人 |
 
-## 项目概览
+## 核心功能
 
-### 核心功能
-
-- **API 网关 (Hertz)**: 统一的 API 入口、JWT 认证、Casbin 授权、OpenTelemetry 链路追踪
+- **API 网关 (Hertz)**: 统一 API 入口、JWT 认证、Casbin 授权、OpenTelemetry 链路追踪
 - **身份服务 (Kitex)**: 用户管理、组织架构、角色权限管理、JWT Token 管理
-- **可观测性**: OpenTelemetry 分布式链路追踪、结构化日志、性能监控
-- **安全性**: JWT + Casbin RBAC 权限控制、密码加密、安全中间件
+- **可观测性**: OpenTelemetry 分布式链路追踪、结构化日志
+- **安全性**: JWT + Casbin RBAC 权限控制、密码加密
 
-### 技术栈
+## 技术栈
 
-- **RPC 框架**: Kitex (字节跳动开源高性能 RPC 框架)
-- **HTTP 框架**: Hertz (字节跳动开源高性能 HTTP 框架)
-- **接口定义**: Thrift IDL
-- **数据库**: PostgreSQL + GORM
-- **缓存**: Redis
-- **服务注册发现**: etcd
-- **依赖注入**: Google Wire
-- **认证授权**: JWT + Casbin (RBAC)
-- **可观测性**: OpenTelemetry + Jaeger
-- **部署**: Docker + Docker Compose
+| 组件 | 技术 | 说明 |
+|------|------|------|
+| RPC 框架 | Kitex | 字节跳动开源高性能 RPC 框架 |
+| HTTP 框架 | Hertz | 字节跳动开源高性能 HTTP 框架 |
+| 接口定义 | Thrift IDL | IDL-First 开发模式 |
+| 数据库 | PostgreSQL + GORM | 关系型数据库 |
+| 缓存 | Redis | 会话管理、热点数据缓存 |
+| 服务发现 | etcd | 服务注册与发现 |
+| 依赖注入 | Google Wire | 编译时依赖注入 |
+| 认证授权 | JWT + Casbin | RBAC 权限控制 |
+| 可观测性 | OpenTelemetry + Jaeger | 分布式链路追踪 |
 
 ## 阅读建议
 
 ### 新用户
 
-1. 先阅读 [快速开始](getting-started.md)，5 分钟启动项目
-2. 浏览 [架构设计](architecture.md) 了解整体设计和微服务架构
-3. 需要开发时参考 [开发指南](development-guide.md)
+1. 先阅读 [01-快速开始](01-getting-started.md)，5 分钟启动项目
+2. 浏览 [02-架构设计](02-architecture.md) 了解整体设计
+3. 需要开发时参考 [03-开发指南](03-development.md)
 
 ### 开发者
 
-1. [开发指南](development-guide.md) - 日常开发必读，包含 IDL-First 流程
-2. [配置说明](configuration.md) - 环境变量和配置参考
-3. [故障排查](troubleshooting.md) - 遇到问题时查阅
-4. [框架教程](#框架教程) - 深入了解 Hertz 和 Kitex 特性
-
-### 架构师
-
-1. [架构设计](architecture.md) - 深入理解微服务架构和设计决策
-2. [可观测性实践](kitex/toturials/observability.md) - 监控和链路追踪设计
-3. [配置说明](configuration.md) - 生产环境配置策略
+1. [03-开发指南](03-development.md) - 日常开发必读
+2. [04-配置参考](04-configuration.md) - 环境变量参考
+3. [06-故障排查](06-troubleshooting.md) - 遇到问题时查阅
 
 ### 运维人员
 
-1. [部署指南](deployment.md) - 部署和运维最佳实践
-2. [配置说明](configuration.md) - 生产环境配置和安全设置
-3. [故障排查](troubleshooting.md) - 问题诊断和解决方案
+1. [05-部署指南](05-deployment.md) - 部署最佳实践
+2. [04-配置参考](04-configuration.md) - 生产环境配置
+3. [06-故障排查](06-troubleshooting.md) - 问题诊断
 
-## 项目资源
-
-- [项目 README](../README.md) - 项目概述和快速入门
-- [IFLOW 指导文档](../IFLOW.md) - 完整的项目开发指南
-- [贡献指南](../CONTRIBUTING.md) - 如何贡献代码
-- [更新日志](../CHANGELOG.md) - 版本更新记录
-- [安全政策](../SECURITY.md) - 安全漏洞报告流程
-
-## 外部文档
+## 外部资源
 
 ### CloudWeGo 生态
 
-- [Kitex 官方文档](https://www.cloudwego.io/zh/docs/kitex/) - 高性能 RPC 框架
-- [Hertz 官方文档](https://www.cloudwego.io/zh/docs/hertz/) - 高性能 HTTP 框架
-- [CloudWeGo 官网](https://www.cloudwego.io/) - 完整生态介绍
+- [Kitex 官方文档](https://www.cloudwego.io/zh/docs/kitex/)
+- [Hertz 官方文档](https://www.cloudwego.io/zh/docs/hertz/)
+- [CloudWeGo 官网](https://www.cloudwego.io/)
 
 ### 核心依赖
 
-- [GORM 官方文档](https://gorm.io/zh_CN/docs/) - Go ORM 框架
-- [Wire 用户指南](https://github.com/google/wire/blob/main/docs/guide.md) - 编译时依赖注入
-- [Casbin 文档](https://casbin.org/zh/docs/) - 访问控制库
-- [OpenTelemetry 文档](https://opentelemetry.io/docs/) - 可观测性框架
-
-## 版本信息
-
-- **当前版本**: v0.1.0
-- **Go 版本要求**: 1.24+
-- **更新日期**: 2025-12-24
+- [GORM 文档](https://gorm.io/zh_CN/docs/)
+- [Wire 指南](https://github.com/google/wire/blob/main/docs/guide.md)
+- [Casbin 文档](https://casbin.org/zh/docs/)
+- [OpenTelemetry 文档](https://opentelemetry.io/docs/)
 
 ---
 
-> 💡 **提示**: 如果你是第一次接触 CloudWeGo，建议先阅读 [快速开始](getting-started.md)，然后按照 [架构设计](architecture.md) 理解项目结构，最后参考 [开发指南](development-guide.md) 开始开发。
+> **提示**：如果你是第一次接触本项目，建议从 [01-快速开始](01-getting-started.md) 开始阅读。

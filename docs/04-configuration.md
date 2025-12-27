@@ -1,6 +1,6 @@
-# 配置说明
+# 配置参考
 
-本文档详细介绍 CloudWeGo Scaffold 的配置管理方式和所有可用配置项。
+本文档详细介绍项目的配置管理方式和所有可用配置项。
 
 ## 目录
 
@@ -8,10 +8,13 @@
 - [配置文件位置](#配置文件位置)
 - [通用配置](#通用配置)
 - [数据库配置](#数据库配置)
+- [Redis 配置](#redis-配置)
 - [服务注册发现](#服务注册发现)
 - [JWT 认证配置](#jwt-认证配置)
 - [文件存储配置](#文件存储配置)
+- [OpenTelemetry 配置](#opentelemetry-配置)
 - [环境差异对照](#环境差异对照)
+- [添加新配置项](#添加新配置项)
 
 ---
 
@@ -28,8 +31,11 @@
 ### Duration 类型格式
 
 Duration 类型支持多种格式：
-- 带单位：`1h`、`30m`、`3600s`
-- 纯数字：`3600`（默认按秒解析）
+
+| 格式 | 示例 |
+|------|------|
+| 带单位 | `1h`、`30m`、`3600s` |
+| 纯数字 | `3600`（默认按秒解析） |
 
 ---
 
@@ -73,6 +79,8 @@ cd gateway && cp .env.example .env
 
 ## 数据库配置
 
+### 连接配置
+
 | 变量名 | 说明 | 默认值 | 示例 |
 |--------|------|--------|------|
 | `DB_HOST` | 数据库主机 | `127.0.0.1` | `postgres`（Docker） |
@@ -94,7 +102,7 @@ cd gateway && cp .env.example .env
 
 ---
 
-## Redis 缓存配置
+## Redis 配置
 
 | 变量名 | 说明 | 默认值 | 示例 |
 |--------|------|--------|------|
@@ -131,6 +139,8 @@ cd gateway && cp .env.example .env
 ## JWT 认证配置
 
 仅适用于 **gateway** 服务。
+
+### 基础配置
 
 | 变量名 | 说明 | 默认值 | 示例 |
 |--------|------|--------|------|
@@ -182,15 +192,15 @@ JWT_SKIP_PATHS=/api/v1/identity/auth/login,/api/v1/identity/auth/refresh,/ping,/
 
 ---
 
-## OpenTelemetry 链路追踪配置
+## OpenTelemetry 配置
 
 | 变量名 | 说明 | 默认值 | 示例 |
 |--------|------|--------|------|
 | `OTEL_ENABLED` | 启用链路追踪 | `true` | `true` |
 | `OTEL_SERVICE_NAME` | 服务名称 | - | `identity-srv` |
 | `OTEL_EXPORTER_ENDPOINT` | Collector 端点 | `localhost:4317` | `jaeger:4317` |
-| `OTEL_EXPORTER_INSECURE` | 跳过 TLS 验证 | `true` | `false`（生产环境） |
-| `OTEL_SAMPLER_RATIO` | 采样率 | `1.0` | `0.1`（生产环境） |
+| `OTEL_EXPORTER_INSECURE` | 跳过 TLS 验证 | `true` | `false`（生产） |
+| `OTEL_SAMPLER_RATIO` | 采样率 | `1.0` | `0.1`（生产） |
 | `OTEL_RESOURCE_ATTRIBUTES` | 资源属性 | - | `service.version=1.0.0` |
 
 ---
@@ -275,5 +285,5 @@ NEW_FEATURE_TIMEOUT=30
 
 ## 下一步
 
-- [部署指南](deployment.md) - 生产环境部署
-- [故障排查](troubleshooting.md) - 配置问题诊断
+- [05-部署指南](05-deployment.md) - 生产环境部署
+- [06-故障排查](06-troubleshooting.md) - 配置问题诊断
