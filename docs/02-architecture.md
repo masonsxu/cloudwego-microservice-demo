@@ -8,13 +8,22 @@
 - [服务列表](#服务列表)
 - [API 网关架构](#api-网关架构)
 - [RPC 服务架构](#rpc-服务架构)
+- [服务交互流程](#服务交互流程)
 - [请求追踪链](#请求追踪链)
+- [数据模型](#数据模型)
 - [技术栈](#技术栈)
 - [关键设计决策](#关键设计决策)
 
 ---
 
 ## 微服务架构
+
+<p align="center">
+  <img src="diagrams/architecture.svg" alt="系统架构图" width="100%">
+</p>
+
+<details>
+<summary>查看 Mermaid 版本</summary>
 
 ```mermaid
 flowchart TB
@@ -58,6 +67,8 @@ flowchart TB
     Gateway & IdentitySrv -->|服务注册| Etcd
     Gateway & IdentitySrv -.->|链路追踪| Jaeger
 ```
+
+</details>
 
 ### 架构特点
 
@@ -248,6 +259,14 @@ sequenceDiagram
 
 ---
 
+## 服务交互流程
+
+<p align="center">
+  <img src="diagrams/service-interaction.svg" alt="服务交互流程图" width="100%">
+</p>
+
+---
+
 ## 请求追踪链
 
 项目采用基于 **metainfo** 的链路追踪机制，使用 `request_id` 追踪请求在微服务调用链中的完整路径。
@@ -274,6 +293,14 @@ sequenceDiagram
 - **自动生成**：缺失的 request_id 自动生成
 - **直接使用 metainfo**：不使用 context.WithValue，性能更优
 - **100% 可追踪**：确保每个请求都有完整的追踪信息
+
+---
+
+## 数据模型
+
+<p align="center">
+  <img src="diagrams/data-model.svg" alt="数据模型关系图" width="100%">
+</p>
 
 ---
 

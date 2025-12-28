@@ -1,0 +1,362 @@
+<svg width="1600" height="1000" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="clientGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="gatewayGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff9a9e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fecfef;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="rpcGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a8edea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fed6e3;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="infraGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffecd2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fcb69f;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Drop Shadow Filter -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="4" stdDeviation="3" flood-color="#000" flood-opacity="0.15"/>
+    </filter>
+
+    <!-- Arrow Markers -->
+    <marker id="arrow-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#667eea"/>
+    </marker>
+    <marker id="arrow-pink" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#e91e63"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4caf50"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#ff9800"/>
+    </marker>
+    <marker id="arrow-gray" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#888"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1600" height="1000" fill="#f8f9fa"/>
+
+  <!-- Title -->
+  <text x="800" y="35" font-family="Arial, sans-serif" font-size="26" font-weight="bold" text-anchor="middle" fill="#333">微服务交互架构图</text>
+  <text x="800" y="60" font-family="Arial, sans-serif" font-size="13" text-anchor="middle" fill="#666">星型拓扑 - 网关为中心，RPC服务不互相调用</text>
+
+  <!-- ========== CLIENT SECTION ========== -->
+  <g transform="translate(30, 90)">
+    <rect x="0" y="0" width="150" height="520" rx="10" fill="url(#clientGradient)" stroke="#667eea" stroke-width="2" filter="url(#shadow)"/>
+    <text x="75" y="30" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">客户端</text>
+    <text x="75" y="50" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="rgba(255,255,255,0.8)">Web/Mobile/API</text>
+
+    <g transform="translate(15, 70)">
+      <rect x="0" y="0" width="120" height="40" rx="5" fill="white" stroke="#667eea" stroke-width="1"/>
+      <text x="60" y="25" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#333">1. HTTP 请求</text>
+    </g>
+    <g transform="translate(15, 130)">
+      <rect x="0" y="0" width="120" height="40" rx="5" fill="white" stroke="#667eea" stroke-width="1"/>
+      <text x="60" y="18" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#333">2. JWT Token</text>
+      <text x="60" y="32" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#888">(Bearer Auth)</text>
+    </g>
+    <g transform="translate(15, 400)">
+      <rect x="0" y="0" width="120" height="40" rx="5" fill="white" stroke="#667eea" stroke-width="1"/>
+      <text x="60" y="25" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#333">14. JSON 响应</text>
+    </g>
+  </g>
+
+  <!-- ========== GATEWAY SECTION ========== -->
+  <g transform="translate(210, 90)">
+    <rect x="0" y="0" width="320" height="520" rx="10" fill="url(#gatewayGradient)" stroke="#e91e63" stroke-width="2" filter="url(#shadow)"/>
+    <text x="160" y="30" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#333">API 网关 (Gateway)</text>
+    <text x="160" y="50" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666">Hertz Framework | Port 8080</text>
+
+    <!-- Middleware Chain -->
+    <text x="160" y="75" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#333">中间件链</text>
+
+    <g transform="translate(20, 85)">
+      <rect x="0" y="0" width="130" height="32" rx="4" fill="white" stroke="#e91e63" stroke-width="1"/>
+      <text x="65" y="21" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#333">3. CORS 跨域</text>
+    </g>
+    <g transform="translate(170, 85)">
+      <rect x="0" y="0" width="130" height="32" rx="4" fill="white" stroke="#e91e63" stroke-width="1"/>
+      <text x="65" y="21" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#333">4. Trace 链路追踪</text>
+    </g>
+    <g transform="translate(20, 125)">
+      <rect x="0" y="0" width="130" height="32" rx="4" fill="white" stroke="#e91e63" stroke-width="1"/>
+      <text x="65" y="21" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#333">5. AccessLog 日志</text>
+    </g>
+    <g transform="translate(170, 125)">
+      <rect x="0" y="0" width="130" height="32" rx="4" fill="white" stroke="#e91e63" stroke-width="1"/>
+      <text x="65" y="21" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#333">6. JWT 认证</text>
+    </g>
+    <g transform="translate(20, 165)">
+      <rect x="0" y="0" width="130" height="32" rx="4" fill="white" stroke="#e91e63" stroke-width="1"/>
+      <text x="65" y="21" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#333">7. Casbin RBAC</text>
+    </g>
+    <g transform="translate(170, 165)">
+      <rect x="0" y="0" width="130" height="32" rx="4" fill="white" stroke="#e91e63" stroke-width="1"/>
+      <text x="65" y="21" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#333">8. Error 错误处理</text>
+    </g>
+
+    <!-- Application Layer -->
+    <line x1="20" y1="210" x2="300" y2="210" stroke="#e91e63" stroke-width="1" stroke-dasharray="3,3"/>
+    <text x="160" y="230" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#333">分层架构</text>
+
+    <g transform="translate(20, 245)">
+      <rect x="0" y="0" width="280" height="35" rx="4" fill="white" stroke="#e91e63" stroke-width="1"/>
+      <text x="140" y="15" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#e91e63">Handler (biz/handler)</text>
+      <text x="140" y="28" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">路由处理、参数绑定</text>
+    </g>
+    <g transform="translate(20, 290)">
+      <rect x="0" y="0" width="280" height="35" rx="4" fill="white" stroke="#e91e63" stroke-width="1"/>
+      <text x="140" y="15" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#e91e63">Domain Service (internal/domain)</text>
+      <text x="140" y="28" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">9. 业务编排、调用 RPC</text>
+    </g>
+    <g transform="translate(20, 335)">
+      <rect x="0" y="0" width="280" height="35" rx="4" fill="white" stroke="#e91e63" stroke-width="1"/>
+      <text x="140" y="15" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#e91e63">Assembler (internal/application)</text>
+      <text x="140" y="28" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">HTTP DTO ↔ RPC DTO 转换</text>
+    </g>
+    <g transform="translate(20, 380)">
+      <rect x="0" y="0" width="280" height="35" rx="4" fill="white" stroke="#e91e63" stroke-width="1"/>
+      <text x="140" y="15" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#e91e63">RPC Client (internal/infrastructure)</text>
+      <text x="140" y="28" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">10. Kitex 客户端、连接池</text>
+    </g>
+
+    <!-- Response handling -->
+    <g transform="translate(20, 430)">
+      <rect x="0" y="0" width="280" height="35" rx="4" fill="#fff3e0" stroke="#ff9800" stroke-width="1"/>
+      <text x="140" y="15" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#ff9800">Response Middleware</text>
+      <text x="140" y="28" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">13. 统一响应格式</text>
+    </g>
+  </g>
+
+  <!-- ========== RPC SERVICE SECTION ========== -->
+  <g transform="translate(560, 90)">
+    <rect x="0" y="0" width="280" height="520" rx="10" fill="url(#rpcGradient)" stroke="#4caf50" stroke-width="2" filter="url(#shadow)"/>
+    <text x="140" y="30" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#333">身份服务 (identity_srv)</text>
+    <text x="140" y="50" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666">Kitex RPC | Port 8891</text>
+
+    <!-- RPC Layers -->
+    <text x="140" y="80" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#333">分层架构</text>
+
+    <g transform="translate(20, 95)">
+      <rect x="0" y="0" width="240" height="50" rx="4" fill="white" stroke="#4caf50" stroke-width="1"/>
+      <text x="120" y="20" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#4caf50">Handler (handler.go)</text>
+      <text x="120" y="35" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">RPC 接口适配、参数校验</text>
+    </g>
+    <g transform="translate(20, 155)">
+      <rect x="0" y="0" width="240" height="50" rx="4" fill="white" stroke="#4caf50" stroke-width="1"/>
+      <text x="120" y="20" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#4caf50">Logic (biz/logic)</text>
+      <text x="120" y="35" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">11. 核心业务逻辑</text>
+    </g>
+    <g transform="translate(20, 215)">
+      <rect x="0" y="0" width="240" height="50" rx="4" fill="white" stroke="#4caf50" stroke-width="1"/>
+      <text x="120" y="20" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#4caf50">DAL (biz/dal)</text>
+      <text x="120" y="35" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">数据访问层、仓储模式</text>
+    </g>
+    <g transform="translate(20, 275)">
+      <rect x="0" y="0" width="240" height="50" rx="4" fill="white" stroke="#4caf50" stroke-width="1"/>
+      <text x="120" y="20" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#4caf50">Converter (biz/converter)</text>
+      <text x="120" y="35" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">Model ↔ DTO 纯函数转换</text>
+    </g>
+    <g transform="translate(20, 335)">
+      <rect x="0" y="0" width="240" height="50" rx="4" fill="white" stroke="#4caf50" stroke-width="1"/>
+      <text x="120" y="20" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#4caf50">Models (models/)</text>
+      <text x="120" y="35" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">GORM 模型、验证钩子</text>
+    </g>
+
+    <!-- Error handling -->
+    <line x1="20" y1="400" x2="260" y2="400" stroke="#4caf50" stroke-width="1" stroke-dasharray="3,3"/>
+    <g transform="translate(20, 415)">
+      <rect x="0" y="0" width="240" height="40" rx="4" fill="#fff3e0" stroke="#ff9800" stroke-width="1"/>
+      <text x="120" y="15" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#ff9800">errno.ToKitexError()</text>
+      <text x="120" y="30" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">12. 业务错误 → BizStatusError</text>
+    </g>
+  </g>
+
+  <!-- ========== INFRASTRUCTURE SECTION ========== -->
+  <g transform="translate(870, 90)">
+    <rect x="0" y="0" width="700" height="520" rx="10" fill="url(#infraGradient)" stroke="#ff9800" stroke-width="2" filter="url(#shadow)"/>
+    <text x="350" y="30" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#333">基础设施层</text>
+    <text x="350" y="50" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666">Docker Compose 管理</text>
+
+    <!-- PostgreSQL -->
+    <g transform="translate(20, 70)">
+      <rect x="0" y="0" width="200" height="130" rx="8" fill="white" stroke="#336791" stroke-width="2"/>
+      <rect x="0" y="0" width="200" height="30" rx="8" fill="#336791"/>
+      <text x="100" y="22" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="white">PostgreSQL 17</text>
+      <text x="100" y="52" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#333">主数据库 :5432</text>
+      <text x="100" y="72" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">用户/组织/角色/菜单</text>
+      <text x="100" y="90" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">GORM ORM + UUID</text>
+      <text x="100" y="108" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">无FK约束 (应用层验证)</text>
+    </g>
+
+    <!-- Redis -->
+    <g transform="translate(240, 70)">
+      <rect x="0" y="0" width="200" height="130" rx="8" fill="white" stroke="#dc382d" stroke-width="2"/>
+      <rect x="0" y="0" width="200" height="30" rx="8" fill="#dc382d"/>
+      <text x="100" y="22" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="white">Redis 8.4</text>
+      <text x="100" y="52" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#333">缓存数据库 :6379</text>
+      <text x="100" y="72" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">JWT Token 黑名单</text>
+      <text x="100" y="90" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">会话缓存</text>
+      <text x="100" y="108" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">AOF 持久化</text>
+    </g>
+
+    <!-- etcd -->
+    <g transform="translate(460, 70)">
+      <rect x="0" y="0" width="220" height="130" rx="8" fill="white" stroke="#419eda" stroke-width="2"/>
+      <rect x="0" y="0" width="220" height="30" rx="8" fill="#419eda"/>
+      <text x="110" y="22" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="white">etcd</text>
+      <text x="110" y="52" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#333">服务注册发现 :2379</text>
+      <text x="110" y="72" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">RPC 服务注册</text>
+      <text x="110" y="90" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">网关动态发现</text>
+      <text x="110" y="108" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">健康检查</text>
+    </g>
+
+    <!-- RustFS -->
+    <g transform="translate(20, 220)">
+      <rect x="0" y="0" width="200" height="130" rx="8" fill="white" stroke="#c73a35" stroke-width="2"/>
+      <rect x="0" y="0" width="200" height="30" rx="8" fill="#c73a35"/>
+      <text x="100" y="22" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="white">RustFS (S3)</text>
+      <text x="100" y="52" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#333">对象存储 :9000</text>
+      <text x="100" y="72" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">组织 Logo 存储</text>
+      <text x="100" y="90" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">预签名 URL</text>
+      <text x="100" y="108" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">双端点配置</text>
+    </g>
+
+    <!-- Jaeger -->
+    <g transform="translate(240, 220)">
+      <rect x="0" y="0" width="200" height="130" rx="8" fill="white" stroke="#60d0e4" stroke-width="2"/>
+      <rect x="0" y="0" width="200" height="30" rx="8" fill="#60d0e4"/>
+      <text x="100" y="22" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="white">Jaeger</text>
+      <text x="100" y="52" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#333">链路追踪 :16686</text>
+      <text x="100" y="72" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">OTLP gRPC :4317</text>
+      <text x="100" y="90" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">分布式追踪</text>
+      <text x="100" y="108" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">可视化分析</text>
+    </g>
+
+    <!-- Observability Stack -->
+    <g transform="translate(460, 220)">
+      <rect x="0" y="0" width="220" height="130" rx="8" fill="white" stroke="#fa709a" stroke-width="2"/>
+      <rect x="0" y="0" width="220" height="30" rx="8" fill="#fa709a"/>
+      <text x="110" y="22" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="white">可观测性</text>
+      <g transform="translate(15, 40)">
+        <rect x="0" y="0" width="85" height="40" rx="4" fill="#f0f0f0"/>
+        <text x="42" y="18" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#333">OpenTelemetry</text>
+        <text x="42" y="32" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">统一采集</text>
+      </g>
+      <g transform="translate(115, 40)">
+        <rect x="0" y="0" width="85" height="40" rx="4" fill="#f0f0f0"/>
+        <text x="42" y="18" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#333">Zerolog</text>
+        <text x="42" y="32" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">结构化日志</text>
+      </g>
+      <text x="110" y="110" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">Trace + Metrics + Logs</text>
+    </g>
+
+    <!-- Wire DI -->
+    <g transform="translate(20, 370)">
+      <rect x="0" y="0" width="660" height="60" rx="8" fill="white" stroke="#888" stroke-width="1"/>
+      <text x="330" y="25" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#333">Google Wire 依赖注入</text>
+      <text x="330" y="45" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">编译时依赖注入 | gateway/internal/wire | rpc/identity_srv/wire</text>
+    </g>
+
+    <!-- Network -->
+    <g transform="translate(20, 445)">
+      <rect x="0" y="0" width="660" height="50" rx="8" fill="#2496ed" stroke="#1a7bb9" stroke-width="1"/>
+      <text x="330" y="22" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Docker Network: cloudwego-scaffold-network (Bridge)</text>
+      <text x="330" y="40" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="rgba(255,255,255,0.9)">容器间通信 | deploy.sh 一键部署</text>
+    </g>
+  </g>
+
+  <!-- ========== FLOW ARROWS ========== -->
+
+  <!-- Client -> Gateway (HTTP) -->
+  <path d="M 180 200 L 200 200" stroke="#667eea" stroke-width="3" marker-end="url(#arrow-blue)" fill="none"/>
+  <text x="185" y="190" font-family="Arial, sans-serif" font-size="9" fill="#667eea">HTTP</text>
+
+  <!-- Gateway -> RPC (Thrift) -->
+  <path d="M 530 380 L 550 380" stroke="#4caf50" stroke-width="3" marker-end="url(#arrow-green)" fill="none"/>
+  <text x="525" y="370" font-family="Arial, sans-serif" font-size="9" fill="#4caf50">RPC</text>
+
+  <!-- RPC -> PostgreSQL -->
+  <path d="M 840 360 L 860 360 L 860 200 L 880 200" stroke="#ff9800" stroke-width="2" marker-end="url(#arrow-orange)" fill="none"/>
+
+  <!-- RPC -> Redis -->
+  <path d="M 840 280 L 860 280 L 860 200 L 1000 200 L 1100 200" stroke="#ff9800" stroke-width="2" marker-end="url(#arrow-orange)" fill="none"/>
+
+  <!-- RPC -> RustFS -->
+  <path d="M 840 390 L 860 390 L 860 370 L 880 370" stroke="#ff9800" stroke-width="2" marker-end="url(#arrow-orange)" fill="none"/>
+
+  <!-- Gateway -> etcd (服务发现) -->
+  <path d="M 530 480 L 1330 480 L 1330 250" stroke="#419eda" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow-blue)" fill="none"/>
+  <text x="930" y="472" font-family="Arial, sans-serif" font-size="9" fill="#419eda">服务发现</text>
+
+  <!-- RPC -> etcd (服务注册) -->
+  <path d="M 840 160 L 1330 160 L 1330 190" stroke="#419eda" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow-blue)" fill="none"/>
+  <text x="1080" y="152" font-family="Arial, sans-serif" font-size="9" fill="#419eda">服务注册</text>
+
+  <!-- All -> Jaeger (Trace) -->
+  <path d="M 530 195 L 1100 195 L 1100 310" stroke="#60d0e4" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-gray)" fill="none"/>
+
+  <!-- Response Flow -->
+  <path d="M 560 430 L 530 430" stroke="#888" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow-gray)" fill="none"/>
+  <path d="M 210 490 L 180 490" stroke="#888" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow-gray)" fill="none"/>
+
+  <!-- ========== LEGEND ========== -->
+  <g transform="translate(30, 640)">
+    <rect x="0" y="0" width="1540" height="140" rx="10" fill="white" stroke="#ddd" stroke-width="1"/>
+    <text x="770" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">图例说明</text>
+
+    <!-- Flow Types -->
+    <g transform="translate(30, 45)">
+      <line x1="0" y1="0" x2="50" y2="0" stroke="#667eea" stroke-width="3" marker-end="url(#arrow-blue)"/>
+      <text x="60" y="5" font-family="Arial, sans-serif" font-size="11" fill="#555">HTTP 请求 (Client → Gateway)</text>
+    </g>
+    <g transform="translate(30, 70)">
+      <line x1="0" y1="0" x2="50" y2="0" stroke="#4caf50" stroke-width="3" marker-end="url(#arrow-green)"/>
+      <text x="60" y="5" font-family="Arial, sans-serif" font-size="11" fill="#555">RPC 调用 (Gateway → Service)</text>
+    </g>
+    <g transform="translate(30, 95)">
+      <line x1="0" y1="0" x2="50" y2="0" stroke="#ff9800" stroke-width="2" marker-end="url(#arrow-orange)"/>
+      <text x="60" y="5" font-family="Arial, sans-serif" font-size="11" fill="#555">数据访问 (Service → DB/Storage)</text>
+    </g>
+    <g transform="translate(30, 120)">
+      <line x1="0" y1="0" x2="50" y2="0" stroke="#888" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="60" y="5" font-family="Arial, sans-serif" font-size="11" fill="#555">返回响应 / 服务注册发现</text>
+    </g>
+
+    <!-- Architecture Notes -->
+    <g transform="translate(350, 45)">
+      <text x="0" y="0" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#333">架构特点:</text>
+      <text x="0" y="20" font-family="Arial, sans-serif" font-size="11" fill="#555">1. 星型拓扑: 网关为中心，RPC 服务不互相调用</text>
+      <text x="0" y="40" font-family="Arial, sans-serif" font-size="11" fill="#555">2. 安全分层: 所有鉴权逻辑必须在 API 网关层</text>
+      <text x="0" y="60" font-family="Arial, sans-serif" font-size="11" fill="#555">3. 协议转换: 网关负责 HTTP → Thrift RPC 转换</text>
+      <text x="0" y="80" font-family="Arial, sans-serif" font-size="11" fill="#555">4. 无状态设计: RPC 服务无状态，支持水平扩展</text>
+    </g>
+
+    <!-- Request Flow -->
+    <g transform="translate(800, 45)">
+      <text x="0" y="0" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#333">请求流程 (数字标注):</text>
+      <text x="0" y="20" font-family="Arial, sans-serif" font-size="11" fill="#555">1-2. 客户端发起 HTTP 请求 (携带 JWT)</text>
+      <text x="0" y="40" font-family="Arial, sans-serif" font-size="11" fill="#555">3-8. 网关中间件链处理 (认证/授权/日志)</text>
+      <text x="0" y="60" font-family="Arial, sans-serif" font-size="11" fill="#555">9-10. Handler → DomainService → RPC Client</text>
+      <text x="0" y="80" font-family="Arial, sans-serif" font-size="11" fill="#555">11-12. RPC 服务处理 (Logic → DAL → DB)</text>
+    </g>
+
+    <g transform="translate(1180, 45)">
+      <text x="0" y="20" font-family="Arial, sans-serif" font-size="11" fill="#555">13. 网关响应格式化</text>
+      <text x="0" y="40" font-family="Arial, sans-serif" font-size="11" fill="#555">14. 返回 JSON 给客户端</text>
+      <text x="0" y="75" font-family="Arial, sans-serif" font-size="10" fill="#888">错误处理:</text>
+      <text x="0" y="90" font-family="Arial, sans-serif" font-size="10" fill="#888">errno → BizStatusError → HTTP Response</text>
+    </g>
+  </g>
+
+  <!-- Footer -->
+  <text x="1550" y="985" font-family="Arial, sans-serif" font-size="10" text-anchor="end" fill="#999">CloudWeGo Microservice Demo - Service Interaction Architecture</text>
+</svg>

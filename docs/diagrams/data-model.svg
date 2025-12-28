@@ -1,0 +1,348 @@
+<svg width="1800" height="1100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="userGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="orgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f5576c;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="roleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="systemGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#43e97b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#38f9d7;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Drop Shadow Filter -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="4" stdDeviation="3" flood-color="#000" flood-opacity="0.15"/>
+    </filter>
+
+    <!-- Arrow Markers -->
+    <marker id="arrowhead-purple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#667eea"/>
+    </marker>
+    <marker id="arrowhead-pink" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#f093fb"/>
+    </marker>
+    <marker id="arrowhead-cyan" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4facfe"/>
+    </marker>
+    <marker id="arrowhead-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#43e97b"/>
+    </marker>
+    <marker id="arrowhead-gray" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#888"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1800" height="1100" fill="#f8f9fa"/>
+
+  <!-- Title -->
+  <text x="900" y="40" font-family="Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="#333">数据模型关系图 (ER Diagram)</text>
+  <text x="900" y="70" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">Identity Service - PostgreSQL 数据库表结构与关系</text>
+
+  <!-- ========== ROW 1: Core Tables ========== -->
+
+  <!-- UserProfile Table -->
+  <g transform="translate(50, 100)">
+    <rect x="0" y="0" width="280" height="380" rx="8" fill="white" stroke="#667eea" stroke-width="2" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="280" height="45" rx="8" fill="url(#userGradient)"/>
+    <text x="140" y="30" font-family="Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="white">user_profiles</text>
+    <text x="140" y="60" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666">用户档案表 (自然人)</text>
+
+    <g transform="translate(15, 75)">
+      <text x="0" y="0" font-family="Consolas, monospace" font-size="11" fill="#e74c3c">PK id : UUID</text>
+      <text x="0" y="20" font-family="Consolas, monospace" font-size="11" fill="#333">username : VARCHAR UNIQUE</text>
+      <text x="0" y="40" font-family="Consolas, monospace" font-size="11" fill="#333">email : VARCHAR UNIQUE</text>
+      <text x="0" y="60" font-family="Consolas, monospace" font-size="11" fill="#333">phone : VARCHAR</text>
+      <text x="0" y="80" font-family="Consolas, monospace" font-size="11" fill="#333">password_hash : VARCHAR</text>
+      <text x="0" y="100" font-family="Consolas, monospace" font-size="11" fill="#333">status : INT (1=Active)</text>
+      <text x="0" y="120" font-family="Consolas, monospace" font-size="11" fill="#333">is_system_user : BOOL</text>
+      <text x="0" y="140" font-family="Consolas, monospace" font-size="11" fill="#333">real_name : VARCHAR</text>
+      <text x="0" y="160" font-family="Consolas, monospace" font-size="11" fill="#333">professional_title : VARCHAR</text>
+      <text x="0" y="180" font-family="Consolas, monospace" font-size="11" fill="#333">license_number : VARCHAR</text>
+      <text x="0" y="200" font-family="Consolas, monospace" font-size="11" fill="#333">employee_id : VARCHAR</text>
+      <text x="0" y="220" font-family="Consolas, monospace" font-size="11" fill="#333">account_expiry : TIMESTAMP</text>
+      <text x="0" y="240" font-family="Consolas, monospace" font-size="11" fill="#333">login_attempts : INT</text>
+      <text x="0" y="260" font-family="Consolas, monospace" font-size="11" fill="#3498db">version : INT (乐观锁)</text>
+      <text x="0" y="280" font-family="Consolas, monospace" font-size="11" fill="#888">created_at/updated_at</text>
+    </g>
+  </g>
+
+  <!-- Organization Table -->
+  <g transform="translate(400, 100)">
+    <rect x="0" y="0" width="280" height="320" rx="8" fill="white" stroke="#f093fb" stroke-width="2" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="280" height="45" rx="8" fill="url(#orgGradient)"/>
+    <text x="140" y="30" font-family="Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="white">organizations</text>
+    <text x="140" y="60" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666">组织表 (支持2级层级)</text>
+
+    <g transform="translate(15, 75)">
+      <text x="0" y="0" font-family="Consolas, monospace" font-size="11" fill="#e74c3c">PK id : UUID</text>
+      <text x="0" y="20" font-family="Consolas, monospace" font-size="11" fill="#333">code : VARCHAR UNIQUE</text>
+      <text x="0" y="40" font-family="Consolas, monospace" font-size="11" fill="#333">name : VARCHAR</text>
+      <text x="0" y="60" font-family="Consolas, monospace" font-size="11" fill="#9b59b6">FK parent_id : UUID (自引用)</text>
+      <text x="0" y="80" font-family="Consolas, monospace" font-size="11" fill="#333">facility_type : VARCHAR</text>
+      <text x="0" y="100" font-family="Consolas, monospace" font-size="11" fill="#333">accreditation_status : VARCHAR</text>
+      <text x="0" y="120" font-family="Consolas, monospace" font-size="11" fill="#3498db">province_city : JSONB</text>
+      <text x="0" y="140" font-family="Consolas, monospace" font-size="11" fill="#333">status : INT</text>
+      <text x="0" y="160" font-family="Consolas, monospace" font-size="11" fill="#888">created_by/updated_by</text>
+      <text x="0" y="180" font-family="Consolas, monospace" font-size="11" fill="#888">created_at/updated_at</text>
+    </g>
+
+    <!-- Self-reference indicator -->
+    <path d="M 280 160 Q 320 160 320 120 Q 320 80 280 80" stroke="#f093fb" stroke-width="2" stroke-dasharray="5,3" fill="none" marker-end="url(#arrowhead-pink)"/>
+    <text x="330" y="125" font-family="Arial, sans-serif" font-size="10" fill="#666">parent</text>
+  </g>
+
+  <!-- Department Table -->
+  <g transform="translate(750, 100)">
+    <rect x="0" y="0" width="280" height="280" rx="8" fill="white" stroke="#f093fb" stroke-width="2" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="280" height="45" rx="8" fill="url(#orgGradient)"/>
+    <text x="140" y="30" font-family="Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="white">departments</text>
+    <text x="140" y="60" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666">部门表</text>
+
+    <g transform="translate(15, 75)">
+      <text x="0" y="0" font-family="Consolas, monospace" font-size="11" fill="#e74c3c">PK id : UUID</text>
+      <text x="0" y="20" font-family="Consolas, monospace" font-size="11" fill="#9b59b6">FK organization_id : UUID</text>
+      <text x="0" y="40" font-family="Consolas, monospace" font-size="11" fill="#333">name : VARCHAR</text>
+      <text x="0" y="60" font-family="Consolas, monospace" font-size="11" fill="#333">department_type : VARCHAR</text>
+      <text x="0" y="80" font-family="Consolas, monospace" font-size="11" fill="#3498db">available_equipment : JSONB</text>
+      <text x="0" y="100" font-family="Consolas, monospace" font-size="11" fill="#333">status : INT</text>
+      <text x="0" y="120" font-family="Consolas, monospace" font-size="11" fill="#888">created_by/updated_by</text>
+      <text x="0" y="140" font-family="Consolas, monospace" font-size="11" fill="#888">created_at/updated_at</text>
+    </g>
+  </g>
+
+  <!-- OrganizationLogo Table -->
+  <g transform="translate(1100, 100)">
+    <rect x="0" y="0" width="280" height="320" rx="8" fill="white" stroke="#f093fb" stroke-width="2" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="280" height="45" rx="8" fill="url(#orgGradient)"/>
+    <text x="140" y="30" font-family="Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="white">organization_logos</text>
+    <text x="140" y="60" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666">组织Logo表 (RustFS存储)</text>
+
+    <g transform="translate(15, 75)">
+      <text x="0" y="0" font-family="Consolas, monospace" font-size="11" fill="#e74c3c">PK id : UUID</text>
+      <text x="0" y="20" font-family="Consolas, monospace" font-size="11" fill="#9b59b6">FK bound_organization_id : UUID</text>
+      <text x="0" y="40" font-family="Consolas, monospace" font-size="11" fill="#9b59b6">FK uploaded_by : UUID</text>
+      <text x="0" y="60" font-family="Consolas, monospace" font-size="11" fill="#333">file_id : VARCHAR (S3 Key)</text>
+      <text x="0" y="80" font-family="Consolas, monospace" font-size="11" fill="#333">file_name : VARCHAR</text>
+      <text x="0" y="100" font-family="Consolas, monospace" font-size="11" fill="#333">file_size : BIGINT</text>
+      <text x="0" y="120" font-family="Consolas, monospace" font-size="11" fill="#333">mime_type : VARCHAR</text>
+      <text x="0" y="140" font-family="Consolas, monospace" font-size="11" fill="#333">status : INT (temp/bound)</text>
+      <text x="0" y="160" font-family="Consolas, monospace" font-size="11" fill="#333">expires_at : TIMESTAMP</text>
+      <text x="0" y="180" font-family="Consolas, monospace" font-size="11" fill="#888">created_at/updated_at</text>
+    </g>
+  </g>
+
+  <!-- ========== ROW 2: Relationship & Role Tables ========== -->
+
+  <!-- UserMembership Table (Center) -->
+  <g transform="translate(400, 500)">
+    <rect x="0" y="0" width="280" height="300" rx="8" fill="white" stroke="#667eea" stroke-width="2" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="280" height="45" rx="8" fill="url(#userGradient)"/>
+    <text x="140" y="30" font-family="Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="white">user_memberships</text>
+    <text x="140" y="60" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666">用户-组织成员关系表</text>
+
+    <g transform="translate(15, 75)">
+      <text x="0" y="0" font-family="Consolas, monospace" font-size="11" fill="#e74c3c">PK id : UUID</text>
+      <text x="0" y="20" font-family="Consolas, monospace" font-size="11" fill="#9b59b6">FK user_id : UUID</text>
+      <text x="0" y="40" font-family="Consolas, monospace" font-size="11" fill="#9b59b6">FK organization_id : UUID</text>
+      <text x="0" y="60" font-family="Consolas, monospace" font-size="11" fill="#9b59b6">FK department_id : UUID</text>
+      <text x="0" y="80" font-family="Consolas, monospace" font-size="11" fill="#333">status : INT (1=Active)</text>
+      <text x="0" y="100" font-family="Consolas, monospace" font-size="11" fill="#333">is_primary : BOOL</text>
+      <text x="0" y="120" font-family="Consolas, monospace" font-size="11" fill="#888">created_by/updated_by</text>
+      <text x="0" y="140" font-family="Consolas, monospace" font-size="11" fill="#888">created_at/updated_at</text>
+    </g>
+
+    <text x="140" y="235" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">UNIQUE(user_id, org_id, dept_id)</text>
+    <text x="140" y="250" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">支持用户多组织成员身份</text>
+  </g>
+
+  <!-- RoleDefinition Table -->
+  <g transform="translate(750, 500)">
+    <rect x="0" y="0" width="280" height="300" rx="8" fill="white" stroke="#4facfe" stroke-width="2" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="280" height="45" rx="8" fill="url(#roleGradient)"/>
+    <text x="140" y="30" font-family="Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="white">role_definitions</text>
+    <text x="140" y="60" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666">角色定义表</text>
+
+    <g transform="translate(15, 75)">
+      <text x="0" y="0" font-family="Consolas, monospace" font-size="11" fill="#e74c3c">PK id : UUID</text>
+      <text x="0" y="20" font-family="Consolas, monospace" font-size="11" fill="#333">name : VARCHAR</text>
+      <text x="0" y="40" font-family="Consolas, monospace" font-size="11" fill="#333">description : TEXT</text>
+      <text x="0" y="60" font-family="Consolas, monospace" font-size="11" fill="#3498db">permissions : JSONB[]</text>
+      <text x="0" y="80" font-family="Consolas, monospace" font-size="11" fill="#333">status : INT</text>
+      <text x="0" y="100" font-family="Consolas, monospace" font-size="11" fill="#333">is_system_role : BOOL</text>
+      <text x="0" y="120" font-family="Consolas, monospace" font-size="11" fill="#888">created_by/updated_by</text>
+      <text x="0" y="140" font-family="Consolas, monospace" font-size="11" fill="#888">created_at/updated_at</text>
+    </g>
+
+    <text x="140" y="235" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">permissions 存储权限数组</text>
+    <text x="140" y="250" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">(无独立 permission 表)</text>
+  </g>
+
+  <!-- UserRoleAssignment Table -->
+  <g transform="translate(1100, 500)">
+    <rect x="0" y="0" width="280" height="240" rx="8" fill="white" stroke="#4facfe" stroke-width="2" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="280" height="45" rx="8" fill="url(#roleGradient)"/>
+    <text x="140" y="30" font-family="Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="white">user_role_assignments</text>
+    <text x="140" y="60" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666">用户角色分配表</text>
+
+    <g transform="translate(15, 75)">
+      <text x="0" y="0" font-family="Consolas, monospace" font-size="11" fill="#e74c3c">PK id : UUID</text>
+      <text x="0" y="20" font-family="Consolas, monospace" font-size="11" fill="#9b59b6">FK user_id : UUID</text>
+      <text x="0" y="40" font-family="Consolas, monospace" font-size="11" fill="#9b59b6">FK role_id : UUID</text>
+      <text x="0" y="60" font-family="Consolas, monospace" font-size="11" fill="#888">created_by/updated_by</text>
+      <text x="0" y="80" font-family="Consolas, monospace" font-size="11" fill="#888">created_at/updated_at</text>
+    </g>
+
+    <text x="140" y="175" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">UNIQUE(user_id, role_id)</text>
+  </g>
+
+  <!-- ========== ROW 3: System Tables ========== -->
+
+  <!-- Menu Table -->
+  <g transform="translate(50, 500)">
+    <rect x="0" y="0" width="280" height="300" rx="8" fill="white" stroke="#43e97b" stroke-width="2" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="280" height="45" rx="8" fill="url(#systemGradient)"/>
+    <text x="140" y="30" font-family="Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="white">menus</text>
+    <text x="140" y="60" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666">菜单表 (树状结构)</text>
+
+    <g transform="translate(15, 75)">
+      <text x="0" y="0" font-family="Consolas, monospace" font-size="11" fill="#e74c3c">PK id : UUID</text>
+      <text x="0" y="20" font-family="Consolas, monospace" font-size="11" fill="#333">semantic_id : VARCHAR</text>
+      <text x="0" y="40" font-family="Consolas, monospace" font-size="11" fill="#333">version : INT</text>
+      <text x="0" y="60" font-family="Consolas, monospace" font-size="11" fill="#333">name : VARCHAR</text>
+      <text x="0" y="80" font-family="Consolas, monospace" font-size="11" fill="#333">path : VARCHAR</text>
+      <text x="0" y="100" font-family="Consolas, monospace" font-size="11" fill="#333">component : VARCHAR</text>
+      <text x="0" y="120" font-family="Consolas, monospace" font-size="11" fill="#333">icon : VARCHAR</text>
+      <text x="0" y="140" font-family="Consolas, monospace" font-size="11" fill="#9b59b6">FK parent_id : UUID (自引用)</text>
+      <text x="0" y="160" font-family="Consolas, monospace" font-size="11" fill="#333">sort : INT</text>
+      <text x="0" y="180" font-family="Consolas, monospace" font-size="11" fill="#888">created_by/updated_by</text>
+    </g>
+
+    <!-- Self-reference indicator -->
+    <path d="M 0 640 Q -40 640 -40 600 Q -40 560 0 560" stroke="#43e97b" stroke-width="2" stroke-dasharray="5,3" fill="none" marker-end="url(#arrowhead-green)"/>
+    <text x="-50" y="605" font-family="Arial, sans-serif" font-size="10" fill="#666">parent</text>
+
+    <text x="140" y="235" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">UNIQUE(semantic_id, version)</text>
+  </g>
+
+  <!-- CasbinRule Table -->
+  <g transform="translate(50, 860)">
+    <rect x="0" y="0" width="350" height="200" rx="8" fill="white" stroke="#43e97b" stroke-width="2" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="350" height="45" rx="8" fill="url(#systemGradient)"/>
+    <text x="175" y="30" font-family="Arial, sans-serif" font-size="15" font-weight="bold" text-anchor="middle" fill="white">casbin_rule</text>
+    <text x="175" y="60" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#666">Casbin RBAC 策略规则表</text>
+
+    <g transform="translate(15, 75)">
+      <text x="0" y="0" font-family="Consolas, monospace" font-size="11" fill="#e74c3c">PK id : INT (自增)</text>
+      <text x="0" y="20" font-family="Consolas, monospace" font-size="11" fill="#333">ptype : VARCHAR (p/p2/g/g2)</text>
+      <text x="0" y="40" font-family="Consolas, monospace" font-size="11" fill="#333">v0-v5 : VARCHAR (策略字段)</text>
+      <text x="0" y="60" font-family="Consolas, monospace" font-size="11" fill="#333">comment : TEXT</text>
+      <text x="0" y="80" font-family="Consolas, monospace" font-size="11" fill="#888">created_by/updated_by</text>
+      <text x="0" y="100" font-family="Consolas, monospace" font-size="11" fill="#888">created_at/updated_at</text>
+    </g>
+  </g>
+
+  <!-- Casbin Policy Types Legend -->
+  <g transform="translate(450, 860)">
+    <rect x="0" y="0" width="350" height="200" rx="8" fill="white" stroke="#ddd" stroke-width="1"/>
+    <text x="175" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">Casbin 策略类型说明</text>
+
+    <g transform="translate(20, 45)">
+      <text x="0" y="0" font-family="Consolas, monospace" font-size="11" fill="#e74c3c">p</text>
+      <text x="35" y="0" font-family="Arial, sans-serif" font-size="11" fill="#333">- 权限策略: 角色 → 资源 → 动作</text>
+
+      <text x="0" y="25" font-family="Consolas, monospace" font-size="11" fill="#e74c3c">p2</text>
+      <text x="35" y="25" font-family="Arial, sans-serif" font-size="11" fill="#333">- 菜单映射: 角色 → 菜单 → 权限级别</text>
+
+      <text x="0" y="50" font-family="Consolas, monospace" font-size="11" fill="#e74c3c">g</text>
+      <text x="35" y="50" font-family="Arial, sans-serif" font-size="11" fill="#333">- 角色继承: 子角色 → 父角色</text>
+
+      <text x="0" y="75" font-family="Consolas, monospace" font-size="11" fill="#e74c3c">g2</text>
+      <text x="35" y="75" font-family="Arial, sans-serif" font-size="11" fill="#333">- 用户角色: 用户 → 角色</text>
+    </g>
+
+    <text x="175" y="160" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">与 role_definitions.permissions 配合使用</text>
+    <text x="175" y="175" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">实现细粒度权限控制</text>
+  </g>
+
+  <!-- ========== Relationship Lines ========== -->
+
+  <!-- UserProfile -> UserMembership -->
+  <path d="M 190 480 L 190 490 L 400 490 L 400 520" stroke="#667eea" stroke-width="2" fill="none" marker-end="url(#arrowhead-purple)"/>
+  <text x="295" y="482" font-family="Arial, sans-serif" font-size="10" fill="#667eea">user_id</text>
+
+  <!-- UserProfile -> UserRoleAssignment -->
+  <path d="M 330 290 L 1240 290 L 1240 490" stroke="#667eea" stroke-width="2" fill="none" marker-end="url(#arrowhead-purple)"/>
+  <text x="785" y="282" font-family="Arial, sans-serif" font-size="10" fill="#667eea">user_id</text>
+
+  <!-- UserProfile -> OrganizationLogo (uploaded_by) -->
+  <path d="M 330 200 L 1100 200" stroke="#667eea" stroke-width="2" stroke-dasharray="5,3" fill="none" marker-end="url(#arrowhead-purple)"/>
+  <text x="715" y="192" font-family="Arial, sans-serif" font-size="10" fill="#667eea">uploaded_by</text>
+
+  <!-- Organization -> UserMembership -->
+  <path d="M 540 420 L 540 490" stroke="#f093fb" stroke-width="2" fill="none" marker-end="url(#arrowhead-pink)"/>
+  <text x="548" y="460" font-family="Arial, sans-serif" font-size="10" fill="#f093fb">org_id</text>
+
+  <!-- Organization -> Department -->
+  <path d="M 680 260 L 750 260" stroke="#f093fb" stroke-width="2" fill="none" marker-end="url(#arrowhead-pink)"/>
+  <text x="700" y="252" font-family="Arial, sans-serif" font-size="10" fill="#f093fb">org_id</text>
+
+  <!-- Organization -> OrganizationLogo -->
+  <path d="M 680 230 L 1100 230" stroke="#f093fb" stroke-width="2" fill="none" marker-end="url(#arrowhead-pink)"/>
+  <text x="880" y="222" font-family="Arial, sans-serif" font-size="10" fill="#f093fb">bound_org_id</text>
+
+  <!-- Department -> UserMembership -->
+  <path d="M 890 380 L 890 450 L 640 450 L 640 490" stroke="#f093fb" stroke-width="2" fill="none" marker-end="url(#arrowhead-pink)"/>
+  <text x="765" y="442" font-family="Arial, sans-serif" font-size="10" fill="#f093fb">dept_id</text>
+
+  <!-- RoleDefinition -> UserRoleAssignment -->
+  <path d="M 1030 610 L 1100 610" stroke="#4facfe" stroke-width="2" fill="none" marker-end="url(#arrowhead-cyan)"/>
+  <text x="1050" y="602" font-family="Arial, sans-serif" font-size="10" fill="#4facfe">role_id</text>
+
+  <!-- ========== Legend ========== -->
+  <g transform="translate(860, 860)">
+    <rect x="0" y="0" width="450" height="200" rx="10" fill="white" stroke="#ddd" stroke-width="1"/>
+    <text x="225" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">图例说明</text>
+
+    <g transform="translate(20, 45)">
+      <text x="0" y="0" font-family="Consolas, monospace" font-size="11" fill="#e74c3c">PK</text>
+      <text x="30" y="0" font-family="Arial, sans-serif" font-size="11" fill="#555">- Primary Key (主键)</text>
+
+      <text x="0" y="22" font-family="Consolas, monospace" font-size="11" fill="#9b59b6">FK</text>
+      <text x="30" y="22" font-family="Arial, sans-serif" font-size="11" fill="#555">- Foreign Key (外键引用)</text>
+
+      <text x="0" y="44" font-family="Consolas, monospace" font-size="11" fill="#3498db">JSONB</text>
+      <text x="60" y="44" font-family="Arial, sans-serif" font-size="11" fill="#555">- JSON 二进制字段</text>
+    </g>
+
+    <g transform="translate(230, 45)">
+      <line x1="0" y1="0" x2="50" y2="0" stroke="#667eea" stroke-width="2"/>
+      <text x="60" y="4" font-family="Arial, sans-serif" font-size="11" fill="#555">用户相关</text>
+
+      <line x1="0" y1="22" x2="50" y2="22" stroke="#f093fb" stroke-width="2"/>
+      <text x="60" y="26" font-family="Arial, sans-serif" font-size="11" fill="#555">组织相关</text>
+
+      <line x1="0" y1="44" x2="50" y2="44" stroke="#4facfe" stroke-width="2"/>
+      <text x="60" y="48" font-family="Arial, sans-serif" font-size="11" fill="#555">角色相关</text>
+
+      <line x1="0" y1="66" x2="50" y2="66" stroke="#43e97b" stroke-width="2"/>
+      <text x="60" y="70" font-family="Arial, sans-serif" font-size="11" fill="#555">系统相关</text>
+    </g>
+
+    <text x="225" y="145" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">所有表均包含审计字段: created_by, updated_by</text>
+    <text x="225" y="162" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">外键约束通过 GORM Hooks 在应用层维护</text>
+    <text x="225" y="179" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#666">主键均使用 UUID (除 casbin_rule 使用自增 INT)</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="1750" y="1085" font-family="Arial, sans-serif" font-size="10" text-anchor="end" fill="#999">CloudWeGo Microservice Demo - Identity Service Data Model</text>
+</svg>

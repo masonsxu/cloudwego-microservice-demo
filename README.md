@@ -24,33 +24,9 @@
 
 ## 架构设计
 
-```mermaid
-graph TD
-    subgraph Client[客户端]
-        A[用户/浏览器]
-    end
-
-    subgraph Gateway["API 网关 (Hertz)"]
-        direction LR
-        B(JWT 认证) --> C(Casbin 授权) --> D(链路追踪) --> E(服务代理)
-    end
-
-    subgraph Services["RPC 服务 (Kitex)"]
-        F[身份服务]
-    end
-
-    subgraph Infrastructure[基础设施]
-        G[PostgreSQL]
-        H[etcd]
-        I[Redis]
-    end
-
-    A -- HTTP/HTTPS --> Gateway
-    Gateway -- RPC (Thrift) --> Services
-    Services -- connects to --> G
-    Services -- connects to --> I
-    Gateway -- service discovery --> H
-```
+<p align="center">
+  <img src="docs/diagrams/architecture.svg" alt="系统架构图" width="100%">
+</p>
 
 **关键设计决策**：
 - **星型拓扑**: 所有 RPC 调用由网关发起，服务间不直接调用
