@@ -374,7 +374,7 @@ func (s *IdentityServiceImpl) GetOrganizationDepartments(
 // GetMembership implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) GetMembership(
 	ctx context.Context,
-	membershipID core.ULID,
+	membershipID core.UUID,
 ) (resp *identity_srv.UserMembership, err error) {
 	resp, err = s.logic.GetMembership(ctx, membershipID)
 	if err != nil {
@@ -387,7 +387,7 @@ func (s *IdentityServiceImpl) GetMembership(
 // GetPrimaryMembership implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) GetPrimaryMembership(
 	ctx context.Context,
-	userID core.ULID,
+	userID core.UUID,
 ) (resp *identity_srv.UserMembership, err error) {
 	resp, err = s.logic.GetPrimaryMembership(ctx, userID)
 	if err != nil {
