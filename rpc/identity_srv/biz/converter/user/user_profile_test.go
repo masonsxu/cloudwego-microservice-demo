@@ -121,7 +121,7 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 		createdBy := uuid.New()
 		updatedBy := uuid.New()
 		accountExpiry := now + 86400000 // 24小时后过期
-		lastLoginTime := now - 3600000   // 1小时前登录
+		lastLoginTime := now - 3600000  // 1小时前登录
 
 		model := &models.UserProfile{
 			BaseModel: models.BaseModel{
@@ -129,25 +129,25 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 				CreatedAt: now,
 				UpdatedAt: now,
 			},
-			Username:          "testuser",
-			PasswordHash:      "hashed_password",
-			Email:             "test@example.com",
-			Phone:             "13800138000",
-			FirstName:         "John",
-			LastName:          "Doe",
-			RealName:          "John Doe",
-			Gender:            models.GenderMale,
-			ProfessionalTitle: "Software Engineer",
-			LicenseNumber:     "LICENSE123",
-			Specialties:       `["Go", "Python", "Docker"]`,
-			EmployeeID:        "EMP001",
-			Status:            models.UserStatusActive,
-			LoginAttempts:     2,
+			Username:           "testuser",
+			PasswordHash:       "hashed_password",
+			Email:              "test@example.com",
+			Phone:              "13800138000",
+			FirstName:          "John",
+			LastName:           "Doe",
+			RealName:           "John Doe",
+			Gender:             models.GenderMale,
+			ProfessionalTitle:  "Software Engineer",
+			LicenseNumber:      "LICENSE123",
+			Specialties:        `["Go", "Python", "Docker"]`,
+			EmployeeID:         "EMP001",
+			Status:             models.UserStatusActive,
+			LoginAttempts:      2,
 			MustChangePassword: true,
-			AccountExpiry:     &accountExpiry,
-			CreatedBy:         &createdBy,
-			UpdatedBy:         &updatedBy,
-			LastLoginTime:     &lastLoginTime,
+			AccountExpiry:      &accountExpiry,
+			CreatedBy:          &createdBy,
+			UpdatedBy:          &updatedBy,
+			LastLoginTime:      &lastLoginTime,
 		}
 
 		result := converter.ModelUserProfileToThrift(model)
@@ -253,6 +253,7 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 	t.Run("零值字段处理", func(t *testing.T) {
 		now := time.Now().UnixMilli()
 		userID := uuid.New()
+
 		var zeroTime int64 = 0
 
 		model := &models.UserProfile{
@@ -261,13 +262,13 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 				CreatedAt: now,
 				UpdatedAt: now,
 			},
-			Username:          "zerofields",
-			Gender:            models.GenderUnknown, // 零值
-			LoginAttempts:     0,                    // 零值
-			MustChangePassword: false,               // 零值
-			AccountExpiry:     &zeroTime,            // 零值时间戳
-			LastLoginTime:     &zeroTime,            // 零值时间戳
-			Status:            models.UserStatusActive,
+			Username:           "zerofields",
+			Gender:             models.GenderUnknown, // 零值
+			LoginAttempts:      0,                    // 零值
+			MustChangePassword: false,                // 零值
+			AccountExpiry:      &zeroTime,            // 零值时间戳
+			LastLoginTime:      &zeroTime,            // 零值时间戳
+			Status:             models.UserStatusActive,
 		}
 
 		result := converter.ModelUserProfileToThrift(model)
@@ -516,9 +517,9 @@ func TestConverterImpl_ApplyUpdateUserToModel(t *testing.T) {
 		result := converter.ApplyUpdateUserToModel(existing, req)
 
 		require.NotNil(t, result)
-		assert.Equal(t, "partial@example.com", result.Email) // 应该更新
-		assert.Equal(t, "13800138000", result.Phone)          // 应该保持不变
-		assert.Equal(t, "partialuser", result.Username)       // 应该保持不变
+		assert.Equal(t, "partial@example.com", result.Email)    // 应该更新
+		assert.Equal(t, "13800138000", result.Phone)            // 应该保持不变
+		assert.Equal(t, "partialuser", result.Username)         // 应该保持不变
 		assert.Equal(t, models.UserStatusActive, result.Status) // 应该保持不变
 	})
 
@@ -537,7 +538,7 @@ func TestConverterImpl_ApplyUpdateUserToModel(t *testing.T) {
 
 		require.NotNil(t, result)
 		assert.Equal(t, `["Old","Specialty"]`, result.Specialties) // 空列表不更新，保持原值
-		assert.Equal(t, "listuser", result.Username) // 其他字段保持不变
+		assert.Equal(t, "listuser", result.Username)               // 其他字段保持不变
 	})
 }
 
@@ -557,21 +558,21 @@ func TestConverterImpl_CompleteRoundTrip(t *testing.T) {
 				CreatedAt: now,
 				UpdatedAt: now,
 			},
-			Username:          "roundtrip",
-			Email:             "roundtrip@example.com",
-			Phone:             "13800138000",
-			FirstName:         "Round",
-			LastName:          "Trip",
-			RealName:          "Round Trip",
-			Gender:            models.GenderFemale,
-			ProfessionalTitle: "Test Engineer",
-			LicenseNumber:     "LICENSE999",
-			Specialties:       `["Testing","QA","Automation"]`,
-			EmployeeID:        "EMP999",
-			Status:            models.UserStatusActive,
-			LoginAttempts:     1,
+			Username:           "roundtrip",
+			Email:              "roundtrip@example.com",
+			Phone:              "13800138000",
+			FirstName:          "Round",
+			LastName:           "Trip",
+			RealName:           "Round Trip",
+			Gender:             models.GenderFemale,
+			ProfessionalTitle:  "Test Engineer",
+			LicenseNumber:      "LICENSE999",
+			Specialties:        `["Testing","QA","Automation"]`,
+			EmployeeID:         "EMP999",
+			Status:             models.UserStatusActive,
+			LoginAttempts:      1,
 			MustChangePassword: false,
-			AccountExpiry:     &accountExpiry,
+			AccountExpiry:      &accountExpiry,
 		}
 
 		// Model -> Thrift
@@ -733,24 +734,25 @@ func BenchmarkConverterImpl_ModelUserProfileToThrift(b *testing.B) {
 			CreatedAt: now,
 			UpdatedAt: now,
 		},
-		Username:          "benchmark",
-		Email:             "benchmark@example.com",
-		Phone:             "13800138000",
-		FirstName:         "Benchmark",
-		LastName:          "User",
-		RealName:          "Benchmark User",
-		Gender:            models.GenderMale,
-		ProfessionalTitle: "Performance Engineer",
-		LicenseNumber:     "LICENSE001",
-		Specialties:       `["Go","Performance","Testing"]`,
-		EmployeeID:        "EMP001",
-		Status:            models.UserStatusActive,
-		LoginAttempts:     1,
+		Username:           "benchmark",
+		Email:              "benchmark@example.com",
+		Phone:              "13800138000",
+		FirstName:          "Benchmark",
+		LastName:           "User",
+		RealName:           "Benchmark User",
+		Gender:             models.GenderMale,
+		ProfessionalTitle:  "Performance Engineer",
+		LicenseNumber:      "LICENSE001",
+		Specialties:        `["Go","Performance","Testing"]`,
+		EmployeeID:         "EMP001",
+		Status:             models.UserStatusActive,
+		LoginAttempts:      1,
 		MustChangePassword: false,
-		AccountExpiry:     &accountExpiry,
+		AccountExpiry:      &accountExpiry,
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ModelUserProfileToThrift(model)
 	}
@@ -794,6 +796,7 @@ func BenchmarkConverterImpl_CreateUserRequestToModel(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.CreateUserRequestToModel(req)
 	}
@@ -836,6 +839,7 @@ func BenchmarkConverterImpl_ApplyUpdateUserToModel(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ApplyUpdateUserToModel(existing, req)
 	}

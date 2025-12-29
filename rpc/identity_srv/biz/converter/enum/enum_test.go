@@ -378,7 +378,7 @@ func TestConverterImpl_CompleteRoundTrip(t *testing.T) {
 
 		// Model -> Thrift
 		thriftStatus := converter.ModelUserStatusToThrift(originalStatus)
-		
+
 		// Thrift -> Model
 		finalStatus := converter.ThriftUserStatusToModel(thriftStatus)
 
@@ -390,7 +390,7 @@ func TestConverterImpl_CompleteRoundTrip(t *testing.T) {
 
 		// Model -> Thrift
 		thriftStatus := converter.ModelRoleStatusToThrift(originalStatus)
-		
+
 		// Thrift -> Model
 		finalStatus := converter.ThriftRoleStatusToModel(thriftStatus)
 
@@ -402,7 +402,7 @@ func TestConverterImpl_CompleteRoundTrip(t *testing.T) {
 
 		// Model -> Thrift
 		thriftGender := converter.ModelGenderToThrift(originalGender)
-		
+
 		// Thrift -> Model
 		finalGender := converter.ThriftGenderToModel(thriftGender)
 
@@ -413,8 +413,9 @@ func TestConverterImpl_CompleteRoundTrip(t *testing.T) {
 // 基准测试
 func BenchmarkConverterImpl_ModelUserStatusToThrift(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ModelUserStatusToThrift(models.UserStatusActive)
 	}
@@ -422,8 +423,9 @@ func BenchmarkConverterImpl_ModelUserStatusToThrift(b *testing.B) {
 
 func BenchmarkConverterImpl_ThriftUserStatusToModel(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ThriftUserStatusToModel(core.UserStatus_ACTIVE)
 	}
@@ -431,8 +433,9 @@ func BenchmarkConverterImpl_ThriftUserStatusToModel(b *testing.B) {
 
 func BenchmarkConverterImpl_ModelRoleStatusToThrift(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ModelRoleStatusToThrift(models.RoleStatusActive)
 	}
@@ -440,8 +443,9 @@ func BenchmarkConverterImpl_ModelRoleStatusToThrift(b *testing.B) {
 
 func BenchmarkConverterImpl_ThriftRoleStatusToModel(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ThriftRoleStatusToModel(core.RoleStatus_ACTIVE)
 	}
@@ -449,8 +453,9 @@ func BenchmarkConverterImpl_ThriftRoleStatusToModel(b *testing.B) {
 
 func BenchmarkConverterImpl_ModelGenderToThrift(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ModelGenderToThrift(models.GenderMale)
 	}
@@ -458,8 +463,9 @@ func BenchmarkConverterImpl_ModelGenderToThrift(b *testing.B) {
 
 func BenchmarkConverterImpl_ThriftGenderToModel(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ThriftGenderToModel(core.Gender_MALE)
 	}
@@ -468,16 +474,17 @@ func BenchmarkConverterImpl_ThriftGenderToModel(b *testing.B) {
 // 综合基准测试 - 模拟真实使用场景
 func BenchmarkConverterImpl_CompleteConversion(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		// 模拟完整的枚举转换流程
 		userStatus := converter.ModelUserStatusToThrift(models.UserStatusActive)
 		_ = converter.ThriftUserStatusToModel(userStatus)
-		
+
 		roleStatus := converter.ModelRoleStatusToThrift(models.RoleStatusActive)
 		_ = converter.ThriftRoleStatusToModel(roleStatus)
-		
+
 		gender := converter.ModelGenderToThrift(models.GenderMale)
 		_ = converter.ThriftGenderToModel(gender)
 	}

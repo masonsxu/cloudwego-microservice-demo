@@ -291,8 +291,8 @@ func TestConverterImpl_PageRequestToQueryOptions(t *testing.T) {
 	t.Run("空值过滤条件处理", func(t *testing.T) {
 		filter := map[string]string{
 			"status": "active",
-			"type":   "",      // 空值应该被忽略
-			"empty":  "   ",   // 空格应该被忽略
+			"type":   "",    // 空值应该被忽略
+			"empty":  "   ", // 空格应该被忽略
 			"name":   "test",
 		}
 		req := &rpc_base.PageRequest{
@@ -357,11 +357,11 @@ func TestConverterImpl_PageRequestToQueryOptions(t *testing.T) {
 		fetchAll := false
 
 		req := &rpc_base.PageRequest{
-			Page:    page,
-			Limit:   limit,
-			Search:  &search,
-			Sort:    &sort,
-			Filter:  filter,
+			Page:     page,
+			Limit:    limit,
+			Search:   &search,
+			Sort:     &sort,
+			Filter:   filter,
 			FetchAll: &fetchAll,
 		}
 
@@ -397,7 +397,7 @@ func TestConverterImpl_PageRequestToQueryOptions_TableDriven(t *testing.T) {
 			description: "nil输入应该返回默认QueryOptions",
 		},
 		{
-			name: "最小参数",
+			name:  "最小参数",
 			input: &rpc_base.PageRequest{},
 			expected: func() *base.QueryOptions {
 				opts := base.NewQueryOptions()
@@ -410,6 +410,7 @@ func TestConverterImpl_PageRequestToQueryOptions_TableDriven(t *testing.T) {
 			input: func() *rpc_base.PageRequest {
 				page := int32(2)
 				limit := int32(10)
+
 				return &rpc_base.PageRequest{
 					Page:  page,
 					Limit: limit,
@@ -418,6 +419,7 @@ func TestConverterImpl_PageRequestToQueryOptions_TableDriven(t *testing.T) {
 			expected: func() *base.QueryOptions {
 				opts := base.NewQueryOptions()
 				opts.WithPage(2, 10)
+
 				return opts
 			}(),
 			description: "仅设置分页参数",
@@ -446,6 +448,7 @@ func BenchmarkConverterImpl_PageResponseToThrift(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.PageResponseToThrift(pageResult)
 	}
@@ -464,15 +467,16 @@ func BenchmarkConverterImpl_PageRequestToQueryOptions(b *testing.B) {
 	fetchAll := false
 
 	req := &rpc_base.PageRequest{
-		Page:    page,
-		Limit:   limit,
-		Search:  &search,
-		Sort:    &sort,
-		Filter:  filter,
+		Page:     page,
+		Limit:    limit,
+		Search:   &search,
+		Sort:     &sort,
+		Filter:   filter,
 		FetchAll: &fetchAll,
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.PageRequestToQueryOptions(req)
 	}

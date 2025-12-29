@@ -22,6 +22,7 @@ func TestStringSliceToJSON_Nil(t *testing.T) {
 
 func TestStringSliceToJSON_SingleElement(t *testing.T) {
 	result := StringSliceToJSON([]string{"hello"})
+
 	expected := `["hello"]`
 	if result != expected {
 		t.Errorf("StringSliceToJSON([hello]) = %q, want %q", result, expected)
@@ -30,6 +31,7 @@ func TestStringSliceToJSON_SingleElement(t *testing.T) {
 
 func TestStringSliceToJSON_MultipleElements(t *testing.T) {
 	result := StringSliceToJSON([]string{"foo", "bar", "baz"})
+
 	expected := `["foo","bar","baz"]`
 	if result != expected {
 		t.Errorf("StringSliceToJSON() = %q, want %q", result, expected)
@@ -38,6 +40,7 @@ func TestStringSliceToJSON_MultipleElements(t *testing.T) {
 
 func TestStringSliceToJSON_SpecialCharacters(t *testing.T) {
 	result := StringSliceToJSON([]string{"hello\"world", "foo\nbar"})
+
 	expected := `["hello\"world","foo\nbar"]`
 	if result != expected {
 		t.Errorf("StringSliceToJSON() = %q, want %q", result, expected)
@@ -46,6 +49,7 @@ func TestStringSliceToJSON_SpecialCharacters(t *testing.T) {
 
 func TestStringSliceToJSON_Unicode(t *testing.T) {
 	result := StringSliceToJSON([]string{"你好", "世界"})
+
 	expected := `["你好","世界"]`
 	if result != expected {
 		t.Errorf("StringSliceToJSON() = %q, want %q", result, expected)
@@ -77,6 +81,7 @@ func TestJSONToStringSlice_SingleElement(t *testing.T) {
 
 func TestJSONToStringSlice_MultipleElements(t *testing.T) {
 	result := JSONToStringSlice(`["foo","bar","baz"]`)
+
 	expected := []string{"foo", "bar", "baz"}
 	if !sliceEqual(result, expected) {
 		t.Errorf("JSONToStringSlice() = %v, want %v", result, expected)
@@ -109,6 +114,7 @@ func TestULIDSliceToJSON_Empty(t *testing.T) {
 func TestULIDSliceToJSON_ValidULIDs(t *testing.T) {
 	ulids := []string{"01ARZ3NDEKTSV4RRFFQ69G5FAV", "01ARZ3NDEKTSV4RRFFQ69G5FAW"}
 	result := ULIDSliceToJSON(ulids)
+
 	expected := `["01ARZ3NDEKTSV4RRFFQ69G5FAV","01ARZ3NDEKTSV4RRFFQ69G5FAW"]`
 	if result != expected {
 		t.Errorf("ULIDSliceToJSON() = %q, want %q", result, expected)
@@ -154,6 +160,7 @@ func TestStringValue_Nil(t *testing.T) {
 
 func TestStringValue_NonNil(t *testing.T) {
 	s := "hello"
+
 	result := StringValue(&s)
 	if result != "hello" {
 		t.Errorf("StringValue(&\"hello\") = %q, want \"hello\"", result)
@@ -192,6 +199,7 @@ func TestInt32Value_Nil(t *testing.T) {
 
 func TestInt32Value_NonNil(t *testing.T) {
 	var i int32 = 42
+
 	result := Int32Value(&i)
 	if result != 42 {
 		t.Errorf("Int32Value(&42) = %d, want 42", result)
@@ -223,6 +231,7 @@ func TestInt64Value_Nil(t *testing.T) {
 
 func TestInt64Value_NonNil(t *testing.T) {
 	var i int64 = 1703472000000
+
 	result := Int64Value(&i)
 	if result != 1703472000000 {
 		t.Errorf("Int64Value(&timestamp) = %d, want 1703472000000", result)
@@ -254,6 +263,7 @@ func TestBoolValue_Nil(t *testing.T) {
 
 func TestBoolValue_True(t *testing.T) {
 	b := true
+
 	result := BoolValue(&b)
 	if result != true {
 		t.Errorf("BoolValue(&true) = %v, want true", result)
@@ -262,6 +272,7 @@ func TestBoolValue_True(t *testing.T) {
 
 func TestBoolValue_False(t *testing.T) {
 	b := false
+
 	result := BoolValue(&b)
 	if result != false {
 		t.Errorf("BoolValue(&false) = %v, want false", result)
@@ -358,10 +369,12 @@ func sliceEqual(a, b []string) bool {
 	if len(a) != len(b) {
 		return false
 	}
+
 	for i := range a {
 		if a[i] != b[i] {
 			return false
 		}
 	}
+
 	return true
 }

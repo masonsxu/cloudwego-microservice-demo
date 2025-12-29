@@ -326,7 +326,7 @@ func TestConverterImpl_CreateRequestToModel(t *testing.T) {
 		deptType := "Technical"
 
 		req := &identity_srv.CreateDepartmentRequest{
-			OrganizationID:  &orgIDStr,
+			OrganizationID: &orgIDStr,
 			Name:           &name,
 			DepartmentType: &deptType,
 		}
@@ -442,7 +442,7 @@ func TestConverterImpl_ApplyUpdateToModel(t *testing.T) {
 		assert.Equal(t, deptID, result.ID)
 		assert.Equal(t, "Updated Name", result.Name)
 		assert.Equal(t, orgID, result.OrganizationID)
-		assert.Equal(t, "Original Type", result.DepartmentType) // 未更新的字段应该保持不变
+		assert.Equal(t, "Original Type", result.DepartmentType)  // 未更新的字段应该保持不变
 		assert.Equal(t, `["equip1"]`, result.AvailableEquipment) // 未更新的字段应该保持不变
 	})
 
@@ -528,9 +528,9 @@ func TestConverterImpl_ModelDepartmentToThrift_TableDriven(t *testing.T) {
 			description: "nil输入应该返回nil",
 		},
 		{
-			name: "空部门模型",
-			input: &models.Department{},
-			expectNil: false,
+			name:        "空部门模型",
+			input:       &models.Department{},
+			expectNil:   false,
 			description: "空部门模型应该返回非nil结果",
 		},
 	}
@@ -538,7 +538,7 @@ func TestConverterImpl_ModelDepartmentToThrift_TableDriven(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := converter.ModelDepartmentToThrift(tt.input)
-			
+
 			if tt.expectNil {
 				assert.Nil(t, result, tt.description)
 			} else {
@@ -551,7 +551,7 @@ func TestConverterImpl_ModelDepartmentToThrift_TableDriven(t *testing.T) {
 // 基准测试
 func BenchmarkConverterImpl_ModelDepartmentToThrift(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	now := time.Now()
 	nowMs := now.UnixMilli()
 	deptID := uuid.New()
@@ -570,6 +570,7 @@ func BenchmarkConverterImpl_ModelDepartmentToThrift(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ModelDepartmentToThrift(model)
 	}
@@ -577,10 +578,10 @@ func BenchmarkConverterImpl_ModelDepartmentToThrift(b *testing.B) {
 
 func BenchmarkConverterImpl_ModelDepartmentsToThrift(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	now := time.Now()
 	nowMs := now.UnixMilli()
-	
+
 	departments := make([]*models.Department, 100)
 	for i := 0; i < 100; i++ {
 		departments[i] = &models.Department{
@@ -597,6 +598,7 @@ func BenchmarkConverterImpl_ModelDepartmentsToThrift(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ModelDepartmentsToThrift(departments)
 	}
@@ -604,19 +606,20 @@ func BenchmarkConverterImpl_ModelDepartmentsToThrift(b *testing.B) {
 
 func BenchmarkConverterImpl_CreateRequestToModel(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	orgID := uuid.New()
 	orgIDStr := orgID.String()
 	name := "Benchmark Department"
 	deptType := "Technical"
 
 	req := &identity_srv.CreateDepartmentRequest{
-		OrganizationID:  &orgIDStr,
+		OrganizationID: &orgIDStr,
 		Name:           &name,
 		DepartmentType: &deptType,
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.CreateRequestToModel(req)
 	}
@@ -624,7 +627,7 @@ func BenchmarkConverterImpl_CreateRequestToModel(b *testing.B) {
 
 func BenchmarkConverterImpl_ApplyUpdateToModel(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	now := time.Now()
 	nowMs := now.UnixMilli()
 	deptID := uuid.New()
@@ -648,6 +651,7 @@ func BenchmarkConverterImpl_ApplyUpdateToModel(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ApplyUpdateToModel(existing, req)
 	}

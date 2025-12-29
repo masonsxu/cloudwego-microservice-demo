@@ -4,9 +4,9 @@ package wire
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/google/wire"
+	"github.com/hertz-contrib/etag"
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
 	hertztracing "github.com/hertz-contrib/obs-opentelemetry/tracing"
-	"github.com/hertz-contrib/etag"
 	"github.com/hertz-contrib/requestid"
 
 	identityHandler "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/handler/identity"
@@ -72,14 +72,14 @@ func ProvideHandlerRegistry(
 // RegisterMiddlewares 注册全局中间件
 func (r *HandlerRegistry) RegisterMiddlewares() {
 	r.server.Use(
-		hertztracing.ServerMiddleware(r.tracer.Config),          // 追踪：最先执行，生成/提取追踪信息
-		requestid.New(),                                         // RequestID：生成和传递请求ID
+		hertztracing.ServerMiddleware(r.tracer.Config), // 追踪：最先执行，生成/提取追踪信息
+		requestid.New(), // RequestID：生成和传递请求ID
 		r.middlewares.ResponseHeaderMiddleware.MiddlewareFunc(), // 响应头：添加标准 HTTP Date 头部
 		r.middlewares.TraceMiddleware.MiddlewareFunc(),          // 追踪：最先执行，生成/提取追踪信息
 		r.middlewares.CORSMiddleware.MiddlewareFunc(),           // 跨域：处理预检，避免被后续中间件拦截
 		r.middlewares.ErrorHandlerMiddleware.MiddlewareFunc(),   // 错误处理：后续所有错误均由其捕获
 		r.middlewares.JWTMiddleware.MiddlewareFunc(),            // 认证：解析用户身份，存入上下文
-		etag.New(),                                              // ETag：计算和验证 ETag
+		etag.New(), // ETag：计算和验证 ETag
 	)
 
 	r.logger.Infof("Global middlewares registered successfully")

@@ -8,9 +8,8 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/config"
-	hertztracing "github.com/hertz-contrib/obs-opentelemetry/tracing"
-
 	"github.com/hertz-contrib/obs-opentelemetry/provider"
+	hertztracing "github.com/hertz-contrib/obs-opentelemetry/tracing"
 
 	appconfig "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 )

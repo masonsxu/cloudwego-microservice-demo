@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 )
 
@@ -33,7 +34,9 @@ func TestModelToThrift_FullModel(t *testing.T) {
 	roleID := uuid.New()
 	createdBy := uuid.New()
 	updatedBy := uuid.New()
+
 	var createdAt int64 = 1703472000000 // 2023-12-25 00:00:00 UTC
+
 	var updatedAt int64 = 1703558400000 // 2023-12-26 00:00:00 UTC
 
 	model := &models.UserRoleAssignment{
@@ -98,8 +101,11 @@ func TestModelToThrift_OptionalFieldsNil(t *testing.T) {
 	id := uuid.New()
 	userID := uuid.New()
 	roleID := uuid.New()
-	var createdAt int64 = 1703472000000
-	var updatedAt int64 = 1703558400000
+
+	var (
+		createdAt int64 = 1703472000000
+		updatedAt int64 = 1703558400000
+	)
 
 	model := &models.UserRoleAssignment{
 		BaseModel: models.BaseModel{
@@ -218,6 +224,7 @@ func safeDeref(s *string) string {
 	if s == nil {
 		return "<nil>"
 	}
+
 	return *s
 }
 
@@ -226,5 +233,6 @@ func safeDerefInt64(i *int64) int64 {
 	if i == nil {
 		return -1
 	}
+
 	return *i
 }

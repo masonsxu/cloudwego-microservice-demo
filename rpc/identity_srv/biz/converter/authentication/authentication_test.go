@@ -55,7 +55,7 @@ func TestConverterImpl_ModelUserMembershipsToThrift(t *testing.T) {
 		result := converter.ModelUserMembershipsToThrift([]*models.UserMembership{membership})
 
 		require.Len(t, result, 1)
-		
+
 		thriftMembership := result[0]
 		assert.Equal(t, membershipID.String(), *thriftMembership.ID)
 		assert.Equal(t, userID.String(), *thriftMembership.UserID)
@@ -151,7 +151,7 @@ func TestConverterImpl_ModelUserMembershipsToThrift(t *testing.T) {
 		result := converter.ModelUserMembershipsToThrift(memberships)
 
 		require.Len(t, result, 3)
-		
+
 		// 第一个元素应该正确转换
 		thriftMembership := result[0]
 		assert.NotNil(t, thriftMembership)
@@ -176,7 +176,7 @@ func TestConverterImpl_ModelUserMembershipsToThrift(t *testing.T) {
 		result := converter.ModelUserMembershipsToThrift([]*models.UserMembership{membership})
 
 		require.Len(t, result, 1)
-		
+
 		thriftMembership := result[0]
 		assert.Equal(t, uuid.Nil.String(), *thriftMembership.ID)
 		assert.Equal(t, uuid.Nil.String(), *thriftMembership.UserID)
@@ -207,7 +207,7 @@ func TestConverterImpl_ModelUserMembershipsToThrift(t *testing.T) {
 		result := converter.ModelUserMembershipsToThrift([]*models.UserMembership{membership})
 
 		require.Len(t, result, 1)
-		
+
 		thriftMembership := result[0]
 		assert.Equal(t, membershipID.String(), *thriftMembership.ID)
 		assert.Equal(t, userID.String(), *thriftMembership.UserID)
@@ -237,7 +237,7 @@ func TestConverterImpl_ModelUserMembershipsToThrift(t *testing.T) {
 		result := converter.ModelUserMembershipsToThrift([]*models.UserMembership{membership})
 
 		require.Len(t, result, 1)
-		
+
 		thriftMembership := result[0]
 		assert.Nil(t, thriftMembership.IsPrimary) // IsPrimary为false时不设置字段
 	})
@@ -246,7 +246,7 @@ func TestConverterImpl_ModelUserMembershipsToThrift(t *testing.T) {
 // 基准测试
 func BenchmarkConverterImpl_ModelUserMembershipsToThrift(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	now := time.Now()
 	nowMs := now.UnixMilli()
 	// 准备测试数据
@@ -266,6 +266,7 @@ func BenchmarkConverterImpl_ModelUserMembershipsToThrift(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ModelUserMembershipsToThrift(memberships)
 	}
@@ -274,7 +275,7 @@ func BenchmarkConverterImpl_ModelUserMembershipsToThrift(b *testing.B) {
 // 表格驱动测试
 func TestConverterImpl_ModelUserMembershipsToThrift_TableDriven(t *testing.T) {
 	converter := &ConverterImpl{}
-	
+
 	tests := []struct {
 		name        string
 		input       []*models.UserMembership

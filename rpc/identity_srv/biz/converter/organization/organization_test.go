@@ -75,8 +75,8 @@ func TestConverterImpl_ModelOrganizationToThrift(t *testing.T) {
 			},
 			Code:         "ORG_001",
 			Name:         "测试组织",
-			ParentID:     uuid.Nil, // 根组织
-			FacilityType: "",        // 空值
+			ParentID:     uuid.Nil,             // 根组织
+			FacilityType: "",                   // 空值
 			ProvinceCity: models.StringSlice{}, // 空切片
 		}
 
@@ -86,10 +86,10 @@ func TestConverterImpl_ModelOrganizationToThrift(t *testing.T) {
 		assert.Equal(t, orgID.String(), *result.ID)
 		assert.Equal(t, "ORG_001", *result.Code)
 		assert.Equal(t, "测试组织", *result.Name)
-		assert.Nil(t, result.ParentID) // uuid.Nil应该被跳过
-		assert.Nil(t, result.FacilityType) // 空字符串应该被跳过
+		assert.Nil(t, result.ParentID)            // uuid.Nil应该被跳过
+		assert.Nil(t, result.FacilityType)        // 空字符串应该被跳过
 		assert.Nil(t, result.AccreditationStatus) // 空字符串应该被跳过
-		assert.Empty(t, result.ProvinceCity) // 空切片
+		assert.Empty(t, result.ProvinceCity)      // 空切片
 		assert.Equal(t, now, *result.CreatedAt)
 		assert.Equal(t, now, *result.UpdatedAt)
 	})
@@ -226,10 +226,10 @@ func TestConverterImpl_ThriftOrganizationToModel(t *testing.T) {
 		assert.Equal(t, orgID, result.ID)
 		assert.Equal(t, "ORG_001", result.Code)
 		assert.Equal(t, "测试组织", result.Name)
-		assert.Equal(t, uuid.Nil, result.ParentID) // nil ParentID
-		assert.Equal(t, "", result.FacilityType) // nil FacilityType
+		assert.Equal(t, uuid.Nil, result.ParentID)      // nil ParentID
+		assert.Equal(t, "", result.FacilityType)        // nil FacilityType
 		assert.Equal(t, "", result.AccreditationStatus) // nil AccreditationStatus
-		assert.Empty(t, result.ProvinceCity) // nil ProvinceCity
+		assert.Empty(t, result.ProvinceCity)            // nil ProvinceCity
 		// 注意：ThrfitOrganizationToModel 不设置时间字段，这些字段会在数据库层设置
 		assert.Equal(t, int64(0), result.CreatedAt)
 		assert.Equal(t, int64(0), result.UpdatedAt)
@@ -427,11 +427,11 @@ func TestConverterImpl_CreateRequestToModel(t *testing.T) {
 
 		require.NotNil(t, result)
 		assert.Equal(t, name, result.Name)
-		assert.Equal(t, "", result.Code) // Code应该在repository层生成
-		assert.Equal(t, uuid.Nil, result.ParentID) // nil ParentID
-		assert.Equal(t, "", result.FacilityType) // nil FacilityType
+		assert.Equal(t, "", result.Code)                // Code应该在repository层生成
+		assert.Equal(t, uuid.Nil, result.ParentID)      // nil ParentID
+		assert.Equal(t, "", result.FacilityType)        // nil FacilityType
 		assert.Equal(t, "", result.AccreditationStatus) // nil AccreditationStatus
-		assert.Empty(t, result.ProvinceCity) // nil ProvinceCity
+		assert.Empty(t, result.ProvinceCity)            // nil ProvinceCity
 	})
 
 	t.Run("根组织创建请求", func(t *testing.T) {
@@ -508,13 +508,13 @@ func TestConverterImpl_ApplyUpdateToModel(t *testing.T) {
 		result := converter.ApplyUpdateToModel(existing, req)
 
 		require.NotNil(t, result)
-		assert.NotEqual(t, existing, result) // 应该是新的对象
-		assert.Equal(t, orgID, result.ID) // ID不应该改变
-		assert.Equal(t, "OLD_CODE", result.Code) // Code不应该改变
-		assert.Equal(t, newName, result.Name) // Name应该更新
-		assert.Equal(t, newParentID, result.ParentID) // ParentID应该更新
-		assert.Equal(t, facilityType, result.FacilityType) // FacilityType应该更新
-		assert.Equal(t, accreditationStatus, result.AccreditationStatus) // AccreditationStatus应该更新
+		assert.NotEqual(t, existing, result)                                   // 应该是新的对象
+		assert.Equal(t, orgID, result.ID)                                      // ID不应该改变
+		assert.Equal(t, "OLD_CODE", result.Code)                               // Code不应该改变
+		assert.Equal(t, newName, result.Name)                                  // Name应该更新
+		assert.Equal(t, newParentID, result.ParentID)                          // ParentID应该更新
+		assert.Equal(t, facilityType, result.FacilityType)                     // FacilityType应该更新
+		assert.Equal(t, accreditationStatus, result.AccreditationStatus)       // AccreditationStatus应该更新
 		assert.Equal(t, models.StringSlice(provinceCity), result.ProvinceCity) // ProvinceCity应该更新
 	})
 
@@ -545,11 +545,11 @@ func TestConverterImpl_ApplyUpdateToModel(t *testing.T) {
 
 		require.NotNil(t, result)
 		assert.Equal(t, orgID, result.ID)
-		assert.Equal(t, "ORG_001", result.Code) // Code不应该改变
-		assert.Equal(t, newName, result.Name) // Name应该更新
-		assert.Equal(t, uuid.Nil, result.ParentID) // ParentID不应该改变
-		assert.Equal(t, "原始类型", result.FacilityType) // FacilityType不应该改变
-		assert.Equal(t, "原始状态", result.AccreditationStatus) // AccreditationStatus不应该改变
+		assert.Equal(t, "ORG_001", result.Code)                          // Code不应该改变
+		assert.Equal(t, newName, result.Name)                            // Name应该更新
+		assert.Equal(t, uuid.Nil, result.ParentID)                       // ParentID不应该改变
+		assert.Equal(t, "原始类型", result.FacilityType)                     // FacilityType不应该改变
+		assert.Equal(t, "原始状态", result.AccreditationStatus)              // AccreditationStatus不应该改变
 		assert.Equal(t, models.StringSlice{"原始省市"}, result.ProvinceCity) // ProvinceCity不应该改变
 	})
 
@@ -572,10 +572,10 @@ func TestConverterImpl_ApplyUpdateToModel(t *testing.T) {
 		}
 
 		req := &identity_srv.UpdateOrganizationRequest{
-			ParentID:            nil, // nil ParentID
+			ParentID:            nil,                                     // nil ParentID
 			FacilityType:        func() *string { s := ""; return &s }(), // 空字符串
-			AccreditationStatus: nil, // nil
-			ProvinceCity:        []string{}, // 空列表
+			AccreditationStatus: nil,                                     // nil
+			ProvinceCity:        []string{},                              // 空列表
 		}
 
 		result := converter.ApplyUpdateToModel(existing, req)
@@ -584,10 +584,10 @@ func TestConverterImpl_ApplyUpdateToModel(t *testing.T) {
 		assert.NotEqual(t, existing, result) // 应该是新对象，不是原对象
 		assert.Equal(t, orgID, result.ID)
 		assert.Equal(t, "ORG_001", result.Code)
-		assert.Equal(t, "原始名称", result.Name) // Name没有更新
-		assert.Equal(t, existing.ParentID, result.ParentID) // ParentID 不应该改变，因为 req.ParentID 是 nil
-		assert.Equal(t, "", result.FacilityType) // 空字符串
-		assert.Equal(t, "原始状态", result.AccreditationStatus) // nil 不更新
+		assert.Equal(t, "原始名称", result.Name)                       // Name没有更新
+		assert.Equal(t, existing.ParentID, result.ParentID)        // ParentID 不应该改变，因为 req.ParentID 是 nil
+		assert.Equal(t, "", result.FacilityType)                   // 空字符串
+		assert.Equal(t, "原始状态", result.AccreditationStatus)        // nil 不更新
 		assert.Equal(t, models.StringSlice{}, result.ProvinceCity) // 空列表
 	})
 }
@@ -708,7 +708,7 @@ func TestConverterImpl_CompleteRoundTrip(t *testing.T) {
 		assert.Equal(t, originalThrift.AccreditationStatus, resultThrift.AccreditationStatus)
 		assert.Equal(t, originalThrift.ProvinceCity, resultThrift.ProvinceCity)
 		// 注意：ThrfitOrganizationToModel 不设置时间字段，所以往返转换后时间字段不会保持
-	// Model -> Thrift -> Model -> Thrift 的往返转换会使用 Model 的时间字段（即默认值 0）
+		// Model -> Thrift -> Model -> Thrift 的往返转换会使用 Model 的时间字段（即默认值 0）
 		assert.Equal(t, int64(0), *resultThrift.CreatedAt)
 		assert.Equal(t, int64(0), *resultThrift.UpdatedAt)
 	})
@@ -731,8 +731,8 @@ func TestConverterImpl_EdgeCases(t *testing.T) {
 			Code:                "EMPTY_TEST",
 			Name:                "空字段测试",
 			ParentID:            uuid.Nil,
-			FacilityType:        "", // 空字符串
-			AccreditationStatus: "", // 空字符串
+			FacilityType:        "",                   // 空字符串
+			AccreditationStatus: "",                   // 空字符串
 			ProvinceCity:        models.StringSlice{}, // 空切片
 		}
 
@@ -742,9 +742,9 @@ func TestConverterImpl_EdgeCases(t *testing.T) {
 		assert.Equal(t, "EMPTY_TEST", *result.Code)
 		assert.Equal(t, "空字段测试", *result.Name)
 		assert.Nil(t, result.ParentID)
-		assert.Nil(t, result.FacilityType) // 空字符串应该被跳过
+		assert.Nil(t, result.FacilityType)        // 空字符串应该被跳过
 		assert.Nil(t, result.AccreditationStatus) // 空字符串应该被跳过
-		assert.Empty(t, result.ProvinceCity) // 空切片
+		assert.Empty(t, result.ProvinceCity)      // 空切片
 	})
 
 	t.Run("nil字段处理", func(t *testing.T) {
@@ -769,17 +769,17 @@ func TestConverterImpl_EdgeCases(t *testing.T) {
 		require.NotNil(t, result)
 		assert.Equal(t, "NIL_TEST", result.Code)
 		assert.Equal(t, "nil字段测试", result.Name)
-		assert.Equal(t, uuid.Nil, result.ParentID) // nil ParentID 应该是 uuid.Nil
-		assert.Equal(t, "", result.FacilityType) // nil 应该是空字符串
+		assert.Equal(t, uuid.Nil, result.ParentID)      // nil ParentID 应该是 uuid.Nil
+		assert.Equal(t, "", result.FacilityType)        // nil 应该是空字符串
 		assert.Equal(t, "", result.AccreditationStatus) // nil 应该是空字符串
-		assert.Empty(t, result.ProvinceCity) // nil 应该是空切片
+		assert.Empty(t, result.ProvinceCity)            // nil 应该是空切片
 	})
 }
 
 // 基准测试
 func BenchmarkConverterImpl_ModelOrganizationToThrift(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	now := int64(1640995200000)
 	orgID := uuid.New()
 	parentID := uuid.New()
@@ -799,6 +799,7 @@ func BenchmarkConverterImpl_ModelOrganizationToThrift(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ModelOrganizationToThrift(model)
 	}
@@ -806,30 +807,32 @@ func BenchmarkConverterImpl_ModelOrganizationToThrift(b *testing.B) {
 
 func BenchmarkConverterImpl_ThriftOrganizationToModel(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	now := int64(1640995200000)
 	orgID := uuid.New()
 	parentID := uuid.New()
 
 	orgIDStr := orgID.String()
-			parentIDStr := parentID.String()
-			code := "BENCHMARK_TEST"
-			name := "基准测试"
-			facilityType := "测试类型"
-			accreditationStatus := "测试状态"
-	
-			dto := &identity_srv.Organization{
-				ID:                  &orgIDStr,
-				Code:                &code,
-				Name:                &name,
-				ParentID:            &parentIDStr,
-				FacilityType:        &facilityType,
-				AccreditationStatus: &accreditationStatus,
-				ProvinceCity:        []string{"测试省", "测试市"},
-				CreatedAt:           &now,
-				UpdatedAt:           &now,
-			}
+	parentIDStr := parentID.String()
+	code := "BENCHMARK_TEST"
+	name := "基准测试"
+	facilityType := "测试类型"
+	accreditationStatus := "测试状态"
+
+	dto := &identity_srv.Organization{
+		ID:                  &orgIDStr,
+		Code:                &code,
+		Name:                &name,
+		ParentID:            &parentIDStr,
+		FacilityType:        &facilityType,
+		AccreditationStatus: &accreditationStatus,
+		ProvinceCity:        []string{"测试省", "测试市"},
+		CreatedAt:           &now,
+		UpdatedAt:           &now,
+	}
+
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ThriftOrganizationToModel(dto)
 	}
@@ -837,10 +840,11 @@ func BenchmarkConverterImpl_ThriftOrganizationToModel(b *testing.B) {
 
 func BenchmarkConverterImpl_ModelOrganizationsToThrift(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	now := int64(1640995200000)
 
 	var orgs []*models.Organization
+
 	for i := 0; i < 10; i++ {
 		org := &models.Organization{
 			BaseModel: models.BaseModel{
@@ -856,6 +860,7 @@ func BenchmarkConverterImpl_ModelOrganizationsToThrift(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ModelOrganizationsToThrift(orgs)
 	}

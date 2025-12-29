@@ -112,7 +112,7 @@ func TestConverterImpl_ModelToThrift(t *testing.T) {
 		assert.Equal(t, "/dashboard", *result.Path)
 		assert.Equal(t, "Dashboard", *result.Component)
 		assert.Equal(t, "dashboard", *result.Icon)
-		
+
 		// 验证子菜单
 		require.Len(t, result.Children, 1)
 		childResult := result.Children[0]
@@ -195,13 +195,13 @@ func TestConverterImpl_ModelToThrift(t *testing.T) {
 		require.NotNil(t, result)
 		assert.Equal(t, "system", *result.Id)
 		assert.Equal(t, "系统管理", *result.Name)
-		
+
 		// 验证第一级子菜单
 		require.Len(t, result.Children, 1)
 		level1Result := result.Children[0]
 		assert.Equal(t, "system-settings", *level1Result.Id)
 		assert.Equal(t, "系统设置", *level1Result.Name)
-		
+
 		// 验证第二级子菜单
 		require.Len(t, level1Result.Children, 1)
 		level2Result := level1Result.Children[0]
@@ -381,7 +381,7 @@ func TestConverterImpl_RecursiveMenuStructure(t *testing.T) {
 
 		// 权限管理 -> 权限配置
 		permissionConfig := &models.Menu{
-			BaseModel: models.BaseModel{ID: uuid.New(), CreatedAt: now, UpdatedAt: now},
+			BaseModel:  models.BaseModel{ID: uuid.New(), CreatedAt: now, UpdatedAt: now},
 			SemanticID: "permission-config",
 			Version:    "v1.0.0",
 			Name:       "权限配置",
@@ -393,7 +393,7 @@ func TestConverterImpl_RecursiveMenuStructure(t *testing.T) {
 
 		// 权限管理 -> 权限列表
 		permissionList := &models.Menu{
-			BaseModel: models.BaseModel{ID: uuid.New(), CreatedAt: now, UpdatedAt: now},
+			BaseModel:  models.BaseModel{ID: uuid.New(), CreatedAt: now, UpdatedAt: now},
 			SemanticID: "permission-list",
 			Version:    "v1.0.0",
 			Name:       "权限列表",
@@ -405,7 +405,7 @@ func TestConverterImpl_RecursiveMenuStructure(t *testing.T) {
 
 		// 权限管理
 		permission := &models.Menu{
-			BaseModel: models.BaseModel{ID: uuid.New(), CreatedAt: now, UpdatedAt: now},
+			BaseModel:  models.BaseModel{ID: uuid.New(), CreatedAt: now, UpdatedAt: now},
 			SemanticID: "permission",
 			Version:    "v1.0.0",
 			Name:       "权限管理",
@@ -417,7 +417,7 @@ func TestConverterImpl_RecursiveMenuStructure(t *testing.T) {
 
 		// 用户管理 -> 用户详情
 		userDetail := &models.Menu{
-			BaseModel: models.BaseModel{ID: uuid.New(), CreatedAt: now, UpdatedAt: now},
+			BaseModel:  models.BaseModel{ID: uuid.New(), CreatedAt: now, UpdatedAt: now},
 			SemanticID: "user-detail",
 			Version:    "v1.0.0",
 			Name:       "用户详情",
@@ -429,7 +429,7 @@ func TestConverterImpl_RecursiveMenuStructure(t *testing.T) {
 
 		// 用户管理 -> 用户列表
 		userList := &models.Menu{
-			BaseModel: models.BaseModel{ID: uuid.New(), CreatedAt: now, UpdatedAt: now},
+			BaseModel:  models.BaseModel{ID: uuid.New(), CreatedAt: now, UpdatedAt: now},
 			SemanticID: "user-list",
 			Version:    "v1.0.0",
 			Name:       "用户列表",
@@ -441,7 +441,7 @@ func TestConverterImpl_RecursiveMenuStructure(t *testing.T) {
 
 		// 用户管理
 		user := &models.Menu{
-			BaseModel: models.BaseModel{ID: uuid.New(), CreatedAt: now, UpdatedAt: now},
+			BaseModel:  models.BaseModel{ID: uuid.New(), CreatedAt: now, UpdatedAt: now},
 			SemanticID: "user",
 			Version:    "v1.0.0",
 			Name:       "用户管理",
@@ -453,7 +453,7 @@ func TestConverterImpl_RecursiveMenuStructure(t *testing.T) {
 
 		// 角色管理
 		role := &models.Menu{
-			BaseModel: models.BaseModel{ID: uuid.New(), CreatedAt: now, UpdatedAt: now},
+			BaseModel:  models.BaseModel{ID: uuid.New(), CreatedAt: now, UpdatedAt: now},
 			SemanticID: "role",
 			Version:    "v1.0.0",
 			Name:       "角色管理",
@@ -465,7 +465,7 @@ func TestConverterImpl_RecursiveMenuStructure(t *testing.T) {
 
 		// 系统
 		system := &models.Menu{
-			BaseModel: models.BaseModel{ID: uuid.New(), CreatedAt: now, UpdatedAt: now},
+			BaseModel:  models.BaseModel{ID: uuid.New(), CreatedAt: now, UpdatedAt: now},
 			SemanticID: "system",
 			Version:    "v1.0.0",
 			Name:       "系统管理",
@@ -483,7 +483,7 @@ func TestConverterImpl_RecursiveMenuStructure(t *testing.T) {
 
 		// 验证一级子菜单
 		require.Len(t, result.Children, 3)
-		
+
 		// 用户管理
 		userResult := result.Children[0]
 		assert.Equal(t, "user", *userResult.Id)
@@ -537,6 +537,7 @@ func TestConverterImpl_EdgeCases(t *testing.T) {
 
 		// 创建5层深度的菜单结构
 		var currentMenu *models.Menu
+
 		for i := 0; i < 5; i++ {
 			level := i + 1
 			menu := &models.Menu{
@@ -571,11 +572,13 @@ func TestConverterImpl_EdgeCases(t *testing.T) {
 		current := result
 		for i := 5; i >= 1; i-- {
 			require.NotNil(t, current)
+
 			expectedID := fmt.Sprintf("level-%d", i)
 			expectedName := fmt.Sprintf("级别 %d", i)
+
 			assert.Equal(t, expectedID, *current.Id)
 			assert.Equal(t, expectedName, *current.Name)
-			
+
 			if i > 1 {
 				require.Len(t, current.Children, 1)
 				current = current.Children[0]
@@ -590,6 +593,7 @@ func TestConverterImpl_EdgeCases(t *testing.T) {
 
 		// 创建包含100个子菜单的父菜单
 		var children []*models.Menu
+
 		for i := 0; i < 100; i++ {
 			child := &models.Menu{
 				BaseModel: models.BaseModel{
@@ -678,7 +682,7 @@ func TestConverterImpl_CompleteRoundTrip(t *testing.T) {
 // 基准测试
 func BenchmarkConverterImpl_ModelToThrift(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	now := int64(1640995200000)
 	menuID := uuid.New()
 
@@ -698,6 +702,7 @@ func BenchmarkConverterImpl_ModelToThrift(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ModelToThrift(model)
 	}
@@ -705,28 +710,31 @@ func BenchmarkConverterImpl_ModelToThrift(b *testing.B) {
 
 func BenchmarkConverterImpl_ModelsToThrift(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	now := int64(1640995200000)
 
 	var menus []*models.Menu
-			for i := 0; i < 10; i++ {
-				menu := &models.Menu{
-					BaseModel: models.BaseModel{
-						ID:        uuid.New(),
-						CreatedAt: now,
-						UpdatedAt: now,
-					},
-					SemanticID: fmt.Sprintf("menu-%d", i),
-					Version:    "v1.0.0",
-					Name:       fmt.Sprintf("菜单 %d", i),
-					Path:       fmt.Sprintf("/menu/%d", i),
-					Component:  fmt.Sprintf("Menu%d", i),
-					Icon:       fmt.Sprintf("menu-%d", i),
-					Children:   []*models.Menu{},
-				}
-				menus = append(menus, menu)
-			}
+
+	for i := 0; i < 10; i++ {
+		menu := &models.Menu{
+			BaseModel: models.BaseModel{
+				ID:        uuid.New(),
+				CreatedAt: now,
+				UpdatedAt: now,
+			},
+			SemanticID: fmt.Sprintf("menu-%d", i),
+			Version:    "v1.0.0",
+			Name:       fmt.Sprintf("菜单 %d", i),
+			Path:       fmt.Sprintf("/menu/%d", i),
+			Component:  fmt.Sprintf("Menu%d", i),
+			Icon:       fmt.Sprintf("menu-%d", i),
+			Children:   []*models.Menu{},
+		}
+		menus = append(menus, menu)
+	}
+
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ModelsToThrift(menus)
 	}
@@ -734,11 +742,12 @@ func BenchmarkConverterImpl_ModelsToThrift(b *testing.B) {
 
 func BenchmarkConverterImpl_RecursiveMenu(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	now := int64(1640995200000)
 
 	// 创建3层深的菜单树
 	var createMenu func(depth int) *models.Menu
+
 	createMenu = func(depth int) *models.Menu {
 		menu := &models.Menu{
 			BaseModel: models.BaseModel{
@@ -765,6 +774,7 @@ func BenchmarkConverterImpl_RecursiveMenu(b *testing.B) {
 	rootMenu := createMenu(3) // 4层深度
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ModelToThrift(rootMenu)
 	}

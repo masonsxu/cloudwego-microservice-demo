@@ -108,6 +108,7 @@ func ProvideServerOptions(
 	// 这样 OTel 会先创建 span，MetaInfoMiddleware 才能提取 trace_id/span_id
 	if provider.IsEnabled() {
 		opts = append(opts, server.WithSuite(tracing.NewServerSuite()))
+
 		klog.Infof("OpenTelemetry tracing enabled, endpoint: %s", cfg.Tracing.Endpoint)
 	}
 

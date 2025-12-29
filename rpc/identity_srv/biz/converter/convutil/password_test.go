@@ -8,7 +8,6 @@ func TestHashPassword_Success(t *testing.T) {
 	password := "mySecretPassword123"
 
 	hash, err := HashPassword(password)
-
 	if err != nil {
 		t.Fatalf("HashPassword() error = %v", err)
 	}
@@ -36,7 +35,6 @@ func TestHashPassword_DifferentHashesForSamePassword(t *testing.T) {
 
 func TestHashPassword_EmptyPassword(t *testing.T) {
 	hash, err := HashPassword("")
-
 	if err != nil {
 		t.Fatalf("HashPassword(\"\") error = %v", err)
 	}
@@ -156,7 +154,9 @@ func BenchmarkHashPassword(b *testing.B) {
 func BenchmarkVerifyPassword(b *testing.B) {
 	password := "benchmarkPassword123"
 	hash, _ := HashPassword(password)
+
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = VerifyPassword(password, hash)
 	}

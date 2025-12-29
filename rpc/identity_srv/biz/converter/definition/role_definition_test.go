@@ -96,7 +96,7 @@ func (m *mockEnumConverter) ThriftGenderToModel(gender core.Gender) models.Gende
 func TestNewConverter(t *testing.T) {
 	enumConverter := &mockEnumConverter{}
 	converter := NewConverter(enumConverter)
-	
+
 	assert.NotNil(t, converter)
 	assert.IsType(t, &ConverterImpl{}, converter)
 }
@@ -386,9 +386,9 @@ func TestConverterImpl_ModelToThrift_TableDriven(t *testing.T) {
 			description: "nil输入应该返回nil",
 		},
 		{
-			name: "空角色定义",
-			input: &models.RoleDefinition{},
-			expectNil: false,
+			name:        "空角色定义",
+			input:       &models.RoleDefinition{},
+			expectNil:   false,
 			description: "空角色定义应该返回非nil结果",
 		},
 	}
@@ -396,7 +396,7 @@ func TestConverterImpl_ModelToThrift_TableDriven(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := converter.ModelToThrift(tt.input)
-			
+
 			if tt.expectNil {
 				assert.Nil(t, result, tt.description)
 			} else {
@@ -410,7 +410,7 @@ func TestConverterImpl_ModelToThrift_TableDriven(t *testing.T) {
 func BenchmarkConverterImpl_ModelToThrift(b *testing.B) {
 	enumConverter := &mockEnumConverter{}
 	converter := NewConverter(enumConverter)
-	
+
 	now := time.Now()
 	nowMs := now.UnixMilli()
 	roleID := uuid.New()
@@ -434,6 +434,7 @@ func BenchmarkConverterImpl_ModelToThrift(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ModelToThrift(model)
 	}

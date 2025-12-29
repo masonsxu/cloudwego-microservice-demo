@@ -481,6 +481,7 @@ func TestConverterImpl_ThriftSliceToModel(t *testing.T) {
 
 	t.Run("大量权限转换", func(t *testing.T) {
 		thrifts := make([]*identity_srv.Permission, 100)
+
 		for i := 0; i < 100; i++ {
 			resource := "resource:" + fmt.Sprintf("%d", i)
 			action := "action:" + fmt.Sprintf("%d", i)
@@ -678,6 +679,7 @@ func BenchmarkConverterImpl_ModelToThrift(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ModelToThrift(model)
 	}
@@ -698,6 +700,7 @@ func BenchmarkConverterImpl_ThriftToModel(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ThriftToModel(thrift)
 	}
@@ -718,6 +721,7 @@ func BenchmarkConverterImpl_ModelSliceToThrift(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ModelSliceToThrift(perms)
 	}
@@ -729,6 +733,7 @@ func BenchmarkConverterImpl_ThriftSliceToModel(b *testing.B) {
 	converter := NewConverter(mockEnumConv)
 
 	thrifts := make([]*identity_srv.Permission, 100)
+
 	for i := 0; i < 100; i++ {
 		resource := "resource:" + fmt.Sprintf("%d", i)
 		action := "action:" + fmt.Sprintf("%d", i)
@@ -741,6 +746,7 @@ func BenchmarkConverterImpl_ThriftSliceToModel(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ThriftSliceToModel(thrifts)
 	}

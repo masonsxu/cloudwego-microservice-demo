@@ -174,7 +174,7 @@ func TestConverterImpl_UploadRequestToModel(t *testing.T) {
 		assert.Equal(t, int64(len(fileContent)), result.FileSize)
 		assert.Equal(t, uploaderID, result.UploadedBy.String())
 		require.NotNil(t, result.ExpiresAt)
-		
+
 		// 验证过期时间是大约7天后
 		expectedExpiry := time.Now().Add(7 * 24 * time.Hour).UnixMilli()
 		assert.InDelta(t, expectedExpiry, *result.ExpiresAt, 1000) // 允许1秒误差
@@ -187,9 +187,9 @@ func TestConverterImpl_UploadRequestToModel(t *testing.T) {
 
 		require.NotNil(t, result)
 		assert.Equal(t, models.LogoStatusTemporary, result.Status)
-		assert.Equal(t, "", result.FileName) // 默认空值
-		assert.Equal(t, "", result.MimeType) // 默认空值
-		assert.Equal(t, int64(0), result.FileSize) // 没有文件内容
+		assert.Equal(t, "", result.FileName)         // 默认空值
+		assert.Equal(t, "", result.MimeType)         // 默认空值
+		assert.Equal(t, int64(0), result.FileSize)   // 没有文件内容
 		assert.Equal(t, uuid.Nil, result.UploadedBy) // 无效UUID
 		require.NotNil(t, result.ExpiresAt)
 	})
@@ -499,7 +499,7 @@ func TestConverterImpl_EdgeCases(t *testing.T) {
 // 基准测试
 func BenchmarkConverterImpl_ModelToThrift(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	now := time.Now()
 	nowMs := now.UnixMilli()
 	logoID := uuid.New()
@@ -520,6 +520,7 @@ func BenchmarkConverterImpl_ModelToThrift(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.ModelToThrift(model)
 	}
@@ -527,7 +528,7 @@ func BenchmarkConverterImpl_ModelToThrift(b *testing.B) {
 
 func BenchmarkConverterImpl_UploadRequestToModel(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	uploaderID := uuid.New().String()
 	fileName := "test.png"
 	mimeType := "image/png"
@@ -541,6 +542,7 @@ func BenchmarkConverterImpl_UploadRequestToModel(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_ = converter.UploadRequestToModel(req)
 	}
@@ -548,7 +550,7 @@ func BenchmarkConverterImpl_UploadRequestToModel(b *testing.B) {
 
 func BenchmarkConverterImpl_BindRequestToModel(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	logoID := uuid.New().String()
 	orgID := uuid.New().String()
 
@@ -558,6 +560,7 @@ func BenchmarkConverterImpl_BindRequestToModel(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		_, _ = converter.BindRequestToModel(req)
 	}
@@ -565,8 +568,9 @@ func BenchmarkConverterImpl_BindRequestToModel(b *testing.B) {
 
 func BenchmarkConverterImpl_StatusConversion(b *testing.B) {
 	converter := &ConverterImpl{}
-	
+
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		// Model -> Thrift -> Model 往环
 		thriftStatus := converter.StatusModelToThrift(models.LogoStatusTemporary)

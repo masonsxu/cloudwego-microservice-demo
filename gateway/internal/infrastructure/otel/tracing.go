@@ -28,6 +28,7 @@ func NewIgnorePathsOption(cfg *config.Configuration) hertztracing.Option {
 		if path == "" {
 			continue
 		}
+
 		if strings.HasSuffix(path, "*") {
 			// 前缀匹配：去掉末尾的 *
 			prefixPaths = append(prefixPaths, strings.TrimSuffix(path, "*"))
