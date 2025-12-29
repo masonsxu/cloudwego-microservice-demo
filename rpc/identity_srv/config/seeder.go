@@ -163,7 +163,6 @@ func seedSuperAdminUser(db *gorm.DB, logger *zerolog.Logger) (uuid.UUID, error) 
 		Status:             models.UserStatusActive,
 		MustChangePassword: false,
 		IsSystemUser:       true, // 标记为系统用户
-		Version:            1,
 	}
 
 	if err := db.Create(user).Error; err != nil {

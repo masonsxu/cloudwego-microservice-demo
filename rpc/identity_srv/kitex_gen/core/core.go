@@ -6,8 +6,6 @@ import (
 	"fmt"
 )
 
-type ULID = string
-
 type UUID = string
 
 type TimestampMS = int64

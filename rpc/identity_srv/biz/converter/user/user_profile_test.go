@@ -148,7 +148,6 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 			CreatedBy:         &createdBy,
 			UpdatedBy:         &updatedBy,
 			LastLoginTime:     &lastLoginTime,
-			Version:           1,
 		}
 
 		result := converter.ModelUserProfileToThrift(model)
@@ -173,7 +172,6 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 		assert.Equal(t, createdBy.String(), *result.CreatedBy)
 		assert.Equal(t, updatedBy.String(), *result.UpdatedBy)
 		assert.Equal(t, &lastLoginTime, result.LastLoginTime)
-		assert.Equal(t, int32(1), result.Version)
 	})
 
 	t.Run("最小用户档案转换", func(t *testing.T) {
@@ -188,7 +186,6 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 			},
 			Username: "minimal",
 			Status:   models.UserStatusInactive,
-			Version:  1,
 		}
 
 		result := converter.ModelUserProfileToThrift(model)
@@ -197,7 +194,6 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 		assert.Equal(t, userID.String(), *result.ID)
 		assert.Equal(t, "minimal", *result.Username)
 		assert.Equal(t, core.UserStatus_INACTIVE, *result.Status)
-		assert.Equal(t, int32(1), result.Version)
 		assert.Equal(t, &now, result.CreatedAt)
 		assert.Equal(t, &now, result.UpdatedAt)
 
@@ -238,7 +234,6 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 			RealName:    "",
 			Specialties: "",
 			Status:      models.UserStatusActive,
-			Version:     1,
 		}
 
 		result := converter.ModelUserProfileToThrift(model)
@@ -273,7 +268,6 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 			AccountExpiry:     &zeroTime,            // 零值时间戳
 			LastLoginTime:     &zeroTime,            // 零值时间戳
 			Status:            models.UserStatusActive,
-			Version:           1,
 		}
 
 		result := converter.ModelUserProfileToThrift(model)
@@ -308,7 +302,6 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 			Username:    "invalidjson",
 			Specialties: "invalid json string[",
 			Status:      models.UserStatusActive,
-			Version:     1,
 		}
 
 		result := converter.ModelUserProfileToThrift(model)
@@ -579,7 +572,6 @@ func TestConverterImpl_CompleteRoundTrip(t *testing.T) {
 			LoginAttempts:     1,
 			MustChangePassword: false,
 			AccountExpiry:     &accountExpiry,
-			Version:           2,
 		}
 
 		// Model -> Thrift
@@ -603,7 +595,6 @@ func TestConverterImpl_CompleteRoundTrip(t *testing.T) {
 		assert.Equal(t, original.LoginAttempts, thrift.LoginAttempts)
 		assert.Equal(t, original.MustChangePassword, thrift.MustChangePassword)
 		assert.Equal(t, original.AccountExpiry, thrift.AccountExpiry)
-		assert.Equal(t, original.Version, thrift.Version)
 	})
 
 	t.Run("创建请求往返测试", func(t *testing.T) {
@@ -655,7 +646,6 @@ func TestConverterImpl_EdgeCases(t *testing.T) {
 			LastName:  longString,
 			RealName:  longString,
 			Status:    models.UserStatusActive,
-			Version:   1,
 		}
 
 		thrift := converter.ModelUserProfileToThrift(model)
@@ -686,7 +676,6 @@ func TestConverterImpl_EdgeCases(t *testing.T) {
 			ProfessionalTitle: "高级工程师🔧",
 			Specialties:       `["Go编程","容器技术","云计算☁️"]`,
 			Status:            models.UserStatusActive,
-			Version:           1,
 		}
 
 		thrift := converter.ModelUserProfileToThrift(model)
@@ -718,7 +707,6 @@ func TestConverterImpl_EdgeCases(t *testing.T) {
 			LicenseNumber:     specialChars,
 			EmployeeID:        specialChars,
 			Status:            models.UserStatusActive,
-			Version:           1,
 		}
 
 		thrift := converter.ModelUserProfileToThrift(model)
@@ -760,7 +748,6 @@ func BenchmarkConverterImpl_ModelUserProfileToThrift(b *testing.B) {
 		LoginAttempts:     1,
 		MustChangePassword: false,
 		AccountExpiry:     &accountExpiry,
-		Version:           1,
 	}
 
 	b.ResetTimer()

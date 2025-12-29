@@ -81,9 +81,6 @@ struct UserProfile {
     /** 最后更新者用户ID */
     19: optional core.UUID updatedBy,
 
-    /** 乐观锁版本号 */
-    21: optional i32 version = 1,
-
     /** 逻辑删除标记 */
     22: optional bool deleted = false,
 

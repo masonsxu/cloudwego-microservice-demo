@@ -51,7 +51,7 @@ func (c *ConverterImpl) ModelDepartmentToThrift(
 		equipmentSlice := convutil.JSONToULIDSlice(model.AvailableEquipment)
 		if len(equipmentSlice) > 0 {
 			// 将 []string 转换为 []core.ULID
-			equipmentULIDs := make([]core.ULID, 0, len(equipmentSlice))
+			equipmentULIDs := make([]core.UUID, 0, len(equipmentSlice))
 			equipmentULIDs = append(equipmentULIDs, equipmentSlice...)
 
 			dto.AvailableEquipment = equipmentULIDs

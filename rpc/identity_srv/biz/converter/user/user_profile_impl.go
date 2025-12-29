@@ -42,7 +42,6 @@ func (c *ConverterImpl) ModelUserProfileToThrift(
 		ID:        &id,
 		Username:  &username,
 		Status:    &status,
-		Version:   model.Version,
 		CreatedAt: &model.CreatedAt,
 		UpdatedAt: &model.UpdatedAt,
 	}

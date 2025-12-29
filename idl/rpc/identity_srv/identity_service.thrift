@@ -69,7 +69,7 @@ service IdentityService {
 
     /**
      * 更新用户信息。
-     * @param req 包含用户ID和需要更新的字段信息，使用乐观锁(version)保证数据一致性。
+     * @param req 包含用户ID和需要更新的字段信息。
      * @return 更新后的用户画像 (UserProfile)。
      */
     identity_model.UserProfile UpdateUser(1: UpdateUserRequest req),
@@ -508,9 +508,6 @@ struct UpdateUserRequest {
     5: optional string lastName,
     6: optional string realName,
     13: optional enums.Gender gender,
-
-    /** 用于乐观锁的版本号 */
-    7: optional i32 version,
     8: optional string professionalTitle,
     9: optional string licenseNumber,
     10: optional list<string> specialties,

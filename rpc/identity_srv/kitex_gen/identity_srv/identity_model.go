@@ -78,7 +78,6 @@ type UserProfile struct {
 	UpdatedAt             *core.TimestampMS `thrift:"updatedAt,17,optional" frugal:"17,optional,i64" json:"updatedAt,omitempty"`
 	CreatedBy             *core.UUID        `thrift:"createdBy,18,optional" frugal:"18,optional,string" json:"createdBy,omitempty"`
 	UpdatedBy             *core.UUID        `thrift:"updatedBy,19,optional" frugal:"19,optional,string" json:"updatedBy,omitempty"`
-	Version               int32             `thrift:"version,21,optional" frugal:"21,optional,i32" json:"version,omitempty"`
 	Deleted               bool              `thrift:"deleted,22,optional" frugal:"22,optional,bool" json:"deleted,omitempty"`
 	RoleIDs               []core.UUID       `thrift:"roleIDs,23,optional" frugal:"23,optional,list<string>" json:"roleIDs,omitempty"`
 	PrimaryOrganizationID *core.UUID        `thrift:"primaryOrganizationID,24,optional" frugal:"24,optional,string" json:"primaryOrganizationID,omitempty"`
@@ -89,7 +88,6 @@ func NewUserProfile() *UserProfile {
 	return &UserProfile{
 		LoginAttempts:      0,
 		MustChangePassword: false,
-		Version:            1,
 		Deleted:            false,
 	}
 }
@@ -97,7 +95,6 @@ func NewUserProfile() *UserProfile {
 func (p *UserProfile) InitDefault() {
 	p.LoginAttempts = 0
 	p.MustChangePassword = false
-	p.Version = 1
 	p.Deleted = false
 }
 
@@ -290,15 +287,6 @@ func (p *UserProfile) GetUpdatedBy() (v core.UUID) {
 	return *p.UpdatedBy
 }
 
-var UserProfile_Version_DEFAULT int32 = 1
-
-func (p *UserProfile) GetVersion() (v int32) {
-	if !p.IsSetVersion() {
-		return UserProfile_Version_DEFAULT
-	}
-	return p.Version
-}
-
 var UserProfile_Deleted_DEFAULT bool = false
 
 func (p *UserProfile) GetDeleted() (v bool) {
@@ -397,9 +385,6 @@ func (p *UserProfile) SetCreatedBy(val *core.UUID) {
 func (p *UserProfile) SetUpdatedBy(val *core.UUID) {
 	p.UpdatedBy = val
 }
-func (p *UserProfile) SetVersion(val int32) {
-	p.Version = val
-}
 func (p *UserProfile) SetDeleted(val bool) {
 	p.Deleted = val
 }
@@ -497,10 +482,6 @@ func (p *UserProfile) IsSetUpdatedBy() bool {
 	return p.UpdatedBy != nil
 }
 
-func (p *UserProfile) IsSetVersion() bool {
-	return p.Version != UserProfile_Version_DEFAULT
-}
-
 func (p *UserProfile) IsSetDeleted() bool {
 	return p.Deleted != UserProfile_Deleted_DEFAULT
 }
@@ -546,7 +527,6 @@ var fieldIDToName_UserProfile = map[int16]string{
 	17: "updatedAt",
 	18: "createdBy",
 	19: "updatedBy",
-	21: "version",
 	22: "deleted",
 	23: "roleIDs",
 	24: "primaryOrganizationID",

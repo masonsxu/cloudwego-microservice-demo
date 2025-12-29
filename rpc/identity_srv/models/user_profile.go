@@ -44,9 +44,6 @@ type UserProfile struct {
 	CreatedBy     *uuid.UUID `gorm:"column:created_by;type:uuid;comment:创建者ID"`
 	UpdatedBy     *uuid.UUID `gorm:"column:updated_by;type:uuid;comment:更新者ID"`
 	LastLoginTime *int64     `gorm:"column:last_login_time;comment:最后登录时间"`
-
-	// 版本控制
-	Version int32 `gorm:"column:version;not null;default:1;comment:版本号"`
 }
 
 // TableName 指定表名

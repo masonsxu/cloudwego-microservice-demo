@@ -661,7 +661,6 @@ type UpdateUserRequest struct {
 	LastName          *string           `thrift:"lastName,5,optional" frugal:"5,optional,string" json:"lastName,omitempty"`
 	RealName          *string           `thrift:"realName,6,optional" frugal:"6,optional,string" json:"realName,omitempty"`
 	Gender            *core.Gender      `thrift:"gender,13,optional" frugal:"13,optional,Gender" json:"gender,omitempty"`
-	Version           *int32            `thrift:"version,7,optional" frugal:"7,optional,i32" json:"version,omitempty"`
 	ProfessionalTitle *string           `thrift:"professionalTitle,8,optional" frugal:"8,optional,string" json:"professionalTitle,omitempty"`
 	LicenseNumber     *string           `thrift:"licenseNumber,9,optional" frugal:"9,optional,string" json:"licenseNumber,omitempty"`
 	Specialties       []string          `thrift:"specialties,10,optional" frugal:"10,optional,list<string>" json:"specialties,omitempty"`
@@ -739,15 +738,6 @@ func (p *UpdateUserRequest) GetGender() (v core.Gender) {
 	return *p.Gender
 }
 
-var UpdateUserRequest_Version_DEFAULT int32
-
-func (p *UpdateUserRequest) GetVersion() (v int32) {
-	if !p.IsSetVersion() {
-		return UpdateUserRequest_Version_DEFAULT
-	}
-	return *p.Version
-}
-
 var UpdateUserRequest_ProfessionalTitle_DEFAULT string
 
 func (p *UpdateUserRequest) GetProfessionalTitle() (v string) {
@@ -813,9 +803,6 @@ func (p *UpdateUserRequest) SetRealName(val *string) {
 func (p *UpdateUserRequest) SetGender(val *core.Gender) {
 	p.Gender = val
 }
-func (p *UpdateUserRequest) SetVersion(val *int32) {
-	p.Version = val
-}
 func (p *UpdateUserRequest) SetProfessionalTitle(val *string) {
 	p.ProfessionalTitle = val
 }
@@ -860,10 +847,6 @@ func (p *UpdateUserRequest) IsSetGender() bool {
 	return p.Gender != nil
 }
 
-func (p *UpdateUserRequest) IsSetVersion() bool {
-	return p.Version != nil
-}
-
 func (p *UpdateUserRequest) IsSetProfessionalTitle() bool {
 	return p.ProfessionalTitle != nil
 }
@@ -899,7 +882,6 @@ var fieldIDToName_UpdateUserRequest = map[int16]string{
 	5:  "lastName",
 	6:  "realName",
 	13: "gender",
-	7:  "version",
 	8:  "professionalTitle",
 	9:  "licenseNumber",
 	10: "specialties",

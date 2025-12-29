@@ -26,7 +26,6 @@ func (a *userAssembler) ToHTTPUserProfile(
 		ID:       rpc.ID,
 		Username: rpc.Username,
 		Status:   common.ConvertIdentityUserStatusPtrToHTTP(rpc.Status),
-		Version:  &rpc.Version,
 
 		// 基本信息（可选字段）
 		Email:             common.CopyStringPtr(rpc.Email),
@@ -138,8 +137,7 @@ func (a *userAssembler) ToRPCUpdateUserRequest(
 	}
 
 	req := &identity_srv.UpdateUserRequest{
-		UserID:  dto.UserID,
-		Version: dto.Version,
+		UserID: dto.UserID,
 	}
 
 	// 使用 ApplyIfSet 处理所有可选字段
@@ -178,7 +176,6 @@ func (a *userAssembler) ToRPCUpdateMeRequest(
 	}
 
 	req := &identity_srv.UpdateUserRequest{
-		Version: dto.Version,
 		// UserID 将在 handler 层从上下文中获取并设置
 	}
 

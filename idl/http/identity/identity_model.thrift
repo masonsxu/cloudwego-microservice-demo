@@ -197,9 +197,6 @@ struct UserProfileDTO {
     /** 最后登录时间 */
     18: optional core.TimestampMS lastLoginTime (go.tag = "json:\"last_login_time,omitempty\""),
 
-    /** 乐观锁版本号 */
-    19: optional i32 version (go.tag = "json:\"version\""),
-
     /** 连续登录失败次数 */
     20: optional i32 loginAttempts (go.tag = "json:\"login_attempts,omitempty\""),
 
@@ -323,9 +320,6 @@ struct UpdateUserRequestDTO {
     /** 真实姓名 */
     6: optional string realName (api.body = "real_name", api.vd = "@:len($)<=100; msg:'真实姓名长度不能超过100个字符'", go.tag = "json:\"real_name,omitempty\""),
 
-    /** 乐观锁版本号 */
-    7: optional i32 version (api.body = "version", api.vd = "@:$>=0; msg:'版本号不能为负数'", go.tag = "json:\"version\""),
-
     /** 职业头衔 */
     8: optional string professionalTitle (api.body = "professional_title", api.vd = "@:len($)<=100; msg:'职业头衔长度不能超过100个字符'", go.tag = "json:\"professional_title,omitempty\""),
 
@@ -371,9 +365,6 @@ struct UpdateMeRequestDTO {
 
     /** 真实姓名 */
     5: optional string realName (api.body = "real_name", api.vd = "@:len($)<=100; msg:'真实姓名长度不能超过100个字符'", go.tag = "json:\"real_name,omitempty\""),
-
-    /** 乐观锁版本号 */
-    6: optional i32 version (api.body = "version", api.vd = "@:$>=0; msg:'版本号不能为负数'", go.tag = "json:\"version\""),
 
     /** 职业头衔 */
     7: optional string professionalTitle (api.body = "professional_title", api.vd = "@:len($)<=100; msg:'职业头衔长度不能超过100个字符'", go.tag = "json:\"professional_title,omitempty\""),

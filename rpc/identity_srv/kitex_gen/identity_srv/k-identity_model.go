@@ -337,20 +337,6 @@ func (p *UserProfile) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
-		case 21:
-			if fieldTypeId == thrift.I32 {
-				l, err = p.FastReadField21(buf[offset:])
-				offset += l
-				if err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
-				offset += l
-				if err != nil {
-					goto SkipFieldError
-				}
-			}
 		case 22:
 			if fieldTypeId == thrift.BOOL {
 				l, err = p.FastReadField22(buf[offset:])
@@ -733,20 +719,6 @@ func (p *UserProfile) FastReadField19(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *UserProfile) FastReadField21(buf []byte) (int, error) {
-	offset := 0
-
-	var _field int32
-	if v, l, err := thrift.Binary.ReadI32(buf[offset:]); err != nil {
-		return offset, err
-	} else {
-		offset += l
-		_field = v
-	}
-	p.Version = _field
-	return offset, nil
-}
-
 func (p *UserProfile) FastReadField22(buf []byte) (int, error) {
 	offset := 0
 
@@ -826,7 +798,6 @@ func (p *UserProfile) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 		offset += p.fastWriteField20(buf[offset:], w)
 		offset += p.fastWriteField16(buf[offset:], w)
 		offset += p.fastWriteField17(buf[offset:], w)
-		offset += p.fastWriteField21(buf[offset:], w)
 		offset += p.fastWriteField22(buf[offset:], w)
 		offset += p.fastWriteField1(buf[offset:], w)
 		offset += p.fastWriteField2(buf[offset:], w)
@@ -875,7 +846,6 @@ func (p *UserProfile) BLength() int {
 		l += p.field17Length()
 		l += p.field18Length()
 		l += p.field19Length()
-		l += p.field21Length()
 		l += p.field22Length()
 		l += p.field23Length()
 		l += p.field24Length()
@@ -1077,15 +1047,6 @@ func (p *UserProfile) fastWriteField19(buf []byte, w thrift.NocopyWriter) int {
 	if p.IsSetUpdatedBy() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 19)
 		offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, *p.UpdatedBy)
-	}
-	return offset
-}
-
-func (p *UserProfile) fastWriteField21(buf []byte, w thrift.NocopyWriter) int {
-	offset := 0
-	if p.IsSetVersion() {
-		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I32, 21)
-		offset += thrift.Binary.WriteI32(buf[offset:], p.Version)
 	}
 	return offset
 }
@@ -1322,15 +1283,6 @@ func (p *UserProfile) field19Length() int {
 	if p.IsSetUpdatedBy() {
 		l += thrift.Binary.FieldBeginLength()
 		l += thrift.Binary.StringLengthNocopy(*p.UpdatedBy)
-	}
-	return l
-}
-
-func (p *UserProfile) field21Length() int {
-	l := 0
-	if p.IsSetVersion() {
-		l += thrift.Binary.FieldBeginLength()
-		l += thrift.Binary.I32Length()
 	}
 	return l
 }

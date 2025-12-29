@@ -1992,8 +1992,6 @@ type UserProfileDTO struct {
 	UpdatedAt *core.TimestampMS `thrift:"updatedAt,17,optional" json:"updated_at" form:"updatedAt" query:"updatedAt"`
 	/** 最后登录时间 */
 	LastLoginTime *core.TimestampMS `thrift:"lastLoginTime,18,optional" json:"last_login_time,omitempty" form:"lastLoginTime" query:"lastLoginTime"`
-	/** 乐观锁版本号 */
-	Version *int32 `thrift:"version,19,optional" json:"version" form:"version" query:"version"`
 	/** 连续登录失败次数 */
 	LoginAttempts *int32 `thrift:"loginAttempts,20,optional" json:"login_attempts,omitempty" form:"loginAttempts" query:"loginAttempts"`
 	/** 创建者用户ID */
@@ -2177,15 +2175,6 @@ func (p *UserProfileDTO) GetLastLoginTime() (v core.TimestampMS) {
 	return *p.LastLoginTime
 }
 
-var UserProfileDTO_Version_DEFAULT int32
-
-func (p *UserProfileDTO) GetVersion() (v int32) {
-	if !p.IsSetVersion() {
-		return UserProfileDTO_Version_DEFAULT
-	}
-	return *p.Version
-}
-
 var UserProfileDTO_LoginAttempts_DEFAULT int32
 
 func (p *UserProfileDTO) GetLoginAttempts() (v int32) {
@@ -2259,7 +2248,6 @@ var fieldIDToName_UserProfileDTO = map[int16]string{
 	16: "createdAt",
 	17: "updatedAt",
 	18: "lastLoginTime",
-	19: "version",
 	20: "loginAttempts",
 	21: "createdBy",
 	22: "updatedBy",
@@ -2338,10 +2326,6 @@ func (p *UserProfileDTO) IsSetUpdatedAt() bool {
 
 func (p *UserProfileDTO) IsSetLastLoginTime() bool {
 	return p.LastLoginTime != nil
-}
-
-func (p *UserProfileDTO) IsSetVersion() bool {
-	return p.Version != nil
 }
 
 func (p *UserProfileDTO) IsSetLoginAttempts() bool {
@@ -2526,14 +2510,6 @@ func (p *UserProfileDTO) Read(iprot thrift.TProtocol) (err error) {
 		case 18:
 			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField18(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 19:
-			if fieldTypeId == thrift.I32 {
-				if err = p.ReadField19(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -2826,17 +2802,6 @@ func (p *UserProfileDTO) ReadField18(iprot thrift.TProtocol) error {
 	p.LastLoginTime = _field
 	return nil
 }
-func (p *UserProfileDTO) ReadField19(iprot thrift.TProtocol) error {
-
-	var _field *int32
-	if v, err := iprot.ReadI32(); err != nil {
-		return err
-	} else {
-		_field = &v
-	}
-	p.Version = _field
-	return nil
-}
 func (p *UserProfileDTO) ReadField20(iprot thrift.TProtocol) error {
 
 	var _field *int32
@@ -2992,10 +2957,6 @@ func (p *UserProfileDTO) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField18(oprot); err != nil {
 			fieldId = 18
-			goto WriteFieldError
-		}
-		if err = p.writeField19(oprot); err != nil {
-			fieldId = 19
 			goto WriteFieldError
 		}
 		if err = p.writeField20(oprot); err != nil {
@@ -3388,25 +3349,6 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 18 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 18 end error: ", p), err)
-}
-
-func (p *UserProfileDTO) writeField19(oprot thrift.TProtocol) (err error) {
-	if p.IsSetVersion() {
-		if err = oprot.WriteFieldBegin("version", thrift.I32, 19); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteI32(*p.Version); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 19 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 19 end error: ", p), err)
 }
 
 func (p *UserProfileDTO) writeField20(oprot thrift.TProtocol) (err error) {
@@ -4987,8 +4929,6 @@ type UpdateUserRequestDTO struct {
 	LastName *string `thrift:"lastName,5,optional" json:"last_name,omitempty" form:"last_name" vd:"@:len($)<=50; msg:'姓氏长度不能超过50个字符'"`
 	/** 真实姓名 */
 	RealName *string `thrift:"realName,6,optional" json:"real_name,omitempty" form:"real_name" vd:"@:len($)<=100; msg:'真实姓名长度不能超过100个字符'"`
-	/** 乐观锁版本号 */
-	Version *int32 `thrift:"version,7,optional" json:"version" form:"version" vd:"@:$>=0; msg:'版本号不能为负数'"`
 	/** 职业头衔 */
 	ProfessionalTitle *string `thrift:"professionalTitle,8,optional" json:"professional_title,omitempty" form:"professional_title" vd:"@:len($)<=100; msg:'职业头衔长度不能超过100个字符'"`
 	/** 执业证书号 */
@@ -5066,15 +5006,6 @@ func (p *UpdateUserRequestDTO) GetRealName() (v string) {
 		return UpdateUserRequestDTO_RealName_DEFAULT
 	}
 	return *p.RealName
-}
-
-var UpdateUserRequestDTO_Version_DEFAULT int32
-
-func (p *UpdateUserRequestDTO) GetVersion() (v int32) {
-	if !p.IsSetVersion() {
-		return UpdateUserRequestDTO_Version_DEFAULT
-	}
-	return *p.Version
 }
 
 var UpdateUserRequestDTO_ProfessionalTitle_DEFAULT string
@@ -5156,7 +5087,6 @@ var fieldIDToName_UpdateUserRequestDTO = map[int16]string{
 	4:  "firstName",
 	5:  "lastName",
 	6:  "realName",
-	7:  "version",
 	8:  "professionalTitle",
 	9:  "licenseNumber",
 	10: "specialties",
@@ -5189,10 +5119,6 @@ func (p *UpdateUserRequestDTO) IsSetLastName() bool {
 
 func (p *UpdateUserRequestDTO) IsSetRealName() bool {
 	return p.RealName != nil
-}
-
-func (p *UpdateUserRequestDTO) IsSetVersion() bool {
-	return p.Version != nil
 }
 
 func (p *UpdateUserRequestDTO) IsSetProfessionalTitle() bool {
@@ -5289,14 +5215,6 @@ func (p *UpdateUserRequestDTO) Read(iprot thrift.TProtocol) (err error) {
 		case 6:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField6(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 7:
-			if fieldTypeId == thrift.I32 {
-				if err = p.ReadField7(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -5461,17 +5379,6 @@ func (p *UpdateUserRequestDTO) ReadField6(iprot thrift.TProtocol) error {
 	p.RealName = _field
 	return nil
 }
-func (p *UpdateUserRequestDTO) ReadField7(iprot thrift.TProtocol) error {
-
-	var _field *int32
-	if v, err := iprot.ReadI32(); err != nil {
-		return err
-	} else {
-		_field = &v
-	}
-	p.Version = _field
-	return nil
-}
 func (p *UpdateUserRequestDTO) ReadField8(iprot thrift.TProtocol) error {
 
 	var _field *string
@@ -5613,10 +5520,6 @@ func (p *UpdateUserRequestDTO) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField6(oprot); err != nil {
 			fieldId = 6
-			goto WriteFieldError
-		}
-		if err = p.writeField7(oprot); err != nil {
-			fieldId = 7
 			goto WriteFieldError
 		}
 		if err = p.writeField8(oprot); err != nil {
@@ -5781,25 +5684,6 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 6 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 6 end error: ", p), err)
-}
-
-func (p *UpdateUserRequestDTO) writeField7(oprot thrift.TProtocol) (err error) {
-	if p.IsSetVersion() {
-		if err = oprot.WriteFieldBegin("version", thrift.I32, 7); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteI32(*p.Version); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 7 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
 }
 
 func (p *UpdateUserRequestDTO) writeField8(oprot thrift.TProtocol) (err error) {
@@ -5993,8 +5877,6 @@ type UpdateMeRequestDTO struct {
 	LastName *string `thrift:"lastName,4,optional" json:"last_name,omitempty" form:"last_name" vd:"@:len($)<=50; msg:'姓氏长度不能超过50个字符'"`
 	/** 真实姓名 */
 	RealName *string `thrift:"realName,5,optional" json:"real_name,omitempty" form:"real_name" vd:"@:len($)<=100; msg:'真实姓名长度不能超过100个字符'"`
-	/** 乐观锁版本号 */
-	Version *int32 `thrift:"version,6,optional" json:"version" form:"version" vd:"@:$>=0; msg:'版本号不能为负数'"`
 	/** 职业头衔 */
 	ProfessionalTitle *string `thrift:"professionalTitle,7,optional" json:"professional_title,omitempty" form:"professional_title" vd:"@:len($)<=100; msg:'职业头衔长度不能超过100个字符'"`
 	/** 许可证号 */
@@ -6061,15 +5943,6 @@ func (p *UpdateMeRequestDTO) GetRealName() (v string) {
 	return *p.RealName
 }
 
-var UpdateMeRequestDTO_Version_DEFAULT int32
-
-func (p *UpdateMeRequestDTO) GetVersion() (v int32) {
-	if !p.IsSetVersion() {
-		return UpdateMeRequestDTO_Version_DEFAULT
-	}
-	return *p.Version
-}
-
 var UpdateMeRequestDTO_ProfessionalTitle_DEFAULT string
 
 func (p *UpdateMeRequestDTO) GetProfessionalTitle() (v string) {
@@ -6130,7 +6003,6 @@ var fieldIDToName_UpdateMeRequestDTO = map[int16]string{
 	3:  "firstName",
 	4:  "lastName",
 	5:  "realName",
-	6:  "version",
 	7:  "professionalTitle",
 	8:  "licenseNumber",
 	9:  "specialties",
@@ -6157,10 +6029,6 @@ func (p *UpdateMeRequestDTO) IsSetLastName() bool {
 
 func (p *UpdateMeRequestDTO) IsSetRealName() bool {
 	return p.RealName != nil
-}
-
-func (p *UpdateMeRequestDTO) IsSetVersion() bool {
-	return p.Version != nil
 }
 
 func (p *UpdateMeRequestDTO) IsSetProfessionalTitle() bool {
@@ -6241,14 +6109,6 @@ func (p *UpdateMeRequestDTO) Read(iprot thrift.TProtocol) (err error) {
 		case 5:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField5(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 6:
-			if fieldTypeId == thrift.I32 {
-				if err = p.ReadField6(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -6386,17 +6246,6 @@ func (p *UpdateMeRequestDTO) ReadField5(iprot thrift.TProtocol) error {
 	p.RealName = _field
 	return nil
 }
-func (p *UpdateMeRequestDTO) ReadField6(iprot thrift.TProtocol) error {
-
-	var _field *int32
-	if v, err := iprot.ReadI32(); err != nil {
-		return err
-	} else {
-		_field = &v
-	}
-	p.Version = _field
-	return nil
-}
 func (p *UpdateMeRequestDTO) ReadField7(iprot thrift.TProtocol) error {
 
 	var _field *string
@@ -6500,10 +6349,6 @@ func (p *UpdateMeRequestDTO) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField5(oprot); err != nil {
 			fieldId = 5
-			goto WriteFieldError
-		}
-		if err = p.writeField6(oprot); err != nil {
-			fieldId = 6
 			goto WriteFieldError
 		}
 		if err = p.writeField7(oprot); err != nil {
@@ -6641,25 +6486,6 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
-}
-
-func (p *UpdateMeRequestDTO) writeField6(oprot thrift.TProtocol) (err error) {
-	if p.IsSetVersion() {
-		if err = oprot.WriteFieldBegin("version", thrift.I32, 6); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteI32(*p.Version); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 6 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 6 end error: ", p), err)
 }
 
 func (p *UpdateMeRequestDTO) writeField7(oprot thrift.TProtocol) (err error) {
