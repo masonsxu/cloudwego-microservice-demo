@@ -19,7 +19,7 @@
 - **RPC 微服务**: Kitex 构建高性能 RPC 服务
 - **整洁架构**: 业务逻辑、数据处理与框架分离
 - **依赖注入**: Google Wire 编译时依赖注入
-- **认证授权**: JWT + Casbin RBAC 权限控制
+- **用户认证**: JWT Token 认证
 - **可观测性**: OpenTelemetry 链路追踪
 
 ## 架构设计
@@ -44,7 +44,6 @@
 | 服务发现 | etcd |
 | 缓存 | Redis |
 | 依赖注入 | [Google Wire](https://github.com/google/wire) |
-| 授权 | [Casbin](https://casbin.org/) |
 | 可观测性 | [OpenTelemetry](https://opentelemetry.io/) |
 
 ## 快速开始

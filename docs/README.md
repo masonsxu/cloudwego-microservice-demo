@@ -15,10 +15,10 @@
 
 ## 核心功能
 
-- **API 网关 (Hertz)**: 统一 API 入口、JWT 认证、Casbin 授权、OpenTelemetry 链路追踪
-- **身份服务 (Kitex)**: 用户管理、组织架构、角色权限管理、JWT Token 管理
+- **API 网关 (Hertz)**: 统一 API 入口、JWT 认证、OpenTelemetry 链路追踪
+- **身份服务 (Kitex)**: 用户管理、组织架构、角色管理、JWT Token 管理、菜单配置
 - **可观测性**: OpenTelemetry 分布式链路追踪、结构化日志
-- **安全性**: JWT + Casbin RBAC 权限控制、密码加密
+- **安全性**: JWT 认证、密码加密
 
 ## 技术栈
 
@@ -31,7 +31,7 @@
 | 缓存 | Redis | 会话管理、热点数据缓存 |
 | 服务发现 | etcd | 服务注册与发现 |
 | 依赖注入 | Google Wire | 编译时依赖注入 |
-| 认证授权 | JWT + Casbin | RBAC 权限控制 |
+| 认证 | JWT | 无状态 Token 认证 |
 | 可观测性 | OpenTelemetry + Jaeger | 分布式链路追踪 |
 
 ## 阅读建议
@@ -66,7 +66,6 @@
 
 - [GORM 文档](https://gorm.io/zh_CN/docs/)
 - [Wire 指南](https://github.com/google/wire/blob/main/docs/guide.md)
-- [Casbin 文档](https://casbin.org/zh/docs/)
 - [OpenTelemetry 文档](https://opentelemetry.io/docs/)
 
 ---

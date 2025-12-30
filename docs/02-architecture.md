@@ -37,7 +37,6 @@ flowchart TB
 
         subgraph GatewayMiddleware["网关中间件"]
             JWT[JWT 认证]
-            Casbin[Casbin 授权]
             Tracing[链路追踪]
             ErrorHandler[错误处理]
         end
@@ -58,7 +57,7 @@ flowchart TB
     WebClient -->|HTTP/HTTPS| Gateway
     MobileClient -->|HTTP/HTTPS| Gateway
 
-    Gateway --> JWT --> Casbin --> Tracing --> ErrorHandler
+    Gateway --> JWT --> Tracing --> ErrorHandler
     ErrorHandler -->|RPC Thrift| IdentitySrv
 
     IdentitySrv -->|GORM| PostgreSQL
@@ -78,7 +77,7 @@ flowchart TB
 | **协议转换** | HTTP → Thrift RPC |
 | **服务发现** | 基于 etcd 的动态服务发现 |
 | **统一入口** | 所有外部请求通过网关 |
-| **安全分层** | 认证授权集中在网关层 |
+| **安全分层** | 认证集中在网关层 |
 
 ---
 
@@ -142,7 +141,7 @@ gateway/
 ├── internal/
 │   ├── application/          # 应用层
 │   │   ├── assembler/        # 数据组装器
-│   │   ├── middleware/       # 中间件（JWT、Casbin、Trace）
+│   │   ├── middleware/       # 中间件（JWT、Trace、ErrorHandler）
 │   │   └── context/          # 上下文管理
 │   ├── domain/               # 领域层
 │   │   └── service/          # 领域服务
@@ -244,7 +243,6 @@ sequenceDiagram
 
     Client->>Gateway: HTTP 请求
     Gateway->>Gateway: JWT 认证
-    Gateway->>Gateway: Casbin 授权
     Gateway->>Handler: RPC 调用
     Handler->>Handler: 参数校验
     Handler->>Logic: 调用业务逻辑
@@ -353,10 +351,10 @@ flowchart LR
 
 ### 2. 安全分层设计
 
-**决策**：所有鉴权逻辑（JWT、权限校验）在网关层处理，RPC 服务不处理权限。
+**决策**：JWT 认证在网关层处理，RPC 服务专注业务逻辑。
 
 **优势**：
-- 单点控制安全策略
+- 单点控制认证策略
 - RPC 服务保持简单
 - 便于安全审计
 
@@ -385,7 +383,7 @@ flowchart LR
 **用途**：
 - JWT Token 黑名单
 - 用户会话状态
-- 权限数据缓存
+- 热点数据缓存
 - API 限流计数
 
 ### 6. OpenTelemetry 链路追踪
