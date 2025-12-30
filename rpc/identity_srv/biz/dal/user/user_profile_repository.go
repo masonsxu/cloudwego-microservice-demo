@@ -399,45 +399,7 @@ func (r *UserProfileRepositoryImpl) FindWithConditions(
 
 	// 应用精确匹配条件（需要表名前缀，因为可能有 JOIN）
 	if conditions != nil {
-		if conditions.Username != nil {
-			qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
-				return db.Where("user_profiles.username = ?", *conditions.Username)
-			})
-		}
-
-		if conditions.Email != nil {
-			qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
-				return db.Where("user_profiles.email = ?", *conditions.Email)
-			})
-		}
-
-		if conditions.Phone != nil {
-			qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
-				return db.Where("user_profiles.phone = ?", *conditions.Phone)
-			})
-		}
-
-		if conditions.Status != nil {
-			qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
-				return db.Where("user_profiles.status = ?", *conditions.Status)
-			})
-		}
-
-		if conditions.MedicalLicense != nil {
-			qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
-				return db.Where(
-					"user_profiles.medical_license_number = ?",
-					*conditions.MedicalLicense,
-				)
-			})
-		}
-
-		// Specialty 模糊匹配
-		if conditions.Specialty != nil {
-			qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
-				return db.Where("user_profiles.specialties LIKE ?", "%"+*conditions.Specialty+"%")
-			})
-		}
+		qb = r.applyUserProfileConditions(qb, conditions)
 	}
 
 	// 应用搜索、预加载和排序
@@ -452,6 +414,54 @@ func (r *UserProfileRepositoryImpl) FindWithConditions(
 // ============================================================================
 // 私有辅助方法
 // ============================================================================
+
+// applyUserProfileConditions 应用用户档案查询条件
+func (r *UserProfileRepositoryImpl) applyUserProfileConditions(
+	qb *base.QueryBuilder[models.UserProfile],
+	conditions *UserProfileQueryConditions,
+) *base.QueryBuilder[models.UserProfile] {
+	if conditions.Username != nil {
+		qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
+			return db.Where("user_profiles.username = ?", *conditions.Username)
+		})
+	}
+
+	if conditions.Email != nil {
+		qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
+			return db.Where("user_profiles.email = ?", *conditions.Email)
+		})
+	}
+
+	if conditions.Phone != nil {
+		qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
+			return db.Where("user_profiles.phone = ?", *conditions.Phone)
+		})
+	}
+
+	if conditions.Status != nil {
+		qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
+			return db.Where("user_profiles.status = ?", *conditions.Status)
+		})
+	}
+
+	if conditions.MedicalLicense != nil {
+		qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
+			return db.Where(
+				"user_profiles.medical_license_number = ?",
+				*conditions.MedicalLicense,
+			)
+		})
+	}
+
+	// Specialty 模糊匹配
+	if conditions.Specialty != nil {
+		qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
+			return db.Where("user_profiles.specialties LIKE ?", "%"+*conditions.Specialty+"%")
+		})
+	}
+
+	return qb
+}
 
 // applySearchConditions 应用搜索条件
 func (r *UserProfileRepositoryImpl) applySearchConditions(

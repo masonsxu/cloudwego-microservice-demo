@@ -227,28 +227,7 @@ func (r *OrganizationRepositoryImpl) FindWithConditions(
 
 	// 应用精确匹配条件（WhereEqual 会自动跳过 nil 值）
 	if conditions != nil {
-		qb = qb.WhereEqual("code", conditions.Code).
-			WhereEqual("facility_type", conditions.FacilityType).
-			WhereEqual("province_city", conditions.ProvinceCity)
-
-		// ParentID 特殊处理：空字符串表示查询根组织
-		if conditions.ParentID != nil {
-			if *conditions.ParentID == "" {
-				// 空字符串表示查询根组织（parent_id IS NULL 或 uuid.Nil）
-				qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
-					return db.Where("parent_id IS NULL OR parent_id = ?", uuid.Nil)
-				})
-			} else {
-				qb = qb.WhereEqual("parent_id", conditions.ParentID)
-			}
-		}
-
-		// Name 模糊匹配
-		if conditions.Name != nil && *conditions.Name != "" {
-			qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
-				return db.Where("name LIKE ?", "%"+*conditions.Name+"%")
-			})
-		}
+		qb = r.applyOrganizationConditions(qb, conditions)
 	}
 
 	// 应用搜索、预加载和排序
@@ -258,6 +237,37 @@ func (r *OrganizationRepositoryImpl) FindWithConditions(
 
 	// 执行分页查询（自动处理计数和分页）
 	return qb.FindWithPagination(opts)
+}
+
+// applyOrganizationConditions 应用组织查询条件
+func (r *OrganizationRepositoryImpl) applyOrganizationConditions(
+	qb *base.QueryBuilder[models.Organization],
+	conditions *OrganizationQueryConditions,
+) *base.QueryBuilder[models.Organization] {
+	qb = qb.WhereEqual("code", conditions.Code).
+		WhereEqual("facility_type", conditions.FacilityType).
+		WhereEqual("province_city", conditions.ProvinceCity)
+
+	// ParentID 特殊处理：空字符串表示查询根组织
+	if conditions.ParentID != nil {
+		if *conditions.ParentID == "" {
+			// 空字符串表示查询根组织（parent_id IS NULL 或 uuid.Nil）
+			qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
+				return db.Where("parent_id IS NULL OR parent_id = ?", uuid.Nil)
+			})
+		} else {
+			qb = qb.WhereEqual("parent_id", conditions.ParentID)
+		}
+	}
+
+	// Name 模糊匹配
+	if conditions.Name != nil && *conditions.Name != "" {
+		qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
+			return db.Where("name LIKE ?", "%"+*conditions.Name+"%")
+		})
+	}
+
+	return qb
 }
 
 // applySearchConditions 应用搜索条件

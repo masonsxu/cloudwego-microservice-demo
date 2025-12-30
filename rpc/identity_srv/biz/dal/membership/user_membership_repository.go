@@ -111,7 +111,8 @@ func (r *UserMembershipRepositoryImpl) GetByUserAndOrganization(
 	var membership models.UserMembership
 
 	err := r.db.WithContext(ctx).
-		Where("user_id = ? AND organization_id = ? AND status = ?", userID, organizationID, models.MembershipStatusActive).
+		Where("user_id = ? AND organization_id = ? AND status = ?",
+			userID, organizationID, models.MembershipStatusActive).
 		First(&membership).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -259,7 +260,10 @@ func (r *UserMembershipRepositoryImpl) FindUsersByOrganizationHierarchy(
 	offset := (opts.Page - 1) * opts.PageSize
 	orderClause := r.buildOrderClause(opts)
 
-	if err := query.Order(orderClause).Offset(int(offset)).Limit(int(opts.PageSize)).Find(&memberships).Error; err != nil {
+	if err := query.Order(orderClause).
+		Offset(int(offset)).
+		Limit(int(opts.PageSize)).
+		Find(&memberships).Error; err != nil {
 		return nil, nil, fmt.Errorf("查询组织层级成员关系失败: %w", err)
 	}
 
@@ -438,7 +442,8 @@ func (r *UserMembershipRepositoryImpl) CheckMembershipExists(
 	userID, organizationID, departmentID string,
 ) (bool, error) {
 	query := r.db.WithContext(ctx).Model(&models.UserMembership{}).
-		Where("user_id = ? AND organization_id = ? AND status = ?", userID, organizationID, models.MembershipStatusActive)
+		Where("user_id = ? AND organization_id = ? AND status = ?",
+			userID, organizationID, models.MembershipStatusActive)
 
 	if departmentID != "" {
 		query = query.Where("department_id = ?", departmentID)

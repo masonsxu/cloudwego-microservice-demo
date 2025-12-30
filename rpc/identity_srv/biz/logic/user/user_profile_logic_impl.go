@@ -310,6 +310,11 @@ func (l *LogicImpl) SearchUsers(
 	ctx context.Context,
 	req *identity_srv.SearchUsersRequest,
 ) (*identity_srv.SearchUsersResponse, error) {
+	// 参数验证
+	if req == nil {
+		return nil, errno.ErrInvalidParams.WithMessage("请求参数不能为空")
+	}
+
 	// 使用 Base Converter 转换分页参数
 	opts := l.converter.Base().PageRequestToQueryOptions(req.Page)
 
@@ -319,7 +324,7 @@ func (l *LogicImpl) SearchUsers(
 	}
 
 	// 设置业务过滤条件
-	if req != nil && req.OrganizationID != nil && *req.OrganizationID != "" {
+	if req.OrganizationID != nil && *req.OrganizationID != "" {
 		conditions.OrgID = req.OrganizationID
 	}
 

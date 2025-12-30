@@ -66,30 +66,8 @@ func (l *LogicImpl) CreateOrganization(
 
 		// 如果提供了logoID，绑定Logo到组织
 		if req.LogoID != nil && *req.LogoID != "" {
-			logoID, parseErr := uuid.Parse(*req.LogoID)
-			if parseErr != nil {
-				return errno.ErrInvalidParams.WithMessage("无效的LogoID格式")
-			}
-
-			// 验证Logo是否存在且为临时状态
-			logo, getErr := txDAL.Logo().GetByID(ctx, logoID.String())
-			if getErr != nil {
-				return errno.ErrLogoNotFound.WithMessage("Logo不存在或已被删除")
-			}
-
-			// 验证Logo状态
-			if logo.Status != models.LogoStatusTemporary {
-				return errno.ErrLogoAlreadyBound.WithMessage("Logo已被绑定或已删除")
-			}
-
-			// 验证Logo未过期
-			if logo.IsExpired() {
-				return errno.ErrLogoExpired.WithMessage("Logo已过期，无法绑定")
-			}
-
-			// 绑定Logo到组织
-			if bindErr := txDAL.Logo().BindToOrganization(ctx, logoID, org.ID); bindErr != nil {
-				return errno.ErrLogoBindingFailed.WithMessage(fmt.Sprintf("绑定Logo失败: %v", bindErr))
+			if err := l.bindLogoToOrganization(ctx, txDAL, *req.LogoID, org.ID); err != nil {
+				return err
 			}
 		}
 
@@ -201,52 +179,8 @@ func (l *LogicImpl) UpdateOrganization(
 	txErr := l.dal.WithTransaction(ctx, func(ctx context.Context, txDAL dal.DAL) error {
 		// 处理Logo更新逻辑
 		if req.LogoID != nil && *req.LogoID != "" {
-			newLogoID, parseErr := uuid.Parse(*req.LogoID)
-			if parseErr != nil {
-				return errno.ErrInvalidParams.WithMessage("无效的LogoID格式")
-			}
-
-			// 1. 查询组织是否已有绑定的Logo
-			oldLogo, getOldErr := txDAL.Logo().GetByOrganizationID(ctx, existingOrg.ID)
-			if getOldErr != nil && !errno.IsRecordNotFound(getOldErr) {
-				return errno.WrapDatabaseError(getOldErr, "查询旧Logo失败")
-			}
-
-			// 2. 如果存在旧Logo，删除旧Logo（S3文件+数据库记录）
-			if oldLogo != nil {
-				// 删除S3文件
-				if l.logoStorageClient != nil {
-					if deleteErr := l.logoStorageClient.DeleteLogo(ctx, oldLogo.FileID); deleteErr != nil {
-						// 记录警告但继续（S3文件删除失败不应阻止Logo更新）
-						// TODO: 添加日志记录
-					}
-				}
-
-				// 软删除数据库记录
-				if deleteErr := txDAL.Logo().Delete(ctx, oldLogo.ID.String()); deleteErr != nil {
-					return errno.WrapDatabaseError(deleteErr, "删除旧Logo记录失败")
-				}
-			}
-
-			// 3. 验证新Logo是否存在且为临时状态
-			newLogo, getNewErr := txDAL.Logo().GetByID(ctx, newLogoID.String())
-			if getNewErr != nil {
-				return errno.ErrLogoNotFound.WithMessage("新Logo不存在或已被删除")
-			}
-
-			// 验证Logo状态
-			if newLogo.Status != models.LogoStatusTemporary {
-				return errno.ErrLogoAlreadyBound.WithMessage("新Logo已被绑定或已删除")
-			}
-
-			// 验证Logo未过期
-			if newLogo.IsExpired() {
-				return errno.ErrLogoExpired.WithMessage("新Logo已过期，无法绑定")
-			}
-
-			// 4. 绑定新Logo到组织
-			if bindErr := txDAL.Logo().BindToOrganization(ctx, newLogoID, existingOrg.ID); bindErr != nil {
-				return errno.ErrLogoBindingFailed.WithMessage(fmt.Sprintf("绑定新Logo失败: %v", bindErr))
+			if err := l.updateOrganizationLogo(ctx, txDAL, *req.LogoID, existingOrg.ID); err != nil {
+				return err
 			}
 		}
 
@@ -460,4 +394,123 @@ func (l *LogicImpl) generateLogoURL(
 	}
 
 	return logoURL, nil
+}
+
+// bindLogoToOrganization 绑定Logo到组织
+func (l *LogicImpl) bindLogoToOrganization(
+	ctx context.Context,
+	txDAL dal.DAL,
+	logoIDStr string,
+	orgID uuid.UUID,
+) error {
+	logoID, parseErr := uuid.Parse(logoIDStr)
+	if parseErr != nil {
+		return errno.ErrInvalidParams.WithMessage("无效的LogoID格式")
+	}
+
+	// 验证Logo是否存在且为临时状态
+	logo, getErr := txDAL.Logo().GetByID(ctx, logoID.String())
+	if getErr != nil {
+		return errno.ErrLogoNotFound.WithMessage("Logo不存在或已被删除")
+	}
+
+	// 验证Logo状态
+	if logo.Status != models.LogoStatusTemporary {
+		return errno.ErrLogoAlreadyBound.WithMessage("Logo已被绑定或已删除")
+	}
+
+	// 验证Logo未过期
+	if logo.IsExpired() {
+		return errno.ErrLogoExpired.WithMessage("Logo已过期，无法绑定")
+	}
+
+	// 绑定Logo到组织
+	if bindErr := txDAL.Logo().BindToOrganization(ctx, logoID, orgID); bindErr != nil {
+		return errno.ErrLogoBindingFailed.WithMessage(fmt.Sprintf("绑定Logo失败: %v", bindErr))
+	}
+
+	return nil
+}
+
+// updateOrganizationLogo 更新组织的Logo
+func (l *LogicImpl) updateOrganizationLogo(
+	ctx context.Context,
+	txDAL dal.DAL,
+	newLogoIDStr string,
+	organizationID uuid.UUID,
+) error {
+	newLogoID, parseErr := uuid.Parse(newLogoIDStr)
+	if parseErr != nil {
+		return errno.ErrInvalidParams.WithMessage("无效的LogoID格式")
+	}
+
+	// 1. 查询组织是否已有绑定的Logo
+	oldLogo, getOldErr := txDAL.Logo().GetByOrganizationID(ctx, organizationID)
+	if getOldErr != nil && !errno.IsRecordNotFound(getOldErr) {
+		return errno.WrapDatabaseError(getOldErr, "查询旧Logo失败")
+	}
+
+	// 2. 如果存在旧Logo，删除旧Logo（S3文件+数据库记录）
+	if oldLogo != nil {
+		if err := l.deleteOldLogo(ctx, txDAL, oldLogo); err != nil {
+			return err
+		}
+	}
+
+	// 3. 验证并绑定新Logo
+	return l.validateAndBindLogo(ctx, txDAL, newLogoID, organizationID)
+}
+
+// deleteOldLogo 删除旧Logo（S3文件+数据库记录）
+func (l *LogicImpl) deleteOldLogo(
+	ctx context.Context,
+	txDAL dal.DAL,
+	oldLogo *models.OrganizationLogo,
+) error {
+	// 删除S3文件
+	if l.logoStorageClient != nil {
+		if deleteErr := l.logoStorageClient.DeleteLogo(ctx, oldLogo.FileID); deleteErr != nil {
+			// 记录警告但继续（S3文件删除失败不应阻止Logo更新）
+			// 注意：这里不返回错误，因为S3文件删除失败不应阻止Logo更新流程
+			_ = deleteErr // 明确表示我们有意忽略这个错误
+		}
+	}
+
+	// 软删除数据库记录
+	if deleteErr := txDAL.Logo().Delete(ctx, oldLogo.ID.String()); deleteErr != nil {
+		return errno.WrapDatabaseError(deleteErr, "删除旧Logo记录失败")
+	}
+
+	return nil
+}
+
+// validateAndBindLogo 验证并绑定Logo到组织
+func (l *LogicImpl) validateAndBindLogo(
+	ctx context.Context,
+	txDAL dal.DAL,
+	logoID uuid.UUID,
+	organizationID uuid.UUID,
+) error {
+	// 验证新Logo是否存在且为临时状态
+	newLogo, getNewErr := txDAL.Logo().GetByID(ctx, logoID.String())
+	if getNewErr != nil {
+		return errno.ErrLogoNotFound.WithMessage("新Logo不存在或已被删除")
+	}
+
+	// 验证Logo状态
+	if newLogo.Status != models.LogoStatusTemporary {
+		return errno.ErrLogoAlreadyBound.WithMessage("新Logo已被绑定或已删除")
+	}
+
+	// 验证Logo未过期
+	if newLogo.IsExpired() {
+		return errno.ErrLogoExpired.WithMessage("新Logo已过期，无法绑定")
+	}
+
+	// 绑定新Logo到组织
+	if bindErr := txDAL.Logo().BindToOrganization(ctx, logoID, organizationID); bindErr != nil {
+		return errno.ErrLogoBindingFailed.WithMessage(fmt.Sprintf("绑定新Logo失败: %v", bindErr))
+	}
+
+	return nil
 }

@@ -64,25 +64,28 @@ func parseModelSchema[T any](db *gorm.DB) *modelSchema {
 
 	// 解析 Schema
 	stmt := &gorm.Statement{DB: db}
-	if err := stmt.Parse(&model); err == nil {
-		s.tableName = stmt.Schema.Table
-
-		// 查找 DeletedAt 字段
-		for _, field := range stmt.Schema.Fields {
-			if field.Name == "DeletedAt" {
-				s.hasSoftDelete = true
-				s.deletedAtColumn = field.DBName
-
-				break
-			}
-		}
-	} else {
+	if err := stmt.Parse(&model); err != nil {
 		// 如果 Schema 解析失败，回退到反射检查
 		if modelType.Kind() == reflect.Struct {
 			if _, ok := modelType.FieldByName("DeletedAt"); ok {
 				s.hasSoftDelete = true
 				s.deletedAtColumn = "deleted_at" // 使用默认列名
 			}
+		}
+		// 存储到缓存并返回
+		modelSchemaCache.Store(modelType, s)
+		return s
+	}
+
+	// Schema 解析成功，提取表名和字段信息
+	s.tableName = stmt.Schema.Table
+
+	// 查找 DeletedAt 字段
+	for _, field := range stmt.Schema.Fields {
+		if field.Name == "DeletedAt" {
+			s.hasSoftDelete = true
+			s.deletedAtColumn = field.DBName
+			break
 		}
 	}
 

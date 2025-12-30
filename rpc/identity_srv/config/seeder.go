@@ -92,6 +92,48 @@ func seedDefaultOrganization(db *gorm.DB, logger *zerolog.Logger) (uuid.UUID, er
 	return org.ID, nil
 }
 
+// handleExistingSuperAdminUser 处理已存在的超级管理员用户
+// 包括恢复软删除的用户和更新系统用户标记
+func handleExistingSuperAdminUser(db *gorm.DB, logger *zerolog.Logger, user *models.UserProfile) (uuid.UUID, error) {
+	// 如果是软删除的用户，恢复它
+	if user.DeletedAt.Valid {
+		if err := db.Unscoped().Model(user).Updates(map[string]interface{}{
+			"deleted_at":     nil,
+			"is_system_user": true, // 确保标记为系统用户
+		}).Error; err != nil {
+			return uuid.Nil, fmt.Errorf("恢复软删除的超级管理员用户失败: %w", err)
+		}
+
+		logger.Info().
+			Str("user_id", user.ID.String()).
+			Str("username", user.Username).
+			Bool("is_system_user", true).
+			Msg("✅ 超级管理员用户已恢复（从软删除状态）")
+
+		return user.ID, nil
+	}
+
+	// 确保现有用户标记为系统用户
+	if !user.IsSystemUser {
+		if err := db.Model(user).Update("is_system_user", true).Error; err != nil {
+			logger.Warn().Err(err).Msg("更新系统用户标记失败")
+		} else {
+			logger.Info().
+				Str("user_id", user.ID.String()).
+				Str("username", user.Username).
+				Msg("✅ 已更新 superadmin 用户的系统用户标记")
+		}
+	}
+
+	logger.Info().
+		Str("user_id", user.ID.String()).
+		Str("username", user.Username).
+		Bool("is_system_user", user.IsSystemUser).
+		Msg("ℹ️  超级管理员用户已存在，跳过创建")
+
+	return user.ID, nil
+}
+
 // seedSuperAdminUser 创建超级管理员用户
 // 使用 username="superadmin" 作为唯一标识，实现幂等性
 // 支持软删除记录的恢复
@@ -110,48 +152,15 @@ func seedSuperAdminUser(db *gorm.DB, logger *zerolog.Logger) (uuid.UUID, error) 
 
 	// 1. 先检查是否存在（包括软删除的记录）
 	err = db.Unscoped().Where("username = ?", "superadmin").First(user).Error
-	if err == nil {
-		// 用户已存在
-		if user.DeletedAt.Valid {
-			// 恢复软删除的用户，并确保标记为系统用户
-			if err := db.Unscoped().Model(user).Updates(map[string]interface{}{
-				"deleted_at":     nil,
-				"is_system_user": true, // 确保标记为系统用户
-			}).Error; err != nil {
-				return uuid.Nil, fmt.Errorf("恢复软删除的超级管理员用户失败: %w", err)
-			}
-
-			logger.Info().
-				Str("user_id", user.ID.String()).
-				Str("username", user.Username).
-				Bool("is_system_user", true).
-				Msg("✅ 超级管理员用户已恢复（从软删除状态）")
-		} else {
-			// 确保现有用户标记为系统用户
-			if !user.IsSystemUser {
-				if err := db.Model(user).Update("is_system_user", true).Error; err != nil {
-					logger.Warn().Err(err).Msg("更新系统用户标记失败")
-				} else {
-					logger.Info().
-						Str("user_id", user.ID.String()).
-						Str("username", user.Username).
-						Msg("✅ 已更新 superadmin 用户的系统用户标记")
-				}
-			}
-
-			logger.Info().
-				Str("user_id", user.ID.String()).
-				Str("username", user.Username).
-				Bool("is_system_user", user.IsSystemUser).
-				Msg("ℹ️  超级管理员用户已存在，跳过创建")
+	if err != nil {
+		if err != gorm.ErrRecordNotFound {
+			// 查询出错
+			return uuid.Nil, fmt.Errorf("查询超级管理员用户失败: %w", err)
 		}
-
-		return user.ID, nil
-	}
-
-	if err != gorm.ErrRecordNotFound {
-		// 查询出错
-		return uuid.Nil, fmt.Errorf("查询超级管理员用户失败: %w", err)
+		// 用户不存在，继续创建流程
+	} else {
+		// 用户已存在，处理并返回
+		return handleExistingSuperAdminUser(db, logger, user)
 	}
 
 	// 2. 用户不存在，创建新用户
@@ -198,7 +207,6 @@ func seedSystemRoles(db *gorm.DB) error {
 	roles := []systemRoleDefinition{
 		// 系统管理角色
 		{"superadmin", "超级管理员 - 拥有系统全部权限，负责系统维护和最高级别管理"},
-		{"system_admin", "系统管理员 - 负责系统维护、用户管理和基础配置"},
 	}
 
 	createdCount := 0
