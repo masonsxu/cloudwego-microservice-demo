@@ -74,9 +74,6 @@ func mapEnvVarsToConfig(v *viper.Viper) {
 	// 链路追踪配置映射
 	mapTracingEnvVars(v)
 
-	// Casbin配置映射
-	mapCasbinEnvVars(v)
-
 	// DataLake配置映射
 	mapDataLakeEnvVars(v)
 
@@ -319,21 +316,6 @@ func mapCookieEnvVars(v *viper.Viper) {
 		"middleware.jwt.cookie.cookie_http_only",
 		func(value string) interface{} {
 			return value == "true"
-		},
-	)
-}
-
-// mapCasbinEnvVars 映射Casbin相关环境变量
-func mapCasbinEnvVars(v *viper.Viper) {
-	mapToViper(v, "CASBIN_ENABLED", "middleware.casbin.enabled", func(value string) interface{} {
-		return value == "true"
-	})
-	mapToViper(
-		v,
-		"CASBIN_SKIP_PATHS",
-		"middleware.casbin.skip_paths",
-		func(value string) interface{} {
-			return splitAndTrim(value, ",")
 		},
 	)
 }

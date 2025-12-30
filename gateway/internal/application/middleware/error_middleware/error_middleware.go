@@ -79,7 +79,7 @@ func (ehm *ErrorHandlerMiddlewareImpl) MiddlewareFunc() app.HandlerFunc {
 				Str("component", "error_middleware").
 				Str("method", string(c.Method())).
 				Str("path", string(c.Request.Path())).
-				Msg("Casbin permission denied")
+				Msg("Permission denied")
 			c.SetStatusCode(403)
 			c.JSON(403, map[string]string{"msg": "权限不足"})
 

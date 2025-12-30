@@ -13,7 +13,6 @@ type Config struct {
 	Log         LogConfig         `mapstructure:"log"`
 	Tracing     TracingConfig     `mapstructure:"tracing"`
 	LogoStorage LogoStorageConfig `mapstructure:"logo_storage"`
-	Casbin      CasbinConfig      `mapstructure:"casbin"`
 	SuperAdmin  SuperAdminConfig  `mapstructure:"super_admin"`
 }
 
@@ -108,13 +107,6 @@ type LogoStorageConfig struct {
 	// 文件管理配置
 	MaxFileSize      int64    `mapstructure:"max_file_size"`      // 最大文件大小（字节，默认10MB）
 	AllowedFileTypes []string `mapstructure:"allowed_file_types"` // 允许的图片类型（如 image/png, image/jpeg）
-}
-
-// CasbinConfig Casbin 配置
-// 相关环境变量：CASBIN_MODEL_PATH, CASBIN_ENABLE_LOG
-type CasbinConfig struct {
-	ModelPath string `mapstructure:"model_path"`
-	EnableLog bool   `mapstructure:"enable_log"`
 }
 
 // SuperAdminConfig 超级管理员配置

@@ -22,7 +22,6 @@ var MiddlewareSet = wire.NewSet(
 	ProvideErrorHandlerMiddleware,
 	ProvideJWTMiddleware,
 	ProvideResponseHeaderMiddleware,
-	// ProvideCasbinMiddleware,
 	NewMiddlewareContainer,
 )
 
@@ -34,7 +33,6 @@ type MiddlewareContainer struct {
 	ErrorHandlerMiddleware   errormw.ErrorHandlerMiddlewareService
 	JWTMiddleware            jwtmdw.JWTMiddlewareService
 	ResponseHeaderMiddleware responsemw.ResponseHeaderMiddlewareService
-	// CasbinMiddleware         casbinmw.CasbinMiddleware
 }
 
 // NewMiddlewareContainer 创建中间件容器
@@ -44,7 +42,6 @@ func NewMiddlewareContainer(
 	errorHandlerMiddleware errormw.ErrorHandlerMiddlewareService,
 	jwtMiddleware jwtmdw.JWTMiddlewareService,
 	responseHeaderMiddleware responsemw.ResponseHeaderMiddlewareService,
-	// casbinMiddleware casbinmw.CasbinMiddleware,
 ) *MiddlewareContainer {
 	return &MiddlewareContainer{
 		TraceMiddleware:          traceMiddleware,
@@ -52,7 +49,6 @@ func NewMiddlewareContainer(
 		ErrorHandlerMiddleware:   errorHandlerMiddleware,
 		JWTMiddleware:            jwtMiddleware,
 		ResponseHeaderMiddleware: responseHeaderMiddleware,
-		// CasbinMiddleware:         casbinMiddleware,
 	}
 }
 
@@ -114,21 +110,3 @@ func ProvideErrorHandlerMiddleware(
 func ProvideResponseHeaderMiddleware() responsemw.ResponseHeaderMiddlewareService {
 	return responsemw.NewResponseHeaderMiddleware()
 }
-
-// ProvideCasbinMiddleware 提供Casbin权限中间件
-// 使用 hertz-contrib/casbin 官方中间件，遵循最佳实践
-// func ProvideCasbinMiddleware(
-// 	cfg *config.Configuration,
-// 	logger *slog.Logger,
-// 	manager *casbin.CasbinManager,
-// ) casbinmw.CasbinMiddleware {
-// 	middleware, err := casbinmw.NewCasbinMiddleware(manager, logger, nil)
-// 	if err != nil {
-// 		logger.Error("Failed to create casbin middleware", "error", err)
-// 		panic(err)
-// 	}
-
-// 	logger.Info("Casbin middleware created successfully")
-
-// 	return middleware
-// }

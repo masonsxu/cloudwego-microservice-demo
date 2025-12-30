@@ -105,10 +105,6 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("middleware.error_handler.enable_error_metrics", false)
 	v.SetDefault("middleware.error_handler.error_response_timeout", 5000)
 
-	// Casbin 权限控制默认配置
-	v.SetDefault("middleware.casbin.enabled", false)
-	v.SetDefault("middleware.casbin.skip_paths", []string{"/health", "/metrics"})
-
 	// Redis 默认值
 	v.SetDefault("redis.address", "localhost:6379")
 	v.SetDefault("redis.password", "")

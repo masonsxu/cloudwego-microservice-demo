@@ -68,9 +68,6 @@ func setDefaults(v *viper.Viper) {
 		"image/webp",    // WebP 图片
 		"image/svg+xml", // SVG 图片
 	})
-	// Casbin 配置默认值
-	v.SetDefault("casbin.model_path", "./config/permission_model.conf")
-	v.SetDefault("casbin.enable_log", false)
 
 	// 超级管理员配置默认值
 	v.SetDefault("super_admin.role_names", []string{"superadmin"})

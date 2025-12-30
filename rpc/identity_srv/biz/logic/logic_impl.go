@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/casbin"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal"
 	roleAssignLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/assignment"
@@ -64,7 +63,7 @@ type Impl struct {
 
 // NewLogicImpl 创建业务逻辑层实例
 // 基于新的DAL架构和模块化设计，初始化所有业务逻辑模块
-func NewLogicImpl(dal dal.DAL, cfg *config.Config, casbinManager *casbin.CasbinManager) Logic {
+func NewLogicImpl(dal dal.DAL, cfg *config.Config) Logic {
 	// 创建转换器实例
 	conv := converter.NewConverter()
 
@@ -99,7 +98,6 @@ func NewLogicImpl(dal dal.DAL, cfg *config.Config, casbinManager *casbin.CasbinM
 	menuLogicImpl := menuLogic.NewLogic(
 		dal,
 		conv,
-		casbinManager,
 		dal.UserRoleAssignment(),
 		cfg,
 	)
@@ -152,6 +150,6 @@ func NewLogicImpl(dal dal.DAL, cfg *config.Config, casbinManager *casbin.CasbinM
 }
 
 // NewLogic 创建业务逻辑层实例（工厂函数）
-func NewLogic(dal dal.DAL, cfg *config.Config, casbinManager *casbin.CasbinManager) Logic {
-	return NewLogicImpl(dal, cfg, casbinManager)
+func NewLogic(dal dal.DAL, cfg *config.Config) Logic {
+	return NewLogicImpl(dal, cfg)
 }

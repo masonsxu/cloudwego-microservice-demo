@@ -4,7 +4,6 @@ package wire
 
 import (
 	"github.com/google/wire"
-	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/casbin"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic"
@@ -29,13 +28,6 @@ var ConverterSet = wire.NewSet(
 	converter.NewConverter,
 )
 
-// CasbinSet Casbin 权限管理 Provider 集合
-var CasbinSet = wire.NewSet(
-	ProvideCasbinConfig,
-	casbin.NewCasbinManager,
-	casbin.NewMenuPermissionLogic,
-)
-
 // DALSet 数据访问层 Provider 集合
 var DALSet = wire.NewSet(
 	dal.NewDALImpl,
@@ -51,7 +43,6 @@ var LogicSet = wire.NewSet(
 var ApplicationSet = wire.NewSet(
 	InfrastructureSet,
 	ConverterSet,
-	CasbinSet,
 	DALSet,
 	LogicSet,
 )

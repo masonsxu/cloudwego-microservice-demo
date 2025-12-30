@@ -28,11 +28,6 @@ func ProvideLogger(cfg *config.Config) (*zerolog.Logger, error) {
 	return logger, nil
 }
 
-// ProvideCasbinConfig 提供 Casbin 配置
-func ProvideCasbinConfig(cfg *config.Config) *config.CasbinConfig {
-	return &cfg.Casbin
-}
-
 // =============================================================================
 // Provider Options - 高级配置选项
 // =============================================================================

@@ -104,36 +104,6 @@ func (s *permissionServiceImpl) BatchBindUsersToRole(
 }
 
 // =================================================================
-// PermissionSyncService 接口实现 - 委托给 permissionSyncService
-// =================================================================
-
-// func (s *permissionServiceImpl) SyncRoleToCasbin(
-// 	ctx context.Context,
-// 	roleID string,
-// ) (*http_base.OperationStatusResponseDTO, error) {
-// 	return s.permissionSyncService.SyncRoleToCasbin(ctx, roleID)
-// }
-
-// func (s *permissionServiceImpl) SyncAllRolesToCasbin(
-// 	ctx context.Context,
-// ) (*http_base.OperationStatusResponseDTO, error) {
-// 	return s.permissionSyncService.SyncAllRolesToCasbin(ctx)
-// }
-
-// func (s *permissionServiceImpl) SyncAllUserRoles(
-// 	ctx context.Context,
-// ) (*http_base.OperationStatusResponseDTO, error) {
-// 	return s.permissionSyncService.SyncAllUserRoles(ctx)
-// }
-
-// func (s *permissionServiceImpl) SyncUserRoles(
-// 	ctx context.Context,
-// 	userID string,
-// ) (*http_base.OperationStatusResponseDTO, error) {
-// 	return s.permissionSyncService.SyncUserRoles(ctx, userID)
-// }
-
-// =================================================================
 // MenuService 接口实现 - 委托给 menuService
 // =================================================================
 

@@ -13,6 +13,7 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/membership"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/menu"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/organization"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/rolemenu"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/user"
 )
 
@@ -34,6 +35,7 @@ type DALImpl struct {
 	menuRepo               menu.MenuRepository
 	roleDefinitionRepo     definition.RoleDefinitionRepository
 	userRoleAssignmentRepo assignment.UserRoleAssignmentRepository
+	roleMenuPermissionRepo rolemenu.RoleMenuPermissionRepository
 
 	// 事务状态
 	isTransaction bool
@@ -52,6 +54,7 @@ func newDALImpl(db *gorm.DB) DAL {
 		menuRepo:               menu.NewMenuRepository(db),
 		roleDefinitionRepo:     definition.NewRoleDefinitionRepository(db),
 		userRoleAssignmentRepo: assignment.NewUserRoleAssignmentRepository(db),
+		roleMenuPermissionRepo: rolemenu.NewRoleMenuPermissionRepository(db),
 		isTransaction:          false,
 	}
 }
@@ -98,6 +101,11 @@ func (dal *DALImpl) RoleDefinition() definition.RoleDefinitionRepository {
 // UserRoleAssignment 获取用户角色分配仓储
 func (dal *DALImpl) UserRoleAssignment() assignment.UserRoleAssignmentRepository {
 	return dal.userRoleAssignmentRepo
+}
+
+// RoleMenuPermission 获取角色菜单权限仓储
+func (dal *DALImpl) RoleMenuPermission() rolemenu.RoleMenuPermissionRepository {
+	return dal.roleMenuPermissionRepo
 }
 
 // ============================================================================
@@ -172,6 +180,7 @@ func (dal *DALImpl) WithDB(db *gorm.DB) DAL {
 		menuRepo:               menu.NewMenuRepository(db),
 		roleDefinitionRepo:     definition.NewRoleDefinitionRepository(db),
 		userRoleAssignmentRepo: assignment.NewUserRoleAssignmentRepository(db),
+		roleMenuPermissionRepo: rolemenu.NewRoleMenuPermissionRepository(db),
 		isTransaction:          dal.isTransaction,
 	}
 }

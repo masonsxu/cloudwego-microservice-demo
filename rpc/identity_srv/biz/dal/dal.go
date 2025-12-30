@@ -12,6 +12,7 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/membership"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/menu"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/organization"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/rolemenu"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/user"
 )
 
@@ -46,6 +47,9 @@ type DAL interface {
 
 	// UserRoleAssignment 用户角色分配仓储
 	UserRoleAssignment() assignment.UserRoleAssignmentRepository
+
+	// RoleMenuPermission 角色菜单权限仓储
+	RoleMenuPermission() rolemenu.RoleMenuPermissionRepository
 
 	// ============================================================================
 	// 事务管理

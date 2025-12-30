@@ -129,6 +129,7 @@ func autoMigrate(db *gorm.DB) error {
 		&models.RoleDefinition{},
 		&models.UserRoleAssignment{},
 		&models.Menu{},
+		&models.RoleMenuPermission{},
 	)
 	if err != nil {
 		return fmt.Errorf("自动迁移失败: %v", err)

@@ -8,7 +8,6 @@ package wire
 
 import (
 	"github.com/google/wire"
-	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/casbin"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic"
@@ -35,12 +34,7 @@ func InitializeApp() (*AppContainer, func(), error) {
 		return nil, nil, err
 	}
 	dalDAL := dal.NewDALImpl(db)
-	casbinConfig := ProvideCasbinConfig(configConfig)
-	casbinManager, err := casbin.NewCasbinManager(db, casbinConfig, logger)
-	if err != nil {
-		return nil, nil, err
-	}
-	logicLogic := logic.NewLogicImpl(dalDAL, configConfig, casbinManager)
+	logicLogic := logic.NewLogicImpl(dalDAL, configConfig)
 	provider, cleanup, err := ProvideOtelProvider(configConfig)
 	if err != nil {
 		return nil, nil, err
@@ -93,11 +87,6 @@ var InfrastructureSet = wire.NewSet(config.LoadConfig, ProvideDB,
 // ConverterSet 转换器 Provider 集合
 var ConverterSet = wire.NewSet(converter.NewConverter)
 
-// CasbinSet Casbin 权限管理 Provider 集合
-var CasbinSet = wire.NewSet(
-	ProvideCasbinConfig, casbin.NewCasbinManager, casbin.NewMenuPermissionLogic,
-)
-
 // DALSet 数据访问层 Provider 集合
 var DALSet = wire.NewSet(dal.NewDALImpl)
 
@@ -109,7 +98,6 @@ var LogicSet = wire.NewSet(logic.NewLogicImpl)
 var ApplicationSet = wire.NewSet(
 	InfrastructureSet,
 	ConverterSet,
-	CasbinSet,
 	DALSet,
 	LogicSet,
 )

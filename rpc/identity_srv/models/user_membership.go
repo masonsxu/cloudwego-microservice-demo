@@ -8,7 +8,6 @@ import (
 )
 
 // UserMembership 用户-组织成员关系模型 (与 IDL identity_model.UserMembership 对应)
-// 用于构建 Casbin 角色关系
 type UserMembership struct {
 	BaseModel
 

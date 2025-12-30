@@ -65,13 +65,12 @@ type ServiceConfig struct {
 }
 
 // MiddlewareConfig 中间件配置
-// 包含 CORS、限流、JWT、错误处理、Casbin 等中间件配置
+// 包含 CORS、限流、JWT、错误处理等中间件配置
 type MiddlewareConfig struct {
 	CORS         CORSConfig         `mapstructure:"cors"`
 	RateLimit    RateLimitConfig    `mapstructure:"rate_limit"`
 	JWT          JWTConfig          `mapstructure:"jwt"`
 	ErrorHandler ErrorHandlerConfig `mapstructure:"error_handler"`
-	Casbin       CasbinConfig       `mapstructure:"casbin"`
 }
 
 // CORSConfig CORS配置
@@ -163,13 +162,6 @@ type ErrorHandlerConfig struct {
 	MaxStackTraceSize     int  `mapstructure:"max_stack_trace_size"`    // 最大堆栈跟踪大小（字节）
 	EnableErrorMetrics    bool `mapstructure:"enable_error_metrics"`    // 是否启用错误指标收集
 	ErrorResponseTimeout  int  `mapstructure:"error_response_timeout"`  // 错误响应超时时间（毫秒）
-}
-
-// CasbinConfig Casbin 权限控制配置
-// 相关环境变量：CASBIN_ENABLED, CASBIN_MODEL_PATH, CASBIN_SKIP_PATHS, CASBIN_ENABLE_LOG
-type CasbinConfig struct {
-	Enabled   bool     `mapstructure:"enabled"`    // 是否启用Casbin权限校验
-	SkipPaths []string `mapstructure:"skip_paths"` // 跳过权限校验的路径列表
 }
 
 // DataLakeConfig DataLake 配置

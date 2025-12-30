@@ -21,7 +21,6 @@ var InfrastructureSet = wire.NewSet(
 	ProvideRedisConfig,
 	ProvideRedisClient,
 	ProvideTokenCache,
-	// ProvideCasbinManager,
 )
 
 // ProvideConfig 提供配置服务
