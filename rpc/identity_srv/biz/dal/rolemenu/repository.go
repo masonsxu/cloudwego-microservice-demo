@@ -99,8 +99,8 @@ func (r *roleMenuPermissionRepository) GetByRoleAndMenu(ctx context.Context, rol
 // SyncRoleMenus 同步角色菜单权限（先删除旧的，再创建新的）
 func (r *roleMenuPermissionRepository) SyncRoleMenus(ctx context.Context, roleID uuid.UUID, permissions []*models.RoleMenuPermission) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		// 1. 删除角色的所有旧权限
-		if err := tx.Delete(&models.RoleMenuPermission{}, "role_id = ?", roleID).Error; err != nil {
+		// 1. 删除角色的所有旧权限（使用硬删除，避免唯一索引冲突）
+		if err := tx.Unscoped().Delete(&models.RoleMenuPermission{}, "role_id = ?", roleID).Error; err != nil {
 			return err
 		}
 
