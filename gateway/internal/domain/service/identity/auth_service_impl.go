@@ -85,9 +85,12 @@ func (s *authServiceImpl) Login(
 		httpResp.RoleIDs = []string{}
 	}
 
-	permission := *rpcResp.Permissions[0].Permission
-	if permission != "" {
-		return httpResp, Permission(permission), nil
+	// 处理权限信息（现在是枚举类型）
+	if rpcResp.Permissions != nil && len(rpcResp.Permissions) > 0 &&
+		rpcResp.Permissions[0].Permission != nil {
+		permLevel := *rpcResp.Permissions[0].Permission
+		// 使用枚举的字符串表示
+		return httpResp, Permission(permLevel.String()), nil
 	}
 
 	return httpResp, "", nil

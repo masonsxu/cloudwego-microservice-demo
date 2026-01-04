@@ -34,17 +34,37 @@ func (p MenuPermissionType) String() string {
 	}
 }
 
+// PermissionLevel 返回前端期望的权限级别字符串
+// 前端定义: "none" / "read" / "write" / "full"
+func (p MenuPermissionType) PermissionLevel() string {
+	switch p {
+	case PermissionNone:
+		return "none"
+	case PermissionView:
+		return "read"
+	case PermissionEdit, PermissionManage:
+		return "write"
+	case PermissionFull:
+		return "full"
+	default:
+		return "none"
+	}
+}
+
 // ParsePermissionType 从字符串解析权限类型
+// 支持内部值 (view/edit/manage/full) 和前端值 (read/write/full/none)
 func ParsePermissionType(s string) MenuPermissionType {
 	switch s {
-	case "view":
+	case "view", "read":
 		return PermissionView
-	case "edit":
+	case "edit", "write":
 		return PermissionEdit
 	case "manage":
 		return PermissionManage
 	case "full":
 		return PermissionFull
+	case "none":
+		return PermissionNone
 	default:
 		return PermissionNone
 	}

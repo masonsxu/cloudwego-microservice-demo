@@ -43,6 +43,48 @@ func NewLogic(
 	}
 }
 
+// =============================================================================
+// 权限级别枚举转换辅助函数
+// =============================================================================
+
+// toThriftPermissionLevel 将内部权限类型转换为 Thrift 枚举
+func toThriftPermissionLevel(p models.MenuPermissionType) identity_srv.PermissionLevel {
+	switch p {
+	case models.PermissionNone:
+		return identity_srv.PermissionLevel_NONE
+	case models.PermissionView:
+		return identity_srv.PermissionLevel_READ
+	case models.PermissionEdit, models.PermissionManage:
+		return identity_srv.PermissionLevel_WRITE
+	case models.PermissionFull:
+		return identity_srv.PermissionLevel_FULL
+	default:
+		return identity_srv.PermissionLevel_NONE
+	}
+}
+
+// toThriftPermissionLevelPtr 将内部权限类型转换为 Thrift 枚举指针
+func toThriftPermissionLevelPtr(p models.MenuPermissionType) *identity_srv.PermissionLevel {
+	level := toThriftPermissionLevel(p)
+	return &level
+}
+
+// parsePermissionTypeFromThrift 从 Thrift 枚举解析权限类型
+func parsePermissionTypeFromThrift(level identity_srv.PermissionLevel) models.MenuPermissionType {
+	switch level {
+	case identity_srv.PermissionLevel_NONE:
+		return models.PermissionNone
+	case identity_srv.PermissionLevel_READ:
+		return models.PermissionView
+	case identity_srv.PermissionLevel_WRITE:
+		return models.PermissionEdit
+	case identity_srv.PermissionLevel_FULL:
+		return models.PermissionFull
+	default:
+		return models.PermissionNone
+	}
+}
+
 // UploadMenu 上传并解析菜单配置文件 (menu.yaml)
 func (l *LogicImpl) UploadMenu(
 	ctx context.Context,
@@ -114,14 +156,17 @@ func (l *LogicImpl) ConfigureRoleMenus(
 		permission := &models.RoleMenuPermission{
 			RoleID:         roleID,
 			MenuID:         *cfg.MenuID,
-			PermissionType: models.PermissionView, // 默认查看权限
+			PermissionType: models.PermissionView,  // 默认查看权限
 			DataScope:      models.DataScopeOwnOrg, // 默认所在组织
 		}
 
-		// 解析权限类型
-		if cfg.Permission != nil && *cfg.Permission != "" {
-			permission.PermissionType = models.ParsePermissionType(*cfg.Permission)
-			permission.DataScope = models.ParseDataScope(*cfg.Permission)
+		// 解析权限类型（从 Thrift 枚举）
+		if cfg.Permission != nil {
+			permission.PermissionType = parsePermissionTypeFromThrift(*cfg.Permission)
+			// DataScope 根据权限类型设置
+			if *cfg.Permission == identity_srv.PermissionLevel_FULL {
+				permission.DataScope = models.DataScopeAllOrgs
+			}
 		}
 
 		permissions = append(permissions, permission)
@@ -290,7 +335,7 @@ func (l *LogicImpl) GetRoleMenuPermissions(
 	for _, perm := range permissions {
 		thriftPermissions = append(thriftPermissions, &identity_srv.MenuPermission{
 			MenuID:     convutil.StringPtr(perm.MenuID),
-			Permission: convutil.StringPtr(perm.DataScope.String()),
+			Permission: toThriftPermissionLevelPtr(perm.PermissionType),
 		})
 	}
 
@@ -336,7 +381,7 @@ func (l *LogicImpl) HasMenuPermission(
 	// 解析请求的权限类型
 	requiredPermType := models.PermissionView
 	if req.Permission != nil {
-		requiredPermType = models.ParsePermissionType(*req.Permission)
+		requiredPermType = parsePermissionTypeFromThrift(*req.Permission)
 	}
 
 	// 检查权限
@@ -418,7 +463,7 @@ func (l *LogicImpl) GetUserMenuPermissions(
 		for _, perm := range mergedPermissions {
 			thriftPermissions = append(thriftPermissions, &identity_srv.MenuPermission{
 				MenuID:     convutil.StringPtr(perm.MenuID),
-				Permission: convutil.StringPtr(perm.DataScope.String()),
+				Permission: toThriftPermissionLevelPtr(perm.PermissionType),
 			})
 		}
 	}
@@ -529,10 +574,11 @@ func (l *LogicImpl) markMenuPermissions(
 
 		if perm, exists := permMap[*node.Id]; exists {
 			newNode.HasPermission = convutil.BoolPtr(true)
-			newNode.PermissionLevel = convutil.StringPtr(perm.DataScope.String())
+			newNode.PermissionLevel = toThriftPermissionLevelPtr(perm.PermissionType)
 		} else {
 			newNode.HasPermission = convutil.BoolPtr(false)
-			newNode.PermissionLevel = convutil.StringPtr("none")
+			noneLevel := identity_srv.PermissionLevel_NONE
+			newNode.PermissionLevel = &noneLevel
 		}
 
 		if len(node.Children) > 0 {
@@ -609,7 +655,7 @@ func (l *LogicImpl) markAllMenusWithFullPermission(
 	for _, node := range menuNodes {
 		newNode := *node
 		newNode.HasPermission = convutil.BoolPtr(true)
-		newNode.PermissionLevel = convutil.StringPtr(models.DataScopeAllOrgs.String())
+		newNode.PermissionLevel = toThriftPermissionLevelPtr(models.PermissionFull)
 
 		if len(node.Children) > 0 {
 			newNode.Children = l.markAllMenusWithFullPermission(node.Children)
@@ -644,7 +690,7 @@ func (l *LogicImpl) collectMenuPermissions(
 	for _, menu := range menus {
 		*permissions = append(*permissions, &identity_srv.MenuPermission{
 			MenuID:     convutil.StringPtr(menu.SemanticID),
-			Permission: convutil.StringPtr(models.DataScopeAllOrgs.String()),
+			Permission: toThriftPermissionLevelPtr(models.PermissionFull),
 		})
 		if len(menu.Children) > 0 {
 			l.collectMenuPermissions(menu.Children, permissions)

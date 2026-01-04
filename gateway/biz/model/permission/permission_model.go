@@ -3,11 +3,73 @@
 package permission
 
 import (
+	"database/sql"
+	"database/sql/driver"
 	"fmt"
 	"github.com/apache/thrift/lib/go/thrift"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/core"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/http_base"
 )
+
+/**
+ * 权限级别枚举 (Permission Level)
+ * 定义菜单权限的访问级别
+ */
+type PermissionLevel int64
+
+const (
+	/** 无权限 */
+	PermissionLevel_NONE PermissionLevel = 0
+	/** 只读权限 */
+	PermissionLevel_READ PermissionLevel = 1
+	/** 读写权限 */
+	PermissionLevel_WRITE PermissionLevel = 2
+	/** 完全权限 */
+	PermissionLevel_FULL PermissionLevel = 3
+)
+
+func (p PermissionLevel) String() string {
+	switch p {
+	case PermissionLevel_NONE:
+		return "NONE"
+	case PermissionLevel_READ:
+		return "READ"
+	case PermissionLevel_WRITE:
+		return "WRITE"
+	case PermissionLevel_FULL:
+		return "FULL"
+	}
+	return "<UNSET>"
+}
+
+func PermissionLevelFromString(s string) (PermissionLevel, error) {
+	switch s {
+	case "NONE":
+		return PermissionLevel_NONE, nil
+	case "READ":
+		return PermissionLevel_READ, nil
+	case "WRITE":
+		return PermissionLevel_WRITE, nil
+	case "FULL":
+		return PermissionLevel_FULL, nil
+	}
+	return PermissionLevel(0), fmt.Errorf("not a valid PermissionLevel string")
+}
+
+func PermissionLevelPtr(v PermissionLevel) *PermissionLevel { return &v }
+func (p *PermissionLevel) Scan(value interface{}) (err error) {
+	var result sql.NullInt64
+	err = result.Scan(value)
+	*p = PermissionLevel(result.Int64)
+	return
+}
+
+func (p *PermissionLevel) Value() (driver.Value, error) {
+	if p == nil {
+		return nil, nil
+	}
+	return int64(*p), nil
+}
 
 // =================================================================
 // 1. 角色与权限管理模块 DTO (RBAC - Role & Permission Management)
@@ -6097,8 +6159,8 @@ type MenuNodeDTO struct {
 	Children []*MenuNodeDTO `thrift:"children,6,optional,list<MenuNodeDTO>" json:"children,omitempty" form:"children" query:"children"`
 	/** 是否有权限访问此菜单 (可选, 用于权限标记) */
 	HasPermission *bool `thrift:"hasPermission,7,optional" json:"has_permission,omitempty" form:"hasPermission" query:"hasPermission"`
-	/** 权限级别 (可选): read, write, full, none */
-	PermissionLevel *string `thrift:"permissionLevel,8,optional" json:"permission_level,omitempty" form:"permissionLevel" query:"permissionLevel"`
+	/** 权限级别 */
+	PermissionLevel *PermissionLevel `thrift:"permissionLevel,8,optional,PermissionLevel" json:"permission_level,omitempty" form:"permissionLevel" query:"permissionLevel"`
 }
 
 func NewMenuNodeDTO() *MenuNodeDTO {
@@ -6171,9 +6233,9 @@ func (p *MenuNodeDTO) GetHasPermission() (v bool) {
 	return *p.HasPermission
 }
 
-var MenuNodeDTO_PermissionLevel_DEFAULT string
+var MenuNodeDTO_PermissionLevel_DEFAULT PermissionLevel
 
-func (p *MenuNodeDTO) GetPermissionLevel() (v string) {
+func (p *MenuNodeDTO) GetPermissionLevel() (v PermissionLevel) {
 	if !p.IsSetPermissionLevel() {
 		return MenuNodeDTO_PermissionLevel_DEFAULT
 	}
@@ -6299,7 +6361,7 @@ func (p *MenuNodeDTO) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 8:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField8(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -6426,11 +6488,12 @@ func (p *MenuNodeDTO) ReadField7(iprot thrift.TProtocol) error {
 }
 func (p *MenuNodeDTO) ReadField8(iprot thrift.TProtocol) error {
 
-	var _field *string
-	if v, err := iprot.ReadString(); err != nil {
+	var _field *PermissionLevel
+	if v, err := iprot.ReadI32(); err != nil {
 		return err
 	} else {
-		_field = &v
+		tmp := PermissionLevel(v)
+		_field = &tmp
 	}
 	p.PermissionLevel = _field
 	return nil
@@ -6635,10 +6698,10 @@ WriteFieldEndError:
 
 func (p *MenuNodeDTO) writeField8(oprot thrift.TProtocol) (err error) {
 	if p.IsSetPermissionLevel() {
-		if err = oprot.WriteFieldBegin("permissionLevel", thrift.STRING, 8); err != nil {
+		if err = oprot.WriteFieldBegin("permissionLevel", thrift.I32, 8); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(*p.PermissionLevel); err != nil {
+		if err := oprot.WriteI32(int32(*p.PermissionLevel)); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -6895,8 +6958,8 @@ func (p *GetMenuTreeResponseDTO) String() string {
 type MenuConfigDTO struct {
 	/** 菜单ID */
 	MenuID *string `thrift:"menuID,1,optional" json:"menu_id" form:"menuID" query:"menuID"`
-	/** 权限类型: read, write, full, none */
-	Permission *string `thrift:"permission,2,optional" json:"permission" form:"permission" query:"permission"`
+	/** 权限级别 */
+	Permission *PermissionLevel `thrift:"permission,2,optional,PermissionLevel" json:"permission" form:"permission" query:"permission"`
 }
 
 func NewMenuConfigDTO() *MenuConfigDTO {
@@ -6915,9 +6978,9 @@ func (p *MenuConfigDTO) GetMenuID() (v string) {
 	return *p.MenuID
 }
 
-var MenuConfigDTO_Permission_DEFAULT string
+var MenuConfigDTO_Permission_DEFAULT PermissionLevel
 
-func (p *MenuConfigDTO) GetPermission() (v string) {
+func (p *MenuConfigDTO) GetPermission() (v PermissionLevel) {
 	if !p.IsSetPermission() {
 		return MenuConfigDTO_Permission_DEFAULT
 	}
@@ -6965,7 +7028,7 @@ func (p *MenuConfigDTO) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 2:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -7014,11 +7077,12 @@ func (p *MenuConfigDTO) ReadField1(iprot thrift.TProtocol) error {
 }
 func (p *MenuConfigDTO) ReadField2(iprot thrift.TProtocol) error {
 
-	var _field *string
-	if v, err := iprot.ReadString(); err != nil {
+	var _field *PermissionLevel
+	if v, err := iprot.ReadI32(); err != nil {
 		return err
 	} else {
-		_field = &v
+		tmp := PermissionLevel(v)
+		_field = &tmp
 	}
 	p.Permission = _field
 	return nil
@@ -7077,10 +7141,10 @@ WriteFieldEndError:
 
 func (p *MenuConfigDTO) writeField2(oprot thrift.TProtocol) (err error) {
 	if p.IsSetPermission() {
-		if err = oprot.WriteFieldBegin("permission", thrift.STRING, 2); err != nil {
+		if err = oprot.WriteFieldBegin("permission", thrift.I32, 2); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(*p.Permission); err != nil {
+		if err := oprot.WriteI32(int32(*p.Permission)); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -7106,8 +7170,8 @@ func (p *MenuConfigDTO) String() string {
 type MenuPermissionDTO struct {
 	/** 菜单ID */
 	MenuID *string `thrift:"menuID,1,optional" json:"menu_id" form:"menuID" query:"menuID"`
-	/** 权限类型: read, write, full, none */
-	Permission *string `thrift:"permission,2,optional" json:"permission" form:"permission" query:"permission"`
+	/** 权限级别 */
+	Permission *PermissionLevel `thrift:"permission,2,optional,PermissionLevel" json:"permission" form:"permission" query:"permission"`
 }
 
 func NewMenuPermissionDTO() *MenuPermissionDTO {
@@ -7126,9 +7190,9 @@ func (p *MenuPermissionDTO) GetMenuID() (v string) {
 	return *p.MenuID
 }
 
-var MenuPermissionDTO_Permission_DEFAULT string
+var MenuPermissionDTO_Permission_DEFAULT PermissionLevel
 
-func (p *MenuPermissionDTO) GetPermission() (v string) {
+func (p *MenuPermissionDTO) GetPermission() (v PermissionLevel) {
 	if !p.IsSetPermission() {
 		return MenuPermissionDTO_Permission_DEFAULT
 	}
@@ -7176,7 +7240,7 @@ func (p *MenuPermissionDTO) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 2:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -7225,11 +7289,12 @@ func (p *MenuPermissionDTO) ReadField1(iprot thrift.TProtocol) error {
 }
 func (p *MenuPermissionDTO) ReadField2(iprot thrift.TProtocol) error {
 
-	var _field *string
-	if v, err := iprot.ReadString(); err != nil {
+	var _field *PermissionLevel
+	if v, err := iprot.ReadI32(); err != nil {
 		return err
 	} else {
-		_field = &v
+		tmp := PermissionLevel(v)
+		_field = &tmp
 	}
 	p.Permission = _field
 	return nil
@@ -7288,10 +7353,10 @@ WriteFieldEndError:
 
 func (p *MenuPermissionDTO) writeField2(oprot thrift.TProtocol) (err error) {
 	if p.IsSetPermission() {
-		if err = oprot.WriteFieldBegin("permission", thrift.STRING, 2); err != nil {
+		if err = oprot.WriteFieldBegin("permission", thrift.I32, 2); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(*p.Permission); err != nil {
+		if err := oprot.WriteI32(int32(*p.Permission)); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -9211,8 +9276,8 @@ type HasMenuPermissionRequestDTO struct {
 	RoleID *string `thrift:"roleID,1,optional" json:"-" path:"roleID" vd:"@:len($) > 0; msg:'角色ID不能为空'"`
 	/** 菜单ID */
 	MenuID *string `thrift:"menuID,2,optional" json:"menu_id" query:"menuID" vd:"@:len($) > 0; msg:'菜单ID不能为空'"`
-	/** 权限类型 */
-	Permission *string `thrift:"permission,3,optional" json:"permission" query:"permission" vd:"@:len($) > 0; msg:'权限类型不能为空'"`
+	/** 权限级别 */
+	Permission *PermissionLevel `thrift:"permission,3,optional,PermissionLevel" json:"permission" query:"permission" `
 }
 
 func NewHasMenuPermissionRequestDTO() *HasMenuPermissionRequestDTO {
@@ -9240,9 +9305,9 @@ func (p *HasMenuPermissionRequestDTO) GetMenuID() (v string) {
 	return *p.MenuID
 }
 
-var HasMenuPermissionRequestDTO_Permission_DEFAULT string
+var HasMenuPermissionRequestDTO_Permission_DEFAULT PermissionLevel
 
-func (p *HasMenuPermissionRequestDTO) GetPermission() (v string) {
+func (p *HasMenuPermissionRequestDTO) GetPermission() (v PermissionLevel) {
 	if !p.IsSetPermission() {
 		return HasMenuPermissionRequestDTO_Permission_DEFAULT
 	}
@@ -9303,7 +9368,7 @@ func (p *HasMenuPermissionRequestDTO) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 3:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -9363,11 +9428,12 @@ func (p *HasMenuPermissionRequestDTO) ReadField2(iprot thrift.TProtocol) error {
 }
 func (p *HasMenuPermissionRequestDTO) ReadField3(iprot thrift.TProtocol) error {
 
-	var _field *string
-	if v, err := iprot.ReadString(); err != nil {
+	var _field *PermissionLevel
+	if v, err := iprot.ReadI32(); err != nil {
 		return err
 	} else {
-		_field = &v
+		tmp := PermissionLevel(v)
+		_field = &tmp
 	}
 	p.Permission = _field
 	return nil
@@ -9449,10 +9515,10 @@ WriteFieldEndError:
 
 func (p *HasMenuPermissionRequestDTO) writeField3(oprot thrift.TProtocol) (err error) {
 	if p.IsSetPermission() {
-		if err = oprot.WriteFieldBegin("permission", thrift.STRING, 3); err != nil {
+		if err = oprot.WriteFieldBegin("permission", thrift.I32, 3); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(*p.Permission); err != nil {
+		if err := oprot.WriteI32(int32(*p.Permission)); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -9484,8 +9550,8 @@ type HasMenuPermissionResponseDTO struct {
 	RoleID *string `thrift:"roleID,3,optional" json:"role_id" form:"roleID" query:"roleID"`
 	/** 菜单ID */
 	MenuID *string `thrift:"menuID,4,optional" json:"menu_id" form:"menuID" query:"menuID"`
-	/** 权限类型 */
-	Permission *string `thrift:"permission,5,optional" json:"permission" form:"permission" query:"permission"`
+	/** 权限级别 */
+	Permission *PermissionLevel `thrift:"permission,5,optional,PermissionLevel" json:"permission" form:"permission" query:"permission"`
 }
 
 func NewHasMenuPermissionResponseDTO() *HasMenuPermissionResponseDTO {
@@ -9531,9 +9597,9 @@ func (p *HasMenuPermissionResponseDTO) GetMenuID() (v string) {
 	return *p.MenuID
 }
 
-var HasMenuPermissionResponseDTO_Permission_DEFAULT string
+var HasMenuPermissionResponseDTO_Permission_DEFAULT PermissionLevel
 
-func (p *HasMenuPermissionResponseDTO) GetPermission() (v string) {
+func (p *HasMenuPermissionResponseDTO) GetPermission() (v PermissionLevel) {
 	if !p.IsSetPermission() {
 		return HasMenuPermissionResponseDTO_Permission_DEFAULT
 	}
@@ -9620,7 +9686,7 @@ func (p *HasMenuPermissionResponseDTO) Read(iprot thrift.TProtocol) (err error) 
 				goto SkipFieldError
 			}
 		case 5:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField5(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -9699,11 +9765,12 @@ func (p *HasMenuPermissionResponseDTO) ReadField4(iprot thrift.TProtocol) error 
 }
 func (p *HasMenuPermissionResponseDTO) ReadField5(iprot thrift.TProtocol) error {
 
-	var _field *string
-	if v, err := iprot.ReadString(); err != nil {
+	var _field *PermissionLevel
+	if v, err := iprot.ReadI32(); err != nil {
 		return err
 	} else {
-		_field = &v
+		tmp := PermissionLevel(v)
+		_field = &tmp
 	}
 	p.Permission = _field
 	return nil
@@ -9831,10 +9898,10 @@ WriteFieldEndError:
 
 func (p *HasMenuPermissionResponseDTO) writeField5(oprot thrift.TProtocol) (err error) {
 	if p.IsSetPermission() {
-		if err = oprot.WriteFieldBegin("permission", thrift.STRING, 5); err != nil {
+		if err = oprot.WriteFieldBegin("permission", thrift.I32, 5); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(*p.Permission); err != nil {
+		if err := oprot.WriteI32(int32(*p.Permission)); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {

@@ -925,8 +925,8 @@ struct MenuConfig {
     /** 菜单ID */
     1: optional string menuID,
 
-    /** 权限类型: read, write, full, none */
-    2: optional string permission,
+    /** 权限级别 */
+    2: optional identity_model.PermissionLevel permission,
 }
 
 /** 菜单权限信息 */
@@ -935,8 +935,8 @@ struct MenuPermission {
     /** 菜单ID */
     1: optional string menuID,
 
-    /** 权限类型: read, write, full, none */
-    2: optional string permission,
+    /** 权限级别 */
+    2: optional identity_model.PermissionLevel permission,
 }
 
 /** 配置角色菜单权限请求 */
@@ -1025,8 +1025,8 @@ struct HasMenuPermissionRequest {
     /** 菜单ID */
     2: optional string menuID,
 
-    /** 权限类型 */
-    3: optional string permission,
+    /** 权限级别 */
+    3: optional identity_model.PermissionLevel permission,
 }
 
 /** 检查菜单权限响应 */
@@ -1041,8 +1041,8 @@ struct HasMenuPermissionResponse {
     /** 菜单ID */
     3: optional string menuID,
 
-    /** 权限类型 */
-    4: optional string permission,
+    /** 权限级别 */
+    4: optional identity_model.PermissionLevel permission,
 }
 
 /** 获取用户菜单权限请求 */

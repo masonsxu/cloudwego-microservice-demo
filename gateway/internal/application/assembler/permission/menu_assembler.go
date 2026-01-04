@@ -6,6 +6,28 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 )
 
+// =============================================================================
+// 枚举类型转换辅助函数
+// =============================================================================
+
+// rpcToHTTPPermissionLevel 将 RPC 枚举转换为 HTTP 枚举
+func rpcToHTTPPermissionLevel(rpc *identity_srv.PermissionLevel) *permissionModel.PermissionLevel {
+	if rpc == nil {
+		return nil
+	}
+	httpLevel := permissionModel.PermissionLevel(*rpc)
+	return &httpLevel
+}
+
+// httpToRPCPermissionLevel 将 HTTP 枚举转换为 RPC 枚举
+func httpToRPCPermissionLevel(http *permissionModel.PermissionLevel) *identity_srv.PermissionLevel {
+	if http == nil {
+		return nil
+	}
+	rpcLevel := identity_srv.PermissionLevel(*http)
+	return &rpcLevel
+}
+
 // menuAssembler implements the IMenuAssembler interface.
 type menuAssembler struct{}
 
@@ -29,7 +51,7 @@ func (a *menuAssembler) ToHTTPMenuNode(
 		Icon:            common.CopyStringPtr(rpcNode.Icon),
 		Component:       common.CopyStringPtr(rpcNode.Component),
 		HasPermission:   common.CopyBoolPtr(rpcNode.HasPermission),
-		PermissionLevel: common.CopyStringPtr(rpcNode.PermissionLevel),
+		PermissionLevel: rpcToHTTPPermissionLevel(rpcNode.PermissionLevel),
 	}
 
 	// 递归处理子菜单
@@ -76,7 +98,7 @@ func (a *menuAssembler) ToRPCMenuNode(dto *permissionModel.MenuNodeDTO) *identit
 		Icon:            dto.Icon,
 		Component:       dto.Component,
 		HasPermission:   dto.HasPermission,
-		PermissionLevel: dto.PermissionLevel,
+		PermissionLevel: httpToRPCPermissionLevel(dto.PermissionLevel),
 	}
 
 	// 递归转换子菜单
@@ -159,7 +181,7 @@ func (a *menuAssembler) ToHTTPMenuConfig(
 
 	return &permissionModel.MenuConfigDTO{
 		MenuID:     rpcConfig.MenuID,
-		Permission: rpcConfig.Permission,
+		Permission: rpcToHTTPPermissionLevel(rpcConfig.Permission),
 	}
 }
 
@@ -191,7 +213,7 @@ func (a *menuAssembler) ToRPCMenuConfig(
 
 	return &identity_srv.MenuConfig{
 		MenuID:     dto.MenuID,
-		Permission: dto.Permission,
+		Permission: httpToRPCPermissionLevel(dto.Permission),
 	}
 }
 
@@ -223,7 +245,7 @@ func (a *menuAssembler) ToHTTPMenuPermission(
 
 	return &permissionModel.MenuPermissionDTO{
 		MenuID:     rpcPermission.MenuID,
-		Permission: rpcPermission.Permission,
+		Permission: rpcToHTTPPermissionLevel(rpcPermission.Permission),
 	}
 }
 
@@ -370,7 +392,7 @@ func (a *menuAssembler) ToRPCHasMenuPermissionRequest(
 	return &identity_srv.HasMenuPermissionRequest{
 		RoleID:     dto.RoleID,
 		MenuID:     dto.MenuID,
-		Permission: dto.Permission,
+		Permission: httpToRPCPermissionLevel(dto.Permission),
 	}
 }
 
@@ -386,7 +408,7 @@ func (a *menuAssembler) ToHTTPHasMenuPermissionResponse(
 		HasPermission: rpcResp.HasPermission,
 		RoleID:        rpcResp.RoleID,
 		MenuID:        rpcResp.MenuID,
-		Permission:    rpcResp.Permission,
+		Permission:    rpcToHTTPPermissionLevel(rpcResp.Permission),
 	}
 
 	return httpResp

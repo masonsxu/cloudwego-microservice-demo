@@ -3821,8 +3821,8 @@ var fieldIDToName_GetMenuTreeResponse = map[int16]string{
 }
 
 type MenuConfig struct {
-	MenuID     *string `thrift:"menuID,1,optional" frugal:"1,optional,string" json:"menuID,omitempty"`
-	Permission *string `thrift:"permission,2,optional" frugal:"2,optional,string" json:"permission,omitempty"`
+	MenuID     *string          `thrift:"menuID,1,optional" frugal:"1,optional,string" json:"menuID,omitempty"`
+	Permission *PermissionLevel `thrift:"permission,2,optional" frugal:"2,optional,PermissionLevel" json:"permission,omitempty"`
 }
 
 func NewMenuConfig() *MenuConfig {
@@ -3841,9 +3841,9 @@ func (p *MenuConfig) GetMenuID() (v string) {
 	return *p.MenuID
 }
 
-var MenuConfig_Permission_DEFAULT string
+var MenuConfig_Permission_DEFAULT PermissionLevel
 
-func (p *MenuConfig) GetPermission() (v string) {
+func (p *MenuConfig) GetPermission() (v PermissionLevel) {
 	if !p.IsSetPermission() {
 		return MenuConfig_Permission_DEFAULT
 	}
@@ -3852,7 +3852,7 @@ func (p *MenuConfig) GetPermission() (v string) {
 func (p *MenuConfig) SetMenuID(val *string) {
 	p.MenuID = val
 }
-func (p *MenuConfig) SetPermission(val *string) {
+func (p *MenuConfig) SetPermission(val *PermissionLevel) {
 	p.Permission = val
 }
 
@@ -3877,8 +3877,8 @@ var fieldIDToName_MenuConfig = map[int16]string{
 }
 
 type MenuPermission struct {
-	MenuID     *string `thrift:"menuID,1,optional" frugal:"1,optional,string" json:"menuID,omitempty"`
-	Permission *string `thrift:"permission,2,optional" frugal:"2,optional,string" json:"permission,omitempty"`
+	MenuID     *string          `thrift:"menuID,1,optional" frugal:"1,optional,string" json:"menuID,omitempty"`
+	Permission *PermissionLevel `thrift:"permission,2,optional" frugal:"2,optional,PermissionLevel" json:"permission,omitempty"`
 }
 
 func NewMenuPermission() *MenuPermission {
@@ -3897,9 +3897,9 @@ func (p *MenuPermission) GetMenuID() (v string) {
 	return *p.MenuID
 }
 
-var MenuPermission_Permission_DEFAULT string
+var MenuPermission_Permission_DEFAULT PermissionLevel
 
-func (p *MenuPermission) GetPermission() (v string) {
+func (p *MenuPermission) GetPermission() (v PermissionLevel) {
 	if !p.IsSetPermission() {
 		return MenuPermission_Permission_DEFAULT
 	}
@@ -3908,7 +3908,7 @@ func (p *MenuPermission) GetPermission() (v string) {
 func (p *MenuPermission) SetMenuID(val *string) {
 	p.MenuID = val
 }
-func (p *MenuPermission) SetPermission(val *string) {
+func (p *MenuPermission) SetPermission(val *PermissionLevel) {
 	p.Permission = val
 }
 
@@ -4363,9 +4363,9 @@ var fieldIDToName_GetRoleMenuPermissionsResponse = map[int16]string{
 }
 
 type HasMenuPermissionRequest struct {
-	RoleID     *core.UUID `thrift:"roleID,1,optional" frugal:"1,optional,string" json:"roleID,omitempty"`
-	MenuID     *string    `thrift:"menuID,2,optional" frugal:"2,optional,string" json:"menuID,omitempty"`
-	Permission *string    `thrift:"permission,3,optional" frugal:"3,optional,string" json:"permission,omitempty"`
+	RoleID     *core.UUID       `thrift:"roleID,1,optional" frugal:"1,optional,string" json:"roleID,omitempty"`
+	MenuID     *string          `thrift:"menuID,2,optional" frugal:"2,optional,string" json:"menuID,omitempty"`
+	Permission *PermissionLevel `thrift:"permission,3,optional" frugal:"3,optional,PermissionLevel" json:"permission,omitempty"`
 }
 
 func NewHasMenuPermissionRequest() *HasMenuPermissionRequest {
@@ -4393,9 +4393,9 @@ func (p *HasMenuPermissionRequest) GetMenuID() (v string) {
 	return *p.MenuID
 }
 
-var HasMenuPermissionRequest_Permission_DEFAULT string
+var HasMenuPermissionRequest_Permission_DEFAULT PermissionLevel
 
-func (p *HasMenuPermissionRequest) GetPermission() (v string) {
+func (p *HasMenuPermissionRequest) GetPermission() (v PermissionLevel) {
 	if !p.IsSetPermission() {
 		return HasMenuPermissionRequest_Permission_DEFAULT
 	}
@@ -4407,7 +4407,7 @@ func (p *HasMenuPermissionRequest) SetRoleID(val *core.UUID) {
 func (p *HasMenuPermissionRequest) SetMenuID(val *string) {
 	p.MenuID = val
 }
-func (p *HasMenuPermissionRequest) SetPermission(val *string) {
+func (p *HasMenuPermissionRequest) SetPermission(val *PermissionLevel) {
 	p.Permission = val
 }
 
@@ -4437,10 +4437,10 @@ var fieldIDToName_HasMenuPermissionRequest = map[int16]string{
 }
 
 type HasMenuPermissionResponse struct {
-	HasPermission *bool      `thrift:"hasPermission,1,optional" frugal:"1,optional,bool" json:"hasPermission,omitempty"`
-	RoleID        *core.UUID `thrift:"roleID,2,optional" frugal:"2,optional,string" json:"roleID,omitempty"`
-	MenuID        *string    `thrift:"menuID,3,optional" frugal:"3,optional,string" json:"menuID,omitempty"`
-	Permission    *string    `thrift:"permission,4,optional" frugal:"4,optional,string" json:"permission,omitempty"`
+	HasPermission *bool            `thrift:"hasPermission,1,optional" frugal:"1,optional,bool" json:"hasPermission,omitempty"`
+	RoleID        *core.UUID       `thrift:"roleID,2,optional" frugal:"2,optional,string" json:"roleID,omitempty"`
+	MenuID        *string          `thrift:"menuID,3,optional" frugal:"3,optional,string" json:"menuID,omitempty"`
+	Permission    *PermissionLevel `thrift:"permission,4,optional" frugal:"4,optional,PermissionLevel" json:"permission,omitempty"`
 }
 
 func NewHasMenuPermissionResponse() *HasMenuPermissionResponse {
@@ -4477,9 +4477,9 @@ func (p *HasMenuPermissionResponse) GetMenuID() (v string) {
 	return *p.MenuID
 }
 
-var HasMenuPermissionResponse_Permission_DEFAULT string
+var HasMenuPermissionResponse_Permission_DEFAULT PermissionLevel
 
-func (p *HasMenuPermissionResponse) GetPermission() (v string) {
+func (p *HasMenuPermissionResponse) GetPermission() (v PermissionLevel) {
 	if !p.IsSetPermission() {
 		return HasMenuPermissionResponse_Permission_DEFAULT
 	}
@@ -4494,7 +4494,7 @@ func (p *HasMenuPermissionResponse) SetRoleID(val *core.UUID) {
 func (p *HasMenuPermissionResponse) SetMenuID(val *string) {
 	p.MenuID = val
 }
-func (p *HasMenuPermissionResponse) SetPermission(val *string) {
+func (p *HasMenuPermissionResponse) SetPermission(val *PermissionLevel) {
 	p.Permission = val
 }
 

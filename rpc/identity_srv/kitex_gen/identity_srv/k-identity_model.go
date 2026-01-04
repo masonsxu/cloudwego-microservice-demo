@@ -4728,7 +4728,7 @@ func (p *MenuNode) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 8:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I32 {
 				l, err = p.FastReadField8(buf[offset:])
 				offset += l
 				if err != nil {
@@ -4871,12 +4871,14 @@ func (p *MenuNode) FastReadField7(buf []byte) (int, error) {
 func (p *MenuNode) FastReadField8(buf []byte) (int, error) {
 	offset := 0
 
-	var _field *string
-	if v, l, err := thrift.Binary.ReadString(buf[offset:]); err != nil {
+	var _field *PermissionLevel
+	if v, l, err := thrift.Binary.ReadI32(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
-		_field = &v
+
+		tmp := PermissionLevel(v)
+		_field = &tmp
 	}
 	p.PermissionLevel = _field
 	return offset, nil
@@ -4991,8 +4993,8 @@ func (p *MenuNode) fastWriteField7(buf []byte, w thrift.NocopyWriter) int {
 func (p *MenuNode) fastWriteField8(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetPermissionLevel() {
-		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 8)
-		offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, *p.PermissionLevel)
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I32, 8)
+		offset += thrift.Binary.WriteI32(buf[offset:], int32(*p.PermissionLevel))
 	}
 	return offset
 }
@@ -5068,7 +5070,7 @@ func (p *MenuNode) field8Length() int {
 	l := 0
 	if p.IsSetPermissionLevel() {
 		l += thrift.Binary.FieldBeginLength()
-		l += thrift.Binary.StringLengthNocopy(*p.PermissionLevel)
+		l += thrift.Binary.I32Length()
 	}
 	return l
 }

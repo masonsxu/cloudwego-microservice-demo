@@ -9,6 +9,24 @@ namespace go permission
 include "../../base/core.thrift"
 include "../base/base.thrift"
 
+/**
+ * 权限级别枚举 (Permission Level)
+ * 定义菜单权限的访问级别
+ */
+enum PermissionLevel {
+    /** 无权限 */
+    NONE = 0,
+
+    /** 只读权限 */
+    READ = 1,
+
+    /** 读写权限 */
+    WRITE = 2,
+
+    /** 完全权限 */
+    FULL = 3,
+}
+
 // =================================================================
 // 1. 角色与权限管理模块 DTO (RBAC - Role & Permission Management)
 // =================================================================
@@ -332,8 +350,8 @@ struct MenuNodeDTO {
     /** 是否有权限访问此菜单 (可选, 用于权限标记) */
     7: optional bool hasPermission (go.tag = "json:\"has_permission,omitempty\""),
 
-    /** 权限级别 (可选): read, write, full, none */
-    8: optional string permissionLevel (go.tag = "json:\"permission_level,omitempty\""),
+    /** 权限级别 */
+    8: optional PermissionLevel permissionLevel (go.tag = "json:\"permission_level,omitempty\""),
 }
 
 /** 菜单树获取响应DTO */
@@ -356,8 +374,8 @@ struct MenuConfigDTO {
     /** 菜单ID */
     1: optional string menuID (go.tag = "json:\"menu_id\""),
 
-    /** 权限类型: read, write, full, none */
-    2: optional string permission (go.tag = "json:\"permission\""),
+    /** 权限级别 */
+    2: optional PermissionLevel permission (go.tag = "json:\"permission\""),
 }
 
 /** 菜单权限信息DTO */
@@ -366,8 +384,8 @@ struct MenuPermissionDTO {
     /** 菜单ID */
     1: optional string menuID (go.tag = "json:\"menu_id\""),
 
-    /** 权限类型: read, write, full, none */
-    2: optional string permission (go.tag = "json:\"permission\""),
+    /** 权限级别 */
+    2: optional PermissionLevel permission (go.tag = "json:\"permission\""),
 }
 
 /** 配置角色菜单权限请求DTO */
@@ -465,8 +483,8 @@ struct HasMenuPermissionRequestDTO {
     /** 菜单ID */
     2: optional string menuID (api.query = "menuID", api.vd = "@:len($) > 0; msg:'菜单ID不能为空'", go.tag = "json:\"menu_id\""),
 
-    /** 权限类型 */
-    3: optional string permission (api.query = "permission", api.vd = "@:len($) > 0; msg:'权限类型不能为空'", go.tag = "json:\"permission\""),
+    /** 权限级别 */
+    3: optional PermissionLevel permission (api.query = "permission", go.tag = "json:\"permission\""),
 }
 
 /** 检查菜单权限响应DTO */
@@ -484,6 +502,6 @@ struct HasMenuPermissionResponseDTO {
     /** 菜单ID */
     4: optional string menuID (go.tag = "json:\"menu_id\""),
 
-    /** 权限类型 */
-    5: optional string permission (go.tag = "json:\"permission\""),
+    /** 权限级别 */
+    5: optional PermissionLevel permission (go.tag = "json:\"permission\""),
 }

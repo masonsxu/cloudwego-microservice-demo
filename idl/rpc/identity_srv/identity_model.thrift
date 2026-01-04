@@ -9,6 +9,24 @@ include "../../base/core.thrift"
 include "../../base/enums.thrift"
 
 /**
+ * 权限级别枚举 (Permission Level)
+ * 定义菜单权限的访问级别
+ */
+enum PermissionLevel {
+    /** 无权限 */
+    NONE = 0,
+
+    /** 只读权限 */
+    READ = 1,
+
+    /** 读写权限 */
+    WRITE = 2,
+
+    /** 完全权限 */
+    FULL = 3,
+}
+
+/**
  * 用户画像 (UserProfile)
  * 代表一个“自然人”，存储用户的核心身份信息，与其在具体组织中的角色和职位无关。
  */
@@ -371,6 +389,6 @@ struct MenuNode {
     /** 是否有权限访问此菜单 (可选, 用于权限标记) */
     7: optional bool hasPermission,
 
-    /** 权限级别 (可选): read, write, full, none */
-    8: optional string permissionLevel,
+    /** 权限级别 */
+    8: optional PermissionLevel permissionLevel,
 }

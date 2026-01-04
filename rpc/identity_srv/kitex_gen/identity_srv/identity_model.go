@@ -9,6 +9,58 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
 )
 
+type PermissionLevel int64
+
+const (
+	PermissionLevel_NONE  PermissionLevel = 0
+	PermissionLevel_READ  PermissionLevel = 1
+	PermissionLevel_WRITE PermissionLevel = 2
+	PermissionLevel_FULL  PermissionLevel = 3
+)
+
+func (p PermissionLevel) String() string {
+	switch p {
+	case PermissionLevel_NONE:
+		return "NONE"
+	case PermissionLevel_READ:
+		return "READ"
+	case PermissionLevel_WRITE:
+		return "WRITE"
+	case PermissionLevel_FULL:
+		return "FULL"
+	}
+	return "<UNSET>"
+}
+
+func PermissionLevelFromString(s string) (PermissionLevel, error) {
+	switch s {
+	case "NONE":
+		return PermissionLevel_NONE, nil
+	case "READ":
+		return PermissionLevel_READ, nil
+	case "WRITE":
+		return PermissionLevel_WRITE, nil
+	case "FULL":
+		return PermissionLevel_FULL, nil
+	}
+	return PermissionLevel(0), fmt.Errorf("not a valid PermissionLevel string")
+}
+
+func PermissionLevelPtr(v PermissionLevel) *PermissionLevel { return &v }
+func (p *PermissionLevel) Scan(value interface{}) (err error) {
+	var result sql.NullInt64
+	err = result.Scan(value)
+	*p = PermissionLevel(result.Int64)
+	return
+}
+
+func (p *PermissionLevel) Value() (driver.Value, error) {
+	if p == nil {
+		return nil, nil
+	}
+	return int64(*p), nil
+}
+
 type OrganizationLogoStatus int64
 
 const (
@@ -1739,14 +1791,14 @@ var fieldIDToName_UserRoleAssignment = map[int16]string{
 }
 
 type MenuNode struct {
-	Name            *string     `thrift:"name,1,optional" frugal:"1,optional,string" json:"name,omitempty"`
-	Id              *string     `thrift:"id,2,optional" frugal:"2,optional,string" json:"id,omitempty"`
-	Path            *string     `thrift:"path,3,optional" frugal:"3,optional,string" json:"path,omitempty"`
-	Icon            *string     `thrift:"icon,4,optional" frugal:"4,optional,string" json:"icon,omitempty"`
-	Component       *string     `thrift:"component,5,optional" frugal:"5,optional,string" json:"component,omitempty"`
-	Children        []*MenuNode `thrift:"children,6,optional" frugal:"6,optional,list<MenuNode>" json:"children,omitempty"`
-	HasPermission   *bool       `thrift:"hasPermission,7,optional" frugal:"7,optional,bool" json:"hasPermission,omitempty"`
-	PermissionLevel *string     `thrift:"permissionLevel,8,optional" frugal:"8,optional,string" json:"permissionLevel,omitempty"`
+	Name            *string          `thrift:"name,1,optional" frugal:"1,optional,string" json:"name,omitempty"`
+	Id              *string          `thrift:"id,2,optional" frugal:"2,optional,string" json:"id,omitempty"`
+	Path            *string          `thrift:"path,3,optional" frugal:"3,optional,string" json:"path,omitempty"`
+	Icon            *string          `thrift:"icon,4,optional" frugal:"4,optional,string" json:"icon,omitempty"`
+	Component       *string          `thrift:"component,5,optional" frugal:"5,optional,string" json:"component,omitempty"`
+	Children        []*MenuNode      `thrift:"children,6,optional" frugal:"6,optional,list<MenuNode>" json:"children,omitempty"`
+	HasPermission   *bool            `thrift:"hasPermission,7,optional" frugal:"7,optional,bool" json:"hasPermission,omitempty"`
+	PermissionLevel *PermissionLevel `thrift:"permissionLevel,8,optional" frugal:"8,optional,PermissionLevel" json:"permissionLevel,omitempty"`
 }
 
 func NewMenuNode() *MenuNode {
@@ -1819,9 +1871,9 @@ func (p *MenuNode) GetHasPermission() (v bool) {
 	return *p.HasPermission
 }
 
-var MenuNode_PermissionLevel_DEFAULT string
+var MenuNode_PermissionLevel_DEFAULT PermissionLevel
 
-func (p *MenuNode) GetPermissionLevel() (v string) {
+func (p *MenuNode) GetPermissionLevel() (v PermissionLevel) {
 	if !p.IsSetPermissionLevel() {
 		return MenuNode_PermissionLevel_DEFAULT
 	}
@@ -1848,7 +1900,7 @@ func (p *MenuNode) SetChildren(val []*MenuNode) {
 func (p *MenuNode) SetHasPermission(val *bool) {
 	p.HasPermission = val
 }
-func (p *MenuNode) SetPermissionLevel(val *string) {
+func (p *MenuNode) SetPermissionLevel(val *PermissionLevel) {
 	p.PermissionLevel = val
 }
 
