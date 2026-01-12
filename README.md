@@ -17,6 +17,7 @@
 
 - **API 网关**: Hertz 作为统一流量入口
 - **RPC 微服务**: Kitex 构建高性能 RPC 服务
+- **权限管理**: Casbin RBAC 权限引擎
 - **整洁架构**: 业务逻辑、数据处理与框架分离
 - **依赖注入**: Google Wire 编译时依赖注入
 - **用户认证**: JWT Token 认证
@@ -43,6 +44,7 @@
 | 数据库 | PostgreSQL + [GORM](https://gorm.io/) |
 | 服务发现 | etcd |
 | 缓存 | Redis |
+| 权限引擎 | [Casbin](https://casbin.org/) |
 | 依赖注入 | [Google Wire](https://github.com/google/wire) |
 | 可观测性 | [OpenTelemetry](https://opentelemetry.io/) |
 
@@ -103,6 +105,7 @@ cloudwego-microservice-demo/
 - [配置参考](docs/04-configuration.md)
 - [部署指南](docs/05-deployment.md)
 - [故障排查](docs/06-troubleshooting.md)
+- [权限管理](docs/07-permission-management.md)
 
 ## 许可证
 
