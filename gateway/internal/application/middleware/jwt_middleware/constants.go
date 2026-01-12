@@ -10,8 +10,8 @@ const (
 	// OrganizationID 表示组织ID
 	OrganizationID = "organizationID"
 
-	// DepartmentID 表示部门ID
-	DepartmentID = "departmentID"
+	// DepartmentIDs 表示部门ID列表（多部门模式）
+	DepartmentIDs = "departmentIDs"
 
 	// Username 表示用户名
 	Username = "username"
@@ -19,11 +19,14 @@ const (
 	// Status 表示用户状态
 	Status = "status"
 
-	// RoleID 表示角色ID（简化为单角色）
-	RoleID = "roleID"
+	// RoleIDs 表示角色ID列表（多角色模式）
+	RoleIDs = "roleIDs"
 
 	// CorePermission 表示核心权限
 	CorePermission = "corePermission"
+
+	// DataScope 表示数据范围（self/dept/org）
+	DataScope = "dataScope"
 )
 
 // Context中存储登录用户信息的键名

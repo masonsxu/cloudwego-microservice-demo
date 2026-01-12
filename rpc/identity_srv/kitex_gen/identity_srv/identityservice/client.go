@@ -66,6 +66,9 @@ type Client interface {
 	GetRoleMenuPermissions(ctx context.Context, req *identity_srv.GetRoleMenuPermissionsRequest, callOptions ...callopt.Option) (r *identity_srv.GetRoleMenuPermissionsResponse, err error)
 	HasMenuPermission(ctx context.Context, req *identity_srv.HasMenuPermissionRequest, callOptions ...callopt.Option) (r *identity_srv.HasMenuPermissionResponse, err error)
 	GetUserMenuPermissions(ctx context.Context, req *identity_srv.GetUserMenuPermissionsRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserMenuPermissionsResponse, err error)
+	CheckPermission(ctx context.Context, req *identity_srv.CheckPermissionRequest, callOptions ...callopt.Option) (r *identity_srv.CheckPermissionResponse, err error)
+	SyncPolicies(ctx context.Context, callOptions ...callopt.Option) (r *identity_srv.SyncPoliciesResponse, err error)
+	GetUserDataScope(ctx context.Context, req *identity_srv.GetUserDataScopeRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserDataScopeResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -365,4 +368,19 @@ func (p *kIdentityServiceClient) HasMenuPermission(ctx context.Context, req *ide
 func (p *kIdentityServiceClient) GetUserMenuPermissions(ctx context.Context, req *identity_srv.GetUserMenuPermissionsRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserMenuPermissionsResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.GetUserMenuPermissions(ctx, req)
+}
+
+func (p *kIdentityServiceClient) CheckPermission(ctx context.Context, req *identity_srv.CheckPermissionRequest, callOptions ...callopt.Option) (r *identity_srv.CheckPermissionResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CheckPermission(ctx, req)
+}
+
+func (p *kIdentityServiceClient) SyncPolicies(ctx context.Context, callOptions ...callopt.Option) (r *identity_srv.SyncPoliciesResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.SyncPolicies(ctx)
+}
+
+func (p *kIdentityServiceClient) GetUserDataScope(ctx context.Context, req *identity_srv.GetUserDataScopeRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserDataScopeResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetUserDataScope(ctx, req)
 }

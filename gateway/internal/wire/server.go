@@ -79,6 +79,7 @@ func (r *HandlerRegistry) RegisterMiddlewares() {
 		r.middlewares.CORSMiddleware.MiddlewareFunc(),           // 跨域：处理预检，避免被后续中间件拦截
 		r.middlewares.ErrorHandlerMiddleware.MiddlewareFunc(),   // 错误处理：后续所有错误均由其捕获
 		r.middlewares.JWTMiddleware.MiddlewareFunc(),            // 认证：解析用户身份，存入上下文
+		r.middlewares.CasbinMiddleware.MiddlewareFunc(),         // 权限：基于 Casbin RBAC 进行权限校验
 		etag.New(), // ETag：计算和验证 ETag
 	)
 

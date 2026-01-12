@@ -38,12 +38,19 @@ var LogicSet = wire.NewSet(
 	logic.NewLogicImpl,
 )
 
+// CasbinSet Casbin 权限管理 Provider 集合
+var CasbinSet = wire.NewSet(
+	ProvideCasbinRepository,
+	ProvideCasbinService,
+)
+
 // ApplicationSet 完整应用 Provider 集合
 // 包含业务逻辑相关的所有依赖
 var ApplicationSet = wire.NewSet(
 	InfrastructureSet,
 	ConverterSet,
 	DALSet,
+	CasbinSet,
 	LogicSet,
 )
 

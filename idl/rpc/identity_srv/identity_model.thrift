@@ -27,6 +27,21 @@ enum PermissionLevel {
 }
 
 /**
+ * 数据范围枚举 (Data Scope)
+ * 定义数据访问的范围级别，用于 Casbin RBAC 数据权限控制
+ */
+enum DataScope {
+    /** 仅自己的数据 */
+    SELF = 1,
+
+    /** 本部门数据 */
+    DEPT = 2,
+
+    /** 全组织数据 */
+    ORG = 3,
+}
+
+/**
  * 用户画像 (UserProfile)
  * 代表一个“自然人”，存储用户的核心身份信息，与其在具体组织中的角色和职位无关。
  */
@@ -295,6 +310,7 @@ struct Permission {
 /**
  * 角色定义 (RoleDefinition)
  * 定义了一个角色及其拥有的权限集合。
+ * 扩展支持 Casbin RBAC：角色继承、部门绑定、数据范围
  */
 struct RoleDefinition {
 
@@ -331,6 +347,20 @@ struct RoleDefinition {
 
     /** 当前角色绑定的用户数量（非持久化字段，查询时动态计算） */
     12: optional i64 userCount,
+
+    // --- Casbin RBAC 扩展字段 ---
+
+    /** 角色编码，用于 Casbin 策略标识（如：ROLE_ADMIN, ROLE_DOCTOR） */
+    13: optional string roleCode,
+
+    /** 父角色ID，支持角色继承（如：主任医师继承住院医师权限） */
+    14: optional core.UUID parentRoleID,
+
+    /** 绑定部门ID，null 表示全院通用角色 */
+    15: optional core.UUID departmentID,
+
+    /** 默认数据范围（self/dept/org） */
+    16: optional DataScope defaultScope,
 }
 
 /**

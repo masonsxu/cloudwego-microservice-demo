@@ -10,17 +10,19 @@ include "../../base/enums.thrift"
 /**
  * JWT 令牌声明（Claims）信息
  * 这些信息将直接嵌入到 JWT Token 中
+ * 支持多角色模式：用户可同时拥有多个角色，权限取并集
  */
 struct JWTClaimsDTO {
     1: optional string userProfileID (go.tag = "json:\"user_profile_id,omitempty\" form:\"user_profile_id\" query:\"user_profile_id\""),  // 用户ID
     2: optional string username (go.tag = "json:\"username,omitempty\" form:\"username\" query:\"username\""),                            // 用户名
     3: optional enums.UserStatus status (go.tag = "json:\"status,omitempty\" form:\"status\" query:\"status\""),                          // 用户状态
-    4: optional string roleID (go.tag = "json:\"role_id,omitempty\" form:\"role_id\" query:\"role_id\""),                                 // 角色ID
+    4: optional list<string> roleIDs (go.tag = "json:\"role_ids,omitempty\" form:\"role_ids\" query:\"role_ids\""),                       // 角色ID列表（多角色模式）
     5: optional string organizationID (go.tag = "json:\"organization_id,omitempty\" form:\"organization_id\" query:\"organization_id\""), // 所属组织ID
-    6: optional string departmentID (go.tag = "json:\"department_id,omitempty\" form:\"department_id\" query:\"department_id\""),         // 所属部门ID
-    7: optional string permission (go.tag = "json:\"permission,omitempty\" form:\"permission\" query:\"permission\""),                    // 权限
+    6: optional list<string> departmentIDs (go.tag = "json:\"department_ids,omitempty\" form:\"department_ids\" query:\"department_ids\""), // 所属部门ID列表（多部门模式）
+    7: optional string permission (go.tag = "json:\"permission,omitempty\" form:\"permission\" query:\"permission\""),                    // 权限（保留用于向后兼容）
     8: optional i64 exp (go.tag = "json:\"exp,omitempty\" form:\"exp\" query:\"exp\""),                                                   // 过期时间（Unix时间戳）
     9: optional i64 iat (go.tag = "json:\"iat,omitempty\" form:\"iat\" query:\"iat\""),                                                   // 签发时间（Unix时间戳）
+    10: optional string dataScope (go.tag = "json:\"data_scope,omitempty\" form:\"data_scope\" query:\"data_scope\""),                    // 数据范围（self/dept/org）
 }
 
 /**

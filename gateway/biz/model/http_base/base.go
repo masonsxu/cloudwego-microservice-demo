@@ -14,6 +14,7 @@ import (
 /**
  * JWT 令牌声明（Claims）信息
  * 这些信息将直接嵌入到 JWT Token 中
+ * 支持多角色模式：用户可同时拥有多个角色，权限取并集
  */
 type JWTClaimsDTO struct {
 	// 用户ID
@@ -22,18 +23,20 @@ type JWTClaimsDTO struct {
 	Username *string `thrift:"username,2,optional" json:"username,omitempty" form:"username" query:"username"`
 	// 用户状态
 	Status *core.UserStatus `thrift:"status,3,optional,UserStatus" json:"status,omitempty" form:"status" query:"status"`
-	// 角色ID
-	RoleID *string `thrift:"roleID,4,optional" json:"role_id,omitempty" form:"role_id" query:"role_id"`
+	// 角色ID列表（多角色模式）
+	RoleIDs []string `thrift:"roleIDs,4,optional,list<string>" json:"role_ids,omitempty" form:"role_ids" query:"role_ids"`
 	// 所属组织ID
 	OrganizationID *string `thrift:"organizationID,5,optional" json:"organization_id,omitempty" form:"organization_id" query:"organization_id"`
-	// 所属部门ID
-	DepartmentID *string `thrift:"departmentID,6,optional" json:"department_id,omitempty" form:"department_id" query:"department_id"`
-	// 权限
+	// 所属部门ID列表（多部门模式）
+	DepartmentIDs []string `thrift:"departmentIDs,6,optional,list<string>" json:"department_ids,omitempty" form:"department_ids" query:"department_ids"`
+	// 权限（保留用于向后兼容）
 	Permission *string `thrift:"permission,7,optional" json:"permission,omitempty" form:"permission" query:"permission"`
 	// 过期时间（Unix时间戳）
 	Exp *int64 `thrift:"exp,8,optional" json:"exp,omitempty" form:"exp" query:"exp"`
 	// 签发时间（Unix时间戳）
 	Iat *int64 `thrift:"iat,9,optional" json:"iat,omitempty" form:"iat" query:"iat"`
+	// 数据范围（self/dept/org）
+	DataScope *string `thrift:"dataScope,10,optional" json:"data_scope,omitempty" form:"data_scope" query:"data_scope"`
 }
 
 func NewJWTClaimsDTO() *JWTClaimsDTO {
@@ -70,13 +73,13 @@ func (p *JWTClaimsDTO) GetStatus() (v core.UserStatus) {
 	return *p.Status
 }
 
-var JWTClaimsDTO_RoleID_DEFAULT string
+var JWTClaimsDTO_RoleIDs_DEFAULT []string
 
-func (p *JWTClaimsDTO) GetRoleID() (v string) {
-	if !p.IsSetRoleID() {
-		return JWTClaimsDTO_RoleID_DEFAULT
+func (p *JWTClaimsDTO) GetRoleIDs() (v []string) {
+	if !p.IsSetRoleIDs() {
+		return JWTClaimsDTO_RoleIDs_DEFAULT
 	}
-	return *p.RoleID
+	return p.RoleIDs
 }
 
 var JWTClaimsDTO_OrganizationID_DEFAULT string
@@ -88,13 +91,13 @@ func (p *JWTClaimsDTO) GetOrganizationID() (v string) {
 	return *p.OrganizationID
 }
 
-var JWTClaimsDTO_DepartmentID_DEFAULT string
+var JWTClaimsDTO_DepartmentIDs_DEFAULT []string
 
-func (p *JWTClaimsDTO) GetDepartmentID() (v string) {
-	if !p.IsSetDepartmentID() {
-		return JWTClaimsDTO_DepartmentID_DEFAULT
+func (p *JWTClaimsDTO) GetDepartmentIDs() (v []string) {
+	if !p.IsSetDepartmentIDs() {
+		return JWTClaimsDTO_DepartmentIDs_DEFAULT
 	}
-	return *p.DepartmentID
+	return p.DepartmentIDs
 }
 
 var JWTClaimsDTO_Permission_DEFAULT string
@@ -124,16 +127,26 @@ func (p *JWTClaimsDTO) GetIat() (v int64) {
 	return *p.Iat
 }
 
+var JWTClaimsDTO_DataScope_DEFAULT string
+
+func (p *JWTClaimsDTO) GetDataScope() (v string) {
+	if !p.IsSetDataScope() {
+		return JWTClaimsDTO_DataScope_DEFAULT
+	}
+	return *p.DataScope
+}
+
 var fieldIDToName_JWTClaimsDTO = map[int16]string{
-	1: "userProfileID",
-	2: "username",
-	3: "status",
-	4: "roleID",
-	5: "organizationID",
-	6: "departmentID",
-	7: "permission",
-	8: "exp",
-	9: "iat",
+	1:  "userProfileID",
+	2:  "username",
+	3:  "status",
+	4:  "roleIDs",
+	5:  "organizationID",
+	6:  "departmentIDs",
+	7:  "permission",
+	8:  "exp",
+	9:  "iat",
+	10: "dataScope",
 }
 
 func (p *JWTClaimsDTO) IsSetUserProfileID() bool {
@@ -148,16 +161,16 @@ func (p *JWTClaimsDTO) IsSetStatus() bool {
 	return p.Status != nil
 }
 
-func (p *JWTClaimsDTO) IsSetRoleID() bool {
-	return p.RoleID != nil
+func (p *JWTClaimsDTO) IsSetRoleIDs() bool {
+	return p.RoleIDs != nil
 }
 
 func (p *JWTClaimsDTO) IsSetOrganizationID() bool {
 	return p.OrganizationID != nil
 }
 
-func (p *JWTClaimsDTO) IsSetDepartmentID() bool {
-	return p.DepartmentID != nil
+func (p *JWTClaimsDTO) IsSetDepartmentIDs() bool {
+	return p.DepartmentIDs != nil
 }
 
 func (p *JWTClaimsDTO) IsSetPermission() bool {
@@ -170,6 +183,10 @@ func (p *JWTClaimsDTO) IsSetExp() bool {
 
 func (p *JWTClaimsDTO) IsSetIat() bool {
 	return p.Iat != nil
+}
+
+func (p *JWTClaimsDTO) IsSetDataScope() bool {
+	return p.DataScope != nil
 }
 
 func (p *JWTClaimsDTO) Read(iprot thrift.TProtocol) (err error) {
@@ -216,7 +233,7 @@ func (p *JWTClaimsDTO) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 4:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField4(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -232,7 +249,7 @@ func (p *JWTClaimsDTO) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 6:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField6(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -258,6 +275,14 @@ func (p *JWTClaimsDTO) Read(iprot thrift.TProtocol) (err error) {
 		case 9:
 			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField9(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 10:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField10(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -327,14 +352,26 @@ func (p *JWTClaimsDTO) ReadField3(iprot thrift.TProtocol) error {
 	return nil
 }
 func (p *JWTClaimsDTO) ReadField4(iprot thrift.TProtocol) error {
-
-	var _field *string
-	if v, err := iprot.ReadString(); err != nil {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
 		return err
-	} else {
-		_field = &v
 	}
-	p.RoleID = _field
+	_field := make([]string, 0, size)
+	for i := 0; i < size; i++ {
+
+		var _elem string
+		if v, err := iprot.ReadString(); err != nil {
+			return err
+		} else {
+			_elem = v
+		}
+
+		_field = append(_field, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
+	}
+	p.RoleIDs = _field
 	return nil
 }
 func (p *JWTClaimsDTO) ReadField5(iprot thrift.TProtocol) error {
@@ -349,14 +386,26 @@ func (p *JWTClaimsDTO) ReadField5(iprot thrift.TProtocol) error {
 	return nil
 }
 func (p *JWTClaimsDTO) ReadField6(iprot thrift.TProtocol) error {
-
-	var _field *string
-	if v, err := iprot.ReadString(); err != nil {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
 		return err
-	} else {
-		_field = &v
 	}
-	p.DepartmentID = _field
+	_field := make([]string, 0, size)
+	for i := 0; i < size; i++ {
+
+		var _elem string
+		if v, err := iprot.ReadString(); err != nil {
+			return err
+		} else {
+			_elem = v
+		}
+
+		_field = append(_field, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
+	}
+	p.DepartmentIDs = _field
 	return nil
 }
 func (p *JWTClaimsDTO) ReadField7(iprot thrift.TProtocol) error {
@@ -390,6 +439,17 @@ func (p *JWTClaimsDTO) ReadField9(iprot thrift.TProtocol) error {
 		_field = &v
 	}
 	p.Iat = _field
+	return nil
+}
+func (p *JWTClaimsDTO) ReadField10(iprot thrift.TProtocol) error {
+
+	var _field *string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = &v
+	}
+	p.DataScope = _field
 	return nil
 }
 
@@ -433,6 +493,10 @@ func (p *JWTClaimsDTO) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField9(oprot); err != nil {
 			fieldId = 9
+			goto WriteFieldError
+		}
+		if err = p.writeField10(oprot); err != nil {
+			fieldId = 10
 			goto WriteFieldError
 		}
 	}
@@ -511,11 +575,19 @@ WriteFieldEndError:
 }
 
 func (p *JWTClaimsDTO) writeField4(oprot thrift.TProtocol) (err error) {
-	if p.IsSetRoleID() {
-		if err = oprot.WriteFieldBegin("roleID", thrift.STRING, 4); err != nil {
+	if p.IsSetRoleIDs() {
+		if err = oprot.WriteFieldBegin("roleIDs", thrift.LIST, 4); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(*p.RoleID); err != nil {
+		if err := oprot.WriteListBegin(thrift.STRING, len(p.RoleIDs)); err != nil {
+			return err
+		}
+		for _, v := range p.RoleIDs {
+			if err := oprot.WriteString(v); err != nil {
+				return err
+			}
+		}
+		if err := oprot.WriteListEnd(); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -549,11 +621,19 @@ WriteFieldEndError:
 }
 
 func (p *JWTClaimsDTO) writeField6(oprot thrift.TProtocol) (err error) {
-	if p.IsSetDepartmentID() {
-		if err = oprot.WriteFieldBegin("departmentID", thrift.STRING, 6); err != nil {
+	if p.IsSetDepartmentIDs() {
+		if err = oprot.WriteFieldBegin("departmentIDs", thrift.LIST, 6); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteString(*p.DepartmentID); err != nil {
+		if err := oprot.WriteListBegin(thrift.STRING, len(p.DepartmentIDs)); err != nil {
+			return err
+		}
+		for _, v := range p.DepartmentIDs {
+			if err := oprot.WriteString(v); err != nil {
+				return err
+			}
+		}
+		if err := oprot.WriteListEnd(); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -622,6 +702,25 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 9 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 9 end error: ", p), err)
+}
+
+func (p *JWTClaimsDTO) writeField10(oprot thrift.TProtocol) (err error) {
+	if p.IsSetDataScope() {
+		if err = oprot.WriteFieldBegin("dataScope", thrift.STRING, 10); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.DataScope); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 end error: ", p), err)
 }
 
 func (p *JWTClaimsDTO) String() string {

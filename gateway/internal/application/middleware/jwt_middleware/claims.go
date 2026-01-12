@@ -24,20 +24,27 @@ func createPayloadFromLoginData(data map[string]interface{}) jwt.MapClaims {
 		claims[Status] = status
 	}
 
-	if roleID, exists := data[RoleID]; exists && roleID != nil {
-		claims[RoleID] = roleID
+	// 多角色模式：存储角色ID列表
+	if roleIDs, exists := data[RoleIDs]; exists && roleIDs != nil {
+		claims[RoleIDs] = roleIDs
 	}
 
 	if orgID, exists := data[OrganizationID]; exists && orgID != nil {
 		claims[OrganizationID] = orgID
 	}
 
-	if deptID, exists := data[DepartmentID]; exists && deptID != nil {
-		claims[DepartmentID] = deptID
+	// 多部门模式：存储部门ID列表
+	if deptIDs, exists := data[DepartmentIDs]; exists && deptIDs != nil {
+		claims[DepartmentIDs] = deptIDs
 	}
 
 	if permission, exists := data[CorePermission]; exists && permission != nil {
 		claims[CorePermission] = permission
+	}
+
+	// 数据范围
+	if dataScope, exists := data[DataScope]; exists && dataScope != nil {
+		claims[DataScope] = dataScope
 	}
 
 	return claims
@@ -59,20 +66,27 @@ func createPayloadFromJWTClaimsDTO(user *http_base.JWTClaimsDTO) jwt.MapClaims {
 		claims[Status] = int(*user.Status)
 	}
 
-	if user.RoleID != nil {
-		claims[RoleID] = *user.RoleID
+	// 多角色模式：存储角色ID列表
+	if len(user.RoleIDs) > 0 {
+		claims[RoleIDs] = user.RoleIDs
 	}
 
 	if user.OrganizationID != nil {
 		claims[OrganizationID] = *user.OrganizationID
 	}
 
-	if user.DepartmentID != nil {
-		claims[DepartmentID] = *user.DepartmentID
+	// 多部门模式：存储部门ID列表
+	if len(user.DepartmentIDs) > 0 {
+		claims[DepartmentIDs] = user.DepartmentIDs
 	}
 
 	if user.Permission != nil {
 		claims[CorePermission] = user.Permission
+	}
+
+	// 数据范围
+	if user.DataScope != nil {
+		claims[DataScope] = *user.DataScope
 	}
 
 	// 设置JWT标准字段
@@ -137,6 +151,32 @@ func extractInt64Claim(claims jwt.MapClaims, key string) (int64, bool) {
 	return 0, false
 }
 
+// extractStringSliceClaim 从claims中提取字符串切片值
+// JWT claims 在解码后可能将 []string 表示为 []interface{}
+func extractStringSliceClaim(claims jwt.MapClaims, key string) ([]string, bool) {
+	if value, exists := claims[key]; exists {
+		// 直接尝试 []string 类型
+		if strSlice, ok := value.([]string); ok && len(strSlice) > 0 {
+			return strSlice, true
+		}
+
+		// JWT 解码后通常是 []interface{} 类型
+		if ifaceSlice, ok := value.([]interface{}); ok && len(ifaceSlice) > 0 {
+			result := make([]string, 0, len(ifaceSlice))
+			for _, item := range ifaceSlice {
+				if str, ok := item.(string); ok {
+					result = append(result, str)
+				}
+			}
+			if len(result) > 0 {
+				return result, true
+			}
+		}
+	}
+
+	return nil, false
+}
+
 // extractBasicUserInfo 提取用户基本信息（用户ID、用户名、状态）
 // 该函数负责从用户个人信息中提取JWT所需的基本字段，包括用户ID、用户名和用户状态。
 // 所有字段都进行了nil安全检查，确保只有非空值才会被添加到用户数据映射中。
@@ -182,10 +222,10 @@ func extractBasicUserInfo(
 	}
 }
 
-// extractMembershipInfo 提取成员关系信息（组织ID、部门ID）
-// 该函数负责从成员关系列表中查找主要成员关系，并提取组织ID和部门ID。
-// 函数会遍历所有成员关系，寻找标记为主要成员关系的记录，并从中提取组织和部门信息。
-// 如果没有找到主要成员关系，则不会向用户数据映射中添加任何组织或部门信息。
+// extractMembershipInfo 提取成员关系信息（组织ID、部门ID列表）
+// 该函数负责从成员关系列表中提取组织ID和所有部门ID。
+// 多部门模式：用户可能同时属于多个部门，函数会收集所有部门ID。
+// 对于组织ID，仍然使用主要成员关系的组织（通常用户只属于一个组织）。
 //
 // 参数:
 //   - memberships: 成员关系列表，可能为nil或空切片
@@ -195,7 +235,7 @@ func extractBasicUserInfo(
 //
 //	userData := make(map[string]interface{})
 //	extractMembershipInfo(loginResp.Memberships, userData)
-//	// userData 现在包含组织ID和部门ID（如果找到主要成员关系且这些字段非空）
+//	// userData 现在包含组织ID和部门ID列表
 func extractMembershipInfo(
 	memberships []*identity.UserMembershipDTO,
 	userData map[string]interface{},
@@ -205,35 +245,42 @@ func extractMembershipInfo(
 		return
 	}
 
-	// 遍历所有成员关系，寻找主要成员关系
+	// 收集所有部门ID
+	var departmentIDs []string
+
+	// 遍历所有成员关系
 	for _, membership := range memberships {
-		// 检查成员关系对象是否为nil，以及是否标记为主要成员关系
-		if membership != nil && membership.IsPrimary != nil && *membership.IsPrimary {
-			// 提取组织ID，确保非空才添加到映射中
+		if membership == nil {
+			continue
+		}
+
+		// 提取部门ID到列表中
+		if membership.DepartmentID != nil && *membership.DepartmentID != "" {
+			departmentIDs = append(departmentIDs, *membership.DepartmentID)
+		}
+
+		// 提取组织ID（只取主要成员关系的组织）
+		if membership.IsPrimary != nil && *membership.IsPrimary {
 			if membership.OrganizationID != nil {
 				userData[OrganizationID] = *membership.OrganizationID
 			}
-
-			// 提取部门ID，确保非空才添加到映射中
-			if membership.DepartmentID != nil {
-				userData[DepartmentID] = *membership.DepartmentID
-			}
-
-			// 找到主要成员关系后跳出循环，避免重复处理
-			break
 		}
+	}
+
+	// 如果有部门ID，存储到userData
+	if len(departmentIDs) > 0 {
+		userData[DepartmentIDs] = departmentIDs
 	}
 }
 
-// extractRoleInfo 提取角色信息（角色ID）
-// 该函数负责从角色ID列表中提取主要角色ID。根据业务逻辑，系统采用单角色模式，
-// 因此从角色列表中选择第一个角色作为用户的主要角色。如果角色列表为空或nil，
-// 则不会向用户数据映射中添加任何角色信息。
+// extractRoleInfo 提取角色信息（角色ID列表）
+// 该函数负责从角色ID列表中提取所有角色。系统采用多角色模式，
+// 用户可以同时拥有多个角色，权限取并集。
 //
-// 主要角色选择逻辑：
-// - 如果角色列表不为空，选择第一个角色作为主要角色
-// - 这种设计简化了权限管理，避免了多角色冲突的复杂性
-// - 在实际业务场景中，用户通常只需要一个主要角色来确定其权限范围
+// 多角色模式说明：
+// - 用户可以同时拥有多个角色（如：住院医师、研究员）
+// - 权限检查时遍历所有角色，取权限并集
+// - 数据范围取最大范围
 //
 // 参数:
 //   - roleIDs: 角色ID列表，可能为nil或空切片
@@ -244,21 +291,15 @@ func extractMembershipInfo(
 //	userData := make(map[string]interface{})
 //	roleIDs := []string{"admin", "user", "viewer"}
 //	extractRoleInfo(roleIDs, userData)
-//	// userData 现在包含 roleID: "admin"（第一个角色）
-//
-//	// 处理空角色列表的情况
-//	extractRoleInfo([]string{}, userData)
-//	// userData 不会包含任何角色信息
+//	// userData 现在包含 roleIDs: ["admin", "user", "viewer"]（所有角色）
 func extractRoleInfo(roleIDs []string, userData map[string]interface{}) {
 	// 检查角色列表是否为空，如果为空则直接返回
-	// 这里使用len()检查而不是nil检查，因为空切片和nil切片都应该被视为无角色
 	if len(roleIDs) == 0 {
 		return
 	}
 
-	// 提取第一个角色作为主要角色
-	// 根据业务需求，系统采用单角色模式，第一个角色被视为用户的主要角色
-	userData[RoleID] = roleIDs[0]
+	// 多角色模式：存储所有角色ID
+	userData[RoleIDs] = roleIDs
 }
 
 // buildUserDataMap 构造用户信息map，供PayloadFunc使用

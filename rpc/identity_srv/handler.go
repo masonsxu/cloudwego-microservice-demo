@@ -733,3 +733,85 @@ func (s *IdentityServiceImpl) GetUserMenuPermissions(
 
 	return resp, nil
 }
+
+// CheckPermission implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) CheckPermission(
+	ctx context.Context,
+	req *identity_srv.CheckPermissionRequest,
+) (resp *identity_srv.CheckPermissionResponse, err error) {
+	userID := ""
+	if req.UserID != nil {
+		userID = string(*req.UserID)
+	}
+	resource := ""
+	if req.Resource != nil {
+		resource = *req.Resource
+	}
+	action := ""
+	if req.Action != nil {
+		action = *req.Action
+	}
+
+	result, err := s.logic.CheckPermission(ctx, userID, req.RoleIDs, req.DepartmentIDs, resource, action)
+	if err != nil {
+		return nil, errno.ToKitexError(err)
+	}
+
+	resp = &identity_srv.CheckPermissionResponse{
+		Allowed:   &result.Allowed,
+		DataScope: &result.DataScope,
+		UserID:    req.UserID,
+		Resource:  req.Resource,
+		Action:    req.Action,
+	}
+	return resp, nil
+}
+
+// SyncPolicies implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) SyncPolicies(ctx context.Context) (resp *identity_srv.SyncPoliciesResponse, err error) {
+	result, err := s.logic.SyncPolicies(ctx)
+	if err != nil {
+		return nil, errno.ToKitexError(err)
+	}
+
+	resp = &identity_srv.SyncPoliciesResponse{
+		Success:              &result.Success,
+		RolePolicyCount:      &result.RolePolicyCount,
+		UserRoleBindingCount: &result.UserRoleBindingCount,
+		RoleInheritanceCount: &result.RoleInheritanceCount,
+		Message:              &result.Message,
+	}
+	return resp, nil
+}
+
+// GetUserDataScope implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) GetUserDataScope(
+	ctx context.Context,
+	req *identity_srv.GetUserDataScopeRequest,
+) (resp *identity_srv.GetUserDataScopeResponse, err error) {
+	userID := ""
+	if req.UserID != nil {
+		userID = string(*req.UserID)
+	}
+	resource := ""
+	if req.Resource != nil {
+		resource = *req.Resource
+	}
+	action := ""
+	if req.Action != nil {
+		action = *req.Action
+	}
+
+	dataScope, err := s.logic.GetUserDataScope(ctx, userID, resource, action)
+	if err != nil {
+		return nil, errno.ToKitexError(err)
+	}
+
+	resp = &identity_srv.GetUserDataScopeResponse{
+		DataScope: &dataScope,
+		UserID:    req.UserID,
+		Resource:  req.Resource,
+		Action:    req.Action,
+	}
+	return resp, nil
+}

@@ -4,6 +4,8 @@ import (
 	"github.com/rs/zerolog"
 	"gorm.io/gorm"
 
+	casbindal "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/casbin"
+	casbinlogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/casbin"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/config"
 )
 
@@ -75,4 +77,20 @@ func WithDBMigration(models ...interface{}) DBOption {
 // 实际配置通过 config.CreateLogger 处理
 func ProvideLoggerWithOptions(cfg *config.Config) (*zerolog.Logger, error) {
 	return ProvideLogger(cfg)
+}
+
+// =============================================================================
+// Casbin Provider Functions - Casbin 权限管理依赖提供者
+// =============================================================================
+
+// ProvideCasbinRepository 提供 Casbin 策略同步仓储
+// 使用 GORM Adapter 持久化策略到数据库
+func ProvideCasbinRepository(db *gorm.DB, logger *zerolog.Logger) (casbindal.PolicySyncRepository, error) {
+	return casbindal.NewPolicySyncRepository(db, logger)
+}
+
+// ProvideCasbinService 提供 Casbin 权限服务
+// 封装策略同步、权限检查等业务逻辑
+func ProvideCasbinService(repo casbindal.PolicySyncRepository, logger *zerolog.Logger) casbinlogic.Service {
+	return casbinlogic.NewService(repo, logger)
 }

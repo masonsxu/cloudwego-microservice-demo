@@ -407,6 +407,29 @@ service IdentityService {
      * @return 用户的合并菜单权限列表（去重，取最高权限）。
      */
     GetUserMenuPermissionsResponse GetUserMenuPermissions(1: GetUserMenuPermissionsRequest req),
+    // -----------------------------------------------------------------
+    // Casbin 权限管理模块 (Casbin Permission Management)
+    // -----------------------------------------------------------------
+
+    /**
+     * 检查用户权限（基于 Casbin RBAC）。
+     * @param req 包含用户ID、资源、操作等信息。
+     * @return 权限检查结果和数据范围。
+     */
+    CheckPermissionResponse CheckPermission(1: CheckPermissionRequest req),
+
+    /**
+     * 同步所有 Casbin 策略（从数据库生成 Casbin 规则）。
+     * @return 同步结果。
+     */
+    SyncPoliciesResponse SyncPolicies(),
+
+    /**
+     * 获取用户的数据范围。
+     * @param req 包含用户ID、资源、操作等信息。
+     * @return 用户在指定资源上的数据范围。
+     */
+    GetUserDataScopeResponse GetUserDataScope(1: GetUserDataScopeRequest req),
 }
 
 // =================================================================
@@ -1063,4 +1086,94 @@ struct GetUserMenuPermissionsResponse {
 
     /** 用户拥有的角色列表 */
     3: optional list<core.UUID> roleIDs,
+}
+
+// =================================================================
+// Casbin 权限管理 (Casbin Permission Management)
+// =================================================================
+
+/** 检查权限请求 */
+struct CheckPermissionRequest {
+
+    /** 用户ID */
+    1: optional core.UUID userID,
+
+    /** 角色ID列表（多角色模式） */
+    2: optional list<string> roleIDs,
+
+    /** 部门ID列表（多部门模式） */
+    3: optional list<string> departmentIDs,
+
+    /** 资源标识（菜单SemanticID 或 API路径） */
+    4: optional string resource,
+
+    /** 操作类型（read/write/manage） */
+    5: optional string action,
+}
+
+/** 检查权限响应 */
+struct CheckPermissionResponse {
+
+    /** 是否具有权限 */
+    1: optional bool allowed,
+
+    /** 数据范围（self/dept/org） */
+    2: optional string dataScope,
+
+    /** 用户ID */
+    3: optional core.UUID userID,
+
+    /** 资源标识 */
+    4: optional string resource,
+
+    /** 操作类型 */
+    5: optional string action,
+}
+
+/** 同步策略响应 */
+struct SyncPoliciesResponse {
+
+    /** 同步是否成功 */
+    1: optional bool success,
+
+    /** 同步的角色策略数量 */
+    2: optional i32 rolePolicyCount,
+
+    /** 同步的用户角色绑定数量 */
+    3: optional i32 userRoleBindingCount,
+
+    /** 同步的角色继承数量 */
+    4: optional i32 roleInheritanceCount,
+
+    /** 响应消息 */
+    5: optional string message,
+}
+
+/** 获取用户数据范围请求 */
+struct GetUserDataScopeRequest {
+
+    /** 用户ID */
+    1: optional core.UUID userID,
+
+    /** 资源标识 */
+    2: optional string resource,
+
+    /** 操作类型 */
+    3: optional string action,
+}
+
+/** 获取用户数据范围响应 */
+struct GetUserDataScopeResponse {
+
+    /** 数据范围（self/dept/org） */
+    1: optional string dataScope,
+
+    /** 用户ID */
+    2: optional core.UUID userID,
+
+    /** 资源标识 */
+    3: optional string resource,
+
+    /** 操作类型 */
+    4: optional string action,
 }

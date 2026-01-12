@@ -5,6 +5,7 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal"
 	roleAssignLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/assignment"
 	authenticationLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/authentication"
+	casbinLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/casbin"
 	roleDefLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/definition"
 	departmentLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/department"
 	logoLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/logo"
@@ -59,11 +60,18 @@ type Impl struct {
 
 	// 菜单管理
 	menuLogic.MenuLogic
+
+	// ============================================================================
+	// Casbin 权限管理 - 基于 Casbin RBAC 引擎
+	// ============================================================================
+
+	// Casbin 权限服务
+	casbinLogic.Service
 }
 
 // NewLogicImpl 创建业务逻辑层实例
 // 基于新的DAL架构和模块化设计，初始化所有业务逻辑模块
-func NewLogicImpl(dal dal.DAL, cfg *config.Config) Logic {
+func NewLogicImpl(dal dal.DAL, cfg *config.Config, casbinService casbinLogic.Service) Logic {
 	// 创建转换器实例
 	conv := converter.NewConverter()
 
@@ -146,10 +154,17 @@ func NewLogicImpl(dal dal.DAL, cfg *config.Config) Logic {
 
 		// 菜单逻辑
 		MenuLogic: menuLogicImpl,
+
+		// ============================================================================
+		// Casbin 权限管理初始化 - 使用 Casbin RBAC 引擎
+		// ============================================================================
+
+		// Casbin 权限服务
+		Service: casbinService,
 	}
 }
 
 // NewLogic 创建业务逻辑层实例（工厂函数）
-func NewLogic(dal dal.DAL, cfg *config.Config) Logic {
-	return NewLogicImpl(dal, cfg)
+func NewLogic(dal dal.DAL, cfg *config.Config, casbinService casbinLogic.Service) Logic {
+	return NewLogicImpl(dal, cfg, casbinService)
 }

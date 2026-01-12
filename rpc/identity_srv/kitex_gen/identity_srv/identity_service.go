@@ -4640,6 +4640,502 @@ var fieldIDToName_GetUserMenuPermissionsResponse = map[int16]string{
 	3: "roleIDs",
 }
 
+type CheckPermissionRequest struct {
+	UserID        *core.UUID `thrift:"userID,1,optional" frugal:"1,optional,string" json:"userID,omitempty"`
+	RoleIDs       []string   `thrift:"roleIDs,2,optional" frugal:"2,optional,list<string>" json:"roleIDs,omitempty"`
+	DepartmentIDs []string   `thrift:"departmentIDs,3,optional" frugal:"3,optional,list<string>" json:"departmentIDs,omitempty"`
+	Resource      *string    `thrift:"resource,4,optional" frugal:"4,optional,string" json:"resource,omitempty"`
+	Action        *string    `thrift:"action,5,optional" frugal:"5,optional,string" json:"action,omitempty"`
+}
+
+func NewCheckPermissionRequest() *CheckPermissionRequest {
+	return &CheckPermissionRequest{}
+}
+
+func (p *CheckPermissionRequest) InitDefault() {
+}
+
+var CheckPermissionRequest_UserID_DEFAULT core.UUID
+
+func (p *CheckPermissionRequest) GetUserID() (v core.UUID) {
+	if !p.IsSetUserID() {
+		return CheckPermissionRequest_UserID_DEFAULT
+	}
+	return *p.UserID
+}
+
+var CheckPermissionRequest_RoleIDs_DEFAULT []string
+
+func (p *CheckPermissionRequest) GetRoleIDs() (v []string) {
+	if !p.IsSetRoleIDs() {
+		return CheckPermissionRequest_RoleIDs_DEFAULT
+	}
+	return p.RoleIDs
+}
+
+var CheckPermissionRequest_DepartmentIDs_DEFAULT []string
+
+func (p *CheckPermissionRequest) GetDepartmentIDs() (v []string) {
+	if !p.IsSetDepartmentIDs() {
+		return CheckPermissionRequest_DepartmentIDs_DEFAULT
+	}
+	return p.DepartmentIDs
+}
+
+var CheckPermissionRequest_Resource_DEFAULT string
+
+func (p *CheckPermissionRequest) GetResource() (v string) {
+	if !p.IsSetResource() {
+		return CheckPermissionRequest_Resource_DEFAULT
+	}
+	return *p.Resource
+}
+
+var CheckPermissionRequest_Action_DEFAULT string
+
+func (p *CheckPermissionRequest) GetAction() (v string) {
+	if !p.IsSetAction() {
+		return CheckPermissionRequest_Action_DEFAULT
+	}
+	return *p.Action
+}
+func (p *CheckPermissionRequest) SetUserID(val *core.UUID) {
+	p.UserID = val
+}
+func (p *CheckPermissionRequest) SetRoleIDs(val []string) {
+	p.RoleIDs = val
+}
+func (p *CheckPermissionRequest) SetDepartmentIDs(val []string) {
+	p.DepartmentIDs = val
+}
+func (p *CheckPermissionRequest) SetResource(val *string) {
+	p.Resource = val
+}
+func (p *CheckPermissionRequest) SetAction(val *string) {
+	p.Action = val
+}
+
+func (p *CheckPermissionRequest) IsSetUserID() bool {
+	return p.UserID != nil
+}
+
+func (p *CheckPermissionRequest) IsSetRoleIDs() bool {
+	return p.RoleIDs != nil
+}
+
+func (p *CheckPermissionRequest) IsSetDepartmentIDs() bool {
+	return p.DepartmentIDs != nil
+}
+
+func (p *CheckPermissionRequest) IsSetResource() bool {
+	return p.Resource != nil
+}
+
+func (p *CheckPermissionRequest) IsSetAction() bool {
+	return p.Action != nil
+}
+
+func (p *CheckPermissionRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("CheckPermissionRequest(%+v)", *p)
+}
+
+var fieldIDToName_CheckPermissionRequest = map[int16]string{
+	1: "userID",
+	2: "roleIDs",
+	3: "departmentIDs",
+	4: "resource",
+	5: "action",
+}
+
+type CheckPermissionResponse struct {
+	Allowed   *bool      `thrift:"allowed,1,optional" frugal:"1,optional,bool" json:"allowed,omitempty"`
+	DataScope *string    `thrift:"dataScope,2,optional" frugal:"2,optional,string" json:"dataScope,omitempty"`
+	UserID    *core.UUID `thrift:"userID,3,optional" frugal:"3,optional,string" json:"userID,omitempty"`
+	Resource  *string    `thrift:"resource,4,optional" frugal:"4,optional,string" json:"resource,omitempty"`
+	Action    *string    `thrift:"action,5,optional" frugal:"5,optional,string" json:"action,omitempty"`
+}
+
+func NewCheckPermissionResponse() *CheckPermissionResponse {
+	return &CheckPermissionResponse{}
+}
+
+func (p *CheckPermissionResponse) InitDefault() {
+}
+
+var CheckPermissionResponse_Allowed_DEFAULT bool
+
+func (p *CheckPermissionResponse) GetAllowed() (v bool) {
+	if !p.IsSetAllowed() {
+		return CheckPermissionResponse_Allowed_DEFAULT
+	}
+	return *p.Allowed
+}
+
+var CheckPermissionResponse_DataScope_DEFAULT string
+
+func (p *CheckPermissionResponse) GetDataScope() (v string) {
+	if !p.IsSetDataScope() {
+		return CheckPermissionResponse_DataScope_DEFAULT
+	}
+	return *p.DataScope
+}
+
+var CheckPermissionResponse_UserID_DEFAULT core.UUID
+
+func (p *CheckPermissionResponse) GetUserID() (v core.UUID) {
+	if !p.IsSetUserID() {
+		return CheckPermissionResponse_UserID_DEFAULT
+	}
+	return *p.UserID
+}
+
+var CheckPermissionResponse_Resource_DEFAULT string
+
+func (p *CheckPermissionResponse) GetResource() (v string) {
+	if !p.IsSetResource() {
+		return CheckPermissionResponse_Resource_DEFAULT
+	}
+	return *p.Resource
+}
+
+var CheckPermissionResponse_Action_DEFAULT string
+
+func (p *CheckPermissionResponse) GetAction() (v string) {
+	if !p.IsSetAction() {
+		return CheckPermissionResponse_Action_DEFAULT
+	}
+	return *p.Action
+}
+func (p *CheckPermissionResponse) SetAllowed(val *bool) {
+	p.Allowed = val
+}
+func (p *CheckPermissionResponse) SetDataScope(val *string) {
+	p.DataScope = val
+}
+func (p *CheckPermissionResponse) SetUserID(val *core.UUID) {
+	p.UserID = val
+}
+func (p *CheckPermissionResponse) SetResource(val *string) {
+	p.Resource = val
+}
+func (p *CheckPermissionResponse) SetAction(val *string) {
+	p.Action = val
+}
+
+func (p *CheckPermissionResponse) IsSetAllowed() bool {
+	return p.Allowed != nil
+}
+
+func (p *CheckPermissionResponse) IsSetDataScope() bool {
+	return p.DataScope != nil
+}
+
+func (p *CheckPermissionResponse) IsSetUserID() bool {
+	return p.UserID != nil
+}
+
+func (p *CheckPermissionResponse) IsSetResource() bool {
+	return p.Resource != nil
+}
+
+func (p *CheckPermissionResponse) IsSetAction() bool {
+	return p.Action != nil
+}
+
+func (p *CheckPermissionResponse) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("CheckPermissionResponse(%+v)", *p)
+}
+
+var fieldIDToName_CheckPermissionResponse = map[int16]string{
+	1: "allowed",
+	2: "dataScope",
+	3: "userID",
+	4: "resource",
+	5: "action",
+}
+
+type SyncPoliciesResponse struct {
+	Success              *bool   `thrift:"success,1,optional" frugal:"1,optional,bool" json:"success,omitempty"`
+	RolePolicyCount      *int32  `thrift:"rolePolicyCount,2,optional" frugal:"2,optional,i32" json:"rolePolicyCount,omitempty"`
+	UserRoleBindingCount *int32  `thrift:"userRoleBindingCount,3,optional" frugal:"3,optional,i32" json:"userRoleBindingCount,omitempty"`
+	RoleInheritanceCount *int32  `thrift:"roleInheritanceCount,4,optional" frugal:"4,optional,i32" json:"roleInheritanceCount,omitempty"`
+	Message              *string `thrift:"message,5,optional" frugal:"5,optional,string" json:"message,omitempty"`
+}
+
+func NewSyncPoliciesResponse() *SyncPoliciesResponse {
+	return &SyncPoliciesResponse{}
+}
+
+func (p *SyncPoliciesResponse) InitDefault() {
+}
+
+var SyncPoliciesResponse_Success_DEFAULT bool
+
+func (p *SyncPoliciesResponse) GetSuccess() (v bool) {
+	if !p.IsSetSuccess() {
+		return SyncPoliciesResponse_Success_DEFAULT
+	}
+	return *p.Success
+}
+
+var SyncPoliciesResponse_RolePolicyCount_DEFAULT int32
+
+func (p *SyncPoliciesResponse) GetRolePolicyCount() (v int32) {
+	if !p.IsSetRolePolicyCount() {
+		return SyncPoliciesResponse_RolePolicyCount_DEFAULT
+	}
+	return *p.RolePolicyCount
+}
+
+var SyncPoliciesResponse_UserRoleBindingCount_DEFAULT int32
+
+func (p *SyncPoliciesResponse) GetUserRoleBindingCount() (v int32) {
+	if !p.IsSetUserRoleBindingCount() {
+		return SyncPoliciesResponse_UserRoleBindingCount_DEFAULT
+	}
+	return *p.UserRoleBindingCount
+}
+
+var SyncPoliciesResponse_RoleInheritanceCount_DEFAULT int32
+
+func (p *SyncPoliciesResponse) GetRoleInheritanceCount() (v int32) {
+	if !p.IsSetRoleInheritanceCount() {
+		return SyncPoliciesResponse_RoleInheritanceCount_DEFAULT
+	}
+	return *p.RoleInheritanceCount
+}
+
+var SyncPoliciesResponse_Message_DEFAULT string
+
+func (p *SyncPoliciesResponse) GetMessage() (v string) {
+	if !p.IsSetMessage() {
+		return SyncPoliciesResponse_Message_DEFAULT
+	}
+	return *p.Message
+}
+func (p *SyncPoliciesResponse) SetSuccess(val *bool) {
+	p.Success = val
+}
+func (p *SyncPoliciesResponse) SetRolePolicyCount(val *int32) {
+	p.RolePolicyCount = val
+}
+func (p *SyncPoliciesResponse) SetUserRoleBindingCount(val *int32) {
+	p.UserRoleBindingCount = val
+}
+func (p *SyncPoliciesResponse) SetRoleInheritanceCount(val *int32) {
+	p.RoleInheritanceCount = val
+}
+func (p *SyncPoliciesResponse) SetMessage(val *string) {
+	p.Message = val
+}
+
+func (p *SyncPoliciesResponse) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SyncPoliciesResponse) IsSetRolePolicyCount() bool {
+	return p.RolePolicyCount != nil
+}
+
+func (p *SyncPoliciesResponse) IsSetUserRoleBindingCount() bool {
+	return p.UserRoleBindingCount != nil
+}
+
+func (p *SyncPoliciesResponse) IsSetRoleInheritanceCount() bool {
+	return p.RoleInheritanceCount != nil
+}
+
+func (p *SyncPoliciesResponse) IsSetMessage() bool {
+	return p.Message != nil
+}
+
+func (p *SyncPoliciesResponse) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SyncPoliciesResponse(%+v)", *p)
+}
+
+var fieldIDToName_SyncPoliciesResponse = map[int16]string{
+	1: "success",
+	2: "rolePolicyCount",
+	3: "userRoleBindingCount",
+	4: "roleInheritanceCount",
+	5: "message",
+}
+
+type GetUserDataScopeRequest struct {
+	UserID   *core.UUID `thrift:"userID,1,optional" frugal:"1,optional,string" json:"userID,omitempty"`
+	Resource *string    `thrift:"resource,2,optional" frugal:"2,optional,string" json:"resource,omitempty"`
+	Action   *string    `thrift:"action,3,optional" frugal:"3,optional,string" json:"action,omitempty"`
+}
+
+func NewGetUserDataScopeRequest() *GetUserDataScopeRequest {
+	return &GetUserDataScopeRequest{}
+}
+
+func (p *GetUserDataScopeRequest) InitDefault() {
+}
+
+var GetUserDataScopeRequest_UserID_DEFAULT core.UUID
+
+func (p *GetUserDataScopeRequest) GetUserID() (v core.UUID) {
+	if !p.IsSetUserID() {
+		return GetUserDataScopeRequest_UserID_DEFAULT
+	}
+	return *p.UserID
+}
+
+var GetUserDataScopeRequest_Resource_DEFAULT string
+
+func (p *GetUserDataScopeRequest) GetResource() (v string) {
+	if !p.IsSetResource() {
+		return GetUserDataScopeRequest_Resource_DEFAULT
+	}
+	return *p.Resource
+}
+
+var GetUserDataScopeRequest_Action_DEFAULT string
+
+func (p *GetUserDataScopeRequest) GetAction() (v string) {
+	if !p.IsSetAction() {
+		return GetUserDataScopeRequest_Action_DEFAULT
+	}
+	return *p.Action
+}
+func (p *GetUserDataScopeRequest) SetUserID(val *core.UUID) {
+	p.UserID = val
+}
+func (p *GetUserDataScopeRequest) SetResource(val *string) {
+	p.Resource = val
+}
+func (p *GetUserDataScopeRequest) SetAction(val *string) {
+	p.Action = val
+}
+
+func (p *GetUserDataScopeRequest) IsSetUserID() bool {
+	return p.UserID != nil
+}
+
+func (p *GetUserDataScopeRequest) IsSetResource() bool {
+	return p.Resource != nil
+}
+
+func (p *GetUserDataScopeRequest) IsSetAction() bool {
+	return p.Action != nil
+}
+
+func (p *GetUserDataScopeRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("GetUserDataScopeRequest(%+v)", *p)
+}
+
+var fieldIDToName_GetUserDataScopeRequest = map[int16]string{
+	1: "userID",
+	2: "resource",
+	3: "action",
+}
+
+type GetUserDataScopeResponse struct {
+	DataScope *string    `thrift:"dataScope,1,optional" frugal:"1,optional,string" json:"dataScope,omitempty"`
+	UserID    *core.UUID `thrift:"userID,2,optional" frugal:"2,optional,string" json:"userID,omitempty"`
+	Resource  *string    `thrift:"resource,3,optional" frugal:"3,optional,string" json:"resource,omitempty"`
+	Action    *string    `thrift:"action,4,optional" frugal:"4,optional,string" json:"action,omitempty"`
+}
+
+func NewGetUserDataScopeResponse() *GetUserDataScopeResponse {
+	return &GetUserDataScopeResponse{}
+}
+
+func (p *GetUserDataScopeResponse) InitDefault() {
+}
+
+var GetUserDataScopeResponse_DataScope_DEFAULT string
+
+func (p *GetUserDataScopeResponse) GetDataScope() (v string) {
+	if !p.IsSetDataScope() {
+		return GetUserDataScopeResponse_DataScope_DEFAULT
+	}
+	return *p.DataScope
+}
+
+var GetUserDataScopeResponse_UserID_DEFAULT core.UUID
+
+func (p *GetUserDataScopeResponse) GetUserID() (v core.UUID) {
+	if !p.IsSetUserID() {
+		return GetUserDataScopeResponse_UserID_DEFAULT
+	}
+	return *p.UserID
+}
+
+var GetUserDataScopeResponse_Resource_DEFAULT string
+
+func (p *GetUserDataScopeResponse) GetResource() (v string) {
+	if !p.IsSetResource() {
+		return GetUserDataScopeResponse_Resource_DEFAULT
+	}
+	return *p.Resource
+}
+
+var GetUserDataScopeResponse_Action_DEFAULT string
+
+func (p *GetUserDataScopeResponse) GetAction() (v string) {
+	if !p.IsSetAction() {
+		return GetUserDataScopeResponse_Action_DEFAULT
+	}
+	return *p.Action
+}
+func (p *GetUserDataScopeResponse) SetDataScope(val *string) {
+	p.DataScope = val
+}
+func (p *GetUserDataScopeResponse) SetUserID(val *core.UUID) {
+	p.UserID = val
+}
+func (p *GetUserDataScopeResponse) SetResource(val *string) {
+	p.Resource = val
+}
+func (p *GetUserDataScopeResponse) SetAction(val *string) {
+	p.Action = val
+}
+
+func (p *GetUserDataScopeResponse) IsSetDataScope() bool {
+	return p.DataScope != nil
+}
+
+func (p *GetUserDataScopeResponse) IsSetUserID() bool {
+	return p.UserID != nil
+}
+
+func (p *GetUserDataScopeResponse) IsSetResource() bool {
+	return p.Resource != nil
+}
+
+func (p *GetUserDataScopeResponse) IsSetAction() bool {
+	return p.Action != nil
+}
+
+func (p *GetUserDataScopeResponse) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("GetUserDataScopeResponse(%+v)", *p)
+}
+
+var fieldIDToName_GetUserDataScopeResponse = map[int16]string{
+	1: "dataScope",
+	2: "userID",
+	3: "resource",
+	4: "action",
+}
+
 type IdentityService interface {
 	Login(ctx context.Context, req *LoginRequest) (r *LoginResponse, err error)
 
@@ -4748,6 +5244,12 @@ type IdentityService interface {
 	HasMenuPermission(ctx context.Context, req *HasMenuPermissionRequest) (r *HasMenuPermissionResponse, err error)
 
 	GetUserMenuPermissions(ctx context.Context, req *GetUserMenuPermissionsRequest) (r *GetUserMenuPermissionsResponse, err error)
+
+	CheckPermission(ctx context.Context, req *CheckPermissionRequest) (r *CheckPermissionResponse, err error)
+
+	SyncPolicies(ctx context.Context) (r *SyncPoliciesResponse, err error)
+
+	GetUserDataScope(ctx context.Context, req *GetUserDataScopeRequest) (r *GetUserDataScopeResponse, err error)
 }
 
 type IdentityServiceLoginArgs struct {
@@ -8494,5 +8996,214 @@ func (p *IdentityServiceGetUserMenuPermissionsResult) String() string {
 }
 
 var fieldIDToName_IdentityServiceGetUserMenuPermissionsResult = map[int16]string{
+	0: "success",
+}
+
+type IdentityServiceCheckPermissionArgs struct {
+	Req *CheckPermissionRequest `thrift:"req,1" frugal:"1,default,CheckPermissionRequest" json:"req"`
+}
+
+func NewIdentityServiceCheckPermissionArgs() *IdentityServiceCheckPermissionArgs {
+	return &IdentityServiceCheckPermissionArgs{}
+}
+
+func (p *IdentityServiceCheckPermissionArgs) InitDefault() {
+}
+
+var IdentityServiceCheckPermissionArgs_Req_DEFAULT *CheckPermissionRequest
+
+func (p *IdentityServiceCheckPermissionArgs) GetReq() (v *CheckPermissionRequest) {
+	if !p.IsSetReq() {
+		return IdentityServiceCheckPermissionArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *IdentityServiceCheckPermissionArgs) SetReq(val *CheckPermissionRequest) {
+	p.Req = val
+}
+
+func (p *IdentityServiceCheckPermissionArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *IdentityServiceCheckPermissionArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceCheckPermissionArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceCheckPermissionArgs = map[int16]string{
+	1: "req",
+}
+
+type IdentityServiceCheckPermissionResult struct {
+	Success *CheckPermissionResponse `thrift:"success,0,optional" frugal:"0,optional,CheckPermissionResponse" json:"success,omitempty"`
+}
+
+func NewIdentityServiceCheckPermissionResult() *IdentityServiceCheckPermissionResult {
+	return &IdentityServiceCheckPermissionResult{}
+}
+
+func (p *IdentityServiceCheckPermissionResult) InitDefault() {
+}
+
+var IdentityServiceCheckPermissionResult_Success_DEFAULT *CheckPermissionResponse
+
+func (p *IdentityServiceCheckPermissionResult) GetSuccess() (v *CheckPermissionResponse) {
+	if !p.IsSetSuccess() {
+		return IdentityServiceCheckPermissionResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *IdentityServiceCheckPermissionResult) SetSuccess(x interface{}) {
+	p.Success = x.(*CheckPermissionResponse)
+}
+
+func (p *IdentityServiceCheckPermissionResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *IdentityServiceCheckPermissionResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceCheckPermissionResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceCheckPermissionResult = map[int16]string{
+	0: "success",
+}
+
+type IdentityServiceSyncPoliciesArgs struct {
+}
+
+func NewIdentityServiceSyncPoliciesArgs() *IdentityServiceSyncPoliciesArgs {
+	return &IdentityServiceSyncPoliciesArgs{}
+}
+
+func (p *IdentityServiceSyncPoliciesArgs) InitDefault() {
+}
+
+func (p *IdentityServiceSyncPoliciesArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceSyncPoliciesArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceSyncPoliciesArgs = map[int16]string{}
+
+type IdentityServiceSyncPoliciesResult struct {
+	Success *SyncPoliciesResponse `thrift:"success,0,optional" frugal:"0,optional,SyncPoliciesResponse" json:"success,omitempty"`
+}
+
+func NewIdentityServiceSyncPoliciesResult() *IdentityServiceSyncPoliciesResult {
+	return &IdentityServiceSyncPoliciesResult{}
+}
+
+func (p *IdentityServiceSyncPoliciesResult) InitDefault() {
+}
+
+var IdentityServiceSyncPoliciesResult_Success_DEFAULT *SyncPoliciesResponse
+
+func (p *IdentityServiceSyncPoliciesResult) GetSuccess() (v *SyncPoliciesResponse) {
+	if !p.IsSetSuccess() {
+		return IdentityServiceSyncPoliciesResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *IdentityServiceSyncPoliciesResult) SetSuccess(x interface{}) {
+	p.Success = x.(*SyncPoliciesResponse)
+}
+
+func (p *IdentityServiceSyncPoliciesResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *IdentityServiceSyncPoliciesResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceSyncPoliciesResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceSyncPoliciesResult = map[int16]string{
+	0: "success",
+}
+
+type IdentityServiceGetUserDataScopeArgs struct {
+	Req *GetUserDataScopeRequest `thrift:"req,1" frugal:"1,default,GetUserDataScopeRequest" json:"req"`
+}
+
+func NewIdentityServiceGetUserDataScopeArgs() *IdentityServiceGetUserDataScopeArgs {
+	return &IdentityServiceGetUserDataScopeArgs{}
+}
+
+func (p *IdentityServiceGetUserDataScopeArgs) InitDefault() {
+}
+
+var IdentityServiceGetUserDataScopeArgs_Req_DEFAULT *GetUserDataScopeRequest
+
+func (p *IdentityServiceGetUserDataScopeArgs) GetReq() (v *GetUserDataScopeRequest) {
+	if !p.IsSetReq() {
+		return IdentityServiceGetUserDataScopeArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *IdentityServiceGetUserDataScopeArgs) SetReq(val *GetUserDataScopeRequest) {
+	p.Req = val
+}
+
+func (p *IdentityServiceGetUserDataScopeArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *IdentityServiceGetUserDataScopeArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceGetUserDataScopeArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceGetUserDataScopeArgs = map[int16]string{
+	1: "req",
+}
+
+type IdentityServiceGetUserDataScopeResult struct {
+	Success *GetUserDataScopeResponse `thrift:"success,0,optional" frugal:"0,optional,GetUserDataScopeResponse" json:"success,omitempty"`
+}
+
+func NewIdentityServiceGetUserDataScopeResult() *IdentityServiceGetUserDataScopeResult {
+	return &IdentityServiceGetUserDataScopeResult{}
+}
+
+func (p *IdentityServiceGetUserDataScopeResult) InitDefault() {
+}
+
+var IdentityServiceGetUserDataScopeResult_Success_DEFAULT *GetUserDataScopeResponse
+
+func (p *IdentityServiceGetUserDataScopeResult) GetSuccess() (v *GetUserDataScopeResponse) {
+	if !p.IsSetSuccess() {
+		return IdentityServiceGetUserDataScopeResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *IdentityServiceGetUserDataScopeResult) SetSuccess(x interface{}) {
+	p.Success = x.(*GetUserDataScopeResponse)
+}
+
+func (p *IdentityServiceGetUserDataScopeResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *IdentityServiceGetUserDataScopeResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceGetUserDataScopeResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceGetUserDataScopeResult = map[int16]string{
 	0: "success",
 }

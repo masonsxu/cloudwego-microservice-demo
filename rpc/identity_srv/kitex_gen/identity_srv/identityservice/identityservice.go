@@ -392,6 +392,27 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"CheckPermission": kitex.NewMethodInfo(
+		checkPermissionHandler,
+		newIdentityServiceCheckPermissionArgs,
+		newIdentityServiceCheckPermissionResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"SyncPolicies": kitex.NewMethodInfo(
+		syncPoliciesHandler,
+		newIdentityServiceSyncPoliciesArgs,
+		newIdentityServiceSyncPoliciesResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"GetUserDataScope": kitex.NewMethodInfo(
+		getUserDataScopeHandler,
+		newIdentityServiceGetUserDataScopeArgs,
+		newIdentityServiceGetUserDataScopeResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 }
 
 var (
@@ -1430,6 +1451,60 @@ func newIdentityServiceGetUserMenuPermissionsResult() interface{} {
 	return identity_srv.NewIdentityServiceGetUserMenuPermissionsResult()
 }
 
+func checkPermissionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceCheckPermissionArgs)
+	realResult := result.(*identity_srv.IdentityServiceCheckPermissionResult)
+	success, err := handler.(identity_srv.IdentityService).CheckPermission(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newIdentityServiceCheckPermissionArgs() interface{} {
+	return identity_srv.NewIdentityServiceCheckPermissionArgs()
+}
+
+func newIdentityServiceCheckPermissionResult() interface{} {
+	return identity_srv.NewIdentityServiceCheckPermissionResult()
+}
+
+func syncPoliciesHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	_ = arg.(*identity_srv.IdentityServiceSyncPoliciesArgs)
+	realResult := result.(*identity_srv.IdentityServiceSyncPoliciesResult)
+	success, err := handler.(identity_srv.IdentityService).SyncPolicies(ctx)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newIdentityServiceSyncPoliciesArgs() interface{} {
+	return identity_srv.NewIdentityServiceSyncPoliciesArgs()
+}
+
+func newIdentityServiceSyncPoliciesResult() interface{} {
+	return identity_srv.NewIdentityServiceSyncPoliciesResult()
+}
+
+func getUserDataScopeHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceGetUserDataScopeArgs)
+	realResult := result.(*identity_srv.IdentityServiceGetUserDataScopeResult)
+	success, err := handler.(identity_srv.IdentityService).GetUserDataScope(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newIdentityServiceGetUserDataScopeArgs() interface{} {
+	return identity_srv.NewIdentityServiceGetUserDataScopeArgs()
+}
+
+func newIdentityServiceGetUserDataScopeResult() interface{} {
+	return identity_srv.NewIdentityServiceGetUserDataScopeResult()
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -1974,6 +2049,35 @@ func (p *kClient) GetUserMenuPermissions(ctx context.Context, req *identity_srv.
 	_args.Req = req
 	var _result identity_srv.IdentityServiceGetUserMenuPermissionsResult
 	if err = p.c.Call(ctx, "GetUserMenuPermissions", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) CheckPermission(ctx context.Context, req *identity_srv.CheckPermissionRequest) (r *identity_srv.CheckPermissionResponse, err error) {
+	var _args identity_srv.IdentityServiceCheckPermissionArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceCheckPermissionResult
+	if err = p.c.Call(ctx, "CheckPermission", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) SyncPolicies(ctx context.Context) (r *identity_srv.SyncPoliciesResponse, err error) {
+	var _args identity_srv.IdentityServiceSyncPoliciesArgs
+	var _result identity_srv.IdentityServiceSyncPoliciesResult
+	if err = p.c.Call(ctx, "SyncPolicies", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetUserDataScope(ctx context.Context, req *identity_srv.GetUserDataScopeRequest) (r *identity_srv.GetUserDataScopeResponse, err error) {
+	var _args identity_srv.IdentityServiceGetUserDataScopeArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceGetUserDataScopeResult
+	if err = p.c.Call(ctx, "GetUserDataScope", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

@@ -56,7 +56,9 @@ func InitializeApp() (*AppContainer, func(), error) {
 	tokenCacheService := ProvideTokenCache(client, logger)
 	jwtMiddlewareService := ProvideJWTMiddleware(service, jwtConfig, tokenCacheService, logger)
 	responseHeaderMiddlewareService := ProvideResponseHeaderMiddleware()
-	middlewareContainer := NewMiddlewareContainer(traceMiddlewareService, corsMiddlewareService, errorHandlerMiddlewareService, jwtMiddlewareService, responseHeaderMiddlewareService)
+	config := ProvideCasbinConfig()
+	casbinMiddleware := ProvideCasbinMiddleware(config, logger)
+	middlewareContainer := NewMiddlewareContainer(traceMiddlewareService, corsMiddlewareService, errorHandlerMiddlewareService, jwtMiddlewareService, responseHeaderMiddlewareService, casbinMiddleware)
 	tracer := ProvideTracer(configuration)
 	provider, cleanup, err := ProvideOtelProvider(configuration)
 	if err != nil {

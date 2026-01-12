@@ -3785,6 +3785,62 @@ func (p *RoleDefinition) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
+		case 13:
+			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField13(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 14:
+			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField14(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 15:
+			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField15(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 16:
+			if fieldTypeId == thrift.I32 {
+				l, err = p.FastReadField16(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
 			offset += l
@@ -3970,6 +4026,64 @@ func (p *RoleDefinition) FastReadField12(buf []byte) (int, error) {
 	return offset, nil
 }
 
+func (p *RoleDefinition) FastReadField13(buf []byte) (int, error) {
+	offset := 0
+
+	var _field *string
+	if v, l, err := thrift.Binary.ReadString(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		_field = &v
+	}
+	p.RoleCode = _field
+	return offset, nil
+}
+
+func (p *RoleDefinition) FastReadField14(buf []byte) (int, error) {
+	offset := 0
+
+	var _field *core.UUID
+	if v, l, err := thrift.Binary.ReadString(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		_field = &v
+	}
+	p.ParentRoleID = _field
+	return offset, nil
+}
+
+func (p *RoleDefinition) FastReadField15(buf []byte) (int, error) {
+	offset := 0
+
+	var _field *core.UUID
+	if v, l, err := thrift.Binary.ReadString(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		_field = &v
+	}
+	p.DepartmentID = _field
+	return offset, nil
+}
+
+func (p *RoleDefinition) FastReadField16(buf []byte) (int, error) {
+	offset := 0
+
+	var _field *DataScope
+	if v, l, err := thrift.Binary.ReadI32(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		tmp := DataScope(v)
+		_field = &tmp
+	}
+	p.DefaultScope = _field
+	return offset, nil
+}
+
 func (p *RoleDefinition) FastWrite(buf []byte) int {
 	return p.FastWriteNocopy(buf, nil)
 }
@@ -3988,6 +4102,10 @@ func (p *RoleDefinition) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int 
 		offset += p.fastWriteField6(buf[offset:], w)
 		offset += p.fastWriteField8(buf[offset:], w)
 		offset += p.fastWriteField9(buf[offset:], w)
+		offset += p.fastWriteField13(buf[offset:], w)
+		offset += p.fastWriteField14(buf[offset:], w)
+		offset += p.fastWriteField15(buf[offset:], w)
+		offset += p.fastWriteField16(buf[offset:], w)
 	}
 	offset += thrift.Binary.WriteFieldStop(buf[offset:])
 	return offset
@@ -4007,6 +4125,10 @@ func (p *RoleDefinition) BLength() int {
 		l += p.field10Length()
 		l += p.field11Length()
 		l += p.field12Length()
+		l += p.field13Length()
+		l += p.field14Length()
+		l += p.field15Length()
+		l += p.field16Length()
 	}
 	l += thrift.Binary.FieldStopLength()
 	return l
@@ -4118,6 +4240,42 @@ func (p *RoleDefinition) fastWriteField12(buf []byte, w thrift.NocopyWriter) int
 	return offset
 }
 
+func (p *RoleDefinition) fastWriteField13(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	if p.IsSetRoleCode() {
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 13)
+		offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, *p.RoleCode)
+	}
+	return offset
+}
+
+func (p *RoleDefinition) fastWriteField14(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	if p.IsSetParentRoleID() {
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 14)
+		offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, *p.ParentRoleID)
+	}
+	return offset
+}
+
+func (p *RoleDefinition) fastWriteField15(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	if p.IsSetDepartmentID() {
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 15)
+		offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, *p.DepartmentID)
+	}
+	return offset
+}
+
+func (p *RoleDefinition) fastWriteField16(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	if p.IsSetDefaultScope() {
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I32, 16)
+		offset += thrift.Binary.WriteI32(buf[offset:], int32(*p.DefaultScope))
+	}
+	return offset
+}
+
 func (p *RoleDefinition) field1Length() int {
 	l := 0
 	if p.IsSetId() {
@@ -4217,6 +4375,42 @@ func (p *RoleDefinition) field12Length() int {
 	if p.IsSetUserCount() {
 		l += thrift.Binary.FieldBeginLength()
 		l += thrift.Binary.I64Length()
+	}
+	return l
+}
+
+func (p *RoleDefinition) field13Length() int {
+	l := 0
+	if p.IsSetRoleCode() {
+		l += thrift.Binary.FieldBeginLength()
+		l += thrift.Binary.StringLengthNocopy(*p.RoleCode)
+	}
+	return l
+}
+
+func (p *RoleDefinition) field14Length() int {
+	l := 0
+	if p.IsSetParentRoleID() {
+		l += thrift.Binary.FieldBeginLength()
+		l += thrift.Binary.StringLengthNocopy(*p.ParentRoleID)
+	}
+	return l
+}
+
+func (p *RoleDefinition) field15Length() int {
+	l := 0
+	if p.IsSetDepartmentID() {
+		l += thrift.Binary.FieldBeginLength()
+		l += thrift.Binary.StringLengthNocopy(*p.DepartmentID)
+	}
+	return l
+}
+
+func (p *RoleDefinition) field16Length() int {
+	l := 0
+	if p.IsSetDefaultScope() {
+		l += thrift.Binary.FieldBeginLength()
+		l += thrift.Binary.I32Length()
 	}
 	return l
 }

@@ -61,6 +61,53 @@ func (p *PermissionLevel) Value() (driver.Value, error) {
 	return int64(*p), nil
 }
 
+type DataScope int64
+
+const (
+	DataScope_SELF DataScope = 1
+	DataScope_DEPT DataScope = 2
+	DataScope_ORG  DataScope = 3
+)
+
+func (p DataScope) String() string {
+	switch p {
+	case DataScope_SELF:
+		return "SELF"
+	case DataScope_DEPT:
+		return "DEPT"
+	case DataScope_ORG:
+		return "ORG"
+	}
+	return "<UNSET>"
+}
+
+func DataScopeFromString(s string) (DataScope, error) {
+	switch s {
+	case "SELF":
+		return DataScope_SELF, nil
+	case "DEPT":
+		return DataScope_DEPT, nil
+	case "ORG":
+		return DataScope_ORG, nil
+	}
+	return DataScope(0), fmt.Errorf("not a valid DataScope string")
+}
+
+func DataScopePtr(v DataScope) *DataScope { return &v }
+func (p *DataScope) Scan(value interface{}) (err error) {
+	var result sql.NullInt64
+	err = result.Scan(value)
+	*p = DataScope(result.Int64)
+	return
+}
+
+func (p *DataScope) Value() (driver.Value, error) {
+	if p == nil {
+		return nil, nil
+	}
+	return int64(*p), nil
+}
+
 type OrganizationLogoStatus int64
 
 const (
@@ -1435,6 +1482,10 @@ type RoleDefinition struct {
 	CreatedAt    *core.TimestampMS `thrift:"createdAt,10,optional" frugal:"10,optional,i64" json:"createdAt,omitempty"`
 	UpdatedAt    *core.TimestampMS `thrift:"updatedAt,11,optional" frugal:"11,optional,i64" json:"updatedAt,omitempty"`
 	UserCount    *int64            `thrift:"userCount,12,optional" frugal:"12,optional,i64" json:"userCount,omitempty"`
+	RoleCode     *string           `thrift:"roleCode,13,optional" frugal:"13,optional,string" json:"roleCode,omitempty"`
+	ParentRoleID *core.UUID        `thrift:"parentRoleID,14,optional" frugal:"14,optional,string" json:"parentRoleID,omitempty"`
+	DepartmentID *core.UUID        `thrift:"departmentID,15,optional" frugal:"15,optional,string" json:"departmentID,omitempty"`
+	DefaultScope *DataScope        `thrift:"defaultScope,16,optional" frugal:"16,optional,DataScope" json:"defaultScope,omitempty"`
 }
 
 func NewRoleDefinition() *RoleDefinition {
@@ -1545,6 +1596,42 @@ func (p *RoleDefinition) GetUserCount() (v int64) {
 	}
 	return *p.UserCount
 }
+
+var RoleDefinition_RoleCode_DEFAULT string
+
+func (p *RoleDefinition) GetRoleCode() (v string) {
+	if !p.IsSetRoleCode() {
+		return RoleDefinition_RoleCode_DEFAULT
+	}
+	return *p.RoleCode
+}
+
+var RoleDefinition_ParentRoleID_DEFAULT core.UUID
+
+func (p *RoleDefinition) GetParentRoleID() (v core.UUID) {
+	if !p.IsSetParentRoleID() {
+		return RoleDefinition_ParentRoleID_DEFAULT
+	}
+	return *p.ParentRoleID
+}
+
+var RoleDefinition_DepartmentID_DEFAULT core.UUID
+
+func (p *RoleDefinition) GetDepartmentID() (v core.UUID) {
+	if !p.IsSetDepartmentID() {
+		return RoleDefinition_DepartmentID_DEFAULT
+	}
+	return *p.DepartmentID
+}
+
+var RoleDefinition_DefaultScope_DEFAULT DataScope
+
+func (p *RoleDefinition) GetDefaultScope() (v DataScope) {
+	if !p.IsSetDefaultScope() {
+		return RoleDefinition_DefaultScope_DEFAULT
+	}
+	return *p.DefaultScope
+}
 func (p *RoleDefinition) SetId(val *core.UUID) {
 	p.Id = val
 }
@@ -1577,6 +1664,18 @@ func (p *RoleDefinition) SetUpdatedAt(val *core.TimestampMS) {
 }
 func (p *RoleDefinition) SetUserCount(val *int64) {
 	p.UserCount = val
+}
+func (p *RoleDefinition) SetRoleCode(val *string) {
+	p.RoleCode = val
+}
+func (p *RoleDefinition) SetParentRoleID(val *core.UUID) {
+	p.ParentRoleID = val
+}
+func (p *RoleDefinition) SetDepartmentID(val *core.UUID) {
+	p.DepartmentID = val
+}
+func (p *RoleDefinition) SetDefaultScope(val *DataScope) {
+	p.DefaultScope = val
 }
 
 func (p *RoleDefinition) IsSetId() bool {
@@ -1623,6 +1722,22 @@ func (p *RoleDefinition) IsSetUserCount() bool {
 	return p.UserCount != nil
 }
 
+func (p *RoleDefinition) IsSetRoleCode() bool {
+	return p.RoleCode != nil
+}
+
+func (p *RoleDefinition) IsSetParentRoleID() bool {
+	return p.ParentRoleID != nil
+}
+
+func (p *RoleDefinition) IsSetDepartmentID() bool {
+	return p.DepartmentID != nil
+}
+
+func (p *RoleDefinition) IsSetDefaultScope() bool {
+	return p.DefaultScope != nil
+}
+
 func (p *RoleDefinition) String() string {
 	if p == nil {
 		return "<nil>"
@@ -1642,6 +1757,10 @@ var fieldIDToName_RoleDefinition = map[int16]string{
 	10: "createdAt",
 	11: "updatedAt",
 	12: "userCount",
+	13: "roleCode",
+	14: "parentRoleID",
+	15: "departmentID",
+	16: "defaultScope",
 }
 
 type UserRoleAssignment struct {

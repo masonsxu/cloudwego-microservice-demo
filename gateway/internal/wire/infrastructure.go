@@ -21,6 +21,7 @@ var InfrastructureSet = wire.NewSet(
 	ProvideRedisConfig,
 	ProvideRedisClient,
 	ProvideTokenCache,
+	ProvidePolicyCache,
 )
 
 // ProvideConfig 提供配置服务
@@ -86,4 +87,10 @@ func ProvideRedisClient(cfg *config.RedisConfig) (*redis.Client, error) {
 // 创建Token缓存服务实例
 func ProvideTokenCache(client *redis.Client, logger *hertzZerolog.Logger) redis.TokenCacheService {
 	return redis.NewTokenCache(client, logger)
+}
+
+// ProvidePolicyCache 提供策略缓存服务
+// 创建 Casbin 策略缓存服务实例，用于缓存权限检查结果
+func ProvidePolicyCache(client *redis.Client, logger *hertzZerolog.Logger) redis.PolicyCacheService {
+	return redis.NewPolicyCache(client, logger)
 }

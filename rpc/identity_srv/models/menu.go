@@ -21,8 +21,15 @@ type Menu struct {
 	Sort       int        `gorm:"column:sort;not null;default:0;comment:排序字段"`
 	CreatedBy  *uuid.UUID `gorm:"column:created_by;type:uuid;comment:创建者ID"`
 	UpdatedBy  *uuid.UUID `gorm:"column:updated_by;type:uuid;comment:最后更新者ID"`
-	Parent     *Menu      `gorm:"foreignKey:ParentID;references:ID;comment:父菜单关联"`
-	Children   []*Menu    `gorm:"foreignKey:ParentID;references:ID;comment:子菜单列表关联"`
+
+	// Casbin 权限扩展字段
+	PermCode string `gorm:"column:perm_code;size:100;index;comment:权限编码,如 emr:create, patient:read"`
+	ApiPath  string `gorm:"column:api_path;size:255;comment:关联的API路径,如 /api/v1/patients"`
+	IsButton bool   `gorm:"column:is_button;default:false;comment:是否为按钮级权限(非菜单项)"`
+
+	// 关联关系
+	Parent   *Menu   `gorm:"foreignKey:ParentID;references:ID;comment:父菜单关联"`
+	Children []*Menu `gorm:"foreignKey:ParentID;references:ID;comment:子菜单列表关联"`
 }
 
 // TableName 指定 Menu 模型对应的数据库表名。
@@ -37,5 +44,29 @@ func (m *Menu) BeforeCreate(tx *gorm.DB) (err error) {
 		m.ID = uuid.New()
 	}
 
+	// 自动生成 PermCode（如果未设置且有 SemanticID）
+	if m.PermCode == "" && m.SemanticID != "" {
+		m.PermCode = "menu:" + m.SemanticID
+	}
+
 	return err
+}
+
+// GetCasbinObject 获取用于 Casbin 策略的资源对象标识
+func (m *Menu) GetCasbinObject() string {
+	if m.PermCode != "" {
+		return m.PermCode
+	}
+	if m.SemanticID != "" {
+		return "menu:" + m.SemanticID
+	}
+	return "menu:" + m.ID.String()
+}
+
+// GetCasbinApiObject 获取用于 API 路径匹配的 Casbin 资源对象
+func (m *Menu) GetCasbinApiObject() string {
+	if m.ApiPath != "" {
+		return m.ApiPath
+	}
+	return ""
 }

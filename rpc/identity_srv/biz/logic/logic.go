@@ -3,6 +3,7 @@ package logic
 import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/assignment"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/authentication"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/casbin"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/definition"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/department"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/logo"
@@ -62,4 +63,12 @@ type Logic interface {
 	// Menu 菜单管理
 	// 负责菜单配置的上传、解析、存储以及用户菜单树的构建和权限过滤
 	menu.MenuLogic
+
+	// ============================================================================
+	// Casbin 权限管理模块 - 基于 Casbin RBAC 引擎
+	// ============================================================================
+
+	// Casbin 权限管理
+	// 负责策略同步、权限检查、数据范围获取等 Casbin 相关功能
+	casbin.Service
 }

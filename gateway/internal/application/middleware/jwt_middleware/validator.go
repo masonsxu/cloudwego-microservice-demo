@@ -39,20 +39,27 @@ func identityHandler(ctx context.Context, c *app.RequestContext) interface{} {
 		jwtClaims.Status = &status
 	}
 
-	if roleID, ok := extractStringClaim(claims, RoleID); ok {
-		jwtClaims.RoleID = &roleID
+	// 多角色模式：提取角色ID列表
+	if roleIDs, ok := extractStringSliceClaim(claims, RoleIDs); ok && len(roleIDs) > 0 {
+		jwtClaims.RoleIDs = roleIDs
 	}
 
 	if orgIDStr, ok := extractStringClaim(claims, OrganizationID); ok {
 		jwtClaims.OrganizationID = &orgIDStr
 	}
 
-	if deptIDStr, ok := extractStringClaim(claims, DepartmentID); ok {
-		jwtClaims.DepartmentID = &deptIDStr
+	// 多部门模式：提取部门ID列表
+	if deptIDs, ok := extractStringSliceClaim(claims, DepartmentIDs); ok && len(deptIDs) > 0 {
+		jwtClaims.DepartmentIDs = deptIDs
 	}
 
 	if permissionStr, ok := extractStringClaim(claims, CorePermission); ok {
 		jwtClaims.Permission = &permissionStr
+	}
+
+	// 提取数据范围
+	if dataScope, ok := extractStringClaim(claims, DataScope); ok {
+		jwtClaims.DataScope = &dataScope
 	}
 
 	// 设置JWT标准时间戳声明
