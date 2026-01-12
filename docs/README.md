@@ -12,13 +12,15 @@
 | [04-配置参考](04-configuration.md) | 环境变量、数据库、JWT、Redis 配置 | 运维、开发者 |
 | [05-部署指南](05-deployment.md) | Docker 部署、生产环境配置 | 运维 |
 | [06-故障排查](06-troubleshooting.md) | 常见问题、错误诊断、日志调试 | 所有人 |
+| [07-权限管理](07-permission-management.md) | Casbin RBAC、策略同步、数据范围 | 架构师、开发者 |
 
 ## 核心功能
 
-- **API 网关 (Hertz)**: 统一 API 入口、JWT 认证、OpenTelemetry 链路追踪
+- **API 网关 (Hertz)**: 统一 API 入口、JWT 认证、Casbin 权限控制、OpenTelemetry 链路追踪
 - **身份服务 (Kitex)**: 用户管理、组织架构、角色管理、JWT Token 管理、菜单配置
+- **权限管理 (Casbin)**: RBAC 权限引擎、五维权限模型、策略同步、数据范围控制
 - **可观测性**: OpenTelemetry 分布式链路追踪、结构化日志
-- **安全性**: JWT 认证、密码加密
+- **安全性**: JWT 认证、Casbin 鉴权、密码加密
 
 ## 技术栈
 
@@ -30,6 +32,7 @@
 | 数据库 | PostgreSQL + GORM | 关系型数据库 |
 | 缓存 | Redis | 会话管理、热点数据缓存 |
 | 服务发现 | etcd | 服务注册与发现 |
+| 权限引擎 | Casbin | RBAC 权限管理 |
 | 依赖注入 | Google Wire | 编译时依赖注入 |
 | 认证 | JWT | 无状态 Token 认证 |
 | 可观测性 | OpenTelemetry + Jaeger | 分布式链路追踪 |
@@ -67,6 +70,7 @@
 - [GORM 文档](https://gorm.io/zh_CN/docs/)
 - [Wire 指南](https://github.com/google/wire/blob/main/docs/guide.md)
 - [OpenTelemetry 文档](https://opentelemetry.io/docs/)
+- [Casbin 文档](https://casbin.org/zh/docs/overview)
 
 ---
 
