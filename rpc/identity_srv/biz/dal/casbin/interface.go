@@ -3,7 +3,7 @@ package casbin
 import (
 	"context"
 
-	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v3"
 )
 
 // PolicySyncRepository Casbin 策略同步仓储接口

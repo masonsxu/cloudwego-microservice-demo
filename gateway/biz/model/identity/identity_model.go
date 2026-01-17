@@ -229,6 +229,336 @@ func (p *LoginRequestDTO) String() string {
 }
 
 /**
+ * 角色信息数据传输对象
+ * 包含角色的基本信息和数据范围，用于登录响应中返回用户的角色详情
+ */
+type RoleInfoDTO struct {
+	/** 角色唯一标识符 */
+	ID *string `thrift:"id,1,optional" json:"id" form:"id" query:"id"`
+	/** 角色编码（如：ROLE_ADMIN, ROLE_DOCTOR） */
+	Code *string `thrift:"code,2,optional" json:"code" form:"code" query:"code"`
+	/** 角色名称（中文显示名称） */
+	Name *string `thrift:"name,3,optional" json:"name" form:"name" query:"name"`
+	/** 数据范围（1:仅自己, 2:本部门, 3:全组织） */
+	DataScope *int32 `thrift:"dataScope,4,optional" json:"data_scope" form:"dataScope" query:"dataScope"`
+}
+
+func NewRoleInfoDTO() *RoleInfoDTO {
+	return &RoleInfoDTO{}
+}
+
+func (p *RoleInfoDTO) InitDefault() {
+}
+
+var RoleInfoDTO_ID_DEFAULT string
+
+func (p *RoleInfoDTO) GetID() (v string) {
+	if !p.IsSetID() {
+		return RoleInfoDTO_ID_DEFAULT
+	}
+	return *p.ID
+}
+
+var RoleInfoDTO_Code_DEFAULT string
+
+func (p *RoleInfoDTO) GetCode() (v string) {
+	if !p.IsSetCode() {
+		return RoleInfoDTO_Code_DEFAULT
+	}
+	return *p.Code
+}
+
+var RoleInfoDTO_Name_DEFAULT string
+
+func (p *RoleInfoDTO) GetName() (v string) {
+	if !p.IsSetName() {
+		return RoleInfoDTO_Name_DEFAULT
+	}
+	return *p.Name
+}
+
+var RoleInfoDTO_DataScope_DEFAULT int32
+
+func (p *RoleInfoDTO) GetDataScope() (v int32) {
+	if !p.IsSetDataScope() {
+		return RoleInfoDTO_DataScope_DEFAULT
+	}
+	return *p.DataScope
+}
+
+var fieldIDToName_RoleInfoDTO = map[int16]string{
+	1: "id",
+	2: "code",
+	3: "name",
+	4: "dataScope",
+}
+
+func (p *RoleInfoDTO) IsSetID() bool {
+	return p.ID != nil
+}
+
+func (p *RoleInfoDTO) IsSetCode() bool {
+	return p.Code != nil
+}
+
+func (p *RoleInfoDTO) IsSetName() bool {
+	return p.Name != nil
+}
+
+func (p *RoleInfoDTO) IsSetDataScope() bool {
+	return p.DataScope != nil
+}
+
+func (p *RoleInfoDTO) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 2:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 3:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 4:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField4(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RoleInfoDTO[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *RoleInfoDTO) ReadField1(iprot thrift.TProtocol) error {
+
+	var _field *string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = &v
+	}
+	p.ID = _field
+	return nil
+}
+func (p *RoleInfoDTO) ReadField2(iprot thrift.TProtocol) error {
+
+	var _field *string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = &v
+	}
+	p.Code = _field
+	return nil
+}
+func (p *RoleInfoDTO) ReadField3(iprot thrift.TProtocol) error {
+
+	var _field *string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = &v
+	}
+	p.Name = _field
+	return nil
+}
+func (p *RoleInfoDTO) ReadField4(iprot thrift.TProtocol) error {
+
+	var _field *int32
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		_field = &v
+	}
+	p.DataScope = _field
+	return nil
+}
+
+func (p *RoleInfoDTO) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("RoleInfoDTO"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *RoleInfoDTO) writeField1(oprot thrift.TProtocol) (err error) {
+	if p.IsSetID() {
+		if err = oprot.WriteFieldBegin("id", thrift.STRING, 1); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.ID); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *RoleInfoDTO) writeField2(oprot thrift.TProtocol) (err error) {
+	if p.IsSetCode() {
+		if err = oprot.WriteFieldBegin("code", thrift.STRING, 2); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Code); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *RoleInfoDTO) writeField3(oprot thrift.TProtocol) (err error) {
+	if p.IsSetName() {
+		if err = oprot.WriteFieldBegin("name", thrift.STRING, 3); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Name); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *RoleInfoDTO) writeField4(oprot thrift.TProtocol) (err error) {
+	if p.IsSetDataScope() {
+		if err = oprot.WriteFieldBegin("dataScope", thrift.I32, 4); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.DataScope); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
+}
+
+func (p *RoleInfoDTO) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("RoleInfoDTO(%+v)", *p)
+
+}
+
+/**
  * 用户登录响应
  * 登录成功后返回的用户信息、权限信息和令牌
  */
@@ -245,6 +575,10 @@ type LoginResponseDTO struct {
 	Memberships []*UserMembershipDTO `thrift:"memberships,5,optional,list<UserMembershipDTO>" json:"memberships,omitempty" form:"memberships" query:"memberships"`
 	/** 用户角色ID列表 */
 	RoleIDs []string `thrift:"roleIDs,6,optional,list<string>" json:"role_ids,omitempty" form:"roleIDs" query:"roleIDs"`
+	/** 用户菜单权限列表（用于前端按钮级权限控制） */
+	Permissions []*permission.MenuPermissionDTO `thrift:"permissions,7,optional,list<permission.MenuPermissionDTO>" json:"permissions,omitempty" form:"permissions" query:"permissions"`
+	/** 用户角色详情列表（包含角色编码、名称和数据范围） */
+	Roles []*RoleInfoDTO `thrift:"roles,8,optional,list<RoleInfoDTO>" json:"roles,omitempty" form:"roles" query:"roles"`
 }
 
 func NewLoginResponseDTO() *LoginResponseDTO {
@@ -308,6 +642,24 @@ func (p *LoginResponseDTO) GetRoleIDs() (v []string) {
 	return p.RoleIDs
 }
 
+var LoginResponseDTO_Permissions_DEFAULT []*permission.MenuPermissionDTO
+
+func (p *LoginResponseDTO) GetPermissions() (v []*permission.MenuPermissionDTO) {
+	if !p.IsSetPermissions() {
+		return LoginResponseDTO_Permissions_DEFAULT
+	}
+	return p.Permissions
+}
+
+var LoginResponseDTO_Roles_DEFAULT []*RoleInfoDTO
+
+func (p *LoginResponseDTO) GetRoles() (v []*RoleInfoDTO) {
+	if !p.IsSetRoles() {
+		return LoginResponseDTO_Roles_DEFAULT
+	}
+	return p.Roles
+}
+
 var fieldIDToName_LoginResponseDTO = map[int16]string{
 	1: "baseResp",
 	2: "userProfile",
@@ -315,6 +667,8 @@ var fieldIDToName_LoginResponseDTO = map[int16]string{
 	4: "tokenInfo",
 	5: "memberships",
 	6: "roleIDs",
+	7: "permissions",
+	8: "roles",
 }
 
 func (p *LoginResponseDTO) IsSetBaseResp() bool {
@@ -339,6 +693,14 @@ func (p *LoginResponseDTO) IsSetMemberships() bool {
 
 func (p *LoginResponseDTO) IsSetRoleIDs() bool {
 	return p.RoleIDs != nil
+}
+
+func (p *LoginResponseDTO) IsSetPermissions() bool {
+	return p.Permissions != nil
+}
+
+func (p *LoginResponseDTO) IsSetRoles() bool {
+	return p.Roles != nil
 }
 
 func (p *LoginResponseDTO) Read(iprot thrift.TProtocol) (err error) {
@@ -403,6 +765,22 @@ func (p *LoginResponseDTO) Read(iprot thrift.TProtocol) (err error) {
 		case 6:
 			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField6(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 7:
+			if fieldTypeId == thrift.LIST {
+				if err = p.ReadField7(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 8:
+			if fieldTypeId == thrift.LIST {
+				if err = p.ReadField8(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -530,6 +908,52 @@ func (p *LoginResponseDTO) ReadField6(iprot thrift.TProtocol) error {
 	p.RoleIDs = _field
 	return nil
 }
+func (p *LoginResponseDTO) ReadField7(iprot thrift.TProtocol) error {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
+		return err
+	}
+	_field := make([]*permission.MenuPermissionDTO, 0, size)
+	values := make([]permission.MenuPermissionDTO, size)
+	for i := 0; i < size; i++ {
+		_elem := &values[i]
+		_elem.InitDefault()
+
+		if err := _elem.Read(iprot); err != nil {
+			return err
+		}
+
+		_field = append(_field, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
+	}
+	p.Permissions = _field
+	return nil
+}
+func (p *LoginResponseDTO) ReadField8(iprot thrift.TProtocol) error {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
+		return err
+	}
+	_field := make([]*RoleInfoDTO, 0, size)
+	values := make([]RoleInfoDTO, size)
+	for i := 0; i < size; i++ {
+		_elem := &values[i]
+		_elem.InitDefault()
+
+		if err := _elem.Read(iprot); err != nil {
+			return err
+		}
+
+		_field = append(_field, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
+	}
+	p.Roles = _field
+	return nil
+}
 
 func (p *LoginResponseDTO) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
@@ -559,6 +983,14 @@ func (p *LoginResponseDTO) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField6(oprot); err != nil {
 			fieldId = 6
+			goto WriteFieldError
+		}
+		if err = p.writeField7(oprot); err != nil {
+			fieldId = 7
+			goto WriteFieldError
+		}
+		if err = p.writeField8(oprot); err != nil {
+			fieldId = 8
 			goto WriteFieldError
 		}
 	}
@@ -715,6 +1147,60 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 6 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 6 end error: ", p), err)
+}
+
+func (p *LoginResponseDTO) writeField7(oprot thrift.TProtocol) (err error) {
+	if p.IsSetPermissions() {
+		if err = oprot.WriteFieldBegin("permissions", thrift.LIST, 7); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteListBegin(thrift.STRUCT, len(p.Permissions)); err != nil {
+			return err
+		}
+		for _, v := range p.Permissions {
+			if err := v.Write(oprot); err != nil {
+				return err
+			}
+		}
+		if err := oprot.WriteListEnd(); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
+}
+
+func (p *LoginResponseDTO) writeField8(oprot thrift.TProtocol) (err error) {
+	if p.IsSetRoles() {
+		if err = oprot.WriteFieldBegin("roles", thrift.LIST, 8); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteListBegin(thrift.STRUCT, len(p.Roles)); err != nil {
+			return err
+		}
+		for _, v := range p.Roles {
+			if err := v.Write(oprot); err != nil {
+				return err
+			}
+		}
+		if err := oprot.WriteListEnd(); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
 }
 
 func (p *LoginResponseDTO) String() string {

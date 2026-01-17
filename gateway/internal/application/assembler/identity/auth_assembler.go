@@ -133,3 +133,55 @@ func (a *authAssembler) convertMenuNode(rpcNode *identity_srv.MenuNode) *permiss
 
 	return httpNode
 }
+
+// ToHTTPMenuPermissions converts RPC MenuPermission array to HTTP MenuPermissionDTO array
+func (a *authAssembler) ToHTTPMenuPermissions(
+	rpcPermissions []*identity_srv.MenuPermission,
+) []*permission.MenuPermissionDTO {
+	if rpcPermissions == nil {
+		return nil
+	}
+
+	result := make([]*permission.MenuPermissionDTO, 0, len(rpcPermissions))
+	for _, rpcPerm := range rpcPermissions {
+		if rpcPerm != nil {
+			httpPerm := &permission.MenuPermissionDTO{
+				MenuID: common.CopyStringPtr(rpcPerm.MenuID),
+			}
+			if rpcPerm.Permission != nil {
+				permLevel := permission.PermissionLevel(*rpcPerm.Permission)
+				httpPerm.Permission = &permLevel
+			}
+			result = append(result, httpPerm)
+		}
+	}
+
+	return result
+}
+
+// ToHTTPRoleInfos converts RPC RoleDefinition array to HTTP RoleInfoDTO array
+func (a *authAssembler) ToHTTPRoleInfos(
+	rpcRoles []*identity_srv.RoleDefinition,
+) []*identity.RoleInfoDTO {
+	if rpcRoles == nil {
+		return nil
+	}
+
+	result := make([]*identity.RoleInfoDTO, 0, len(rpcRoles))
+	for _, rpcRole := range rpcRoles {
+		if rpcRole != nil {
+			httpRole := &identity.RoleInfoDTO{
+				ID:   common.CopyStringPtr(rpcRole.Id),
+				Code: common.CopyStringPtr(rpcRole.RoleCode),
+				Name: common.CopyStringPtr(rpcRole.Name),
+			}
+			if rpcRole.DefaultScope != nil {
+				dataScope := int32(*rpcRole.DefaultScope)
+				httpRole.DataScope = &dataScope
+			}
+			result = append(result, httpRole)
+		}
+	}
+
+	return result
+}

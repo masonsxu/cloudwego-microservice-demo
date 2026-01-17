@@ -353,7 +353,45 @@ func (a *menuAssembler) ToHTTPGetUserMenuTreeResponse(
 	// 转换角色ID列表（从core.UUID到string）
 	copy(httpResp.RoleIDs, rpcResp.RoleIDs)
 
+	// 从菜单树中提取扁平化的权限列表
+	httpResp.Permissions = a.extractPermissionsFromMenuTree(rpcResp.MenuTree)
+
 	return httpResp
+}
+
+// extractPermissionsFromMenuTree 从 MenuNode 树中提取扁平化的权限列表
+// 递归遍历所有菜单节点，收集具有权限的菜单，返回 MenuPermissionDTO 列表
+func (a *menuAssembler) extractPermissionsFromMenuTree(
+	menuNodes []*identity_srv.MenuNode,
+) []*permissionModel.MenuPermissionDTO {
+	if menuNodes == nil {
+		return nil
+	}
+
+	permissions := make([]*permissionModel.MenuPermissionDTO, 0)
+
+	for _, node := range menuNodes {
+		if node == nil {
+			continue
+		}
+
+		// 如果节点有权限级别，添加到权限列表
+		if node.PermissionLevel != nil && node.Id != nil {
+			perm := &permissionModel.MenuPermissionDTO{
+				MenuID:     node.Id,
+				Permission: rpcToHTTPPermissionLevel(node.PermissionLevel),
+			}
+			permissions = append(permissions, perm)
+		}
+
+		// 递归处理子菜单
+		if len(node.Children) > 0 {
+			childPermissions := a.extractPermissionsFromMenuTree(node.Children)
+			permissions = append(permissions, childPermissions...)
+		}
+	}
+
+	return permissions
 }
 
 // ToRPCGetRoleMenuPermissionsRequest converts HTTP request to RPC GetRoleMenuPermissionsRequest.

@@ -29,6 +29,25 @@ struct LoginRequestDTO {
 }
 
 /**
+ * 角色信息数据传输对象
+ * 包含角色的基本信息和数据范围，用于登录响应中返回用户的角色详情
+ */
+struct RoleInfoDTO {
+
+    /** 角色唯一标识符 */
+    1: optional string id (go.tag = "json:\"id\""),
+
+    /** 角色编码（如：ROLE_ADMIN, ROLE_DOCTOR） */
+    2: optional string code (go.tag = "json:\"code\""),
+
+    /** 角色名称（中文显示名称） */
+    3: optional string name (go.tag = "json:\"name\""),
+
+    /** 数据范围（1:仅自己, 2:本部门, 3:全组织） */
+    4: optional i32 dataScope (go.tag = "json:\"data_scope\""),
+}
+
+/**
  * 用户登录响应
  * 登录成功后返回的用户信息、权限信息和令牌
  */
@@ -51,6 +70,12 @@ struct LoginResponseDTO {
 
     /** 用户角色ID列表 */
     6: optional list<string> roleIDs (go.tag = "json:\"role_ids,omitempty\""),
+
+    /** 用户菜单权限列表（用于前端按钮级权限控制） */
+    7: optional list<permission_model.MenuPermissionDTO> permissions (go.tag = "json:\"permissions,omitempty\""),
+
+    /** 用户角色详情列表（包含角色编码、名称和数据范围） */
+    8: optional list<RoleInfoDTO> roles (go.tag = "json:\"roles,omitempty\""),
 }
 
 /**

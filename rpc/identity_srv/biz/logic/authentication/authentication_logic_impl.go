@@ -140,6 +140,20 @@ func (l *LogicImpl) Login(
 	resp.RoleIDs = menuResp.RoleIDs
 	resp.Permissions = permissions.Permissions
 
+	// 获取角色详情
+	if len(menuResp.RoleIDs) > 0 {
+		roleModels, err := l.dal.RoleDefinition().BatchGetByIDs(ctx, menuResp.RoleIDs)
+		if err != nil {
+			tracelog.Ctx(ctx).Warn().
+				Err(err).
+				Str("user_id", userID).
+				Msg("获取角色详情失败")
+			// 非致命错误，不影响登录流程
+		} else {
+			resp.RoleDetails = l.converter.RoleDefinition().ModelsToThrift(roleModels)
+		}
+	}
+
 	return resp, nil
 }
 

@@ -71,6 +71,7 @@ type LoginResponse struct {
 	MenuTree    []*MenuNode       `thrift:"menuTree,3,optional" frugal:"3,optional,list<MenuNode>" json:"menuTree,omitempty"`
 	RoleIDs     []string          `thrift:"roleIDs,4,optional" frugal:"4,optional,list<string>" json:"roleIDs,omitempty"`
 	Permissions []*MenuPermission `thrift:"permissions,5,optional" frugal:"5,optional,list<MenuPermission>" json:"permissions,omitempty"`
+	RoleDetails []*RoleDefinition `thrift:"roleDetails,6,optional" frugal:"6,optional,list<RoleDefinition>" json:"roleDetails,omitempty"`
 }
 
 func NewLoginResponse() *LoginResponse {
@@ -124,6 +125,15 @@ func (p *LoginResponse) GetPermissions() (v []*MenuPermission) {
 	}
 	return p.Permissions
 }
+
+var LoginResponse_RoleDetails_DEFAULT []*RoleDefinition
+
+func (p *LoginResponse) GetRoleDetails() (v []*RoleDefinition) {
+	if !p.IsSetRoleDetails() {
+		return LoginResponse_RoleDetails_DEFAULT
+	}
+	return p.RoleDetails
+}
 func (p *LoginResponse) SetUserProfile(val *UserProfile) {
 	p.UserProfile = val
 }
@@ -138,6 +148,9 @@ func (p *LoginResponse) SetRoleIDs(val []string) {
 }
 func (p *LoginResponse) SetPermissions(val []*MenuPermission) {
 	p.Permissions = val
+}
+func (p *LoginResponse) SetRoleDetails(val []*RoleDefinition) {
+	p.RoleDetails = val
 }
 
 func (p *LoginResponse) IsSetUserProfile() bool {
@@ -160,6 +173,10 @@ func (p *LoginResponse) IsSetPermissions() bool {
 	return p.Permissions != nil
 }
 
+func (p *LoginResponse) IsSetRoleDetails() bool {
+	return p.RoleDetails != nil
+}
+
 func (p *LoginResponse) String() string {
 	if p == nil {
 		return "<nil>"
@@ -173,6 +190,7 @@ var fieldIDToName_LoginResponse = map[int16]string{
 	3: "menuTree",
 	4: "roleIDs",
 	5: "permissions",
+	6: "roleDetails",
 }
 
 type ChangePasswordRequest struct {

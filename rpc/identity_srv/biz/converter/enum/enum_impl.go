@@ -2,6 +2,7 @@ package enum
 
 import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 )
 
@@ -98,5 +99,33 @@ func (m *ConverterImpl) ThriftGenderToModel(gender core.Gender) models.Gender {
 		return models.GenderUnknown
 	default:
 		return models.GenderUnknown
+	}
+}
+
+// ModelDataScopeToThrift converts models.DataScopeType to identity_srv.DataScope.
+func (m *ConverterImpl) ModelDataScopeToThrift(scope models.DataScopeType) identity_srv.DataScope {
+	switch scope {
+	case models.DataScopeSelf:
+		return identity_srv.DataScope_SELF
+	case models.DataScopeDept:
+		return identity_srv.DataScope_DEPT
+	case models.DataScopeOrg:
+		return identity_srv.DataScope_ORG
+	default:
+		return identity_srv.DataScope_SELF
+	}
+}
+
+// ThriftDataScopeToModel converts identity_srv.DataScope to models.DataScopeType.
+func (m *ConverterImpl) ThriftDataScopeToModel(scope identity_srv.DataScope) models.DataScopeType {
+	switch scope {
+	case identity_srv.DataScope_SELF:
+		return models.DataScopeSelf
+	case identity_srv.DataScope_DEPT:
+		return models.DataScopeDept
+	case identity_srv.DataScope_ORG:
+		return models.DataScopeOrg
+	default:
+		return models.DataScopeSelf
 	}
 }

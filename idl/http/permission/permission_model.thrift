@@ -452,6 +452,9 @@ struct GetUserMenuTreeResponseDTO {
 
     /** 用户拥有的角色列表 */
     4: optional list<string> roleIDs (go.tag = "json:\"role_ids\""),
+
+    /** 用户菜单权限列表（扁平化格式，用于前端按钮级权限控制） */
+    5: optional list<MenuPermissionDTO> permissions (go.tag = "json:\"permissions,omitempty\""),
 }
 
 /** 获取角色菜单权限请求DTO */

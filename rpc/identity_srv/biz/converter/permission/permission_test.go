@@ -85,6 +85,32 @@ func (m *mockEnumConverter) ThriftGenderToModel(gender core.Gender) models.Gende
 	}
 }
 
+func (m *mockEnumConverter) ModelDataScopeToThrift(scope models.DataScopeType) identity_srv.DataScope {
+	switch scope {
+	case models.DataScopeSelf:
+		return identity_srv.DataScope_SELF
+	case models.DataScopeDept:
+		return identity_srv.DataScope_DEPT
+	case models.DataScopeOrg:
+		return identity_srv.DataScope_ORG
+	default:
+		return identity_srv.DataScope_SELF
+	}
+}
+
+func (m *mockEnumConverter) ThriftDataScopeToModel(scope identity_srv.DataScope) models.DataScopeType {
+	switch scope {
+	case identity_srv.DataScope_SELF:
+		return models.DataScopeSelf
+	case identity_srv.DataScope_DEPT:
+		return models.DataScopeDept
+	case identity_srv.DataScope_ORG:
+		return models.DataScopeOrg
+	default:
+		return models.DataScopeSelf
+	}
+}
+
 // TestNewConverter 测试转换器构造函数
 func TestNewConverter(t *testing.T) {
 	mockEnumConv := &mockEnumConverter{}

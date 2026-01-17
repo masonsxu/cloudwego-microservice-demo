@@ -8,4 +8,5 @@ import (
 // Converter defines the interface for converting role definition data.
 type Converter interface {
 	ModelToThrift(*models.RoleDefinition) *identity_srv.RoleDefinition
+	ModelsToThrift([]*models.RoleDefinition) []*identity_srv.RoleDefinition
 }

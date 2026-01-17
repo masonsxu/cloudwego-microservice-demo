@@ -37,7 +37,20 @@ func (c *ConverterImpl) ModelToThrift(
 
 	status := c.converter.ModelRoleStatusToThrift(model.Status)
 
-	// 简化实现，直接返回基本字段，权限转换暂时跳过
+	// 转换数据范围
+	dataScope := c.converter.ModelDataScopeToThrift(model.DefaultScope)
+
+	// 转换父角色ID和部门ID
+	var parentRoleID, departmentID *string
+	if model.ParentRoleID != nil {
+		s := model.ParentRoleID.String()
+		parentRoleID = &s
+	}
+	if model.DepartmentID != nil {
+		s := model.DepartmentID.String()
+		departmentID = &s
+	}
+
 	return &identity_srv.RoleDefinition{
 		Id:           convutil.StringPtr(model.ID.String()),
 		Name:         convutil.StringPtr(model.Name),
@@ -49,6 +62,28 @@ func (c *ConverterImpl) ModelToThrift(
 		UpdatedBy:    updatedBy,
 		CreatedAt:    &model.CreatedAt,
 		UpdatedAt:    &model.UpdatedAt,
-		UserCount:    &model.UserCount, // 新增：用户数量
+		UserCount:    &model.UserCount,
+		// Casbin 扩展字段
+		RoleCode:     convutil.StringPtr(model.RoleCode),
+		ParentRoleID: parentRoleID,
+		DepartmentID: departmentID,
+		DefaultScope: &dataScope,
 	}
+}
+
+// ModelsToThrift converts a slice of models.RoleDefinition to a slice of identity_srv.RoleDefinition.
+func (c *ConverterImpl) ModelsToThrift(
+	models []*models.RoleDefinition,
+) []*identity_srv.RoleDefinition {
+	if models == nil {
+		return nil
+	}
+
+	result := make([]*identity_srv.RoleDefinition, 0, len(models))
+	for _, model := range models {
+		if thrift := c.ModelToThrift(model); thrift != nil {
+			result = append(result, thrift)
+		}
+	}
+	return result
 }

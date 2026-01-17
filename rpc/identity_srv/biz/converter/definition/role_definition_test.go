@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 )
 
@@ -90,6 +91,32 @@ func (m *mockEnumConverter) ThriftGenderToModel(gender core.Gender) models.Gende
 		return models.GenderFemale
 	default:
 		return models.GenderUnknown
+	}
+}
+
+func (m *mockEnumConverter) ModelDataScopeToThrift(scope models.DataScopeType) identity_srv.DataScope {
+	switch scope {
+	case models.DataScopeSelf:
+		return identity_srv.DataScope_SELF
+	case models.DataScopeDept:
+		return identity_srv.DataScope_DEPT
+	case models.DataScopeOrg:
+		return identity_srv.DataScope_ORG
+	default:
+		return identity_srv.DataScope_SELF
+	}
+}
+
+func (m *mockEnumConverter) ThriftDataScopeToModel(scope identity_srv.DataScope) models.DataScopeType {
+	switch scope {
+	case identity_srv.DataScope_SELF:
+		return models.DataScopeSelf
+	case identity_srv.DataScope_DEPT:
+		return models.DataScopeDept
+	case identity_srv.DataScope_ORG:
+		return models.DataScopeOrg
+	default:
+		return models.DataScopeSelf
 	}
 }
 
@@ -438,4 +465,238 @@ func BenchmarkConverterImpl_ModelToThrift(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_ = converter.ModelToThrift(model)
 	}
+}
+
+// TestMockEnumConverter_DataScope 测试 mockEnumConverter 的 DataScope 转换方法
+func TestMockEnumConverter_DataScope(t *testing.T) {
+	mockEnumConv := &mockEnumConverter{}
+
+	t.Run("ModelDataScopeToThrift", func(t *testing.T) {
+		tests := []struct {
+			name     string
+			input    models.DataScopeType
+			expected identity_srv.DataScope
+		}{
+			{
+				name:     "DataScopeSelf",
+				input:    models.DataScopeSelf,
+				expected: identity_srv.DataScope_SELF,
+			},
+			{
+				name:     "DataScopeDept",
+				input:    models.DataScopeDept,
+				expected: identity_srv.DataScope_DEPT,
+			},
+			{
+				name:     "DataScopeOrg",
+				input:    models.DataScopeOrg,
+				expected: identity_srv.DataScope_ORG,
+			},
+			{
+				name:     "Invalid DataScope",
+				input:    models.DataScopeType(0),
+				expected: identity_srv.DataScope_SELF, // 默认值
+			},
+		}
+
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				result := mockEnumConv.ModelDataScopeToThrift(tt.input)
+				assert.Equal(t, tt.expected, result)
+			})
+		}
+	})
+
+	t.Run("ThriftDataScopeToModel", func(t *testing.T) {
+		tests := []struct {
+			name     string
+			input    identity_srv.DataScope
+			expected models.DataScopeType
+		}{
+			{
+				name:     "DataScope_SELF",
+				input:    identity_srv.DataScope_SELF,
+				expected: models.DataScopeSelf,
+			},
+			{
+				name:     "DataScope_DEPT",
+				input:    identity_srv.DataScope_DEPT,
+				expected: models.DataScopeDept,
+			},
+			{
+				name:     "DataScope_ORG",
+				input:    identity_srv.DataScope_ORG,
+				expected: models.DataScopeOrg,
+			},
+			{
+				name:     "Invalid DataScope",
+				input:    identity_srv.DataScope(0),
+				expected: models.DataScopeSelf, // 默认值
+			},
+		}
+
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				result := mockEnumConv.ThriftDataScopeToModel(tt.input)
+				assert.Equal(t, tt.expected, result)
+			})
+		}
+	})
+
+	t.Run("DataScope 往返转换", func(t *testing.T) {
+		scopes := []models.DataScopeType{
+			models.DataScopeSelf,
+			models.DataScopeDept,
+			models.DataScopeOrg,
+		}
+
+		for _, original := range scopes {
+			// Model -> Thrift
+			thrift := mockEnumConv.ModelDataScopeToThrift(original)
+
+			// Thrift -> Model
+			result := mockEnumConv.ThriftDataScopeToModel(thrift)
+
+			// 验证往返转换的一致性
+			assert.Equal(t, original, result, "往返转换应该保持一致")
+		}
+	})
+}
+
+// TestConverterImpl_ModelToThrift_WithDefaultScope 测试包含 DefaultScope 的角色定义转换
+func TestConverterImpl_ModelToThrift_WithDefaultScope(t *testing.T) {
+	enumConverter := &mockEnumConverter{}
+	converter := NewConverter(enumConverter)
+
+	t.Run("DataScopeSelf 转换", func(t *testing.T) {
+		now := time.Now()
+		nowMs := now.UnixMilli()
+		roleID := uuid.New()
+
+		model := &models.RoleDefinition{
+			BaseModel: models.BaseModel{
+				ID:        roleID,
+				CreatedAt: nowMs,
+				UpdatedAt: nowMs,
+			},
+			Name:         "SelfScopeRole",
+			Description:  "Role with self data scope",
+			Status:       models.RoleStatusActive,
+			Permissions:  models.Permissions{},
+			IsSystemRole: false,
+			DefaultScope: models.DataScopeSelf,
+		}
+
+		result := converter.ModelToThrift(model)
+
+		require.NotNil(t, result)
+		assert.Equal(t, roleID.String(), *result.Id)
+		assert.Equal(t, "SelfScopeRole", *result.Name)
+		assert.NotNil(t, result.DefaultScope)
+		assert.Equal(t, identity_srv.DataScope_SELF, *result.DefaultScope)
+	})
+
+	t.Run("DataScopeDept 转换", func(t *testing.T) {
+		now := time.Now()
+		nowMs := now.UnixMilli()
+		roleID := uuid.New()
+
+		model := &models.RoleDefinition{
+			BaseModel: models.BaseModel{
+				ID:        roleID,
+				CreatedAt: nowMs,
+				UpdatedAt: nowMs,
+			},
+			Name:         "DeptScopeRole",
+			Description:  "Role with department data scope",
+			Status:       models.RoleStatusActive,
+			Permissions:  models.Permissions{},
+			IsSystemRole: false,
+			DefaultScope: models.DataScopeDept,
+		}
+
+		result := converter.ModelToThrift(model)
+
+		require.NotNil(t, result)
+		assert.Equal(t, roleID.String(), *result.Id)
+		assert.Equal(t, "DeptScopeRole", *result.Name)
+		assert.NotNil(t, result.DefaultScope)
+		assert.Equal(t, identity_srv.DataScope_DEPT, *result.DefaultScope)
+	})
+
+	t.Run("DataScopeOrg 转换", func(t *testing.T) {
+		now := time.Now()
+		nowMs := now.UnixMilli()
+		roleID := uuid.New()
+
+		model := &models.RoleDefinition{
+			BaseModel: models.BaseModel{
+				ID:        roleID,
+				CreatedAt: nowMs,
+				UpdatedAt: nowMs,
+			},
+			Name:         "OrgScopeRole",
+			Description:  "Role with organization data scope",
+			Status:       models.RoleStatusActive,
+			Permissions:  models.Permissions{},
+			IsSystemRole: false,
+			DefaultScope: models.DataScopeOrg,
+		}
+
+		result := converter.ModelToThrift(model)
+
+		require.NotNil(t, result)
+		assert.Equal(t, roleID.String(), *result.Id)
+		assert.Equal(t, "OrgScopeRole", *result.Name)
+		assert.NotNil(t, result.DefaultScope)
+		assert.Equal(t, identity_srv.DataScope_ORG, *result.DefaultScope)
+	})
+
+	t.Run("零值 DefaultScope 处理", func(t *testing.T) {
+		now := time.Now()
+		nowMs := now.UnixMilli()
+		roleID := uuid.New()
+
+		model := &models.RoleDefinition{
+			BaseModel: models.BaseModel{
+				ID:        roleID,
+				CreatedAt: nowMs,
+				UpdatedAt: nowMs,
+			},
+			Name:         "ZeroScopeRole",
+			Description:  "Role with zero default scope",
+			Status:       models.RoleStatusActive,
+			Permissions:  models.Permissions{},
+			IsSystemRole: false,
+			DefaultScope: models.DataScopeType(0), // 零值
+		}
+
+		result := converter.ModelToThrift(model)
+
+		require.NotNil(t, result)
+		assert.Equal(t, roleID.String(), *result.Id)
+		assert.Equal(t, "ZeroScopeRole", *result.Name)
+		// 零值应该被转换为默认值 DataScope_SELF
+		assert.NotNil(t, result.DefaultScope)
+		assert.Equal(t, identity_srv.DataScope_SELF, *result.DefaultScope)
+	})
+}
+
+// BenchmarkMockEnumConverter_DataScope 基准测试 DataScope 转换
+func BenchmarkMockEnumConverter_DataScope(b *testing.B) {
+	mockEnumConv := &mockEnumConverter{}
+
+	b.Run("ModelDataScopeToThrift", func(b *testing.B) {
+		b.ResetTimer()
+		for i := 0; i < b.N; i++ {
+			_ = mockEnumConv.ModelDataScopeToThrift(models.DataScopeOrg)
+		}
+	})
+
+	b.Run("ThriftDataScopeToModel", func(b *testing.B) {
+		b.ResetTimer()
+		for i := 0; i < b.N; i++ {
+			_ = mockEnumConv.ThriftDataScopeToModel(identity_srv.DataScope_ORG)
+		}
+	})
 }

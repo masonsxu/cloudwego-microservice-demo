@@ -463,6 +463,9 @@ struct LoginResponse {
 
     /** 用户拥有的菜单权限列表（菜单ID -> 权限） */
     5: optional list<MenuPermission> permissions,
+
+    /** 用户角色详情列表（包含角色编码、名称和数据范围） */
+    6: optional list<identity_model.RoleDefinition> roleDetails,
 }
 
 /** 修改密码请求 */

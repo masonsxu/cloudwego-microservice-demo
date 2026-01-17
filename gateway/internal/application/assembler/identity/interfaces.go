@@ -37,6 +37,8 @@ type IAuthAssembler interface {
 		*identityModel.ForcePasswordChangeRequestDTO,
 	) *identity_srv.ForcePasswordChangeRequest
 	ToHTTPMenuTree([]*identity_srv.MenuNode) []*permissionModel.MenuNodeDTO
+	ToHTTPMenuPermissions([]*identity_srv.MenuPermission) []*permissionModel.MenuPermissionDTO
+	ToHTTPRoleInfos([]*identity_srv.RoleDefinition) []*identityModel.RoleInfoDTO
 }
 
 type IDepartmentAssembler interface {

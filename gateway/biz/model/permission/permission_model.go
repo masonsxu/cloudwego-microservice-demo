@@ -8477,6 +8477,8 @@ type GetUserMenuTreeResponseDTO struct {
 	UserID *string `thrift:"userID,3,optional" json:"user_id" form:"userID" query:"userID"`
 	/** 用户拥有的角色列表 */
 	RoleIDs []string `thrift:"roleIDs,4,optional,list<string>" json:"role_ids" form:"roleIDs" query:"roleIDs"`
+	/** 用户菜单权限列表（扁平化格式，用于前端按钮级权限控制） */
+	Permissions []*MenuPermissionDTO `thrift:"permissions,5,optional,list<MenuPermissionDTO>" json:"permissions,omitempty" form:"permissions" query:"permissions"`
 }
 
 func NewGetUserMenuTreeResponseDTO() *GetUserMenuTreeResponseDTO {
@@ -8522,11 +8524,21 @@ func (p *GetUserMenuTreeResponseDTO) GetRoleIDs() (v []string) {
 	return p.RoleIDs
 }
 
+var GetUserMenuTreeResponseDTO_Permissions_DEFAULT []*MenuPermissionDTO
+
+func (p *GetUserMenuTreeResponseDTO) GetPermissions() (v []*MenuPermissionDTO) {
+	if !p.IsSetPermissions() {
+		return GetUserMenuTreeResponseDTO_Permissions_DEFAULT
+	}
+	return p.Permissions
+}
+
 var fieldIDToName_GetUserMenuTreeResponseDTO = map[int16]string{
 	1: "baseResp",
 	2: "menuTree",
 	3: "userID",
 	4: "roleIDs",
+	5: "permissions",
 }
 
 func (p *GetUserMenuTreeResponseDTO) IsSetBaseResp() bool {
@@ -8543,6 +8555,10 @@ func (p *GetUserMenuTreeResponseDTO) IsSetUserID() bool {
 
 func (p *GetUserMenuTreeResponseDTO) IsSetRoleIDs() bool {
 	return p.RoleIDs != nil
+}
+
+func (p *GetUserMenuTreeResponseDTO) IsSetPermissions() bool {
+	return p.Permissions != nil
 }
 
 func (p *GetUserMenuTreeResponseDTO) Read(iprot thrift.TProtocol) (err error) {
@@ -8591,6 +8607,14 @@ func (p *GetUserMenuTreeResponseDTO) Read(iprot thrift.TProtocol) (err error) {
 		case 4:
 			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField4(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 5:
+			if fieldTypeId == thrift.LIST {
+				if err = p.ReadField5(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -8690,6 +8714,29 @@ func (p *GetUserMenuTreeResponseDTO) ReadField4(iprot thrift.TProtocol) error {
 	p.RoleIDs = _field
 	return nil
 }
+func (p *GetUserMenuTreeResponseDTO) ReadField5(iprot thrift.TProtocol) error {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
+		return err
+	}
+	_field := make([]*MenuPermissionDTO, 0, size)
+	values := make([]MenuPermissionDTO, size)
+	for i := 0; i < size; i++ {
+		_elem := &values[i]
+		_elem.InitDefault()
+
+		if err := _elem.Read(iprot); err != nil {
+			return err
+		}
+
+		_field = append(_field, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
+	}
+	p.Permissions = _field
+	return nil
+}
 
 func (p *GetUserMenuTreeResponseDTO) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
@@ -8711,6 +8758,10 @@ func (p *GetUserMenuTreeResponseDTO) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField4(oprot); err != nil {
 			fieldId = 4
+			goto WriteFieldError
+		}
+		if err = p.writeField5(oprot); err != nil {
+			fieldId = 5
 			goto WriteFieldError
 		}
 	}
@@ -8821,6 +8872,33 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
+}
+
+func (p *GetUserMenuTreeResponseDTO) writeField5(oprot thrift.TProtocol) (err error) {
+	if p.IsSetPermissions() {
+		if err = oprot.WriteFieldBegin("permissions", thrift.LIST, 5); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteListBegin(thrift.STRUCT, len(p.Permissions)); err != nil {
+			return err
+		}
+		for _, v := range p.Permissions {
+			if err := v.Write(oprot); err != nil {
+				return err
+			}
+		}
+		if err := oprot.WriteListEnd(); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
 }
 
 func (p *GetUserMenuTreeResponseDTO) String() string {

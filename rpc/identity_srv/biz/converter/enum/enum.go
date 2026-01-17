@@ -2,6 +2,7 @@ package enum
 
 import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 )
 
@@ -18,4 +19,8 @@ type Converter interface {
 	// Gender
 	ModelGenderToThrift(models.Gender) core.Gender
 	ThriftGenderToModel(core.Gender) models.Gender
+
+	// DataScope
+	ModelDataScopeToThrift(models.DataScopeType) identity_srv.DataScope
+	ThriftDataScopeToModel(identity_srv.DataScope) models.DataScopeType
 }

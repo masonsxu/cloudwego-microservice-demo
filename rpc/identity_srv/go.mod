@@ -9,6 +9,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.90.0
 	github.com/aws/smithy-go v1.23.2
 	github.com/bytedance/gopkg v0.1.3
+	github.com/casbin/casbin/v3 v3.8.1
+	github.com/casbin/gorm-adapter/v3 v3.40.0
 	github.com/cloudwego/gopkg v0.1.7
 	github.com/cloudwego/kitex v0.15.2
 	github.com/google/uuid v1.6.0
@@ -22,6 +24,7 @@ require (
 	github.com/stretchr/testify v1.11.1
 	go.opentelemetry.io/otel/trace v1.37.0
 	golang.org/x/crypto v0.46.0
+	golang.org/x/text v0.32.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/postgres v1.6.0
@@ -46,9 +49,6 @@ require (
 	github.com/bmatcuk/doublestar/v4 v4.9.1 // indirect
 	github.com/bytedance/sonic v1.14.2 // indirect
 	github.com/bytedance/sonic/loader v0.4.0 // indirect
-	github.com/casbin/casbin/v2 v2.135.0 // indirect
-	github.com/casbin/casbin/v3 v3.8.1 // indirect
-	github.com/casbin/gorm-adapter/v3 v3.40.0 // indirect
 	github.com/casbin/govaluate v1.10.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.6 // indirect
@@ -136,7 +136,6 @@ require (
 	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.39.0 // indirect
-	golang.org/x/text v0.32.0 // indirect
 	google.golang.org/genproto v0.0.0-20241118233622-e639e219e697 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250303144028-a0af3efb3deb // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250303144028-a0af3efb3deb // indirect

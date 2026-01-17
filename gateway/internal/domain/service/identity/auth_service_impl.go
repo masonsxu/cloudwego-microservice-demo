@@ -85,7 +85,21 @@ func (s *authServiceImpl) Login(
 		httpResp.RoleIDs = []string{}
 	}
 
-	// 处理权限信息（现在是枚举类型）
+	// 处理菜单权限信息
+	if rpcResp.Permissions != nil {
+		httpResp.Permissions = s.assembler.Auth().ToHTTPMenuPermissions(rpcResp.Permissions)
+	} else {
+		httpResp.Permissions = []*permission.MenuPermissionDTO{}
+	}
+
+	// 处理角色详情信息
+	if rpcResp.RoleDetails != nil {
+		httpResp.Roles = s.assembler.Auth().ToHTTPRoleInfos(rpcResp.RoleDetails)
+	} else {
+		httpResp.Roles = []*identity.RoleInfoDTO{}
+	}
+
+	// 处理权限信息（现在是枚举类型）- 提取最高权限级别返回
 	if rpcResp.Permissions != nil && len(rpcResp.Permissions) > 0 &&
 		rpcResp.Permissions[0].Permission != nil {
 		permLevel := *rpcResp.Permissions[0].Permission
