@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxury Capricorn UI Component</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+SC:wght@300;700&family=Lato:wght@300;400&display=swap');
+
+        :root {
+            /* Palette Definition */
+            --bg-base: #141416;         /* 深岩灰 - 背景 */
+            --c-accent: #D4AF37;        /* 香槟金 - 核心高亮/图标 */
+            --c-text-main: #F2F0E4;     /* 羊皮纸白 - 主标题 */
+            --c-text-sub: #8B9bb4;      /* 矿石灰 - 副文本 */
+            --c-btn-bg: #2C2E33;        /* 青铜褐变体 - 按钮底色 */
+            --c-highlight: #FFF8E7;     /* 亮光色 - 极亮部 */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #000;
+            background-image: radial-gradient(circle at 50% 10%, #2a2d35 0%, #000000 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Lato', 'Noto Serif SC', sans-serif;
+            color: var(--c-text-main);
+        }
+
+        /* Card Container */
+        .card {
+            position: relative;
+            width: 380px;
+            height: 600px;
+            background: linear-gradient(145deg, rgba(30, 32, 36, 0.9), rgba(20, 20, 22, 0.95));
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px 30px;
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(212, 175, 55, 0.1);
+        }
+
+        /* Background SVG Decoration */
+        .bg-graphic {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Content Styling */
+        .header {
+            z-index: 1;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .sign-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 50%;
+            color: var(--c-accent);
+            font-size: 24px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 32px;
+            letter-spacing: 4px;
+            color: var(--c-accent);
+            text-transform: uppercase;
+            background: linear-gradient(to right, #D4AF37, #F2F0E4, #D4AF37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 5s linear infinite;
+        }
+
+        h2 {
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 300;
+            font-size: 18px;
+            color: var(--c-text-sub);
+            margin-top: 8px;
+            letter-spacing: 2px;
+        }
+
+        .date {
+            font-size: 12px;
+            color: var(--c-accent);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 20px;
+            opacity: 0.8;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .date::before, .date::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 30px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--c-accent));
+        }
+        .date::before { right: 100%; margin-right: 15px; }
+        .date::after { left: 100%; margin-left: 15px; transform: scaleX(-1); }
+
+        /* Color Palette Showcase */
+        .palette-display {
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 40px 0;
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .palette-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--c-text-sub);
+            text-align: center;
+        }
+
+        .swatches {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+
+        .swatch-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .swatch {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        .swatch::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%);
+        }
+
+        .hex-code {
+            font-size: 9px;
+            color: var(--c-text-sub);
+            font-family: monospace;
+            opacity: 0.7;
+        }
+
+        /* Action Area */
+        .footer {
+            z-index: 1;
+            text-align: center;
+        }
+
+        .btn {
+            background: var(--c-btn-bg);
+            color: var(--c-text-main);
+            border: 1px solid var(--c-accent);
+            padding: 14px 40px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Cinzel', serif;
+        }
+
+        .btn:hover {
+            background: var(--c-accent);
+            color: var(--bg-base);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Animations */
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .star {
+            fill: var(--c-accent);
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        /* SVG Specifics */
+        .constellation-lines {
+            stroke: url(#lineGradient);
+            stroke-width: 1;
+            fill: none;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 3s ease-out forwards 0.5s;
+        }
+
+        @keyframes drawLine {
+            to { stroke-dashoffset: 0; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <svg class="bg-graphic" viewBox="0 0 400 600" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:var(--c-accent); stop-opacity:0.1" />
+                    <stop offset="50%" style="stop-color:var(--c-accent); stop-opacity:0.8" />
+                    <stop offset="100%" style="stop-color:var(--c-text-sub); stop-opacity:0.1" />
+                </linearGradient>
+                <filter id="glow">
+                    <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+                    <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+            </defs>
+            
+            <g transform="translate(50, 100) scale(0.8)">
+                <path class="constellation-lines" d="M 60,80 L 140,50 L 220,90 L 280,180 L 240,250 L 120,260 L 60,180 L 60,80 M 280,180 L 320,160" />
+                
+                <circle cx="60" cy="80" r="3" class="star" style="animation-delay: 0.1s" fill="var(--c-text-main)" filter="url(#glow)"/>
+                <circle cx="140" cy="50" r="4" class="star" style="animation-delay: 0.3s" fill="var(--c-text-main)" filter="url(#glow)"/>
+                <circle cx="220" cy="90" r="3" class="star" style="animation-delay: 0.5s" fill="var(--c-accent)"/>
+                <circle cx="280" cy="180" r="4" class="star" style="animation-delay: 0.7s" fill="var(--c-text-main)" filter="url(#glow)"/>
+                <circle cx="240" cy="250" r="3" class="star" style="animation-delay: 0.9s" fill="var(--c-accent)"/>
+                <circle cx="120" cy="260" r="3" class="star" style="animation-delay: 1.1s" fill="var(--c-text-main)"/>
+                <circle cx="60" cy="180" r="2" class="star" style="animation-delay: 1.3s" fill="var(--c-text-sub)"/>
+                <circle cx="320" cy="160" r="2" class="star" style="animation-delay: 1.5s" fill="var(--c-text-sub)"/>
+            </g>
+        </svg>
+
+        <div class="header">
+            <div class="sign-icon">♑</div>
+            <h1>Capricorn</h1>
+            <h2>摩 羯 座</h2>
+            <div class="date">Dec 22 — Jan 19</div>
+        </div>
+
+        <div class="palette-display">
+            <div class="palette-title">Color Scheme / 配色方案</div>
+            <div class="swatches">
+                <div class="swatch-group">
+                    <div class="swatch" style="background: #141416;"></div>
+                    <span class="hex-code">#141416</span>
+                </div>
+                <div class="swatch-group">
+                    <div class="swatch" style="background: #F2F0E4;"></div>
+                    <span class="hex-code">#F2F0E4</span>
+                </div>
+                <div class="swatch-group">
+                    <div class="swatch" style="background: #D4AF37;"></div>
+                    <span class="hex-code">#D4AF37</span>
+                </div>
+                <div class="swatch-group">
+                    <div class="swatch" style="background: #8B9bb4;"></div>
+                    <span class="hex-code">#8B9BB4</span>
+                </div>
+                 <div class="swatch-group">
+                    <div class="swatch" style="background: #2C2E33;"></div>
+                    <span class="hex-code">#2C2E33</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <button class="btn">Explore • 探索</button>
+        </div>
+    </div>
+
+</body>
+</html>

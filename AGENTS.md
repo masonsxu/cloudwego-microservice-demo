@@ -253,7 +253,7 @@ go get -u ./...
 
 ### 快速参考
 
-所有 UI 设计、前端开发、文档编写必须严格遵循 **[奢华摩羯座配色规范](docs/CAPRICORN-THEME-GUIDE.md)**。
+所有 UI 设计、前端开发、文档编写必须严格遵循 **[奢华摩羯座配色规范](docs/08-capricorn-theme-guide.md)**。
 
 #### 核心配色速览
 
@@ -307,7 +307,7 @@ go get -u ./...
 
 详细的配色规范、组件示例、动画效果、测试指南等内容，请参考：
 
-- **[奢华摩羯座配色规范](docs/CAPRICORN-THEME-GUIDE.md)** - 完整的设计文档
+- **[奢华摩羯座配色规范](docs/08-capricorn-theme-guide.md)** - 完整的设计文档
 
 该文档包含：
 - 官方配色定义（CSS 和 Tailwind 配置）
@@ -1021,7 +1021,7 @@ import (
 - [部署指南](docs/05-deployment.md) - 生产环境部署步骤
 - [故障排查](docs/06-troubleshooting.md) - 常见问题和解决方案
 - [权限管理](docs/07-permission-management.md) - Casbin RBAC 配置和使用
-- [奢华摩羯座配色规范](docs/CAPRICORN-THEME-GUIDE.md) - 官方配色方案和使用指南
+- [奢华摩羯座配色规范](docs/08-capricorn-theme-guide.md) - 官方配色方案和使用指南
 
 ## 关键文件速查
 
@@ -1091,7 +1091,7 @@ cd gateway && ./script/gen_hertz_code.sh && sh build.sh
 - 添加权限管理模块文档
 - 添加 AGENTS.md 文档供智能编码代理使用
 - 新增 UI配色设计规范 - 奢华摩羯座配色方案，所有 UI 设计必须遵循
-- 将配色规范整理为独立文档 [docs/CAPRICORN-THEME-GUIDE.md](docs/CAPRICORN-THEME-GUIDE.md)，提供完整的 CSS 和 Tailwind 配置示例
+- 将配色规范整理为独立文档 [docs/08-capricorn-theme-guide.md](docs/08-capricorn-theme-guide.md)，提供完整的 CSS 和 Tailwind 配置示例
 
 详见 [Git 历史](https://github.com/masonsxu/cloudwego-microservice-demo/commits/main)
 
