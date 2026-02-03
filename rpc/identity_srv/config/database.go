@@ -135,7 +135,42 @@ func autoMigrate(db *gorm.DB) error {
 		return fmt.Errorf("自动迁移失败: %v", err)
 	}
 
+	// 清理旧的唯一约束索引（如果存在）
+	// 旧的索引: idx_semantic_version (semantic_id, version)
+	// 新的索引: idx_product_semantic_version (product_line, semantic_id, version)
+	if err := cleanupOldMenuIndexes(db); err != nil {
+		log.Printf("警告: 清理旧索引失败: %v", err)
+		// 不中断迁移，继续执行
+	}
+
 	log.Println("数据库自动迁移完成")
+
+	return nil
+}
+
+// cleanupOldMenuIndexes 清理 Menu 表的旧索引
+func cleanupOldMenuIndexes(db *gorm.DB) error {
+	// 检查是否存在旧的唯一约束索引 idx_semantic_version
+	var indexExists bool
+	err := db.Raw(`
+		SELECT EXISTS (
+			SELECT 1 FROM pg_indexes
+			WHERE tablename = 'menus'
+			AND indexname = 'idx_semantic_version'
+		)
+	`).Scan(&indexExists).Error
+
+	if err != nil {
+		return fmt.Errorf("检查旧索引失败: %v", err)
+	}
+
+	if indexExists {
+		log.Println("发现旧的唯一约束索引 idx_semantic_version，正在删除...")
+		if err := db.Exec("DROP INDEX IF EXISTS idx_semantic_version").Error; err != nil {
+			return fmt.Errorf("删除旧索引失败: %v", err)
+		}
+		log.Println("成功删除旧索引 idx_semantic_version")
+	}
 
 	return nil
 }

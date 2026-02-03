@@ -114,7 +114,7 @@ menu:
 	assert.Contains(t, err.Error(), "检测到重复的语义化ID")
 }
 
-func TestParseAndFlattenMenu_EmptyProductLine(t *testing.T) {
+func TestParseAndFlattenMenu_WithVersionZero(t *testing.T) {
 	yamlContent := `
 menu:
   - name: "患者数据"
@@ -122,22 +122,17 @@ menu:
     path: "/patient-data"
 `
 
-	_, _, err := ParseAndFlattenMenu(yamlContent, "", 1)
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "产品线不能为空")
-}
+	productLine := "default"
+	version := 0 // Parser 接受 0 作为临时值，由 Logic 层更新
 
-func TestParseAndFlattenMenu_InvalidVersion(t *testing.T) {
-	yamlContent := `
-menu:
-  - name: "患者数据"
-    id: "patient_data"
-    path: "/patient-data"
-`
+	menus, contentHash, err := ParseAndFlattenMenu(yamlContent, productLine, version)
+	require.NoError(t, err)
+	require.NotEmpty(t, contentHash)
+	require.Len(t, menus, 1)
 
-	_, _, err := ParseAndFlattenMenu(yamlContent, "default", 0)
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "版本号必须大于0")
+	// 版本号应该被设置
+	assert.Equal(t, version, menus[0].Version)
+	assert.Equal(t, productLine, menus[0].ProductLine)
 }
 
 func TestParseAndFlattenMenu_InvalidYAML(t *testing.T) {

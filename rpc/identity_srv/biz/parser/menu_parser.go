@@ -86,19 +86,14 @@ func toHashNodes(nodes []*YamlMenuNode) []menuHashNode {
 
 // ParseAndFlattenMenu 解析YAML格式的菜单内容，并将其扁平化为 models.Menu 的列表，
 // 以便进行数据库插入。该函数会分配版本号并处理父子关系。
-// 注意：此函数假定 models.Menu 结构体允许在代码中预设其 UUID。
+// 注意：
+// - 此函数假定 models.Menu 结构体允许在代码中预设其 UUID
+// - version 参数由调用方设置（可以是临时值，后续由 Logic 层更新）
+// - productLine 和 version 的校验应在 Logic 层或 Gateway 层处理
 func ParseAndFlattenMenu(yamlContent string, productLine string, version int) ([]*models.Menu, string, error) {
 	var container YamlMenuContainer
 	if err := yaml.Unmarshal([]byte(yamlContent), &container); err != nil {
 		return nil, "", fmt.Errorf("解析菜单YAML失败: %w", err)
-	}
-
-	if productLine == "" {
-		return nil, "", fmt.Errorf("产品线不能为空")
-	}
-
-	if version <= 0 {
-		return nil, "", fmt.Errorf("版本号必须大于0")
 	}
 
 	// 计算内容哈希
