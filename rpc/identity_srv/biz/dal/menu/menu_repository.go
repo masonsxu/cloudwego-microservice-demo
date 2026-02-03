@@ -10,6 +10,11 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 )
 
+const (
+	// DefaultProductLine 默认产品线标识
+	DefaultProductLine = "default"
+)
+
 // menuRepository implements the MenuRepository interface.
 type menuRepository struct {
 	// 嵌入基础仓储接口
@@ -38,37 +43,61 @@ func (r *menuRepository) CreateMenuTree(ctx context.Context, menus []*models.Men
 	})
 }
 
-// GetAllVersions retrieves a list of all unique menu version identifiers, sorted descending.
-func (r *menuRepository) GetAllVersions(ctx context.Context) ([]string, error) {
-	var versions []string
+// GetMaxVersion 获取指定产品线的最大版本号
+func (r *menuRepository) GetMaxVersion(ctx context.Context, productLine string) (int, error) {
+	var maxVersion int
 
 	err := r.db.WithContext(ctx).
 		Model(&models.Menu{}).
-		Select("DISTINCT version").
-		Order("version DESC").
-		Pluck("version", &versions).
+		Where("product_line = ?", productLine).
+		Select("COALESCE(MAX(version), 0)").
+		Scan(&maxVersion).
 		Error
+	if err != nil {
+		return 0, err
+	}
 
-	return versions, err
+	return maxVersion, nil
 }
 
-// GetLatestMenuTree retrieves the full menu tree for the most recent version.
-func (r *menuRepository) GetLatestMenuTree(ctx context.Context) ([]*models.Menu, error) {
-	// Step 1: Find the latest version string based on creation time.
-	var latestVersion string
+// GetLatestContentHash 获取指定产品线最新版本的内容哈希
+func (r *menuRepository) GetLatestContentHash(ctx context.Context, productLine string) (string, error) {
+	// 先获取最新版本号
+	maxVersion, err := r.GetMaxVersion(ctx, productLine)
+	if err != nil {
+		return "", err
+	}
 
-	err := r.db.WithContext(ctx).
+	if maxVersion == 0 {
+		// 没有任何版本
+		return "", nil
+	}
+
+	// 获取该版本的第一条记录的内容哈希（同一版本所有记录哈希相同）
+	var contentHash string
+	err = r.db.WithContext(ctx).
 		Model(&models.Menu{}).
-		Order("created_at DESC").
+		Where("product_line = ? AND version = ?", productLine, maxVersion).
 		Limit(1).
-		Pluck("version", &latestVersion).
+		Pluck("content_hash", &contentHash).
 		Error
+	if err != nil {
+		return "", err
+	}
+
+	return contentHash, nil
+}
+
+// GetLatestMenuTree retrieves the full menu tree for the most recent version of a product line.
+func (r *menuRepository) GetLatestMenuTree(ctx context.Context, productLine string) ([]*models.Menu, error) {
+	// Step 1: Find the latest version for this product line.
+	maxVersion, err := r.GetMaxVersion(ctx, productLine)
 	if err != nil {
 		return nil, err
 	}
 
-	if latestVersion == "" {
-		// No menus found in the database.
+	if maxVersion == 0 {
+		// No menus found for this product line.
 		return []*models.Menu{}, nil
 	}
 
@@ -76,7 +105,7 @@ func (r *menuRepository) GetLatestMenuTree(ctx context.Context) ([]*models.Menu,
 	var menus []*models.Menu
 
 	err = r.db.WithContext(ctx).
-		Where("version = ?", latestVersion).
+		Where("product_line = ? AND version = ?", productLine, maxVersion).
 		Order("sort ASC").
 		Find(&menus).
 		Error
@@ -102,8 +131,6 @@ func (r *menuRepository) GetLatestMenuTree(ctx context.Context) ([]*models.Menu,
 			if parent, ok := menuMap[*menu.ParentID]; ok {
 				parent.Children = append(parent.Children, menu)
 			}
-			// Note: If a parent is not found, the node becomes an orphan and won't appear in the tree.
-			// This indicates data integrity issues if it happens.
 		}
 	}
 
@@ -113,27 +140,28 @@ func (r *menuRepository) GetLatestMenuTree(ctx context.Context) ([]*models.Menu,
 // GetBySemanticID 根据语义ID和版本查询菜单
 func (r *menuRepository) GetBySemanticID(
 	ctx context.Context,
+	productLine string,
 	semanticID string,
-	version string,
+	version int,
 ) (*models.Menu, error) {
 	if semanticID == "" {
 		return nil, gorm.ErrRecordNotFound
 	}
 
-	// 如果版本为空，获取最新版本
-	if version == "" {
-		latestVersion, err := r.getLatestVersion(ctx)
+	// 如果版本为0，获取最新版本
+	if version == 0 {
+		maxVersion, err := r.GetMaxVersion(ctx, productLine)
 		if err != nil {
 			return nil, err
 		}
 
-		version = latestVersion
+		version = maxVersion
 	}
 
 	var menu models.Menu
 
 	err := r.db.WithContext(ctx).
-		Where("semantic_id = ? AND version = ?", semanticID, version).
+		Where("product_line = ? AND semantic_id = ? AND version = ?", productLine, semanticID, version).
 		First(&menu).
 		Error
 	if err != nil {
@@ -146,6 +174,7 @@ func (r *menuRepository) GetBySemanticID(
 // GetBySemanticIDs 批量根据语义ID查询菜单（使用最新版本）
 func (r *menuRepository) GetBySemanticIDs(
 	ctx context.Context,
+	productLine string,
 	semanticIDs []string,
 ) ([]*models.Menu, error) {
 	if len(semanticIDs) == 0 {
@@ -153,15 +182,19 @@ func (r *menuRepository) GetBySemanticIDs(
 	}
 
 	// 获取最新版本
-	latestVersion, err := r.getLatestVersion(ctx)
+	maxVersion, err := r.GetMaxVersion(ctx, productLine)
 	if err != nil {
 		return nil, err
+	}
+
+	if maxVersion == 0 {
+		return []*models.Menu{}, nil
 	}
 
 	var menus []*models.Menu
 
 	err = r.db.WithContext(ctx).
-		Where("semantic_id IN ? AND version = ?", semanticIDs, latestVersion).
+		Where("product_line = ? AND semantic_id IN ? AND version = ?", productLine, semanticIDs, maxVersion).
 		Find(&menus).
 		Error
 	if err != nil {
@@ -174,11 +207,16 @@ func (r *menuRepository) GetBySemanticIDs(
 // GetLatestSemanticIDMapping 获取最新版本的语义ID到UUID的映射
 func (r *menuRepository) GetLatestSemanticIDMapping(
 	ctx context.Context,
+	productLine string,
 ) (map[string]uuid.UUID, error) {
 	// 获取最新版本
-	latestVersion, err := r.getLatestVersion(ctx)
+	maxVersion, err := r.GetMaxVersion(ctx, productLine)
 	if err != nil {
 		return nil, err
+	}
+
+	if maxVersion == 0 {
+		return make(map[string]uuid.UUID), nil
 	}
 
 	// 查询最新版本的所有菜单
@@ -190,7 +228,7 @@ func (r *menuRepository) GetLatestSemanticIDMapping(
 	err = r.db.WithContext(ctx).
 		Model(&models.Menu{}).
 		Select("id, semantic_id").
-		Where("version = ?", latestVersion).
+		Where("product_line = ? AND version = ?", productLine, maxVersion).
 		Find(&menus).
 		Error
 	if err != nil {
@@ -204,25 +242,4 @@ func (r *menuRepository) GetLatestSemanticIDMapping(
 	}
 
 	return mapping, nil
-}
-
-// getLatestVersion 获取最新版本号的辅助方法
-func (r *menuRepository) getLatestVersion(ctx context.Context) (string, error) {
-	var latestVersion string
-
-	err := r.db.WithContext(ctx).
-		Model(&models.Menu{}).
-		Order("created_at DESC").
-		Limit(1).
-		Pluck("version", &latestVersion).
-		Error
-	if err != nil {
-		return "", err
-	}
-
-	if latestVersion == "" {
-		return "", gorm.ErrRecordNotFound
-	}
-
-	return latestVersion, nil
 }

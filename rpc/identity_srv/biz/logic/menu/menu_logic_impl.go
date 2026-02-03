@@ -13,6 +13,7 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/convutil"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/assignment"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/menu"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/parser"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/config"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
@@ -94,13 +95,36 @@ func (l *LogicImpl) UploadMenu(
 		return errno.ErrInvalidParams.WithMessage("YAML内容不能为空")
 	}
 
-	// 生成版本号
-	version := fmt.Sprintf("v%d", getCurrentTimestamp())
+	productLine := menu.DefaultProductLine
+	if req.ProductLine != nil && *req.ProductLine != "" {
+		productLine = *req.ProductLine
+	}
 
 	// 使用parser模块解析YAML内容并转换为模型
-	menuModels, err := parser.ParseAndFlattenMenu(*req.YamlContent, version)
+	// 先用版本号0解析，获取哈希值
+	menuModels, contentHash, err := parser.ParseAndFlattenMenu(*req.YamlContent, productLine, 0)
 	if err != nil {
 		return errno.ErrInvalidParams.WithMessage(fmt.Sprintf("解析菜单YAML失败: %s", err.Error()))
+	}
+
+	// 去重检查：查询该产品线最新版本的哈希
+	latestHash, err := l.dal.Menu().GetLatestContentHash(ctx, productLine)
+	if err == nil && latestHash == contentHash {
+		// 内容相同，静默返回成功（不创建新版本）
+		return nil
+	}
+
+	// 获取新版本号（自增）
+	maxVersion, err := l.dal.Menu().GetMaxVersion(ctx, productLine)
+	if err != nil {
+		return errno.ErrOperationFailed.WithMessage(fmt.Sprintf("获取版本号失败: %s", err.Error()))
+	}
+
+	newVersion := maxVersion + 1
+
+	// 更新所有菜单的版本号
+	for _, menu := range menuModels {
+		menu.Version = newVersion
 	}
 
 	// 使用dal模块将菜单数据保存到数据库
@@ -115,7 +139,7 @@ func (l *LogicImpl) UploadMenu(
 func (l *LogicImpl) GetMenuTree(
 	ctx context.Context,
 ) (*identity_srv.GetMenuTreeResponse, error) {
-	menuModels, err := l.dal.Menu().GetLatestMenuTree(ctx)
+	menuModels, err := l.dal.Menu().GetLatestMenuTree(ctx, menu.DefaultProductLine)
 	if err != nil {
 		return nil, errno.ErrOperationFailed.WithMessage(fmt.Sprintf("获取菜单树失败: %s", err.Error()))
 	}
@@ -279,7 +303,7 @@ func (l *LogicImpl) GetUserMenuTree(
 		}
 
 		// 获取完整菜单树
-		menuModels, err := l.dal.Menu().GetLatestMenuTree(ctx)
+		menuModels, err := l.dal.Menu().GetLatestMenuTree(ctx, menu.DefaultProductLine)
 		if err != nil {
 			return nil, errno.ErrOperationFailed.WithMessage(
 				fmt.Sprintf("获取完整菜单树失败: %s", err.Error()),
@@ -535,7 +559,7 @@ func (l *LogicImpl) buildMenuTreeWithPermissions(
 	}
 
 	// 获取完整菜单树
-	menuModels, err := l.dal.Menu().GetLatestMenuTree(ctx)
+	menuModels, err := l.dal.Menu().GetLatestMenuTree(ctx, menu.DefaultProductLine)
 	if err != nil {
 		return nil, err
 	}
@@ -626,7 +650,7 @@ func (l *LogicImpl) filterAuthorizedMenus(
 func (l *LogicImpl) getAllMenusWithFullPermissions(
 	ctx context.Context,
 ) ([]*identity_srv.MenuNode, error) {
-	menuModels, err := l.dal.Menu().GetLatestMenuTree(ctx)
+	menuModels, err := l.dal.Menu().GetLatestMenuTree(ctx, menu.DefaultProductLine)
 	if err != nil {
 		return nil, err
 	}
@@ -639,7 +663,7 @@ func (l *LogicImpl) getAllMenusWithFullPermissions(
 func (l *LogicImpl) getAllMenusWithoutPermissionMarks(
 	ctx context.Context,
 ) ([]*identity_srv.MenuNode, error) {
-	menuModels, err := l.dal.Menu().GetLatestMenuTree(ctx)
+	menuModels, err := l.dal.Menu().GetLatestMenuTree(ctx, menu.DefaultProductLine)
 	if err != nil {
 		return nil, err
 	}
@@ -671,7 +695,7 @@ func (l *LogicImpl) markAllMenusWithFullPermission(
 func (l *LogicImpl) buildSuperAdminPermissions(
 	ctx context.Context,
 ) ([]*identity_srv.MenuPermission, error) {
-	menuModels, err := l.dal.Menu().GetLatestMenuTree(ctx)
+	menuModels, err := l.dal.Menu().GetLatestMenuTree(ctx, menu.DefaultProductLine)
 	if err != nil {
 		return nil, err
 	}

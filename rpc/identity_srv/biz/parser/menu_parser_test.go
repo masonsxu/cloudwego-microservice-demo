@@ -35,11 +35,13 @@ menu:
     component: "Layout"
 `
 
-	version := "v20250928"
+	productLine := "default"
+	version := 1
 
 	// 测试解析和扁平化
-	menus, err := ParseAndFlattenMenu(yamlContent, version)
+	menus, contentHash, err := ParseAndFlattenMenu(yamlContent, productLine, version)
 	require.NoError(t, err)
+	require.NotEmpty(t, contentHash)
 	require.Len(t, menus, 4) // 2个根菜单 + 2个子菜单
 
 	// 验证根菜单
@@ -83,71 +85,73 @@ menu:
   - name: "患者数据"
     id: ""
     path: "/patient-data"
-    icon: "IconPatientData"
-    component: "Layout"
 `
 
-	version := "v20250928"
+	productLine := "default"
+	version := 1
 
-	// 测试空的语义ID应该报错
-	_, err := ParseAndFlattenMenu(yamlContent, version)
-	require.Error(t, err)
+	_, _, err := ParseAndFlattenMenu(yamlContent, productLine, version)
+	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "菜单节点缺少语义化ID")
 }
 
 func TestParseAndFlattenMenu_DuplicateSemanticID(t *testing.T) {
 	yamlContent := `
 menu:
-  - name: "患者数据1"
+  - name: "患者数据"
     id: "patient_data"
-    path: "/patient-data-1"
-    icon: "IconPatientData"
-    component: "Layout"
+    path: "/patient-data"
   - name: "患者数据2"
     id: "patient_data"
-    path: "/patient-data-2"
-    icon: "IconPatientData"
-    component: "Layout"
+    path: "/patient-data2"
 `
 
-	version := "v20250928"
+	productLine := "default"
+	version := 1
 
-	// 测试重复的语义ID应该报错
-	_, err := ParseAndFlattenMenu(yamlContent, version)
-	require.Error(t, err)
+	_, _, err := ParseAndFlattenMenu(yamlContent, productLine, version)
+	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "检测到重复的语义化ID")
 }
 
-func TestParseAndFlattenMenu_EmptyVersion(t *testing.T) {
+func TestParseAndFlattenMenu_EmptyProductLine(t *testing.T) {
 	yamlContent := `
 menu:
   - name: "患者数据"
     id: "patient_data"
     path: "/patient-data"
-    icon: "IconPatientData"
-    component: "Layout"
 `
 
-	// 测试空版本应该报错
-	_, err := ParseAndFlattenMenu(yamlContent, "")
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "版本号不能为空")
+	_, _, err := ParseAndFlattenMenu(yamlContent, "", 1)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "产品线不能为空")
+}
+
+func TestParseAndFlattenMenu_InvalidVersion(t *testing.T) {
+	yamlContent := `
+menu:
+  - name: "患者数据"
+    id: "patient_data"
+    path: "/patient-data"
+`
+
+	_, _, err := ParseAndFlattenMenu(yamlContent, "default", 0)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "版本号必须大于0")
 }
 
 func TestParseAndFlattenMenu_InvalidYAML(t *testing.T) {
 	yamlContent := `
 menu:
-  - name: "患者数据
+  - name: "患者数据"
     id: "patient_data"
-    path: "/patient-data"
 `
 
-	version := "v20250928"
+	productLine := "default"
+	version := 1
 
-	// 测试无效的YAML应该报错
-	_, err := ParseAndFlattenMenu(yamlContent, version)
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "解析菜单YAML失败")
+	_, _, err := ParseAndFlattenMenu(yamlContent, productLine, version)
+	assert.Error(t, err)
 }
 
 // findMenuBySemanticID 辅助函数，根据语义ID查找菜单

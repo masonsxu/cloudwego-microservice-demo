@@ -18,22 +18,27 @@ type MenuRepository interface {
 	// It's recommended to perform this operation within a transaction.
 	CreateMenuTree(ctx context.Context, menus []*models.Menu) error
 
-	// GetAllVersions retrieves a list of all unique menu version identifiers, sorted descending.
-	GetAllVersions(ctx context.Context) ([]string, error)
+	// GetMaxVersion 获取指定产品线的最大版本号
+	GetMaxVersion(ctx context.Context, productLine string) (int, error)
 
-	// GetLatestMenuTree retrieves the full menu tree for the most recent version.
-	// It fetches the flat list from the DB and constructs a tree structure.
-	GetLatestMenuTree(ctx context.Context) ([]*models.Menu, error)
+	// GetLatestContentHash 获取指定产品线最新版本的内容哈希
+	GetLatestContentHash(ctx context.Context, productLine string) (string, error)
+
+	// GetLatestMenuTree retrieves the full menu tree for the most recent version of a product line.
+	GetLatestMenuTree(ctx context.Context, productLine string) ([]*models.Menu, error)
 
 	// GetBySemanticID 根据语义ID和版本查询菜单
+	// productLine: 产品线标识
 	// semanticID: 语义化菜单ID (来自menu.yaml)
-	// version: 菜单版本，如果为空则使用最新版本
-	GetBySemanticID(ctx context.Context, semanticID string, version string) (*models.Menu, error)
+	// version: 菜单版本，如果为0则使用最新版本
+	GetBySemanticID(ctx context.Context, productLine string, semanticID string, version int) (*models.Menu, error)
 
 	// GetBySemanticIDs 批量根据语义ID查询菜单（使用最新版本）
+	// productLine: 产品线标识
 	// semanticIDs: 语义化菜单ID列表
-	GetBySemanticIDs(ctx context.Context, semanticIDs []string) ([]*models.Menu, error)
+	GetBySemanticIDs(ctx context.Context, productLine string, semanticIDs []string) ([]*models.Menu, error)
 
 	// GetLatestSemanticIDMapping 获取最新版本的语义ID到UUID的映射
-	GetLatestSemanticIDMapping(ctx context.Context) (map[string]uuid.UUID, error)
+	// productLine: 产品线标识
+	GetLatestSemanticIDMapping(ctx context.Context, productLine string) (map[string]uuid.UUID, error)
 }

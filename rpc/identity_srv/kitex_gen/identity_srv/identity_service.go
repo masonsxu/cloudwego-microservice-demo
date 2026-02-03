@@ -3763,7 +3763,8 @@ var fieldIDToName_BatchGetUserRolesResponse = map[int16]string{
 }
 
 type UploadMenuRequest struct {
-	YamlContent *string `thrift:"yamlContent,1,optional" frugal:"1,optional,string" json:"yamlContent,omitempty"`
+	ProductLine *string `thrift:"productLine,1,optional" frugal:"1,optional,string" json:"productLine,omitempty"`
+	YamlContent *string `thrift:"yamlContent,2,optional" frugal:"2,optional,string" json:"yamlContent,omitempty"`
 }
 
 func NewUploadMenuRequest() *UploadMenuRequest {
@@ -3771,6 +3772,15 @@ func NewUploadMenuRequest() *UploadMenuRequest {
 }
 
 func (p *UploadMenuRequest) InitDefault() {
+}
+
+var UploadMenuRequest_ProductLine_DEFAULT string
+
+func (p *UploadMenuRequest) GetProductLine() (v string) {
+	if !p.IsSetProductLine() {
+		return UploadMenuRequest_ProductLine_DEFAULT
+	}
+	return *p.ProductLine
 }
 
 var UploadMenuRequest_YamlContent_DEFAULT string
@@ -3781,8 +3791,15 @@ func (p *UploadMenuRequest) GetYamlContent() (v string) {
 	}
 	return *p.YamlContent
 }
+func (p *UploadMenuRequest) SetProductLine(val *string) {
+	p.ProductLine = val
+}
 func (p *UploadMenuRequest) SetYamlContent(val *string) {
 	p.YamlContent = val
+}
+
+func (p *UploadMenuRequest) IsSetProductLine() bool {
+	return p.ProductLine != nil
 }
 
 func (p *UploadMenuRequest) IsSetYamlContent() bool {
@@ -3797,7 +3814,8 @@ func (p *UploadMenuRequest) String() string {
 }
 
 var fieldIDToName_UploadMenuRequest = map[int16]string{
-	1: "yamlContent",
+	1: "productLine",
+	2: "yamlContent",
 }
 
 type GetMenuTreeResponse struct {

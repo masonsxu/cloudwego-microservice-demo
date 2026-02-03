@@ -10644,6 +10644,20 @@ func (p *UploadMenuRequest) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
+		case 2:
+			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField2(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
 			offset += l
@@ -10672,6 +10686,20 @@ func (p *UploadMenuRequest) FastReadField1(buf []byte) (int, error) {
 		offset += l
 		_field = &v
 	}
+	p.ProductLine = _field
+	return offset, nil
+}
+
+func (p *UploadMenuRequest) FastReadField2(buf []byte) (int, error) {
+	offset := 0
+
+	var _field *string
+	if v, l, err := thrift.Binary.ReadString(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		_field = &v
+	}
 	p.YamlContent = _field
 	return offset, nil
 }
@@ -10684,6 +10712,7 @@ func (p *UploadMenuRequest) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) i
 	offset := 0
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], w)
+		offset += p.fastWriteField2(buf[offset:], w)
 	}
 	offset += thrift.Binary.WriteFieldStop(buf[offset:])
 	return offset
@@ -10693,6 +10722,7 @@ func (p *UploadMenuRequest) BLength() int {
 	l := 0
 	if p != nil {
 		l += p.field1Length()
+		l += p.field2Length()
 	}
 	l += thrift.Binary.FieldStopLength()
 	return l
@@ -10700,14 +10730,32 @@ func (p *UploadMenuRequest) BLength() int {
 
 func (p *UploadMenuRequest) fastWriteField1(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	if p.IsSetYamlContent() {
+	if p.IsSetProductLine() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 1)
+		offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, *p.ProductLine)
+	}
+	return offset
+}
+
+func (p *UploadMenuRequest) fastWriteField2(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	if p.IsSetYamlContent() {
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 2)
 		offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, *p.YamlContent)
 	}
 	return offset
 }
 
 func (p *UploadMenuRequest) field1Length() int {
+	l := 0
+	if p.IsSetProductLine() {
+		l += thrift.Binary.FieldBeginLength()
+		l += thrift.Binary.StringLengthNocopy(*p.ProductLine)
+	}
+	return l
+}
+
+func (p *UploadMenuRequest) field2Length() int {
 	l := 0
 	if p.IsSetYamlContent() {
 		l += thrift.Binary.FieldBeginLength()

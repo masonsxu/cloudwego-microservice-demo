@@ -930,8 +930,11 @@ struct BatchGetUserRolesResponse {
 /** 菜单上传请求 */
 struct UploadMenuRequest {
 
+    /** 产品线标识 */
+    1: optional string productLine,
+
     /** YAML 格式的菜单配置内容 */
-    1: optional string yamlContent,
+    2: optional string yamlContent,
 }
 
 /** 菜单树获取响应 */

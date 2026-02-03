@@ -11,16 +11,19 @@ import (
 type Menu struct {
 	BaseModel
 
-	SemanticID string     `gorm:"column:semantic_id;not null;size:100;index:idx_semantic_version,unique;comment:语义化标识符"`
-	Version    string     `gorm:"column:version;not null;index;size:50;index:idx_semantic_version,unique;comment:版本标识"`
-	Name       string     `gorm:"column:name;not null;size:100;comment:菜单显示名称"`
-	Path       string     `gorm:"column:path;not null;size:255;comment:前端路由路径"`
-	Component  string     `gorm:"column:component;size:255;comment:前端组件的路径"`
-	Icon       string     `gorm:"column:icon;size:100;comment:菜单图标的标识符	"`
-	ParentID   *uuid.UUID `gorm:"column:parent_id;index;type:uuid;comment:父菜单ID"`
-	Sort       int        `gorm:"column:sort;not null;default:0;comment:排序字段"`
-	CreatedBy  *uuid.UUID `gorm:"column:created_by;type:uuid;comment:创建者ID"`
-	UpdatedBy  *uuid.UUID `gorm:"column:updated_by;type:uuid;comment:最后更新者ID"`
+	// 产品线标识 (用于多租户/多产品线隔离)
+	ProductLine string     `gorm:"column:product_line;not null;size:50;index:idx_product_semantic_version,priority:1;comment:产品线标识"`
+	SemanticID  string     `gorm:"column:semantic_id;not null;size:100;index:idx_product_semantic_version,priority:2;comment:语义化标识符"`
+	Version     int        `gorm:"column:version;not null;index:idx_product_semantic_version,priority:3;default:1;comment:版本号(自增)"`
+	ContentHash string     `gorm:"column:content_hash;size:64;index;comment:内容哈希(SHA256)"`
+	Name        string     `gorm:"column:name;not null;size:100;comment:菜单显示名称"`
+	Path        string     `gorm:"column:path;not null;size:255;comment:前端路由路径"`
+	Component   string     `gorm:"column:component;size:255;comment:前端组件的路径"`
+	Icon        string     `gorm:"column:icon;size:100;comment:菜单图标的标识符	"`
+	ParentID    *uuid.UUID `gorm:"column:parent_id;index;type:uuid;comment:父菜单ID"`
+	Sort        int        `gorm:"column:sort;not null;default:0;comment:排序字段"`
+	CreatedBy   *uuid.UUID `gorm:"column:created_by;type:uuid;comment:创建者ID"`
+	UpdatedBy   *uuid.UUID `gorm:"column:updated_by;type:uuid;comment:最后更新者ID"`
 
 	// Casbin 权限扩展字段
 	PermCode string `gorm:"column:perm_code;size:100;index;comment:权限编码,如 emr:create, patient:read"`
