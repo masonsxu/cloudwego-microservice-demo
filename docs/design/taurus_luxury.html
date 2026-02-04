@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taurus Luxury UI Component | 金牛座奢华UI组件</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        taurus: {
+                            bg: '#34495E',      // Wet Asphalt (Main Background)
+                            text: '#ECF0F1',    // Clouds (Text)
+                            gold: '#F39C12',    // Orange (Highlight/Accent)
+                            action: '#F39C12',  // Orange (Button)
+                            bronze: '#7F8C8D',  // Concrete (Icon/Detail)
+                            moss: '#2C3E50',    // Midnight Blue (Sub-layer - Darker shade of BG)
+                            silver: '#BDC3C7'   // Silver (Secondary Detail)
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'Merriweather', 'serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #F39C12 0%, #ECF0F1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-taurus-bg min-h-screen flex items-center justify-center p-4 font-sans selection:bg-taurus-gold selection:text-taurus-bg">
+
+    <!-- Main Card Container -->
+    <div
+        class="relative w-full max-w-4xl bg-taurus-moss/60 backdrop-blur-md border border-taurus-silver/20 rounded-3xl overflow-hidden shadow-2xl transition-all duration-500 hover:shadow-taurus-gold/20 hover:border-taurus-gold/50 group">
+
+        <!-- Decorative Background Elements -->
+        <div
+            class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-taurus-gold/10 rounded-full blur-3xl pointer-events-none">
+        </div>
+        <div
+            class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-taurus-bronze/10 rounded-full blur-3xl pointer-events-none">
+        </div>
+
+        <div class="flex flex-col md:flex-row">
+
+            <!-- Left Side: Visual & Icon -->
+            <div
+                class="md:w-2/5 p-10 flex flex-col items-center justify-center bg-gradient-to-br from-taurus-bg/50 to-transparent relative border-b md:border-b-0 md:border-r border-taurus-silver/20">
+
+                <!-- Taurus SVG Icon -->
+                <div class="w-48 h-48 relative mb-6 transform transition-transform duration-700 group-hover:scale-105">
+                    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        class="w-full h-full drop-shadow-[0_0_15px_rgba(243,156,18,0.3)]">
+                        <defs>
+                            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#F39C12;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#F39C12;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#BDC3C7;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <!-- Circle Frame -->
+                        <circle cx="100" cy="100" r="90" stroke="url(#goldGrad)" stroke-width="2"
+                            stroke-opacity="0.8" />
+                        <circle cx="100" cy="100" r="70" stroke="url(#goldGrad)" stroke-width="1" stroke-dasharray="4 4"
+                            stroke-opacity="0.5" />
+
+                        <!-- Taurus Symbol (Bull) -->
+                        <path d="M50 80 C50 40, 150 40, 150 80" stroke="url(#goldGrad)" stroke-width="6"
+                            stroke-linecap="round" class="opacity-100" />
+                        <circle cx="100" cy="110" r="35" stroke="url(#goldGrad)" stroke-width="6" class="opacity-100" />
+
+                        <!-- Star Accents -->
+                        <circle cx="100" cy="40" r="3" fill="#ECF0F1">
+                            <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite" />
+                        </circle>
+                        <circle cx="150" cy="80" r="2" fill="#ECF0F1">
+                            <animate attributeName="opacity" values="0.5;1;0.5" dur="4s" repeatCount="indefinite" />
+                        </circle>
+                        <circle cx="50" cy="80" r="2" fill="#ECF0F1">
+                            <animate attributeName="opacity" values="0.5;1;0.5" dur="5s" repeatCount="indefinite" />
+                        </circle>
+                    </svg>
+                </div>
+
+                <h2 class="text-3xl font-serif text-taurus-gold tracking-widest mb-1">TAURUS</h2>
+                <p class="text-taurus-text/60 text-sm tracking-[0.2em] uppercase">金牛座</p>
+                <p class="mt-4 text-taurus-bronze text-xs font-mono">APR 20 - MAY 20</p>
+            </div>
+
+            <!-- Right Side: Content & Color Palette -->
+            <div class="md:w-3/5 p-10 flex flex-col justify-between">
+
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <span class="h-px w-8 bg-taurus-gold/50"></span>
+                        <span class="text-taurus-gold/80 text-xs font-bold tracking-widest uppercase">Color Scheme /
+                            配色方案</span>
+                    </div>
+
+                    <h1 class="text-4xl md:text-5xl font-serif text-taurus-text mb-2">Modern Stoic</h1>
+                    <h3 class="text-xl font-light text-taurus-text/80 mb-6 italic">现代斯多葛系列</h3>
+
+                    <p class="text-taurus-text/70 leading-relaxed mb-8 font-light">
+                        A refined palette inspired by modern architectural elegance. Combining deep slate blues with
+                        vibrant orange and cool grays to evoke stability, precision, and understated luxury.
+                        <br><br>
+                        灵感源自现代建筑美学。深邃板岩蓝与活力橙色及冷灰色的碰撞，彰显稳重、精准与低调的奢华感。
+                    </p>
+                </div>
+
+                <!-- Palette Swatches -->
+                <div class="grid grid-cols-5 gap-4 mb-8">
+                    <!-- Color 1: Clouds (Text) -->
+                    <div class="group/swatch cursor-pointer">
+                        <div
+                            class="w-full aspect-square rounded-lg bg-[#ECF0F1] border border-white/10 shadow-lg transform transition-transform group-hover/swatch:-translate-y-1">
+                        </div>
+                        <p class="text-[10px] text-center mt-2 text-taurus-text/50 font-mono">#ECF0F1<br>Clouds</p>
+                    </div>
+                    <!-- Color 2: Orange (Highlight) -->
+                    <div class="group/swatch cursor-pointer">
+                        <div
+                            class="w-full aspect-square rounded-lg bg-[#F39C12] border border-white/10 shadow-lg transform transition-transform group-hover/swatch:-translate-y-1">
+                        </div>
+                        <p class="text-[10px] text-center mt-2 text-taurus-text/50 font-mono">#F39C12<br>Orange</p>
+                    </div>
+                    <!-- Color 3: Concrete (Detail) -->
+                    <div class="group/swatch cursor-pointer">
+                        <div
+                            class="w-full aspect-square rounded-lg bg-[#7F8C8D] border border-white/10 shadow-lg transform transition-transform group-hover/swatch:-translate-y-1">
+                        </div>
+                        <p class="text-[10px] text-center mt-2 text-taurus-text/50 font-mono">#7F8C8D<br>Concrete</p>
+                    </div>
+                    <!-- Color 4: Wet Asphalt (BG) -->
+                    <div class="group/swatch cursor-pointer">
+                        <div
+                            class="w-full aspect-square rounded-lg bg-[#34495E] border border-white/10 shadow-lg transform transition-transform group-hover/swatch:-translate-y-1">
+                        </div>
+                        <p class="text-[10px] text-center mt-2 text-taurus-text/50 font-mono">#34495E<br>Asphalt</p>
+                    </div>
+                    <!-- Color 5: Silver (Accent) -->
+                    <div class="group/swatch cursor-pointer">
+                        <div
+                            class="w-full aspect-square rounded-lg bg-[#BDC3C7] border border-white/10 shadow-lg transform transition-transform group-hover/swatch:-translate-y-1">
+                        </div>
+                        <p class="text-[10px] text-center mt-2 text-taurus-text/50 font-mono">#BDC3C7<br>Silver</p>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <button
+                    class="group/btn relative w-full md:w-auto px-8 py-4 bg-taurus-action/90 hover:bg-taurus-action text-white overflow-hidden rounded-sm transition-all duration-300 shadow-lg hover:shadow-taurus-action/30">
+                    <div
+                        class="absolute inset-0 w-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 transition-all duration-700 group-hover/btn:w-full">
+                    </div>
+                    <div class="relative flex items-center justify-between">
+                        <span class="font-serif tracking-widest text-sm uppercase mr-4">Download Palette / 下载方案</span>
+                        <svg class="w-4 h-4 text-white transform transition-transform group-hover/btn:translate-x-1"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                        </svg>
+                    </div>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- Bottom Status Bar -->
+        <div
+            class="bg-taurus-bg/80 px-6 py-3 flex justify-between items-center border-t border-taurus-silver/10 text-[10px] text-taurus-text/40 font-mono uppercase tracking-widest">
+            <span>Status: Updated</span>
+            <span>Element: Earth / 土象</span>
+            <span>Planet: Venus / 金星</span>
+        </div>
+    </div>
+
+</body>
+
+</html>
