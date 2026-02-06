@@ -25,9 +25,101 @@
 
 ## 架构设计
 
-<p align="center">
-  <img src="docs/diagrams/architecture.svg" alt="系统架构图" width="100%">
-</p>
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#2C3E50', 'primaryTextColor': '#ECF0F1', 'primaryBorderColor': '#BDC3C7', 'lineColor': '#BDC3C7', 'secondaryColor': '#34495E', 'tertiaryColor': '#34495E', 'mainBkg': '#34495E', 'nodeBorder': '#BDC3C7', 'clusterBkg': '#34495E', 'clusterBorder': '#BDC3C7', 'defaultLinkColor': '#BDC3C7', 'fontFamily': 'arial'}}}%%
+graph TD
+    %% 样式定义
+    classDef base fill:#2C3E50,stroke:#BDC3C7,stroke-width:1px,color:#ECF0F1;
+    classDef highlight fill:#F39C12,stroke:#ECF0F1,stroke-width:2px,color:#2C3E50,font-weight:bold;
+    classDef sub fill:#34495E,stroke:#7F8C8D,stroke-width:1px,color:#BDC3C7,stroke-dasharray: 5 5;
+    classDef infra fill:#7F8C8D,stroke:#ECF0F1,stroke-width:1px,color:#ECF0F1;
+
+    %% 客户端层
+    Client[("📱 客户端<br/>Web / Mobile / API Client")]:::base
+
+    %% API 网关层
+    subgraph Gateway_Layer [API 网关层 - Hertz :8080]
+        direction TB
+        Gateway[("🚪 API Gateway")]:::highlight
+        
+        subgraph Middleware [中间件链]
+            direction LR
+            MW_CORS(CORS):::sub
+            MW_Trace(Trace):::sub
+            MW_Log(AccessLog):::sub
+            MW_JWT(JWT Auth):::sub
+            MW_Casbin(Casbin RBAC):::sub
+            MW_Error(Error Handle):::sub
+            MW_Resp(Response):::sub
+            
+            MW_CORS --> MW_Trace --> MW_Log --> MW_JWT --> MW_Casbin --> MW_Error --> MW_Resp
+        end
+        
+        subgraph GW_Components [分层架构]
+            direction LR
+            GW_Handler(Handler<br/>biz/handler):::sub
+            GW_Service(Domain Service<br/>internal/domain):::sub
+            GW_Assembler(Assembler<br/>DTO Convert):::sub
+            GW_Client(RPC Client<br/>infrastructure):::sub
+            
+            GW_Handler --> GW_Service --> GW_Assembler --> GW_Client
+        end
+    end
+
+    %% RPC 服务层
+    subgraph RPC_Layer [RPC 服务层 - Kitex :8891]
+        direction TB
+        IdentitySRV[("🛡️ Identity Service")]:::highlight
+        
+        subgraph Modules [业务模块]
+            direction LR
+            Mod_User(User):::sub
+            Mod_Org(Org):::sub
+            Mod_Role(Role):::sub
+            Mod_Menu(Menu):::sub
+            Mod_Logo(Logo):::sub
+        end
+        
+        subgraph RPC_Components [分层架构]
+            direction LR
+            RPC_Handler(Handler<br/>RPC Adaptor):::sub
+            RPC_Logic(Logic<br/>Business):::sub
+            RPC_DAL(DAL<br/>Data Access):::sub
+            RPC_Model(Models<br/>GORM):::sub
+            
+            RPC_Handler --> RPC_Logic --> RPC_DAL --> RPC_Model
+        end
+    end
+
+    %% 基础设施层
+    subgraph Infra_Layer [基础设施层]
+        direction LR
+        DB[("🐘 PostgreSQL<br/>:5432")]:::infra
+        Redis[("🔴 Redis<br/>:6379")]:::infra
+        Etcd[("🏗️ etcd<br/>:2379")]:::infra
+        S3[("📦 RustFS (S3)<br/>:9000")]:::infra
+        Jaeger[("🔍 Jaeger<br/>:16686")]:::infra
+    end
+
+    %% 连接关系
+    Client ==>|HTTP/JSON| Gateway
+    Gateway --> Middleware
+    Middleware --> GW_Components
+    GW_Components ==>|Thrift RPC| IdentitySRV
+    
+    IdentitySRV --> Modules
+    Modules --> RPC_Components
+    
+    RPC_Components --> DB
+    RPC_Components --> Redis
+    RPC_Components --> S3
+    
+    Gateway -.->|服务发现| Etcd
+    IdentitySRV -.->|服务注册| Etcd
+    
+    Gateway -.->|Trace| Jaeger
+    IdentitySRV -.->|Trace| Jaeger
+```
 
 **关键设计决策**：
 - **星型拓扑**: 所有 RPC 调用由网关发起，服务间不直接调用
