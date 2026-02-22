@@ -103,6 +103,11 @@ gateway/docs/
 docs/_build/
 site/
 
+# 临时报告和工作总结
+docs/*-SUMMARY.md
+docs/*-PROGRESS.md
+docs/FINAL-*.md
+
 # 容器相关
 docker-compose.override.yml
 .iflow/
