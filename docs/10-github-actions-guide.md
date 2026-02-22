@@ -1,166 +1,168 @@
 # GitHub Actions CI/CD 使用指南
 
-本项目配置了 GitHub Actions 自动化测试流水线，每次推送代码或创建 Pull Request 时自动运行测试。
+本项目配置了 GitHub Actions 自动化 CI 流水线，每次推送代码或创建 Pull Request 时自动运行检查。
 
-## 📋 Workflows 概览
+## Workflows 概览
 
-### 1. **Test Workflow** (`.github/workflows/test.yml`)
+项目共 4 个工作流文件：
 
-完整的测试流程，包括：
-- ✅ RPC 服务测试（带 PostgreSQL、Redis、etcd）
-- ✅ Gateway 服务测试
-- ✅ 代码检查（golangci-lint）
-- ✅ 构建验证
+| 工作流 | 文件 | 用途 |
+|--------|------|------|
+| CI | `ci.yml` | 统一的代码检查、测试、构建、覆盖率 |
+| PR Review | `pr-review.yml` | AI 代码审查 |
+| Issue Killer | `issue-killer.yml` | AI 自动实现 |
+| Issue Triage | `issue-triage.yaml` | Issue 自动分类 |
 
-**触发条件**：
-- Push 到 `main`, `master`, `develop` 分支
-- 创建 Pull Request
+## CI 工作流详解 (`ci.yml`)
 
-**检查项**：
+### 触发条件
+
+- Push 到 `main` 分支
+- 创建/更新 PR 到 `main` 分支
+- 自动排除：`**.md`、`docs/**`、`docker/**`、`LICENSE`、AI 工作流文件
+
+### 并发控制
+
+同一分支的多次 push 只保留最新一次运行，旧的运行自动取消：
+
+```yaml
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 ```
-✓ 代码格式化检查
-✓ 静态分析
-✓ 单元测试
-✅ 竞态条件检测
-✓ 测试覆盖率
-✓ 代码构建
+
+### Job 结构与依赖关系
+
+```
+lint ──────────────> build
+test-rpc ──────┐
+               ├──> coverage (仅 PR)
+test-gateway ──┘
 ```
 
-### 2. **Coverage Workflow** (`.github/workflows/coverage.yml`)
+- `lint`、`test-rpc`、`test-gateway` 三个 job 并行运行，互不阻塞
+- `build` 依赖 `lint` 通过后运行
+- `coverage` 依赖两个 test job 完成后运行，且仅在 PR 时触发
 
-生成详细的覆盖率报告：
-- 📊 生成 HTML 覆盖率报告
-- 📈 计算覆盖率百分比
-- 💬 在 PR 中评论覆盖率
-- 📦 上传覆盖率报告到 Artifacts
-- 🎯 检查覆盖率阈值（30%）
+### Job 1: Lint
 
-**特性**：
-- 合并 RPC 和 Gateway 的覆盖率
-- 自动在 PR 中评论覆盖率结果
-- 生成可视化 HTML 报告
-- 上传到 Codecov
+无需服务容器，执行以下检查：
 
-### 3. **CI Workflow** (`.github/workflows/ci.yml`)
+1. 生成 Swagger 文档（gateway 的 `docs/` 在 `.gitignore` 中，lint 前必须生成）
+2. `golangci-lint run`：对 RPC 和 Gateway 分别执行静态分析
+3. `golangci-lint fmt --diff`：检查代码格式一致性
 
-快速检查 + 完整测试流程：
-- 🔍 代码格式化检查
-- 🔍 静态分析
-- 🔍 TODO/FIXME/HACK 检查
-- ✅ 完整测试（包含数据库）
+使用 `golangci/golangci-lint-action@v7` 官方 action，锁定 `v2.1` 版本，自带 lint 结果缓存。
 
-**触发条件**：
-- PR 或推送到 `main/master` 分支
+**格式化工具统一说明**：`.golangci.yml` 已配置 `gci` + `goimports` + `gofumpt` + `golines` + `swaggo`，通过 `golangci-lint fmt` 统一执行，无需单独安装 `goimports-reviser` 等工具。
 
-## 🚀 使用方法
+### Job 2: Test RPC
 
-### 本地运行前自检
+需要服务容器（均配有 healthcheck）：
+
+| 服务 | 镜像 | 端口 | 健康检查 |
+|------|------|------|----------|
+| PostgreSQL | `postgres:15-alpine` | 5432 | `pg_isready` |
+| Redis | `redis:7-alpine` | 6379 | `redis-cli ping` |
+| etcd | `quay.io/coreos/etcd:v3.5.9` | 2379 | `etcdctl endpoint health` |
+
+执行 `go test -v -race -coverprofile -covermode=atomic`，并上传覆盖率产物。
+
+### Job 3: Test Gateway
+
+无需服务容器，先生成 Swagger 文档再运行测试，上传覆盖率产物。
+
+### Job 4: Build
+
+依赖 `lint` 通过，验证两个模块可以编译通过（输出到 `/dev/null`，仅做编译检查）。
+
+### Job 5: Coverage（仅 PR）
+
+依赖两个 test job 完成：
+
+1. 下载两个模块的覆盖率产物
+2. 使用 `gocovmerge` 合并覆盖率
+3. 提取 RPC / Gateway / 总体覆盖率百分比
+4. 检查阈值（30%），低于阈值则失败
+5. 在 PR 上评论覆盖率表格（查找并更新已有评论，避免重复）
+6. 上传合并后的覆盖率报告（保留 30 天）
+
+PR 评论示例：
+
+```
+## 📊 测试覆盖率报告
+
+| 模块 | 覆盖率 | 状态 |
+|------|--------|------|
+| RPC Service | xx% | 🟢/🟡/🟠/🔴 |
+| Gateway Service | xx% | 🟢/🟡/🟠/🔴 |
+| **总体** | **xx%** | 🟢/🟡/🟠/🔴 |
+
+> 阈值: 30% | ✅ 达标 / ❌ 未达标
+```
+
+颜色规则：🟢 >= 80% / 🟡 >= 60% / 🟠 >= 30% / 🔴 < 30%
+
+## 本地运行前自检
 
 在推送代码前，建议先本地运行：
 
 ```bash
-# 1. 格式化检查
-golangci-lint run --disable-all --enable goimports,go vet
+# 1. 静态分析
+cd rpc/identity_srv && golangci-lint run --timeout=5m ./...
+cd gateway && golangci-lint run --timeout=5m ./...
 
-# 2. 运行测试（需要基础设施）
+# 2. 格式化检查（查看差异）
+cd rpc/identity_srv && golangci-lint fmt --diff
+cd gateway && golangci-lint fmt --diff
+
+# 3. 自动修复格式
+cd rpc/identity_srv && golangci-lint fmt
+cd gateway && golangci-lint fmt
+
+# 4. 运行测试（需要基础设施）
 cd docker && podman-compose up -d
-cd rpc/identity_srv && go test ./... -v
-cd gateway && go test ./... -v
+cd rpc/identity_srv && go test ./... -v -race
+cd gateway && go test ./... -v -race
 
-# 3. 生成覆盖率
-./scripts/generate-coverage-report.sh
+# 5. 编译检查
+cd rpc/identity_srv && go build -o /dev/null ./cmd/main.go
+cd gateway && go build -o /dev/null ./cmd/main.go
 ```
 
-### 推送代码触发 CI
-
-```bash
-# 推送到主分支
-git push origin main
-
-# 或创建 PR
-git push origin feature-branch
-# 然后在 GitHub 上创建 PR
-```
-
-### 查看 CI 结果
-
-1. **GitHub Actions 页面**
-   - 进入仓库的 "Actions" 标签
-   - 查看最近的 workflow 运行
-
-2. **PR 检查状态**
-   - PR 页面会显示所有检查项的状态
-   - 必须所有检查通过才能合并
-
-3. **覆盖率报告**
-   - PR 评论会显示覆盖率百分比
-   - 点击 Actions 运行查看详细报告
-   - 下载 Artifacts 查看 HTML 报告
-
-## 📊 Codecov 集成
-
-项目集成了 Codecov 用于可视化覆盖率：
-
-### 配置文件 (`.codecov.yml`)
-
-```yaml
-coverage:
-  status:
-    project:
-      default:
-        target: 70%    # 目标覆盖率
-        threshold: 5%   # 允许下降 5%
-    patch:
-      default:
-        target: 80%    # 新代码目标
-        threshold: 10%  # 允许下降 10%
-```
-
-### 查看覆盖率
-
-1. **Codecov Dashboard**
-   ```
-   https://codecov.io/github/YOUR_ORG/YOUR_REPO
-   ```
-
-2. **PR 评论**
-   - 每次 PR 会自动评论覆盖率变化
-
-3. **覆盖率徽章**
-   ```markdown
-   ![codecov](https://codecov.io/gh/YOUR_ORG/YOUR_REPO/branch/main/graph/badge.svg)
-   ```
-
-## 🔧 配置说明
+## 配置说明
 
 ### 环境变量
 
-CI 使用以下环境变量（在 workflow 中配置）：
+CI 中测试使用以下环境变量：
 
 ```bash
-# 数据库
-DB_DSN: host=localhost port=5432 user=test_user password=test_password...
+# 数据库（仅 RPC 测试需要）
+DB_DSN: host=localhost port=5432 user=test_user password=test_password dbname=identity_db_test sslmode=disable
 
-# Redis
+# Redis（仅 RPC 测试需要）
 REDIS_ADDR: localhost:6379
 
-# etcd
+# etcd（仅 RPC 测试需要）
 ETCD_ADDR: localhost:2379
 ```
-
-### 服务依赖
-
-CI 自动启动以下服务：
-- PostgreSQL 15（端口 5432）
-- Redis 7（端口 6379）
-- etcd v3.5.9（端口 2379）
 
 ### Go 版本
 
 - Go 1.24
-- 使用缓存加速构建
+- 使用 `setup-go` 内置缓存，按 `go.sum` 文件做缓存 key
 
-## 📈 覆盖率目标
+### 权限
+
+CI 使用最小权限原则：
+
+```yaml
+permissions:
+  contents: read        # 读取代码
+  pull-requests: write  # 评论覆盖率
+```
+
+## 覆盖率目标
 
 | 模块 | 当前目标 | 最终目标 |
 |------|---------|----------|
@@ -170,7 +172,7 @@ CI 自动启动以下服务：
 | Gateway 层 | 0% | 60% |
 | **总体** | **30%** | **70%** |
 
-## 🐛 常见问题
+## 常见问题
 
 ### Q: CI 测试失败，但本地测试通过？
 
@@ -178,124 +180,55 @@ CI 自动启动以下服务：
 1. 数据库版本不同（CI 使用 PostgreSQL 15）
 2. 时区或环境变量不同
 3. Go 版本不同
+4. Swagger 文档未生成（Gateway 测试前需要 `swag init`）
 
 **解决方法**：
 ```bash
 # 使用 CI 相同的数据库版本
 docker run -d -p 5432:5432 \
-  -e POSTGRES_DB=test_db \
-  -e POSTGRES_USER=test \
-  -e POSTGRES_PASSWORD=test \
+  -e POSTGRES_DB=identity_db_test \
+  -e POSTGRES_USER=test_user \
+  -e POSTGRES_PASSWORD=test_password \
   postgres:15-alpine
 ```
 
-### Q: 覆盖率没有上传到 Codecov？
+### Q: 修改了文档/Docker 配置后 CI 没有触发？
 
-**检查项**：
-1. Codecov token 是否配置
-   - Settings → Secrets → Actions → `CODECOV_TOKEN`
+这是预期行为。`ci.yml` 配置了 `paths-ignore`，修改以下文件不触发 CI：
+- `**.md`（所有 Markdown 文件）
+- `docs/**`（文档目录）
+- `docker/**`（Docker 配置）
+- `LICENSE`
 
-2. workflow 是否成功运行
-   - 查看 Actions 日志
+### Q: 同一 PR 多次 push，之前的运行怎么办？
 
-3. 覆盖率文件是否生成
-   - 检查 Artifacts
+CI 配置了并发控制（`cancel-in-progress: true`），同一分支的旧运行会被自动取消，只保留最新的运行。
 
 ### Q: 如何跳过 CI？
 
 **不推荐**，但如果必须：
 
 ```bash
-# 在 commit message 中
 git commit -m "feat: add feature [ci skip]"
 git commit -m "feat: add feature [skip ci]"
 ```
 
 ### Q: 如何调试 CI 失败？
 
-1. **启用调试日志**
-   ```yaml
-   - name: Run tests
-     run: go test -v -race ./...
-   ```
-
-2. **使用 tmate 进行交互式调试**
+1. **查看 Actions 日志**：进入仓库 Actions 标签，点击对应的 workflow run
+2. **下载覆盖率报告**：在 run 页面的 Artifacts 区域下载
+3. **使用 tmate 交互式调试**（临时添加到 workflow）：
    ```yaml
    - name: Setup tmate session
      uses: mxschmitt/action-tmate@v3
    ```
 
-3. **下载 Artifacts**
-   - CI 运行页面 → Artifacts
-   - 下载日志和覆盖率文件
+### Q: PR 上有多条覆盖率评论？
 
-## 🎯 最佳实践
+不会出现。coverage job 使用"查找并更新"策略，同一 PR 只维护一条覆盖率评论。
 
-### 1. 保持测试快速
-
-```go
-// ✅ 好的测试 - 快速
-func TestValidation(t *testing.T) {
-    result := validateInput("test")
-    assert.True(t, result)
-}
-
-// ❌ 差的测试 - 慢速（依赖数据库）
-func TestValidationWithDB(t *testing.T) {
-    db := setupDatabase()
-    result := validateFromDB(db, "test")
-    assert.True(t, result)
-}
-```
-
-### 2. 使用 Table-Driven Tests
-
-```go
-func TestCalculate(t *testing.T) {
-    tests := []struct {
-        name   string
-        input  int
-        want   int
-    }{
-        {"case1", 1, 2},
-        {"case2", 2, 4},
-    }
-
-    for _, tt := range tests {
-        t.Run(tt.name, func(t *testing.T) {
-            assert.Equal(t, tt.want, calculate(tt.input))
-        })
-    }
-}
-```
-
-### 3. 提交前测试
-
-```bash
-# 使用 pre-commit hook
-git pre-commit
-
-# 或手动运行
-go test ./... -race -cover
-golangci-lint run
-```
-
-## 📝 代码审查检查清单
-
-PR 合并前确保：
-- [ ] 所有 CI 检查通过
-- [ ] 覆盖率不低于当前分支
-- [ ] 没有新增 TODO/FIXME
-- [ ] 代码格式化正确
-- [ ] 没有引入新的警告
-
-## 🔗 相关链接
+## 相关链接
 
 - [GitHub Actions 文档](https://docs.github.com/en/actions)
-- [Codecov 文档](https://docs.codecov.com/)
 - [golangci-lint 文档](https://golangci-lint.run/)
-- [Go Testing 指南](docs/09-testing-guide.md)
-
----
-
-**提示**: 本地运行 `./scripts/generate-coverage-report.sh` 可以预览 CI 中的覆盖率报告！
+- [Go Testing 指南](09-testing-guide.md)

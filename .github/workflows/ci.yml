@@ -2,14 +2,40 @@ name: CI
 
 on:
   push:
-    branches: [ main, master, develop ]
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - "docker/**"
+      - "LICENSE"
+      - ".github/workflows/pr-review.yml"
+      - ".github/workflows/issue-killer.yml"
+      - ".github/workflows/issue-triage.yaml"
   pull_request:
-    branches: [ main, master, develop ]
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - "docker/**"
+      - "LICENSE"
+      - ".github/workflows/pr-review.yml"
+      - ".github/workflows/issue-killer.yml"
+      - ".github/workflows/issue-triage.yaml"
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
-  # 快速检查 - 每次提交都运行
-  quick-check:
-    name: Quick Check
+  # ──────────────────────────────────────────────
+  # Job 1: Lint（无需服务容器）
+  # ──────────────────────────────────────────────
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -18,32 +44,53 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
-          cache: true
+          go-version: "1.24"
 
-      - name: Check code format
+      - name: Generate Swagger docs
         run: |
-          go install github.com/incu6us/goimports-reviser@latest
-          goimports-reviser -check -format ./...
+          go install github.com/swaggo/swag/cmd/swag@latest
+          cd gateway && swag init --parseDependencyLevel 1 --useStructName true
 
-      - name: Run go vet
-        run: |
-          cd rpc/identity_srv && go vet ./...
-          cd ../../gateway && go vet ./...
+      - name: Lint RPC Service
+        uses: golangci/golangci-lint-action@v7
+        with:
+          version: v2.1
+          working-directory: rpc/identity_srv
+          args: --timeout=5m
 
-      - name: Check for TODO/FIXME/HACK
+      - name: Lint Gateway Service
+        uses: golangci/golangci-lint-action@v7
+        with:
+          version: v2.1
+          working-directory: gateway
+          args: --timeout=5m
+
+      - name: Check format (RPC)
+        working-directory: rpc/identity_srv
         run: |
-          if grep -rn "TODO\|FIXME\|HACK" --include="*.go" .; then
-            echo "⚠️ 发现 TODO/FIXME/HACK 标记"
-            grep -rn "TODO\|FIXME\|HACK" --include="*.go" .
+          OUTPUT=$(golangci-lint fmt --diff 2>&1) || true
+          if [ -n "$OUTPUT" ]; then
+            echo "::error::RPC 代码格式不一致，请运行 golangci-lint fmt"
+            echo "$OUTPUT"
+            exit 1
           fi
 
-  # 完整测试 - 在 PR 和 main 分支运行
-  full-test:
-    name: Full Test
+      - name: Check format (Gateway)
+        working-directory: gateway
+        run: |
+          OUTPUT=$(golangci-lint fmt --diff 2>&1) || true
+          if [ -n "$OUTPUT" ]; then
+            echo "::error::Gateway 代码格式不一致，请运行 golangci-lint fmt"
+            echo "$OUTPUT"
+            exit 1
+          fi
+
+  # ──────────────────────────────────────────────
+  # Job 2: Test RPC（需要 PostgreSQL + Redis + etcd）
+  # ──────────────────────────────────────────────
+  test-rpc:
+    name: Test RPC Service
     runs-on: ubuntu-latest
-    needs: quick-check
-    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
 
     services:
       postgres:
@@ -54,11 +101,21 @@ jobs:
           POSTGRES_PASSWORD: test_password
         ports:
           - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
       redis:
         image: redis:7-alpine
         ports:
           - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
       etcd:
         image: quay.io/coreos/etcd:v3.5.9
@@ -73,6 +130,11 @@ jobs:
           ETCD_INITIAL_CLUSTER_STATE: new
         ports:
           - 2379:2379
+        options: >-
+          --health-cmd "etcdctl endpoint health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout code
@@ -81,39 +143,215 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
-          cache: true
+          go-version: "1.24"
+          cache-dependency-path: rpc/identity_srv/go.sum
 
       - name: Download dependencies
-        run: |
-          cd rpc/identity_srv && go mod download
-          cd ../../gateway && go mod download
+        working-directory: rpc/identity_srv
+        run: go mod download
 
-      - name: Install swag
-        run: go install github.com/swaggo/swag/cmd/swag@latest
-
-      - name: Generate Swagger docs
-        working-directory: gateway
-        run: swag init --parseDependencyLevel 1 --useStructName true
-
-      - name: Run RPC tests
+      - name: Run tests
         working-directory: rpc/identity_srv
         env:
           DB_DSN: host=localhost port=5432 user=test_user password=test_password dbname=identity_db_test sslmode=disable
           REDIS_ADDR: localhost:6379
           ETCD_ADDR: localhost:2379
-        run: go test -v -race -coverprofile=coverage.out ./...
+        run: go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
 
-      - name: Run Gateway tests
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-rpc
+          path: rpc/identity_srv/coverage.out
+
+  # ──────────────────────────────────────────────
+  # Job 3: Test Gateway（无需服务容器）
+  # ──────────────────────────────────────────────
+  test-gateway:
+    name: Test Gateway Service
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache-dependency-path: gateway/go.sum
+
+      - name: Download dependencies
         working-directory: gateway
-        run: go test -v -race -coverprofile=coverage.out ./...
+        run: go mod download
 
-      - name: Generate coverage
+      - name: Generate Swagger docs
+        working-directory: gateway
+        run: |
+          go install github.com/swaggo/swag/cmd/swag@latest
+          swag init --parseDependencyLevel 1 --useStructName true
+
+      - name: Run tests
+        working-directory: gateway
+        run: go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-gateway
+          path: gateway/coverage.out
+
+  # ──────────────────────────────────────────────
+  # Job 4: Build（依赖 lint）
+  # ──────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+
+      - name: Generate Swagger docs
+        run: |
+          go install github.com/swaggo/swag/cmd/swag@latest
+          cd gateway && swag init --parseDependencyLevel 1 --useStructName true
+
+      - name: Build RPC Service
+        working-directory: rpc/identity_srv
+        run: go build -o /dev/null ./cmd/main.go
+
+      - name: Build Gateway Service
+        working-directory: gateway
+        run: go build -o /dev/null ./cmd/main.go
+
+  # ──────────────────────────────────────────────
+  # Job 5: Coverage（依赖 test-rpc + test-gateway，仅 PR 时运行）
+  # ──────────────────────────────────────────────
+  coverage:
+    name: Coverage Report
+    runs-on: ubuntu-latest
+    needs: [test-rpc, test-gateway]
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+
+      - name: Download RPC coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-rpc
+          path: coverage/rpc
+
+      - name: Download Gateway coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-gateway
+          path: coverage/gateway
+
+      - name: Merge coverage
         run: |
           go install github.com/wadey/gocovmerge@latest
-          gocovmerge rpc/identity_srv/coverage.out gateway/coverage.out > coverage.out
-          go tool cover -func=coverage.out
+          gocovmerge coverage/rpc/coverage.out coverage/gateway/coverage.out > coverage/merged.out
 
-      - name: Generate coverage summary
+      - name: Extract coverage percentages
+        id: cov
         run: |
-          go tool cover -func=coverage.out | tee coverage-summary.txt
+          # 总体覆盖率
+          TOTAL=$(go tool cover -func=coverage/merged.out | grep total | awk '{print $3}' | sed 's/%//')
+          echo "total=$TOTAL" >> $GITHUB_OUTPUT
+
+          # RPC 覆盖率
+          RPC=$(go tool cover -func=coverage/rpc/coverage.out | grep total | awk '{print $3}' | sed 's/%//')
+          echo "rpc=$RPC" >> $GITHUB_OUTPUT
+
+          # Gateway 覆盖率
+          GW=$(go tool cover -func=coverage/gateway/coverage.out | grep total | awk '{print $3}' | sed 's/%//')
+          echo "gateway=$GW" >> $GITHUB_OUTPUT
+
+      - name: Check coverage threshold
+        run: |
+          COVERAGE=${{ steps.cov.outputs.total }}
+          THRESHOLD=30
+          echo "Total coverage: ${COVERAGE}%"
+          if (( $(echo "$COVERAGE < $THRESHOLD" | bc -l) )); then
+            echo "::error::Coverage ${COVERAGE}% is below threshold ${THRESHOLD}%"
+            exit 1
+          fi
+
+      - name: Comment coverage on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const rpc = '${{ steps.cov.outputs.rpc }}';
+            const gw = '${{ steps.cov.outputs.gateway }}';
+            const total = '${{ steps.cov.outputs.total }}';
+            const threshold = 30;
+
+            function statusIcon(pct) {
+              const n = parseFloat(pct);
+              if (n >= 80) return '\u{1F7E2}';
+              if (n >= 60) return '\u{1F7E1}';
+              if (n >= 30) return '\u{1F7E0}';
+              return '\u{1F534}';
+            }
+
+            const passed = parseFloat(total) >= threshold;
+            const result = passed ? '\u2705 \u8FBE\u6807' : '\u274C \u672A\u8FBE\u6807';
+
+            const body = [
+              '## \u{1F4CA} \u6D4B\u8BD5\u8986\u76D6\u7387\u62A5\u544A',
+              '',
+              '| \u6A21\u5757 | \u8986\u76D6\u7387 | \u72B6\u6001 |',
+              '|------|--------|------|',
+              `| RPC Service | ${rpc}% | ${statusIcon(rpc)} |`,
+              `| Gateway Service | ${gw}% | ${statusIcon(gw)} |`,
+              `| **\u603B\u4F53** | **${total}%** | ${statusIcon(total)} |`,
+              '',
+              `> \u9608\u503C: ${threshold}% | ${result}`,
+            ].join('\n');
+
+            // 查找已有的覆盖率评论并更新
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const marker = '\u{1F4CA} \u6D4B\u8BD5\u8986\u76D6\u7387\u62A5\u544A';
+            const existing = comments.find(c => c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body: body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body,
+              });
+            }
+
+      - name: Upload merged coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-merged-${{ github.run_number }}
+          path: coverage/merged.out
+          retention-days: 30
