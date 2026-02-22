@@ -91,6 +91,11 @@ func (m *MetaInfoMiddleware) ensureRequestID(ctx context.Context) context.Contex
 	requestID := uuid.New().String()
 	ctx = metainfo.WithPersistentValue(ctx, "request_id", requestID)
 
+	// 记录生成日志（便于追踪问题）
+	m.logger.Warn().
+		Str("generated_request_id", requestID).
+		Msg("Generated missing request_id")
+
 	return ctx
 }
 

@@ -1,0 +1,163 @@
+name: Coverage Report
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  coverage:
+    name: Generate Coverage Report
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: identity_db_test
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+
+      etcd:
+        image: quay.io/coreos/etcd:v3.5.9
+        env:
+          ETCD_NAME: etcd0
+          ETCD_INITIAL_ADVERTISE_PEER_URLS: http://etcd0:2379
+          ETCD_LISTEN_PEER_URLS: http://0.0.0.0:2380
+          ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+          ETCD_ADVERTISE_CLIENT_URLS: http://etcd0:2379
+          ETCD_INITIAL_CLUSTER: etcd0=http://etcd0:2380
+          ETCD_INITIAL_CLUSTER_TOKEN: etcd-cluster
+          ETCD_INITIAL_CLUSTER_STATE: new
+        ports:
+          - 2379:2379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: true
+
+      - name: Install coverage tools
+        run: |
+          go install github.com/mattn/goveralls@latest
+          go install github.com/axw/gocov/gocov@latest
+
+      - name: Run RPC tests with coverage
+        working-directory: rpc/identity_srv
+        env:
+          DB_DSN: host=localhost port=5432 user=test_user password=test_password dbname=identity_db_test sslmode=disable
+          REDIS_ADDR: localhost:6379
+          ETCD_ADDR: localhost:2379
+        run: |
+          go test -v -coverprofile=coverage.out -covermode=atomic ./...
+
+      - name: Generate RPC coverage report
+        working-directory: rpc/identity_srv
+        run: |
+          go tool cover -html=coverage.out -o coverage.html
+          go tool cover -func=coverage.out | tee coverage.txt
+
+      - name: Run Gateway tests with coverage
+        working-directory: gateway
+        run: |
+          go test -v -coverprofile=coverage.out -covermode=atomic ./...
+
+      - name: Generate Gateway coverage report
+        working-directory: gateway
+        run: |
+          go tool cover -html=coverage.out -o coverage.html
+          go tool cover -func=coverage.out | tee coverage.txt
+
+      - name: Merge coverage profiles
+        run: |
+          # 合并覆盖率文件
+          go install github.com/wadey/gocovmerge@latest
+          gocovmerge rpc/identity_srv/coverage.out gateway/coverage.out > coverage.out
+
+      - name: Generate HTML report
+        run: |
+          go tool cover -html=coverage.out -o coverage.html
+          go tool cover -func=coverage.out | tee coverage-summary.txt
+
+      - name: Extract coverage percentage
+        id: coverage
+        run: |
+          COVERAGE=$(go tool cover -func=coverage.out | grep total | awk '{print $3}' | sed 's/%//')
+          echo "coverage=$COVERAGE" >> $GITHUB_OUTPUT
+
+      - name: Comment coverage on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const coverage = '${{ steps.coverage.outputs.coverage }}';
+            const comment = `## 测试覆盖率报告 📊
+
+            总体覆盖率: **${coverage}%**
+
+            [查看详细报告](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+            <!--
+            覆盖率徽章生成：
+            ![coverage](https://img.shields.io/badge/coverage-${coverage}-${coverage >= 80 ? 'brightgreen' : coverage >= 60 ? 'yellow' : 'red'})
+            -->
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            coverage.out
+            coverage.html
+            coverage-summary.txt
+            rpc/identity_srv/coverage.out
+            rpc/identity_srv/coverage.html
+            gateway/coverage.out
+            gateway/coverage.html
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.out
+          flags: full-coverage
+          name: full-coverage-report
+          fail_ci_if_error: false
+
+      - name: Check coverage threshold
+        run: |
+          COVERAGE=$(go tool cover -func=coverage.out | grep total | awk '{print $3}' | sed 's/%//')
+          echo "总体覆盖率: $COVERAGE%"
+          THRESHOLD=30
+          if (( $(echo "$COVERAGE < $THRESHOLD" | bc -l) )); then
+            echo "❌ 覆盖率 ${COVERAGE}% 低于阈值 ${THRESHOLD}%"
+            exit 1
+          else
+            echo "✅ 覆盖率 ${COVERAGE}% 达到阈值 ${THRESHOLD}%"
+          fi

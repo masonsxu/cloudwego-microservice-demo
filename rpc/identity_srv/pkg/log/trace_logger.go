@@ -148,8 +148,8 @@ func Event(ctx context.Context, event *zerolog.Event) *zerolog.Event {
 			event = event.Str(k, s)
 		}
 	}
-	// 固定添加 service 字段为 "identity"
-	return event.Str(FieldService, "identity")
+	// 固定添加 service 字段为 "identity_srv"
+	return event.Str(FieldService, "identity_srv")
 }
 
 // BindToContext 将带追踪信息的 logger 绑定到 context

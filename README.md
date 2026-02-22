@@ -198,6 +198,38 @@ cloudwego-microservice-demo/
 - [部署指南](docs/05-deployment.md)
 - [故障排查](docs/06-troubleshooting.md)
 - [权限管理](docs/07-permission-management.md)
+- [奢华摩羯座配色规范](docs/08-capricorn-theme-guide.md)
+- [测试指南](docs/09-testing-guide.md)
+
+## 测试
+
+### 运行测试
+
+```bash
+# 运行所有测试
+go test ./... -v
+
+# 生成测试覆盖率报告
+./scripts/generate-coverage-report.sh
+
+# 或手动生成
+cd rpc/identity_srv && go test ./... -coverprofile=coverage.out
+go tool cover -html=coverage.out
+```
+
+### 测试覆盖率
+
+| 模块 | 覆盖率 | 状态 |
+|------|--------|------|
+| pkg/errno | 100.0% | ✅ |
+| pkg/log | 84.8% | ✅ |
+| pkg/password | 83.3% | ✅ |
+| internal/middleware | 89.1% | ✅ |
+| biz/converter | 60.0% | ⚠️ |
+| biz/dal | 0.0% | ❌ |
+| biz/logic | 0.0% | ❌ |
+
+详细的测试指南请参考 [测试文档](docs/09-testing-guide.md)。
 
 ## 许可证
 
