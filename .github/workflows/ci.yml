@@ -219,11 +219,11 @@ jobs:
 
       - name: Build RPC Service
         working-directory: rpc/identity_srv
-        run: go build -o /dev/null ./main.go
+        run: go build -o /dev/null .
 
       - name: Build Gateway Service
         working-directory: gateway
-        run: go build -o /dev/null ./main.go
+        run: go build -o /dev/null .
 
   # ──────────────────────────────────────────────
   # Job 5: Coverage（依赖 test-rpc + test-gateway，仅 PR 时运行）
