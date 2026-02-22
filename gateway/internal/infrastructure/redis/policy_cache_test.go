@@ -67,9 +67,11 @@ func TestPermissionCacheResult_Struct(t *testing.T) {
 	if !result.Allowed {
 		t.Error("Expected Allowed to be true")
 	}
+
 	if result.DataScope != "org" {
 		t.Errorf("Expected DataScope to be 'org', got %s", result.DataScope)
 	}
+
 	if result.CachedAt != 1704067200 {
 		t.Errorf("Expected CachedAt to be 1704067200, got %d", result.CachedAt)
 	}
@@ -81,6 +83,7 @@ func TestPolicyCache_GetPermissionKey(t *testing.T) {
 	}
 
 	key := pc.getPermissionKey("user:123:resource:read")
+
 	expected := "gateway:permission:user:123:resource:read"
 	if key != expected {
 		t.Errorf("getPermissionKey() = %s, want %s", key, expected)
@@ -93,6 +96,7 @@ func TestPolicyCache_GetUserPermissionsPattern(t *testing.T) {
 	}
 
 	pattern := pc.getUserPermissionsPattern("user123")
+
 	expected := "gateway:permission:user:user123:*"
 	if pattern != expected {
 		t.Errorf("getUserPermissionsPattern() = %s, want %s", pattern, expected)
@@ -105,6 +109,7 @@ func TestPolicyCache_GetRolePermissionsPattern(t *testing.T) {
 	}
 
 	pattern := pc.getRolePermissionsPattern("role456")
+
 	expected := "gateway:permission:role:role456:*"
 	if pattern != expected {
 		t.Errorf("getRolePermissionsPattern() = %s, want %s", pattern, expected)
@@ -117,6 +122,7 @@ func TestPolicyCache_GetUserRolesKey(t *testing.T) {
 	}
 
 	key := pc.getUserRolesKey("user789")
+
 	expected := "gateway:permission:user_roles:user789"
 	if key != expected {
 		t.Errorf("getUserRolesKey() = %s, want %s", key, expected)
@@ -163,6 +169,7 @@ func TestPolicyCache_KeyPatterns(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var result string
+
 			switch tt.method {
 			case "getPermissionKey":
 				result = pc.getPermissionKey(tt.input)
@@ -173,6 +180,7 @@ func TestPolicyCache_KeyPatterns(t *testing.T) {
 			case "getUserRolesKey":
 				result = pc.getUserRolesKey(tt.input)
 			}
+
 			if result != tt.expected {
 				t.Errorf("%s(%s) = %s, want %s", tt.method, tt.input, result, tt.expected)
 			}
@@ -187,5 +195,5 @@ func TestNewPolicyCache(t *testing.T) {
 	}
 
 	// 验证返回的是 PolicyCacheService 接口类型
-	var _ PolicyCacheService = cache
+	_ = cache
 }

@@ -15,7 +15,9 @@ func rpcToHTTPPermissionLevel(rpc *identity_srv.PermissionLevel) *permissionMode
 	if rpc == nil {
 		return nil
 	}
+
 	httpLevel := permissionModel.PermissionLevel(*rpc)
+
 	return &httpLevel
 }
 
@@ -24,7 +26,9 @@ func httpToRPCPermissionLevel(http *permissionModel.PermissionLevel) *identity_s
 	if http == nil {
 		return nil
 	}
+
 	rpcLevel := identity_srv.PermissionLevel(*http)
+
 	return &rpcLevel
 }
 

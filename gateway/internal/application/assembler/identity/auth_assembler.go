@@ -152,6 +152,7 @@ func (a *authAssembler) ToHTTPMenuPermissions(
 				permLevel := permission.PermissionLevel(*rpcPerm.Permission)
 				httpPerm.Permission = &permLevel
 			}
+
 			result = append(result, httpPerm)
 		}
 	}
@@ -179,6 +180,7 @@ func (a *authAssembler) ToHTTPRoleInfos(
 				dataScope := int32(*rpcRole.DefaultScope)
 				httpRole.DataScope = &dataScope
 			}
+
 			result = append(result, httpRole)
 		}
 	}

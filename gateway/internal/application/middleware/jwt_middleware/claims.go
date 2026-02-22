@@ -168,6 +168,7 @@ func extractStringSliceClaim(claims jwt.MapClaims, key string) ([]string, bool) 
 					result = append(result, str)
 				}
 			}
+
 			if len(result) > 0 {
 				return result, true
 			}

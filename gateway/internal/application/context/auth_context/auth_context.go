@@ -40,9 +40,11 @@ func NewAuthContext(claims *http_base.JWTClaimsDTO) *AuthContext {
 		if len(claims.RoleIDs) > 0 {
 			ctx.roleIDs = claims.RoleIDs
 		}
+
 		if len(claims.DepartmentIDs) > 0 {
 			ctx.departmentIDs = claims.DepartmentIDs
 		}
+
 		if claims.DataScope != nil {
 			ctx.dataScope = *claims.DataScope
 		}
@@ -145,6 +147,7 @@ func (ac *AuthContext) GetRoleID() (string, bool) {
 	if len(roleIDs) > 0 {
 		return roleIDs[0], true
 	}
+
 	return "", false
 }
 
@@ -159,6 +162,7 @@ func (ac *AuthContext) GetDepartmentID() (string, bool) {
 	if len(deptIDs) > 0 {
 		return deptIDs[0], true
 	}
+
 	return "", false
 }
 
@@ -242,6 +246,7 @@ func (ac *AuthContext) GetRoleIDs() []string {
 	if ac.claims != nil && len(ac.claims.RoleIDs) > 0 {
 		return ac.claims.RoleIDs
 	}
+
 	return nil
 }
 
@@ -265,6 +270,7 @@ func (ac *AuthContext) GetDepartmentIDs() []string {
 	if ac.claims != nil && len(ac.claims.DepartmentIDs) > 0 {
 		return ac.claims.DepartmentIDs
 	}
+
 	return nil
 }
 
@@ -280,6 +286,7 @@ func (ac *AuthContext) GetDataScope() string {
 	if ac == nil {
 		return ""
 	}
+
 	return ac.dataScope
 }
 
@@ -295,6 +302,7 @@ func GetCurrentRoleIDs(c *app.RequestContext) []string {
 	if authCtx, exists := GetAuthContext(c); exists {
 		return authCtx.GetRoleIDs()
 	}
+
 	return nil
 }
 
@@ -303,6 +311,7 @@ func GetCurrentDepartmentIDs(c *app.RequestContext) []string {
 	if authCtx, exists := GetAuthContext(c); exists {
 		return authCtx.GetDepartmentIDs()
 	}
+
 	return nil
 }
 
@@ -320,6 +329,7 @@ func GetCurrentDataScope(c *app.RequestContext) string {
 			return dataScope
 		}
 	}
+
 	return ""
 }
 

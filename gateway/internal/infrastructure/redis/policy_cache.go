@@ -13,7 +13,13 @@ import (
 // 用于缓存 Casbin 权限检查结果，提高权限校验性能
 type PolicyCacheService interface {
 	// CachePermissionResult 缓存权限检查结果
-	CachePermissionResult(ctx context.Context, key string, allowed bool, dataScope string, expiration time.Duration) error
+	CachePermissionResult(
+		ctx context.Context,
+		key string,
+		allowed bool,
+		dataScope string,
+		expiration time.Duration,
+	) error
 
 	// GetPermissionResult 获取缓存的权限检查结果
 	GetPermissionResult(ctx context.Context, key string) (allowed bool, dataScope string, exists bool, err error)
@@ -109,6 +115,7 @@ func (pc *PolicyCache) CachePermissionResult(
 	}
 
 	pc.logger.Debugf("Permission result cached: key=%s, allowed=%v, dataScope=%s", key, allowed, dataScope)
+
 	return nil
 }
 
@@ -125,7 +132,9 @@ func (pc *PolicyCache) GetPermissionResult(
 		if err.Error() == "redis: nil" {
 			return false, "", false, nil
 		}
+
 		pc.logger.Errorf("Failed to get permission result: error=%v, key=%s", err, key)
+
 		return false, "", false, fmt.Errorf("获取权限缓存失败: %w", err)
 	}
 
@@ -136,6 +145,7 @@ func (pc *PolicyCache) GetPermissionResult(
 	}
 
 	pc.logger.Debugf("Permission result cache hit: key=%s, allowed=%v", key, result.Allowed)
+
 	return result.Allowed, result.DataScope, true, nil
 }
 
@@ -162,8 +172,10 @@ func (pc *PolicyCache) invalidateByPattern(ctx context.Context, pattern string) 
 	rdb := pc.client.GetClient()
 
 	// 使用 SCAN 命令查找匹配的键
-	var cursor uint64
-	var keysDeleted int
+	var (
+		cursor      uint64
+		keysDeleted int
+	)
 
 	for {
 		keys, nextCursor, err := rdb.Scan(ctx, cursor, pattern, 100).Result()
@@ -177,6 +189,7 @@ func (pc *PolicyCache) invalidateByPattern(ctx context.Context, pattern string) 
 				pc.logger.Errorf("Failed to delete keys: error=%v, count=%d", err, len(keys))
 				return fmt.Errorf("删除缓存键失败: %w", err)
 			}
+
 			keysDeleted += len(keys)
 		}
 
@@ -187,6 +200,7 @@ func (pc *PolicyCache) invalidateByPattern(ctx context.Context, pattern string) 
 	}
 
 	pc.logger.Infof("Permission cache invalidated: pattern=%s, keysDeleted=%d", pattern, keysDeleted)
+
 	return nil
 }
 
@@ -212,6 +226,7 @@ func (pc *PolicyCache) CacheUserRoles(
 	}
 
 	pc.logger.Debugf("User roles cached: userID=%s, roleCount=%d", userID, len(roleIDs))
+
 	return nil
 }
 
@@ -225,7 +240,9 @@ func (pc *PolicyCache) GetUserRoles(ctx context.Context, userID string) ([]strin
 		if err.Error() == "redis: nil" {
 			return nil, false, nil
 		}
+
 		pc.logger.Errorf("Failed to get user roles: error=%v, userID=%s", err, userID)
+
 		return nil, false, fmt.Errorf("获取用户角色缓存失败: %w", err)
 	}
 
@@ -236,6 +253,7 @@ func (pc *PolicyCache) GetUserRoles(ctx context.Context, userID string) ([]strin
 	}
 
 	pc.logger.Debugf("User roles cache hit: userID=%s, roleCount=%d", userID, len(roleIDs))
+
 	return roleIDs, true, nil
 }
 
@@ -250,6 +268,7 @@ func (pc *PolicyCache) InvalidateUserRoles(ctx context.Context, userID string) e
 	}
 
 	pc.logger.Debugf("User roles cache invalidated: userID=%s", userID)
+
 	return nil
 }
 
@@ -257,12 +276,15 @@ func (pc *PolicyCache) InvalidateUserRoles(ctx context.Context, userID string) e
 // 格式: {userID}:{roleIDs}:{resource}:{action}
 func GeneratePermissionCacheKey(userID string, roleIDs []string, resource, action string) string {
 	rolesKey := ""
+
 	for i, roleID := range roleIDs {
 		if i > 0 {
 			rolesKey += ","
 		}
+
 		rolesKey += roleID
 	}
+
 	return fmt.Sprintf("%s:[%s]:%s:%s", userID, rolesKey, resource, action)
 }
 

@@ -35,6 +35,7 @@ func (p PermissionLevel) MarshalJSON() ([]byte, error) {
 	if str, ok := permissionLevelToString[p]; ok {
 		return json.Marshal(str)
 	}
+
 	return json.Marshal("none")
 }
 
@@ -47,7 +48,9 @@ func (p *PermissionLevel) UnmarshalJSON(data []byte) error {
 		if numErr := json.Unmarshal(data, &num); numErr != nil {
 			return fmt.Errorf("PermissionLevel must be a string or number: %w", err)
 		}
+
 		*p = PermissionLevel(num)
+
 		return nil
 	}
 
@@ -64,5 +67,6 @@ func (p PermissionLevel) ToLowerString() string {
 	if str, ok := permissionLevelToString[p]; ok {
 		return str
 	}
+
 	return "none"
 }
