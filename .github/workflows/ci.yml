@@ -124,11 +124,6 @@ jobs:
           ETCD_LISTEN_CLIENT_URLS: "http://0.0.0.0:2379"
         ports:
           - 2379:2379
-        options: >-
-          --health-cmd "etcdctl endpoint health"
-          --health-interval 10s
-          --health-timeout 10s
-          --health-retries 10
 
     steps:
       - name: Checkout code
@@ -139,6 +134,19 @@ jobs:
         with:
           go-version: "1.25"
           cache-dependency-path: rpc/identity_srv/go.sum
+
+      - name: Wait for etcd
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:2379/health > /dev/null 2>&1; then
+              echo "etcd is ready"
+              exit 0
+            fi
+            echo "Waiting for etcd... ($i/30)"
+            sleep 1
+          done
+          echo "::error::etcd failed to start"
+          exit 1
 
       - name: Download dependencies
         working-directory: rpc/identity_srv
