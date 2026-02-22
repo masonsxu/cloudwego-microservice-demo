@@ -1,90 +1,252 @@
-#!/bin/bash
-# pre-commit 挂钩，用于强制执行：
-# 1. 无非 ASCII 文件名（通过 hooks.allownonascii 可配置）
+#!/usr/bin/env bash
+# pre-commit hook
+#
+# 检查项：
+# 1. 非 ASCII 文件名检查（通过 hooks.allownonascii 可配置）
 # 2. 文件大小限制（通过 hooks.maxfilesize 可配置，默认 10MB）
+# 3. golangci-lint 代码规范检查（仅检查，不自动修复）
+# 4. diff-index 空白错误检查
 
-echo "运行 pre-commit 挂钩..." >&2
+set -uo pipefail
 
-# --------------------------
-# 检查非 ASCII 文件名
-# --------------------------
+# =========================
+# 公共工具函数
+# =========================
+
+# 颜色支持检测
+if [[ -t 2 ]] && [[ -z "${NO_COLOR:-}" ]]; then
+    _RED='\033[0;31m'
+    _YELLOW='\033[0;33m'
+    _GREEN='\033[0;32m'
+    _BOLD='\033[1m'
+    _RESET='\033[0m'
+else
+    _RED='' _YELLOW='' _GREEN='' _BOLD='' _RESET=''
+fi
+
+info()  { printf "${_GREEN}[pre-commit]${_RESET} %s\n" "$*" >&2; }
+warn()  { printf "${_YELLOW}[pre-commit 警告]${_RESET} %s\n" "$*" >&2; }
+error() { printf "${_RED}[pre-commit 错误]${_RESET} %s\n" "$*" >&2; }
+
+# 临时文件清理机制
+_cleanup_files=()
+trap 'rm -f "${_cleanup_files[@]}" 2>/dev/null' EXIT
+
+register_cleanup() {
+    _cleanup_files+=("$1")
+}
+
+# =========================
+# 从 go.work 动态解析模块列表
+# =========================
+parse_modules() {
+    local gowork="$1"
+    sed -n '/^use (/,/^)/{
+        /^use (/d
+        /^)/d
+        s/^[[:space:]]*\.\///
+        /^$/d
+        p
+    }' "$gowork"
+}
+
+# =========================
+# 确定比较基准
+# =========================
 if git rev-parse --verify HEAD >/dev/null 2>&1; then
     against=HEAD
 else
     # 初始提交：与空树对象比较
     against=$(git hash-object -t tree /dev/null)
-    if [ -z "$against" ]; then
-        echo "错误：无法创建空树对象。" >&2
+    if [[ -z "$against" ]]; then
+        error "无法创建空树对象。"
         exit 1
     fi
 fi
 
-allownonascii=$(git config --type=bool hooks.allownonascii)
+# =========================
+# 1. 非 ASCII 文件名检查
+# =========================
+allownonascii=$(git config --type=bool hooks.allownonascii 2>/dev/null || echo "false")
 
-if [ "$allownonascii" != "true" ]; then
-    echo "检查非 ASCII 文件名..." >&2
+if [[ "$allownonascii" != "true" ]]; then
     if git diff-index --cached --name-only --diff-filter=A -z "$against" | LC_ALL=C tr -d '[ -~]\0' | grep -q .; then
-        cat <<EOF >&2
-错误：尝试添加包含非 ASCII 文件名的文件。
+        error "尝试添加包含非 ASCII 文件名的文件。"
+        cat >&2 <<'EOF'
 
-非 ASCII 文件名可能在某些平台上引起问题。要允许非 ASCII 文件名，请运行：
+非 ASCII 文件名可能在某些平台上引起问题。
 
-  git config hooks.allownonascii true
+解决方案：
+  - 重命名文件为纯 ASCII 文件名
+  - 或允许非 ASCII 文件名：git config hooks.allownonascii true
+  - 或跳过检查：git commit --no-verify
 
 EOF
         exit 1
     fi
 fi
 
-# --------------------------
-# 检查文件大小限制
-# --------------------------
-# 如果未设置，默认 10MB
-MAX_SIZE=$(git config --type=int hooks.maxfilesize || echo $((10 * 1024 * 1024)))
+# =========================
+# 2. 文件大小限制检查
+# =========================
+MAX_SIZE=$(git config --type=int hooks.maxfilesize 2>/dev/null || echo $((10 * 1024 * 1024)))
 
-echo "检查文件大小限制（最大 $((MAX_SIZE / 1024 / 1024)) MB）..." >&2
+# 先将文件列表写入临时文件，避免进程替换中 exit 不生效的问题
+staged_files_tmp=$(mktemp)
+register_cleanup "$staged_files_tmp"
 
-# 获取暂存文件列表（添加、复制、修改、重命名）
+if ! git diff-index --cached --name-only --diff-filter=ACMR -z "$against" > "$staged_files_tmp" 2>/dev/null; then
+    error "无法获取暂存文件列表。"
+    exit 1
+fi
+
+file_count=0
 while IFS= read -r -d '' file; do
-    if [ -n "$file" ]; then
-        echo "检查文件：'$file'" >&2
-        # 从 Git 索引获取暂存内容的大小
-        size=$(git cat-file -s ":${file}" 2>/dev/null || echo 0)
-        if [ "$size" -eq 0 ]; then
-            echo "警告：无法确定 '$file' 的大小，可能文件未正确暂存。跳过大小检查。" >&2
-            continue
+    [[ -z "$file" ]] && continue
+    file_count=$((file_count + 1))
+
+    # 从 Git 索引获取暂存内容的大小
+    size=$(git cat-file -s ":${file}" 2>/dev/null || echo 0)
+    if [[ "$size" -eq 0 ]]; then
+        continue
+    fi
+    if [[ "$size" -gt "$MAX_SIZE" ]]; then
+        # 使用 KB 显示，避免小文件显示 0 MB
+        size_kb=$((size / 1024))
+        max_size_kb=$((MAX_SIZE / 1024))
+        error "文件 '$file' 大小为 ${size_kb} KB，超过了 ${max_size_kb} KB 限制。"
+        cat >&2 <<'EOF'
+
+解决方案：
+  - 考虑使用 Git LFS 管理大文件
+  - 或增加限制：git config hooks.maxfilesize <大小-字节>
+  - 或跳过检查：git commit --no-verify
+
+EOF
+        exit 1
+    fi
+done < "$staged_files_tmp"
+
+info "检查了 ${file_count} 个暂存文件（大小限制 $((MAX_SIZE / 1024 / 1024)) MB）。"
+
+# =========================
+# 3. golangci-lint 代码规范检查
+# =========================
+# 获取暂存的 Go 文件列表
+staged_go_files=$(git diff-index --cached --name-only --diff-filter=ACMR "$against" 2>/dev/null | grep '\.go$' || true)
+
+if [[ -n "$staged_go_files" ]]; then
+    go_file_count=$(echo "$staged_go_files" | wc -l)
+    info "检测到 ${go_file_count} 个暂存的 Go 文件，运行 golangci-lint 检查..."
+
+    # 检查 golangci-lint 是否安装
+    if ! command -v golangci-lint &>/dev/null; then
+        error "未找到 golangci-lint 命令。"
+        cat >&2 <<'EOF'
+
+请安装 golangci-lint：
+  curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
+
+或跳过此检查：
+  git commit --no-verify
+
+EOF
+        exit 1
+    fi
+
+    if [[ -f "go.work" ]]; then
+        # Go workspace 项目：从 go.work 动态解析模块
+        mapfile -t modules < <(parse_modules "go.work")
+
+        if [[ ${#modules[@]} -eq 0 ]]; then
+            warn "无法从 go.work 解析模块列表，跳过 golangci-lint 检查。"
+        else
+            # 确定哪些模块包含暂存的 Go 文件
+            modules_to_check=()
+            for module in "${modules[@]}"; do
+                if echo "$staged_go_files" | grep -q "^${module}/"; then
+                    modules_to_check+=("$module")
+                fi
+            done
+
+            if [[ ${#modules_to_check[@]} -eq 0 ]]; then
+                info "暂存的 Go 文件不在已知模块中，跳过 golangci-lint 检查。"
+            else
+                info "需要检查的模块：${modules_to_check[*]}"
+                lint_failed=0
+
+                for module in "${modules_to_check[@]}"; do
+                    # 跳过已知依赖兼容性问题的模块
+                    # rpc/datalake_srv: Hertz 绑定的 Thrift 版本与 Apache Arrow 不兼容
+                    if [[ "$module" == "rpc/datalake_srv" ]]; then
+                        warn "跳过 $module 的 golangci-lint 检查（已知依赖兼容性问题）。"
+                        continue
+                    fi
+
+                    info "检查模块：$module"
+
+                    # --new-from-rev=HEAD：仅检查相对于 HEAD 的新增/修改代码
+                    # 这是增量检查设计，避免因历史遗留问题阻塞提交
+                    if ! (cd "$module" && golangci-lint run --modules-download-mode=readonly --new-from-rev=HEAD); then
+                        lint_failed=1
+                        error "模块 '$module' 的 golangci-lint 检查失败。"
+                    fi
+                done
+
+                if [[ $lint_failed -ne 0 ]]; then
+                    cat >&2 <<'EOF'
+
+请修复上述问题后重新提交。
+
+提示：运行以下命令可自动修复部分问题：
+  cd <模块目录> && golangci-lint run --fix
+
+或跳过检查：
+  git commit --no-verify
+
+EOF
+                    exit 1
+                fi
+                info "golangci-lint 检查通过。"
+            fi
         fi
-        if [ "$size" -gt "$MAX_SIZE" ]; then
-            size_mb=$((size / 1024 / 1024))
-            max_size_mb=$((MAX_SIZE / 1024 / 1024))
-            cat <<EOF >&2
-错误：文件 '$file' 大小为 $size_mb MB，超过了 $max_size_mb MB 限制。
+    else
+        # 非 workspace 项目，直接运行
+        if ! golangci-lint run --modules-download-mode=readonly --new-from-rev=HEAD; then
+            error "golangci-lint 检查失败。"
+            cat >&2 <<'EOF'
 
-要提交更大文件，请考虑使用 Git LFS 或通过以下命令增加限制：
+请修复上述问题后重新提交。
 
-  git config hooks.maxfilesize <大小-字节>
+提示：运行以下命令可自动修复部分问题：
+  golangci-lint run --fix
+
+或跳过检查：
+  git commit --no-verify
 
 EOF
             exit 1
         fi
+        info "golangci-lint 检查通过。"
     fi
-done < <(git diff-index --cached --name-only --diff-filter=ACMR -z "$against" || {
-    echo "错误：无法获取暂存文件列表。" >&2
-    exit 1
-})
+else
+    info "没有暂存的 Go 文件，跳过 golangci-lint 检查。"
+fi
 
-# --------------------------
-# 最终 diff-index 检查
-# --------------------------
-echo "执行最终 diff-index 检查..." >&2
-if ! git diff-index --check --cached "$against" --; then
-    cat <<EOF >&2
-错误：检测到提交内容问题（例如空白错误、行尾问题）。
+# =========================
+# 4. diff-index 空白错误检查
+# =========================
+if ! git diff-index --check --cached "$against" -- >/dev/null 2>&1; then
+    error "检测到空白错误（trailing whitespace / 行尾问题）。"
+    git diff-index --check --cached "$against" -- >&2 || true
+    cat >&2 <<'EOF'
 
-请检查暂存文件并修正问题后重新提交。
+请修复上述空白问题后重新提交。
+或跳过检查：git commit --no-verify
+
 EOF
     exit 1
 fi
 
-echo "pre-commit 检查通过。" >&2
+info "pre-commit 检查全部通过。"
 exit 0
