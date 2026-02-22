@@ -54,14 +54,14 @@ jobs:
       - name: Lint RPC Service
         uses: golangci/golangci-lint-action@v7
         with:
-          version: v2.2
+          version: v2.4
           working-directory: rpc/identity_srv
           args: --timeout=5m
 
       - name: Lint Gateway Service
         uses: golangci/golangci-lint-action@v7
         with:
-          version: v2.2
+          version: v2.4
           working-directory: gateway
           args: --timeout=5m
 
@@ -118,20 +118,13 @@ jobs:
           --health-retries 5
 
       etcd:
-        image: quay.io/coreos/etcd:v3.5.9
+        image: bitnami/etcd:3.5
         env:
-          ETCD_NAME: node1
-          ETCD_INITIAL_ADVERTISE_PEER_URLS: http://0.0.0.0:2380
-          ETCD_LISTEN_PEER_URLS: http://0.0.0.0:2380
-          ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
-          ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
-          ETCD_INITIAL_CLUSTER: node1=http://0.0.0.0:2380
-          ETCD_INITIAL_CLUSTER_TOKEN: etcd-cluster
-          ETCD_INITIAL_CLUSTER_STATE: new
+          ALLOW_NONE_AUTHENTICATION: "yes"
         ports:
           - 2379:2379
         options: >-
-          --health-cmd "etcdctl --endpoints=http://127.0.0.1:2379 endpoint health"
+          --health-cmd "etcdctl endpoint health"
           --health-interval 10s
           --health-timeout 10s
           --health-retries 10
