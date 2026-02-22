@@ -7,14 +7,16 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
+	"github.com/rs/zerolog"
 
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
+	tracelog "github.com/masonsxu/cloudwego-microservice-demo/gateway/pkg/log"
 )
 
 // CORSMiddleware CORS中间件实现
 type CORSMiddleware struct {
 	config *config.CORSConfig
-	logger *hertzZerolog.Logger
+	logger *zerolog.Logger
 }
 
 // NewCORSMiddleware 创建新的CORS中间件实例
@@ -22,13 +24,19 @@ func NewCORSMiddleware(
 	config *config.CORSConfig,
 	logger *hertzZerolog.Logger,
 ) CORSMiddlewareService {
-	if logger == nil {
-		logger = hertzZerolog.New()
+	var zlogger *zerolog.Logger
+
+	if logger != nil {
+		unwrapped := logger.Unwrap()
+		zlogger = &unwrapped
+	} else {
+		nop := zerolog.Nop()
+		zlogger = &nop
 	}
 
 	return &CORSMiddleware{
 		config: config,
-		logger: logger,
+		logger: zlogger,
 	}
 }
 
@@ -46,8 +54,10 @@ func (cm *CORSMiddleware) MiddlewareFunc() app.HandlerFunc {
 
 		// 如果是OPTIONS请求，直接返回200
 		if string(c.Method()) == http.MethodOptions {
-			cm.logger.Debugf("Handling CORS preflight request: origin=%s, method=%s",
-				string(c.GetHeader("Origin")), string(c.GetHeader("Access-Control-Request-Method")))
+			tracelog.Event(ctx, cm.logger.Debug()).
+				Str("origin", string(c.GetHeader("Origin"))).
+				Str("method", string(c.GetHeader("Access-Control-Request-Method"))).
+				Msg("Handling CORS preflight request")
 			c.AbortWithStatus(http.StatusOK)
 
 			return

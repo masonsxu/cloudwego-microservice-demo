@@ -64,7 +64,8 @@ func NewMiddlewareContainer(
 func ProvideTraceMiddleware(logger *hertzZerolog.Logger) tracemdw.TraceMiddlewareService {
 	middleware := tracemdw.NewTraceMiddleware()
 
-	logger.Infof("Trace middleware created successfully")
+	zl := logger.Unwrap()
+	zl.Info().Msg("Trace middleware created successfully")
 
 	return middleware
 }
@@ -79,11 +80,13 @@ func ProvideJWTMiddleware(
 ) jwtmdw.JWTMiddlewareService {
 	middleware, err := jwtmdw.JWTMiddlewareProvider(identityService, jwtConfig, tokenCache, logger)
 	if err != nil {
-		logger.Errorf("Failed to create JWT middleware: %v", err)
+		zl := logger.Unwrap()
+		zl.Error().Err(err).Msg("Failed to create JWT middleware")
 		panic(err)
 	}
 
-	logger.Infof("JWT middleware created successfully")
+	zl := logger.Unwrap()
+	zl.Info().Msg("JWT middleware created successfully")
 
 	return middleware
 }
@@ -95,7 +98,9 @@ func ProvideCORSMiddleware(
 	logger *hertzZerolog.Logger,
 ) corsmdw.CORSMiddlewareService {
 	middleware := corsmdw.NewCORSMiddleware(&cfg.Middleware.CORS, logger)
-	logger.Infof("CORS middleware created successfully")
+
+	zl := logger.Unwrap()
+	zl.Info().Msg("CORS middleware created successfully")
 
 	return middleware
 }
@@ -107,7 +112,9 @@ func ProvideErrorHandlerMiddleware(
 	logger *hertzZerolog.Logger,
 ) errormw.ErrorHandlerMiddlewareService {
 	middleware := errormw.NewErrorHandlerMiddleware(&cfg.Middleware.ErrorHandler, logger)
-	logger.Infof("Error Handler middleware created successfully")
+
+	zl := logger.Unwrap()
+	zl.Info().Msg("Error Handler middleware created successfully")
 
 	return middleware
 }
@@ -135,7 +142,8 @@ func ProvideCasbinMiddleware(
 	// 使用新的 ProvideCasbinMiddleware，不再需要数据库连接
 	middleware := casbinmdw.ProvideCasbinMiddleware(casbinConfig, &zlogger)
 
-	logger.Infof("Casbin middleware created successfully (memory adapter)")
+	zl := logger.Unwrap()
+	zl.Info().Msg("Casbin middleware created successfully (memory adapter)")
 
 	return middleware
 }

@@ -175,9 +175,7 @@ func (s *userManagementServiceImpl) UpdateUser(
 			httpUserProfile.RoleIDs = req.RoleIDs
 			if err := s.updateUserRoles(ctx, req.UserID, req.RoleIDs, operatorID); err != nil {
 				// 角色更新失败，记录错误并返回
-				s.Logger().Error("更新用户角色失败",
-					"userID", *req.UserID,
-					"error", err)
+				s.Log(ctx).Error().Err(err).Str("user_id", *req.UserID).Msg("更新用户角色失败")
 
 				return nil, err
 			}
@@ -353,9 +351,7 @@ func (s *userManagementServiceImpl) enrichUserProfileWithRoles(
 	)
 	if err != nil {
 		// 角色获取失败不影响主流程，仅记录警告
-		s.Logger().Warn("获取用户角色失败",
-			"userID", *userProfile.ID,
-			"error", err)
+		s.Log(ctx).Warn().Err(err).Str("user_id", *userProfile.ID).Msg("获取用户角色失败")
 
 		return
 	}
@@ -403,7 +399,7 @@ func (s *userManagementServiceImpl) enrichUserProfilesWithRolesBatch(
 		})
 	if err != nil {
 		// 角色获取失败不影响主流程，仅记录警告
-		s.Logger().Warn("批量获取用户角色失败", "error", err)
+		s.Log(ctx).Warn().Err(err).Msg("批量获取用户角色失败")
 		return
 	}
 
@@ -449,14 +445,15 @@ func (s *userManagementServiceImpl) assignOrganizationMembership(
 	})
 	if err != nil {
 		// 成员关系创建失败不影响主流程，仅记录警告
-		s.Logger().Warn("创建主成员关系失败",
-			"userID", *userID,
-			"organizationID", *organizationID,
-			"error", err)
+		s.Log(ctx).Warn().Err(err).
+			Str("user_id", *userID).
+			Str("organization_id", *organizationID).
+			Msg("创建主成员关系失败")
 	} else {
-		s.Logger().Info("成功创建主成员关系",
-			"userID", *userID,
-			"organizationID", *organizationID)
+		s.Log(ctx).Info().
+			Str("user_id", *userID).
+			Str("organization_id", *organizationID).
+			Msg("成功创建主成员关系")
 	}
 }
 
@@ -485,19 +482,20 @@ func (s *userManagementServiceImpl) assignRolesToUser(
 			AssignedBy: &operatorID,
 		})
 		if err != nil {
-			s.Logger().Warn("分配角色失败",
-				"userID", *userID,
-				"roleID", roleID,
-				"error", err)
+			s.Log(ctx).Warn().Err(err).
+				Str("user_id", *userID).
+				Str("role_id", roleID).
+				Msg("分配角色失败")
 		} else {
 			successCount++
 		}
 	}
 
-	s.Logger().Info("批量分配角色完成",
-		"userID", *userID,
-		"total", len(roleIDs),
-		"success", successCount)
+	s.Log(ctx).Info().
+		Str("user_id", *userID).
+		Int("total", len(roleIDs)).
+		Int("success", successCount).
+		Msg("批量分配角色完成")
 }
 
 // updateOrganizationMembership 更新用户的组织成员关系
@@ -531,16 +529,17 @@ func (s *userManagementServiceImpl) updateOrganizationMembership(
 			IsPrimary:      &isPrimary,
 		})
 		if err != nil {
-			s.Logger().Warn("更新主成员关系失败",
-				"userID", *userID,
-				"membershipID", *primaryMembership.ID,
-				"newOrganizationID", *organizationID,
-				"error", err)
+			s.Log(ctx).Warn().Err(err).
+				Str("user_id", *userID).
+				Str("membership_id", *primaryMembership.ID).
+				Str("new_organization_id", *organizationID).
+				Msg("更新主成员关系失败")
 		} else {
-			s.Logger().Info("成功更新主成员关系",
-				"userID", *userID,
-				"membershipID", *primaryMembership.ID,
-				"newOrganizationID", *organizationID)
+			s.Log(ctx).Info().
+				Str("user_id", *userID).
+				Str("membership_id", *primaryMembership.ID).
+				Str("new_organization_id", *organizationID).
+				Msg("成功更新主成员关系")
 		}
 	}
 }
@@ -565,9 +564,7 @@ func (s *userManagementServiceImpl) updateUserRoles(
 		},
 	)
 	if err != nil {
-		s.Logger().Warn("获取用户当前角色失败",
-			"userID", *userID,
-			"error", err)
+		s.Log(ctx).Warn().Err(err).Str("user_id", *userID).Msg("获取用户当前角色失败")
 		// 即使获取失败，仍然尝试分配新角色
 		s.assignRolesToUser(ctx, userID, newRoleIDs, operatorID)
 
@@ -638,10 +635,10 @@ func (s *userManagementServiceImpl) updateUserRoles(
 				}
 
 				// 其他错误也应该中断并回滚（保证原子性）
-				s.Logger().Error("撤销角色失败，回滚操作",
-					"userID", *userID,
-					"roleID", roleID,
-					"error", err)
+				s.Log(ctx).Error().Err(err).
+					Str("user_id", *userID).
+					Str("role_id", roleID).
+					Msg("撤销角色失败，回滚操作")
 				s.rollbackRevokedRoles(ctx, userID, revokedRoles, operatorID)
 
 				return errors.ProcessRPCError(err, "撤销角色失败")
@@ -651,9 +648,10 @@ func (s *userManagementServiceImpl) updateUserRoles(
 			revokedRoles = append(revokedRoles, roleID)
 		}
 
-		s.Logger().Info("批量撤销角色成功",
-			"userID", *userID,
-			"count", len(revokedRoles))
+		s.Log(ctx).Info().
+			Str("user_id", *userID).
+			Int("count", len(revokedRoles)).
+			Msg("批量撤销角色成功")
 	}
 
 	// 7. 分配新角色
@@ -661,12 +659,13 @@ func (s *userManagementServiceImpl) updateUserRoles(
 		s.assignRolesToUser(ctx, userID, rolesToAdd, operatorID)
 	}
 
-	s.Logger().Info("更新用户角色完成",
-		"userID", *userID,
-		"currentCount", len(currentRoleIDs),
-		"newCount", len(newRoleIDSet),
-		"added", len(rolesToAdd),
-		"removed", len(rolesToRemove))
+	s.Log(ctx).Info().
+		Str("user_id", *userID).
+		Int("current_count", len(currentRoleIDs)).
+		Int("new_count", len(newRoleIDSet)).
+		Int("added", len(rolesToAdd)).
+		Int("removed", len(rolesToRemove)).
+		Msg("更新用户角色完成")
 
 	return nil
 }
@@ -702,9 +701,10 @@ func (s *userManagementServiceImpl) rollbackRevokedRoles(
 		return
 	}
 
-	s.Logger().Warn("开始回滚已撤销的角色",
-		"userID", *userID,
-		"count", len(revokedRoles))
+	s.Log(ctx).Warn().
+		Str("user_id", *userID).
+		Int("count", len(revokedRoles)).
+		Msg("开始回滚已撤销的角色")
 
 	successCount := 0
 
@@ -715,17 +715,18 @@ func (s *userManagementServiceImpl) rollbackRevokedRoles(
 			AssignedBy: &operatorID,
 		})
 		if err != nil {
-			s.Logger().Error("回滚角色失败",
-				"userID", *userID,
-				"roleID", roleID,
-				"error", err)
+			s.Log(ctx).Error().Err(err).
+				Str("user_id", *userID).
+				Str("role_id", roleID).
+				Msg("回滚角色失败")
 		} else {
 			successCount++
 		}
 	}
 
-	s.Logger().Info("角色回滚完成",
-		"userID", *userID,
-		"total", len(revokedRoles),
-		"success", successCount)
+	s.Log(ctx).Info().
+		Str("user_id", *userID).
+		Int("total", len(revokedRoles)).
+		Int("success", successCount).
+		Msg("角色回滚完成")
 }

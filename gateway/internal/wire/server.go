@@ -83,7 +83,8 @@ func (r *HandlerRegistry) RegisterMiddlewares() {
 		etag.New(), // ETag：计算和验证 ETag
 	)
 
-	r.logger.Infof("Global middlewares registered successfully")
+	zl := r.logger.Unwrap()
+	zl.Info().Msg("Global middlewares registered successfully")
 }
 
 // RegisterHandlers 注册 Handler 依赖
@@ -92,7 +93,8 @@ func (r *HandlerRegistry) RegisterHandlers() {
 	identityHandler.SetIdentityService(r.identityService, r.middlewares.JWTMiddleware)
 	permissionHandler.SetPermissionService(r.permissionService)
 
-	r.logger.Infof("Handler dependencies registered successfully")
+	zl := r.logger.Unwrap()
+	zl.Info().Msg("Handler dependencies registered successfully")
 }
 
 // Server 返回 Hertz 服务器实例

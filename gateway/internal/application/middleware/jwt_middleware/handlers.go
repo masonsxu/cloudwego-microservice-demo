@@ -7,11 +7,12 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/jwt"
-	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
+	"github.com/rs/zerolog"
 
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/http_base"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/identity"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/errors"
+	tracelog "github.com/masonsxu/cloudwego-microservice-demo/gateway/pkg/log"
 )
 
 // createTokenInfo 创建Token信息
@@ -119,7 +120,7 @@ func customHTTPStatusMessageFunc(
 	e error,
 	ctx context.Context,
 	c *app.RequestContext,
-	logger *hertzZerolog.Logger,
+	logger *zerolog.Logger,
 ) string {
 	// 检查是否已经有响应被写入（避免重复写入）
 	if c.Response.IsBodyStream() || len(c.Response.Body()) > 0 {
@@ -134,27 +135,27 @@ func customHTTPStatusMessageFunc(
 		// 认证失败（用户名密码错误等）
 		apiError = errors.ErrInvalidCredentials
 
-		logger.Debugf("Authentication failed: error=%v", e)
+		tracelog.Event(ctx, logger.Debug()).Err(e).Msg("Authentication failed")
 	case jwt.ErrExpiredToken:
 		// Token过期
 		apiError = errors.ErrJWTTokenExpired
 
-		logger.Debugf("Token expired: error=%v", e)
+		tracelog.Event(ctx, logger.Debug()).Err(e).Msg("Token expired")
 	case jwt.ErrFailedTokenCreation:
 		// Token创建失败
 		apiError = errors.ErrJWTCreationFail
 
-		logger.Warnf("Token creation failed: error=%v", e)
+		tracelog.Event(ctx, logger.Warn()).Err(e).Msg("Token creation failed")
 	default:
 		// 检查是否是项目内部的业务错误
 		if bizErr, ok := e.(errors.APIError); ok {
 			apiError = bizErr
-			logger.Debugf("Business error: error=%v", bizErr)
+			tracelog.Event(ctx, logger.Debug()).Err(bizErr).Msg("Business error")
 		} else {
 			// 其他未知错误，默认为JWT验证失败
 			apiError = errors.ErrJWTValidationFail
 
-			logger.Warnf("Unknown JWT error: error=%v", e)
+			tracelog.Event(ctx, logger.Warn()).Err(e).Msg("Unknown JWT error")
 		}
 	}
 

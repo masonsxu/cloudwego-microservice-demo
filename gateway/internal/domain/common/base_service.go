@@ -30,6 +30,13 @@ func (bs *BaseService) Logger() *hertzZerolog.Logger {
 	return bs.logger
 }
 
+// Log 获取带追踪上下文的 *zerolog.Logger
+// 用法：s.Log(ctx).Error().Err(err).Msg("失败")
+func (bs *BaseService) Log(ctx context.Context) *zerolog.Logger {
+	l := bs.logger.Unwrap().With().Ctx(ctx).Logger()
+	return &l
+}
+
 // ResponseBuilder 获取响应构建器
 func (bs *BaseService) ResponseBuilder() *ResponseBuilder {
 	return bs.responseBuilder

@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog"
 
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/context/auth_context"
+	tracelog "github.com/masonsxu/cloudwego-microservice-demo/gateway/pkg/log"
 )
 
 // CasbinMiddleware Casbin权限中间件实现
@@ -75,7 +76,7 @@ func (m *CasbinMiddleware) MiddlewareFunc() app.HandlerFunc {
 		// 获取认证上下文
 		authCtx, exists := auth_context.GetAuthContext(c)
 		if !exists || authCtx == nil {
-			m.logger.Warn().Str("path", path).Msg("No auth context found")
+			tracelog.Event(ctx, m.logger.Warn()).Str("path", path).Msg("No auth context found")
 			abortWithUnauthorized(c, "Authentication required")
 			return
 		}
@@ -83,7 +84,7 @@ func (m *CasbinMiddleware) MiddlewareFunc() app.HandlerFunc {
 		// 获取用户信息
 		userID, ok := auth_context.GetCurrentUserProfileID(c)
 		if !ok {
-			m.logger.Warn().Str("path", path).Msg("No user ID found in auth context")
+			tracelog.Event(ctx, m.logger.Warn()).Str("path", path).Msg("No user ID found in auth context")
 			abortWithUnauthorized(c, "User not authenticated")
 			return
 		}
@@ -91,7 +92,7 @@ func (m *CasbinMiddleware) MiddlewareFunc() app.HandlerFunc {
 		// 获取角色ID列表（多角色模式）
 		roleIDs := auth_context.GetCurrentRoleIDs(c)
 		if len(roleIDs) == 0 {
-			m.logger.Warn().Str("path", path).Str("user_id", userID).Msg("No roles found for user")
+			tracelog.Event(ctx, m.logger.Warn()).Str("path", path).Str("user_id", userID).Msg("No roles found for user")
 			abortWithPermissionDenied(c, "No roles assigned")
 			return
 		}
@@ -108,7 +109,7 @@ func (m *CasbinMiddleware) MiddlewareFunc() app.HandlerFunc {
 		// 执行权限检查（多角色取并集）
 		allowed, dataScope, err := m.checkMultiRolePermission(ctx, userID, roleIDs, deptIDs, resource, action)
 		if err != nil {
-			m.logger.Error().Err(err).
+			tracelog.Event(ctx, m.logger.Error()).Err(err).
 				Str("path", path).
 				Str("user_id", userID).
 				Strs("role_ids", roleIDs).
@@ -118,7 +119,7 @@ func (m *CasbinMiddleware) MiddlewareFunc() app.HandlerFunc {
 		}
 
 		if !allowed {
-			m.logger.Info().
+			tracelog.Event(ctx, m.logger.Info()).
 				Str("path", path).
 				Str("user_id", userID).
 				Strs("role_ids", roleIDs).
@@ -134,7 +135,7 @@ func (m *CasbinMiddleware) MiddlewareFunc() app.HandlerFunc {
 			auth_context.SetDataScope(c, dataScope)
 		}
 
-		m.logger.Debug().
+		tracelog.Event(ctx, m.logger.Debug()).
 			Str("path", path).
 			Str("user_id", userID).
 			Str("resource", resource).
@@ -304,7 +305,11 @@ func (m *CasbinMiddleware) CheckPermissionWithDataScope(
 }
 
 // GetUserPermissions 获取用户的所有权限列表
-func (m *CasbinMiddleware) GetUserPermissions(ctx context.Context, userID string, roleIDs []string) ([]PermissionInfo, error) {
+func (m *CasbinMiddleware) GetUserPermissions(
+	ctx context.Context,
+	userID string,
+	roleIDs []string,
+) ([]PermissionInfo, error) {
 	var permissions []PermissionInfo
 	seen := make(map[string]bool)
 

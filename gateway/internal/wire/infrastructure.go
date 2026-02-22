@@ -50,11 +50,13 @@ func ProvideLogger(cfg *config.Configuration) *hertzZerolog.Logger {
 func ProvideIdentityClient(logger *hertzZerolog.Logger) identitycli.IdentityClient {
 	client, err := identitycli.NewIdentityClient()
 	if err != nil {
-		logger.Errorf("Failed to create identity client: %v", err)
+		zl := logger.Unwrap()
+		zl.Error().Err(err).Msg("Failed to create identity client")
 		panic(err)
 	}
 
-	logger.Infof("Identity client created successfully")
+	zl := logger.Unwrap()
+	zl.Info().Msg("Identity client created successfully")
 
 	return client
 }

@@ -120,16 +120,16 @@ func Ctx(ctx context.Context) *zerolog.Logger {
 //	logger := log.WithTrace(ctx, existingLogger)
 //	logger.Info().Msg("hello")
 func WithTrace(ctx context.Context, logger zerolog.Logger) zerolog.Logger {
-	return logger.With().Fields(TraceFields(ctx)).Logger()
+	return logger.With().Ctx(ctx).Logger()
 }
 
 // WithTraceAndService 为 logger 添加追踪字段和服务信息
 // 返回包含完整追踪上下文的 logger
 func WithTraceAndService(ctx context.Context, logger zerolog.Logger, service, method string) zerolog.Logger {
 	return logger.With().
-		Fields(TraceFields(ctx)).
 		Str(FieldService, service).
 		Str(FieldMethod, method).
+		Ctx(ctx).
 		Logger()
 }
 
@@ -142,19 +142,18 @@ func WithTraceAndService(ctx context.Context, logger zerolog.Logger, service, me
 //	    Str("component", "user_handler").
 //	    Msg("hello")
 func Event(ctx context.Context, event *zerolog.Event) *zerolog.Event {
-	fields := TraceFields(ctx)
-	for k, v := range fields {
-		if s, ok := v.(string); ok {
-			event = event.Str(k, s)
-		}
-	}
-	// 固定添加 service 字段为 "identity_srv"
-	return event.Str(FieldService, "identity_srv")
+	// 固定添加 service 字段为 "radius-identity"
+	return event.Ctx(ctx).Str(FieldService, "radius-identity")
 }
 
 // BindToContext 将带追踪信息的 logger 绑定到 context
 // 后续代码可通过 zerolog.Ctx(ctx) 或 log.Ctx(ctx) 获取
 func BindToContext(ctx context.Context, logger zerolog.Logger, service, method string) context.Context {
-	ctxLogger := WithTraceAndService(ctx, logger, service, method)
+	ctxLogger := logger.With().
+		Str(FieldService, service).
+		Str(FieldMethod, method).
+		Ctx(ctx).
+		Logger()
+
 	return ctxLogger.WithContext(ctx)
 }

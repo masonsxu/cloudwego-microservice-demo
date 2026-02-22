@@ -100,12 +100,16 @@ func JWTMiddlewareProvider(
 	// 创建 Token 提取器
 	tokenExtractor := NewDefaultTokenExtractor(jwtConfig)
 
+	// 解包 hertzZerolog.Logger 得到底层 *zerolog.Logger
+	unwrapped := logger.Unwrap()
+	zlogger := &unwrapped
+
 	// 创建 HTTP 状态消息处理函数（适配 hertz-contrib/jwt 的接口）
 	// hertz-contrib/jwt 的 HTTPStatusMessageFunc 签名是：
 	// func(e error, ctx context.Context, c *app.RequestContext) string
 	// 我们创建一个闭包来传递 logger
 	httpStatusMessageFunc := func(e error, ctx context.Context, c *app.RequestContext) string {
-		return customHTTPStatusMessageFunc(e, ctx, c, logger)
+		return customHTTPStatusMessageFunc(e, ctx, c, zlogger)
 	}
 
 	// 创建 hertz-contrib/jwt 中间件
@@ -170,6 +174,6 @@ func JWTMiddlewareProvider(
 		mw:             mw,
 		tokenCache:     tokenCache,
 		tokenExtractor: tokenExtractor,
-		logger:         logger,
+		logger:         zlogger,
 	}, nil
 }

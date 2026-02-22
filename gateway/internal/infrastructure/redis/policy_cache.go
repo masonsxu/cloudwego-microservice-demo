@@ -7,6 +7,9 @@ import (
 	"time"
 
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
+	"github.com/rs/zerolog"
+
+	tracelog "github.com/masonsxu/cloudwego-microservice-demo/gateway/pkg/log"
 )
 
 // PolicyCacheService 策略缓存服务接口
@@ -53,15 +56,25 @@ type PermissionCacheResult struct {
 // PolicyCache 策略缓存服务实现
 type PolicyCache struct {
 	client *Client
-	logger *hertzZerolog.Logger
+	logger *zerolog.Logger
 	prefix string // 缓存键前缀
 }
 
 // NewPolicyCache 创建策略缓存服务
 func NewPolicyCache(client *Client, logger *hertzZerolog.Logger) PolicyCacheService {
+	var zlogger *zerolog.Logger
+
+	if logger != nil {
+		unwrapped := logger.Unwrap()
+		zlogger = &unwrapped
+	} else {
+		nop := zerolog.Nop()
+		zlogger = &nop
+	}
+
 	return &PolicyCache{
 		client: client,
-		logger: logger,
+		logger: zlogger,
 		prefix: "gateway:permission:",
 	}
 }
@@ -104,17 +117,21 @@ func (pc *PolicyCache) CachePermissionResult(
 
 	data, err := json.Marshal(result)
 	if err != nil {
-		pc.logger.Errorf("Failed to marshal permission result: error=%v", err)
+		tracelog.Event(ctx, pc.logger.Error()).Err(err).Msg("Failed to marshal permission result")
 		return fmt.Errorf("序列化权限结果失败: %w", err)
 	}
 
 	err = pc.client.Set(ctx, cacheKey, string(data), expiration)
 	if err != nil {
-		pc.logger.Errorf("Failed to cache permission result: error=%v, key=%s", err, key)
+		tracelog.Event(ctx, pc.logger.Error()).Err(err).Str("key", key).Msg("Failed to cache permission result")
 		return fmt.Errorf("缓存权限结果失败: %w", err)
 	}
 
-	pc.logger.Debugf("Permission result cached: key=%s, allowed=%v, dataScope=%s", key, allowed, dataScope)
+	tracelog.Event(ctx, pc.logger.Debug()).
+		Str("key", key).
+		Bool("allowed", allowed).
+		Str("data_scope", dataScope).
+		Msg("Permission result cached")
 
 	return nil
 }
@@ -133,18 +150,21 @@ func (pc *PolicyCache) GetPermissionResult(
 			return false, "", false, nil
 		}
 
-		pc.logger.Errorf("Failed to get permission result: error=%v, key=%s", err, key)
+		tracelog.Event(ctx, pc.logger.Error()).Err(err).Str("key", key).Msg("Failed to get permission result")
 
 		return false, "", false, fmt.Errorf("获取权限缓存失败: %w", err)
 	}
 
 	var result PermissionCacheResult
 	if err := json.Unmarshal([]byte(data), &result); err != nil {
-		pc.logger.Errorf("Failed to unmarshal permission result: error=%v, key=%s", err, key)
+		tracelog.Event(ctx, pc.logger.Error()).Err(err).Str("key", key).Msg("Failed to unmarshal permission result")
 		return false, "", false, fmt.Errorf("解析权限缓存失败: %w", err)
 	}
 
-	pc.logger.Debugf("Permission result cache hit: key=%s, allowed=%v", key, result.Allowed)
+	tracelog.Event(ctx, pc.logger.Debug()).
+		Str("key", key).
+		Bool("allowed", result.Allowed).
+		Msg("Permission result cache hit")
 
 	return result.Allowed, result.DataScope, true, nil
 }
@@ -180,13 +200,13 @@ func (pc *PolicyCache) invalidateByPattern(ctx context.Context, pattern string) 
 	for {
 		keys, nextCursor, err := rdb.Scan(ctx, cursor, pattern, 100).Result()
 		if err != nil {
-			pc.logger.Errorf("Failed to scan keys: error=%v, pattern=%s", err, pattern)
+			tracelog.Event(ctx, pc.logger.Error()).Err(err).Str("pattern", pattern).Msg("Failed to scan keys")
 			return fmt.Errorf("扫描缓存键失败: %w", err)
 		}
 
 		if len(keys) > 0 {
 			if err := rdb.Del(ctx, keys...).Err(); err != nil {
-				pc.logger.Errorf("Failed to delete keys: error=%v, count=%d", err, len(keys))
+				tracelog.Event(ctx, pc.logger.Error()).Err(err).Int("count", len(keys)).Msg("Failed to delete keys")
 				return fmt.Errorf("删除缓存键失败: %w", err)
 			}
 
@@ -199,7 +219,10 @@ func (pc *PolicyCache) invalidateByPattern(ctx context.Context, pattern string) 
 		}
 	}
 
-	pc.logger.Infof("Permission cache invalidated: pattern=%s, keysDeleted=%d", pattern, keysDeleted)
+	tracelog.Event(ctx, pc.logger.Info()).
+		Str("pattern", pattern).
+		Int("keys_deleted", keysDeleted).
+		Msg("Permission cache invalidated")
 
 	return nil
 }
@@ -215,17 +238,20 @@ func (pc *PolicyCache) CacheUserRoles(
 
 	data, err := json.Marshal(roleIDs)
 	if err != nil {
-		pc.logger.Errorf("Failed to marshal user roles: error=%v, userID=%s", err, userID)
+		tracelog.Event(ctx, pc.logger.Error()).Err(err).Str("user_id", userID).Msg("Failed to marshal user roles")
 		return fmt.Errorf("序列化用户角色列表失败: %w", err)
 	}
 
 	err = pc.client.Set(ctx, cacheKey, string(data), expiration)
 	if err != nil {
-		pc.logger.Errorf("Failed to cache user roles: error=%v, userID=%s", err, userID)
+		tracelog.Event(ctx, pc.logger.Error()).Err(err).Str("user_id", userID).Msg("Failed to cache user roles")
 		return fmt.Errorf("缓存用户角色列表失败: %w", err)
 	}
 
-	pc.logger.Debugf("User roles cached: userID=%s, roleCount=%d", userID, len(roleIDs))
+	tracelog.Event(ctx, pc.logger.Debug()).
+		Str("user_id", userID).
+		Int("role_count", len(roleIDs)).
+		Msg("User roles cached")
 
 	return nil
 }
@@ -241,18 +267,21 @@ func (pc *PolicyCache) GetUserRoles(ctx context.Context, userID string) ([]strin
 			return nil, false, nil
 		}
 
-		pc.logger.Errorf("Failed to get user roles: error=%v, userID=%s", err, userID)
+		tracelog.Event(ctx, pc.logger.Error()).Err(err).Str("user_id", userID).Msg("Failed to get user roles")
 
 		return nil, false, fmt.Errorf("获取用户角色缓存失败: %w", err)
 	}
 
 	var roleIDs []string
 	if err := json.Unmarshal([]byte(data), &roleIDs); err != nil {
-		pc.logger.Errorf("Failed to unmarshal user roles: error=%v, userID=%s", err, userID)
+		tracelog.Event(ctx, pc.logger.Error()).Err(err).Str("user_id", userID).Msg("Failed to unmarshal user roles")
 		return nil, false, fmt.Errorf("解析用户角色缓存失败: %w", err)
 	}
 
-	pc.logger.Debugf("User roles cache hit: userID=%s, roleCount=%d", userID, len(roleIDs))
+	tracelog.Event(ctx, pc.logger.Debug()).
+		Str("user_id", userID).
+		Int("role_count", len(roleIDs)).
+		Msg("User roles cache hit")
 
 	return roleIDs, true, nil
 }
@@ -263,11 +292,11 @@ func (pc *PolicyCache) InvalidateUserRoles(ctx context.Context, userID string) e
 
 	err := pc.client.Del(ctx, cacheKey)
 	if err != nil {
-		pc.logger.Errorf("Failed to invalidate user roles: error=%v, userID=%s", err, userID)
+		tracelog.Event(ctx, pc.logger.Error()).Err(err).Str("user_id", userID).Msg("Failed to invalidate user roles")
 		return fmt.Errorf("使用户角色缓存失效失败: %w", err)
 	}
 
-	pc.logger.Debugf("User roles cache invalidated: userID=%s", userID)
+	tracelog.Event(ctx, pc.logger.Debug()).Str("user_id", userID).Msg("User roles cache invalidated")
 
 	return nil
 }

@@ -10,6 +10,8 @@ import (
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
 	"github.com/rs/zerolog"
 	"gopkg.in/natefinch/lumberjack.v2"
+
+	tracelog "github.com/masonsxu/cloudwego-microservice-demo/gateway/pkg/log"
 )
 
 // CreateLogger 根据配置创建zerolog.Logger实例
@@ -72,6 +74,9 @@ func CreateLogger(cfg *Configuration) (*hertzZerolog.Logger, error) {
 		// 这样 caller 显示的是业务代码位置而不是库内部位置
 		// 值为 4 可以跳过：hertz-zerolog 内部封装层 -> zerolog Event 层
 		hertzZerolog.WithCallerSkipFrameCount(4),
+		// 安装 OTel Hook：自动注入 trace_id/span_id/request_id，
+		// 并将 Error/Warn 级别日志同步到 Jaeger Span
+		hertzZerolog.WithHook(tracelog.NewOTelHook()),
 	}
 
 	// 创建 logger
