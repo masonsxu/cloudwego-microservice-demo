@@ -118,9 +118,10 @@ jobs:
           --health-retries 5
 
       etcd:
-        image: ghcr.io/etcd-io/etcd:v3.6.8
+        image: bitnami/etcd:3.5
         env:
-          ETCD_ADVERTISE_CLIENT_URLS: "http://etcd:2379"
+          ALLOW_NONE_AUTHENTICATION: "yes"
+          ETCD_ADVERTISE_CLIENT_URLS: "http://0.0.0.0:2379"
           ETCD_LISTEN_CLIENT_URLS: "http://0.0.0.0:2379"
         ports:
           - 2379:2379
@@ -219,11 +220,11 @@ jobs:
 
       - name: Build RPC Service
         working-directory: rpc/identity_srv
-        run: go build -o /dev/null ./cmd/main.go
+        run: go build -o /dev/null ./main.go
 
       - name: Build Gateway Service
         working-directory: gateway
-        run: go build -o /dev/null ./cmd/main.go
+        run: go build -o /dev/null ./main.go
 
   # ──────────────────────────────────────────────
   # Job 5: Coverage（依赖 test-rpc + test-gateway，仅 PR 时运行）
