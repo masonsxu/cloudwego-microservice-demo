@@ -488,9 +488,58 @@ func (r *DepartmentRepositoryImpl) FindWithConditions(
 		opts = conditions.Page
 	}
 
-	// 构建基础查询
+	// 构建基础查询并应用过滤条件
 	query := r.db.WithContext(ctx).Model(&models.Department{})
+	query = r.applyFilterConditions(query, conditions, opts)
 
+	// 处理搜索条件
+	if opts.Search != "" {
+		query = r.applySearchConditions(query, opts.Search)
+	}
+
+	// 处理预加载
+	for _, preload := range opts.Preloads {
+		query = query.Preload(preload)
+	}
+
+	// 计算总数
+	var total int64
+
+	countQuery := r.db.WithContext(ctx).Model(&models.Department{})
+	countQuery = r.applyFilterConditions(countQuery, conditions, opts)
+
+	if opts.Search != "" {
+		countQuery = r.applySearchConditions(countQuery, opts.Search)
+	}
+
+	if err := countQuery.Count(&total).Error; err != nil {
+		return nil, nil, fmt.Errorf("统计部门总数失败: %w", err)
+	}
+
+	// 处理排序
+	orderClause := r.buildOrderClause(opts)
+	query = query.Order(orderClause)
+
+	// 分页查询
+	var departments []*models.Department
+
+	offset := (opts.Page - 1) * opts.PageSize
+	if err := query.Offset(int(offset)).Limit(int(opts.PageSize)).Find(&departments).Error; err != nil {
+		return nil, nil, fmt.Errorf("查询部门列表失败: %w", err)
+	}
+
+	// 构建分页结果
+	pageResult := models.NewPageResult(int32(total), opts.Page, opts.PageSize)
+
+	return departments, pageResult, nil
+}
+
+// applyFilterConditions 应用过滤条件到查询
+func (r *DepartmentRepositoryImpl) applyFilterConditions(
+	query *gorm.DB,
+	conditions *DepartmentQueryConditions,
+	opts *base.QueryOptions,
+) *gorm.DB {
 	// 处理软删除
 	if !opts.IncludeDeleted && !opts.DeletedOnly {
 		// 默认：仅查询未删除记录
@@ -522,72 +571,7 @@ func (r *DepartmentRepositoryImpl) FindWithConditions(
 		}
 	}
 
-	// 处理搜索条件
-	if opts.Search != "" {
-		query = r.applySearchConditions(query, opts.Search)
-	}
-
-	// 处理预加载
-	for _, preload := range opts.Preloads {
-		query = query.Preload(preload)
-	}
-
-	// 计算总数
-	var total int64
-
-	countQuery := r.db.WithContext(ctx).Model(&models.Department{})
-
-	// 重新应用所有过滤条件用于计数
-	if !opts.IncludeDeleted && !opts.DeletedOnly {
-		// countQuery 默认已处理软删除
-	} else if opts.DeletedOnly {
-		countQuery = countQuery.Unscoped().Where("deleted_at IS NOT NULL")
-	} else if opts.IncludeDeleted {
-		countQuery = countQuery.Unscoped()
-	}
-
-	if conditions != nil && conditions.EquipmentID != nil && *conditions.EquipmentID != "" {
-		countQuery = countQuery.Where("equipment_ids::jsonb ? ?", *conditions.EquipmentID)
-	}
-
-	if conditions != nil {
-		if conditions.OrganizationID != nil {
-			countQuery = countQuery.Where("organization_id = ?", *conditions.OrganizationID)
-		}
-
-		if conditions.DepartmentType != nil {
-			countQuery = countQuery.Where("department_type = ?", *conditions.DepartmentType)
-		}
-
-		if conditions.Name != nil && *conditions.Name != "" {
-			countQuery = countQuery.Where("name LIKE ?", "%"+*conditions.Name+"%")
-		}
-	}
-
-	if opts.Search != "" {
-		countQuery = r.applySearchConditions(countQuery, opts.Search)
-	}
-
-	if err := countQuery.Count(&total).Error; err != nil {
-		return nil, nil, fmt.Errorf("统计部门总数失败: %w", err)
-	}
-
-	// 处理排序
-	orderClause := r.buildOrderClause(opts)
-	query = query.Order(orderClause)
-
-	// 分页查询
-	var departments []*models.Department
-
-	offset := (opts.Page - 1) * opts.PageSize
-	if err := query.Offset(int(offset)).Limit(int(opts.PageSize)).Find(&departments).Error; err != nil {
-		return nil, nil, fmt.Errorf("查询部门列表失败: %w", err)
-	}
-
-	// 构建分页结果
-	pageResult := models.NewPageResult(int32(total), opts.Page, opts.PageSize)
-
-	return departments, pageResult, nil
+	return query
 }
 
 // ============================================================================

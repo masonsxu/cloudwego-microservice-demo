@@ -611,47 +611,9 @@ func (s *userManagementServiceImpl) updateUserRoles(
 
 	// 6. 删除旧角色（增强版 - 带错误检测和回滚）
 	if len(rolesToRemove) > 0 {
-		var revokedRoles []string // 记录已成功撤销的角色，用于可能的回滚
-
-		for _, roleID := range rolesToRemove {
-			err := s.identityClient.RevokeRoleFromUser(
-				ctx,
-				&identity_srv.RevokeRoleFromUserRequest{
-					UserID:    userID,
-					RoleID:    &roleID,
-					RevokedBy: &operatorID,
-				},
-			)
-			if err != nil {
-				// 检查是否为系统角色保护错误 (207017)
-				if bizErr, isBizErr := kerrors.FromBizStatusError(err); isBizErr {
-					if bizErr.BizStatusCode() == 207017 {
-						// 立即回滚已撤销的角色
-						s.rollbackRevokedRoles(ctx, userID, revokedRoles, operatorID)
-
-						// 构造友好错误消息
-						return s.buildSystemRoleProtectionError(ctx, roleID, bizErr.BizMessage())
-					}
-				}
-
-				// 其他错误也应该中断并回滚（保证原子性）
-				s.Log(ctx).Error().Err(err).
-					Str("user_id", *userID).
-					Str("role_id", roleID).
-					Msg("撤销角色失败，回滚操作")
-				s.rollbackRevokedRoles(ctx, userID, revokedRoles, operatorID)
-
-				return errors.ProcessRPCError(err, "撤销角色失败")
-			}
-
-			// 记录成功撤销的角色，用于可能的回滚
-			revokedRoles = append(revokedRoles, roleID)
+		if err := s.removeRolesWithRollback(ctx, userID, rolesToRemove, operatorID); err != nil {
+			return err
 		}
-
-		s.Log(ctx).Info().
-			Str("user_id", *userID).
-			Int("count", len(revokedRoles)).
-			Msg("批量撤销角色成功")
 	}
 
 	// 7. 分配新角色
@@ -688,6 +650,68 @@ func (s *userManagementServiceImpl) buildSystemRoleProtectionError(
 
 	// 返回业务错误，保持 207017 错误码以便客户端识别
 	return errors.NewAPIError(207017, friendlyMessage)
+}
+
+// removeRolesWithRollback 批量撤销角色，失败时自动回滚已撤销的角色
+func (s *userManagementServiceImpl) removeRolesWithRollback(
+	ctx context.Context,
+	userID *string,
+	rolesToRemove []string,
+	operatorID string,
+) error {
+	var revokedRoles []string // 记录已成功撤销的角色，用于可能的回滚
+
+	for _, roleID := range rolesToRemove {
+		err := s.identityClient.RevokeRoleFromUser(
+			ctx,
+			&identity_srv.RevokeRoleFromUserRequest{
+				UserID:    userID,
+				RoleID:    &roleID,
+				RevokedBy: &operatorID,
+			},
+		)
+		if err != nil {
+			return s.handleRevokeError(ctx, err, userID, roleID, revokedRoles, operatorID)
+		}
+
+		// 记录成功撤销的角色，用于可能的回滚
+		revokedRoles = append(revokedRoles, roleID)
+	}
+
+	s.Log(ctx).Info().
+		Str("user_id", *userID).
+		Int("count", len(revokedRoles)).
+		Msg("批量撤销角色成功")
+
+	return nil
+}
+
+// handleRevokeError 处理角色撤销错误：检查系统角色保护并回滚
+func (s *userManagementServiceImpl) handleRevokeError(
+	ctx context.Context,
+	err error,
+	userID *string,
+	roleID string,
+	revokedRoles []string,
+	operatorID string,
+) error {
+	// 检查是否为系统角色保护错误 (207017)
+	if bizErr, isBizErr := kerrors.FromBizStatusError(err); isBizErr {
+		if bizErr.BizStatusCode() == 207017 {
+			s.rollbackRevokedRoles(ctx, userID, revokedRoles, operatorID)
+
+			return s.buildSystemRoleProtectionError(ctx, roleID, bizErr.BizMessage())
+		}
+	}
+
+	// 其他错误也应该中断并回滚（保证原子性）
+	s.Log(ctx).Error().Err(err).
+		Str("user_id", *userID).
+		Str("role_id", roleID).
+		Msg("撤销角色失败，回滚操作")
+	s.rollbackRevokedRoles(ctx, userID, revokedRoles, operatorID)
+
+	return errors.ProcessRPCError(err, "撤销角色失败")
 }
 
 // rollbackRevokedRoles 回滚已撤销的角色，恢复用户角色状态

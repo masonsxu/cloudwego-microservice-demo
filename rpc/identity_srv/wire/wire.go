@@ -4,11 +4,12 @@ package wire
 
 import (
 	"github.com/google/wire"
+	"github.com/rs/zerolog"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/config"
-	"github.com/rs/zerolog"
 )
 
 // =============================================================================

@@ -75,6 +75,7 @@ func (r *menuRepository) GetLatestContentHash(ctx context.Context, productLine s
 
 	// 获取该版本的第一条记录的内容哈希（同一版本所有记录哈希相同）
 	var contentHash string
+
 	err = r.db.WithContext(ctx).
 		Model(&models.Menu{}).
 		Where("product_line = ? AND version = ?", productLine, maxVersion).

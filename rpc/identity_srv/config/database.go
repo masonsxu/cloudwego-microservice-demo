@@ -152,6 +152,7 @@ func autoMigrate(db *gorm.DB) error {
 func cleanupOldMenuIndexes(db *gorm.DB) error {
 	// 检查是否存在旧的唯一约束索引 idx_semantic_version
 	var indexExists bool
+
 	err := db.Raw(`
 		SELECT EXISTS (
 			SELECT 1 FROM pg_indexes
@@ -159,16 +160,17 @@ func cleanupOldMenuIndexes(db *gorm.DB) error {
 			AND indexname = 'idx_semantic_version'
 		)
 	`).Scan(&indexExists).Error
-
 	if err != nil {
 		return fmt.Errorf("检查旧索引失败: %v", err)
 	}
 
 	if indexExists {
 		log.Println("发现旧的唯一约束索引 idx_semantic_version，正在删除...")
+
 		if err := db.Exec("DROP INDEX IF EXISTS idx_semantic_version").Error; err != nil {
 			return fmt.Errorf("删除旧索引失败: %v", err)
 		}
+
 		log.Println("成功删除旧索引 idx_semantic_version")
 	}
 

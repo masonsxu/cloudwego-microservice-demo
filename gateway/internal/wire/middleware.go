@@ -6,11 +6,11 @@ import (
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
 	"github.com/rs/zerolog"
 
-	casbinmdw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/casbin_middleware"
+	casbnmw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/casbin_middleware"
 	corsmdw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/cors_middleware"
 	errormw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/error_middleware"
 	jwtmdw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/jwt_middleware"
-	responsemw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/response_middleware"
+	respmw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/response_middleware"
 	tracemdw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/trace_middleware"
 	identityService "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/identity"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
@@ -36,8 +36,8 @@ type MiddlewareContainer struct {
 	CORSMiddleware           corsmdw.CORSMiddlewareService
 	ErrorHandlerMiddleware   errormw.ErrorHandlerMiddlewareService
 	JWTMiddleware            jwtmdw.JWTMiddlewareService
-	ResponseHeaderMiddleware responsemw.ResponseHeaderMiddlewareService
-	CasbinMiddleware         *casbinmdw.CasbinMiddleware
+	ResponseHeaderMiddleware respmw.ResponseHeaderMiddlewareService
+	CasbinMiddleware         *casbnmw.CasbinMiddleware
 }
 
 // NewMiddlewareContainer 创建中间件容器
@@ -46,8 +46,8 @@ func NewMiddlewareContainer(
 	corsMiddleware corsmdw.CORSMiddlewareService,
 	errorHandlerMiddleware errormw.ErrorHandlerMiddlewareService,
 	jwtMiddleware jwtmdw.JWTMiddlewareService,
-	responseHeaderMiddleware responsemw.ResponseHeaderMiddlewareService,
-	casbinMiddleware *casbinmdw.CasbinMiddleware,
+	responseHeaderMiddleware respmw.ResponseHeaderMiddlewareService,
+	casbinMiddleware *casbnmw.CasbinMiddleware,
 ) *MiddlewareContainer {
 	return &MiddlewareContainer{
 		TraceMiddleware:          traceMiddleware,
@@ -121,26 +121,26 @@ func ProvideErrorHandlerMiddleware(
 
 // ProvideResponseHeaderMiddleware 提供响应头中间件
 // 自动为所有响应添加标准 HTTP Date 响应头
-func ProvideResponseHeaderMiddleware() responsemw.ResponseHeaderMiddlewareService {
-	return responsemw.NewResponseHeaderMiddleware()
+func ProvideResponseHeaderMiddleware() respmw.ResponseHeaderMiddlewareService {
+	return respmw.NewResponseHeaderMiddleware()
 }
 
 // ProvideCasbinConfig 提供 Casbin 配置
-func ProvideCasbinConfig() *casbinmdw.Config {
-	return casbinmdw.LoadConfigFromEnv()
+func ProvideCasbinConfig() *casbnmw.Config {
+	return casbnmw.LoadConfigFromEnv()
 }
 
 // ProvideCasbinMiddleware 提供 Casbin 权限中间件
 // 使用内存 Adapter，策略通过 RPC 从 Identity Service 同步
 func ProvideCasbinMiddleware(
-	casbinConfig *casbinmdw.Config,
+	casbinConfig *casbnmw.Config,
 	logger *hertzZerolog.Logger,
-) *casbinmdw.CasbinMiddleware {
+) *casbnmw.CasbinMiddleware {
 	// 创建一个标准输出的 zerolog.Logger
 	zlogger := zerolog.New(zerolog.NewConsoleWriter()).With().Timestamp().Logger()
 
 	// 使用新的 ProvideCasbinMiddleware，不再需要数据库连接
-	middleware := casbinmdw.ProvideCasbinMiddleware(casbinConfig, &zlogger)
+	middleware := casbnmw.ProvideCasbinMiddleware(casbinConfig, &zlogger)
 
 	zl := logger.Unwrap()
 	zl.Info().Msg("Casbin middleware created successfully (memory adapter)")

@@ -13,7 +13,7 @@ import (
 	corsmw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/cors_middleware"
 	errormw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/error_middleware"
 	jwtmw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/jwt_middleware"
-	responsemw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/response_middleware"
+	respmw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/response_middleware"
 	tracemdw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/trace_middleware"
 )
 
@@ -28,7 +28,7 @@ func DefaultMiddleware(
 	corsMiddleware corsmw.CORSMiddlewareService,
 	errorMiddleware errormw.ErrorHandlerMiddlewareService,
 	jwtMiddleware jwtmw.JWTMiddlewareService,
-	responseHeaderMiddleware responsemw.ResponseHeaderMiddlewareService,
+	responseHeaderMiddleware respmw.ResponseHeaderMiddlewareService,
 ) {
 	h.Use(
 		hertztracing.ServerMiddleware(tracerCfg),  // 追踪：最先执行，生成/提取追踪信息

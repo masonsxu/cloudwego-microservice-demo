@@ -47,7 +47,12 @@ type RoleMenuPermissionRepository interface {
 	GetMenuIDsByRoleIDs(ctx context.Context, roleIDs []uuid.UUID) ([]string, error)
 
 	// HasPermission 检查角色是否具有指定菜单的指定权限
-	HasPermission(ctx context.Context, roleID uuid.UUID, menuID string, permissionType models.MenuPermissionType) (bool, error)
+	HasPermission(
+		ctx context.Context,
+		roleID uuid.UUID,
+		menuID string,
+		permissionType models.MenuPermissionType,
+	) (bool, error)
 
 	// GetMergedPermissions 获取多个角色的合并权限（每个菜单取最高权限）
 	GetMergedPermissions(ctx context.Context, roleIDs []uuid.UUID) ([]models.MenuPermissionInfo, error)

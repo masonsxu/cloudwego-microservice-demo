@@ -741,12 +741,14 @@ func (s *IdentityServiceImpl) CheckPermission(
 ) (resp *identity_srv.CheckPermissionResponse, err error) {
 	userID := ""
 	if req.UserID != nil {
-		userID = string(*req.UserID)
+		userID = *req.UserID
 	}
+
 	resource := ""
 	if req.Resource != nil {
 		resource = *req.Resource
 	}
+
 	action := ""
 	if req.Action != nil {
 		action = *req.Action
@@ -764,6 +766,7 @@ func (s *IdentityServiceImpl) CheckPermission(
 		Resource:  req.Resource,
 		Action:    req.Action,
 	}
+
 	return resp, nil
 }
 
@@ -781,6 +784,7 @@ func (s *IdentityServiceImpl) SyncPolicies(ctx context.Context) (resp *identity_
 		RoleInheritanceCount: &result.RoleInheritanceCount,
 		Message:              &result.Message,
 	}
+
 	return resp, nil
 }
 
@@ -791,12 +795,14 @@ func (s *IdentityServiceImpl) GetUserDataScope(
 ) (resp *identity_srv.GetUserDataScopeResponse, err error) {
 	userID := ""
 	if req.UserID != nil {
-		userID = string(*req.UserID)
+		userID = *req.UserID
 	}
+
 	resource := ""
 	if req.Resource != nil {
 		resource = *req.Resource
 	}
+
 	action := ""
 	if req.Action != nil {
 		action = *req.Action
@@ -813,5 +819,6 @@ func (s *IdentityServiceImpl) GetUserDataScope(
 		Resource:  req.Resource,
 		Action:    req.Action,
 	}
+
 	return resp, nil
 }

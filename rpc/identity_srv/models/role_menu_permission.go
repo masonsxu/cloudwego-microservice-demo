@@ -111,8 +111,8 @@ type RoleMenuPermission struct {
 	BaseModel
 
 	RoleID         uuid.UUID          `gorm:"column:role_id;type:uuid;not null;index:idx_role_menu,unique;comment:角色ID"`
-	MenuID         string             `gorm:"column:menu_id;size:100;not null;index:idx_role_menu,unique;comment:语义化菜单ID"`
-	PermissionType MenuPermissionType `gorm:"column:permission_type;not null;default:1;comment:权限类型:0-无,1-查看,2-编辑,3-管理,4-完全控制"`
+	MenuID         string             `gorm:"column:menu_id;size:100;not null;index:idx_role_menu,unique;comment:菜单ID"`
+	PermissionType MenuPermissionType `gorm:"column:permission_type;not null;default:1;comment:权限类型:无/查看/编辑/管理/完全控制"`
 	DataScope      DataScope          `gorm:"column:data_scope;not null;default:1;comment:数据范围:0-无,1-所在组织,2-所有组织"`
 
 	// 关联
@@ -129,6 +129,7 @@ func (r *RoleMenuPermission) BeforeCreate(tx *gorm.DB) error {
 	if r.ID == uuid.Nil {
 		r.ID = uuid.New()
 	}
+
 	return nil
 }
 
@@ -140,6 +141,7 @@ func MergePermissionTypes(types ...MenuPermissionType) MenuPermissionType {
 			max = t
 		}
 	}
+
 	return max
 }
 
@@ -151,6 +153,7 @@ func MergeDataScopes(scopes ...DataScope) DataScope {
 			max = s
 		}
 	}
+
 	return max
 }
 
@@ -184,5 +187,6 @@ func MergeMenuPermissions(permissionLists ...[]MenuPermissionInfo) []MenuPermiss
 	for _, perm := range merged {
 		result = append(result, *perm)
 	}
+
 	return result
 }

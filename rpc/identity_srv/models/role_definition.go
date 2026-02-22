@@ -179,6 +179,7 @@ func (r *RoleDefinition) GetCasbinSubject() string {
 	if r.RoleCode != "" {
 		return r.RoleCode
 	}
+
 	return "role:" + r.ID.String()
 }
 
@@ -187,5 +188,6 @@ func (r *RoleDefinition) GetCasbinDomain() string {
 	if r.DepartmentID != nil {
 		return "dept:" + r.DepartmentID.String()
 	}
+
 	return "*" // 全院通用
 }

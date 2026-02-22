@@ -5,6 +5,7 @@ import (
 
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/base"
 	definitionDal "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/definition"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
@@ -231,7 +232,10 @@ func (l *LogicImpl) ListRoleDefinitions(
 	req *identity_srv.RoleDefinitionQueryRequest,
 ) (*identity_srv.RoleDefinitionListResponse, error) {
 	// 使用 Base Converter 转换分页参数
-	opts := l.converter.Base().PageRequestToQueryOptions(req.Page)
+	var opts *base.QueryOptions
+	if req != nil {
+		opts = l.converter.Base().PageRequestToQueryOptions(req.Page)
+	}
 
 	// 构建查询条件
 	conditions := &definitionDal.RoleDefinitionQueryConditions{

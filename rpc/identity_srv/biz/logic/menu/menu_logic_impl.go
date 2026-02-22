@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -151,11 +150,6 @@ func (l *LogicImpl) GetMenuTree(
 	}, nil
 }
 
-// getCurrentTimestamp 获取当前时间戳（毫秒）
-func getCurrentTimestamp() int64 {
-	return time.Now().UnixMilli()
-}
-
 // ConfigureRoleMenus 配置角色的菜单权限
 func (l *LogicImpl) ConfigureRoleMenus(
 	ctx context.Context,
@@ -202,6 +196,7 @@ func (l *LogicImpl) ConfigureRoleMenus(
 	}
 
 	successMsg := "菜单权限配置成功"
+
 	return &identity_srv.ConfigureRoleMenusResponse{
 		Success: convutil.BoolPtr(true),
 		Message: &successMsg,
@@ -514,6 +509,7 @@ func (l *LogicImpl) isSuperAdminRole(ctx context.Context, roleID string) (bool, 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return false, nil
 		}
+
 		return false, err
 	}
 
@@ -536,10 +532,12 @@ func (l *LogicImpl) checkSuperAdminRoles(ctx context.Context, roleIDs []string) 
 		if err != nil {
 			return false, err
 		}
+
 		if isSuperAdmin {
 			return true, nil
 		}
 	}
+
 	return false, nil
 }
 
@@ -591,7 +589,7 @@ func (l *LogicImpl) markMenuPermissions(
 	menuNodes []*identity_srv.MenuNode,
 	permMap map[string]models.MenuPermissionInfo,
 ) []*identity_srv.MenuNode {
-	var result []*identity_srv.MenuNode
+	result := make([]*identity_srv.MenuNode, 0, len(menuNodes))
 
 	for _, node := range menuNodes {
 		newNode := *node
@@ -656,6 +654,7 @@ func (l *LogicImpl) getAllMenusWithFullPermissions(
 	}
 
 	fullMenuTree := l.converter.Menu().ModelsToThrift(menuModels)
+
 	return l.markAllMenusWithFullPermission(fullMenuTree), nil
 }
 
@@ -667,6 +666,7 @@ func (l *LogicImpl) getAllMenusWithoutPermissionMarks(
 	if err != nil {
 		return nil, err
 	}
+
 	return l.converter.Menu().ModelsToThrift(menuModels), nil
 }
 
@@ -674,7 +674,7 @@ func (l *LogicImpl) getAllMenusWithoutPermissionMarks(
 func (l *LogicImpl) markAllMenusWithFullPermission(
 	menuNodes []*identity_srv.MenuNode,
 ) []*identity_srv.MenuNode {
-	var result []*identity_srv.MenuNode
+	result := make([]*identity_srv.MenuNode, 0, len(menuNodes))
 
 	for _, node := range menuNodes {
 		newNode := *node

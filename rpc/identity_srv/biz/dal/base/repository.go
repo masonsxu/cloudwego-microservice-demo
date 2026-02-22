@@ -74,6 +74,7 @@ func parseModelSchema[T any](db *gorm.DB) *modelSchema {
 		}
 		// 存储到缓存并返回
 		modelSchemaCache.Store(modelType, s)
+
 		return s
 	}
 
@@ -85,6 +86,7 @@ func parseModelSchema[T any](db *gorm.DB) *modelSchema {
 		if field.Name == "DeletedAt" {
 			s.hasSoftDelete = true
 			s.deletedAtColumn = field.DBName
+
 			break
 		}
 	}
@@ -189,11 +191,12 @@ func (opts *QueryOptions) WithOrder(orderBy string, desc bool) *QueryOptions {
 		validField := true
 
 		for _, char := range orderBy {
-			if !((char >= 'a' && char <= 'z') ||
-				(char >= 'A' && char <= 'Z') ||
-				(char >= '0' && char <= '9') ||
-				char == '_' || char == '.') {
+			if (char < 'a' || char > 'z') &&
+				(char < 'A' || char > 'Z') &&
+				(char < '0' || char > '9') &&
+				char != '_' && char != '.' {
 				validField = false
+
 				break
 			}
 		}

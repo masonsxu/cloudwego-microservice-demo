@@ -688,6 +688,7 @@ func BenchmarkMockEnumConverter_DataScope(b *testing.B) {
 
 	b.Run("ModelDataScopeToThrift", func(b *testing.B) {
 		b.ResetTimer()
+
 		for i := 0; i < b.N; i++ {
 			_ = mockEnumConv.ModelDataScopeToThrift(models.DataScopeOrg)
 		}
@@ -695,6 +696,7 @@ func BenchmarkMockEnumConverter_DataScope(b *testing.B) {
 
 	b.Run("ThriftDataScopeToModel", func(b *testing.B) {
 		b.ResetTimer()
+
 		for i := 0; i < b.N; i++ {
 			_ = mockEnumConv.ThriftDataScopeToModel(identity_srv.DataScope_ORG)
 		}

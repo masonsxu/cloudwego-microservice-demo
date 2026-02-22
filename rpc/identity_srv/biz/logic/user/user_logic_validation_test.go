@@ -275,10 +275,11 @@ func validateUsername(username string) bool {
 	}
 	// 检查是否只包含字母数字
 	for _, ch := range username {
-		if !((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9')) {
+		if (ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z') && (ch < '0' || ch > '9') {
 			return false
 		}
 	}
+
 	return true
 }
 
@@ -288,15 +289,18 @@ func validateEmail(email string) bool {
 	}
 	// 简单的邮箱验证：检查是否包含 @
 	atIndex := -1
+
 	for i, ch := range email {
 		if ch == '@' {
 			atIndex = i
 			break
 		}
 	}
+
 	if atIndex == -1 || atIndex == 0 || atIndex == len(email)-1 {
 		return false
 	}
+
 	return true
 }
 
@@ -304,6 +308,7 @@ func validatePhoneNumber(phone string) bool {
 	if phone == "" {
 		return true // 手机号可选
 	}
+
 	if len(phone) < 10 {
 		return false
 	}
@@ -313,6 +318,7 @@ func validatePhoneNumber(phone string) bool {
 			return false
 		}
 	}
+
 	return true
 }
 
@@ -320,6 +326,7 @@ func calculatePasswordStrength(password string) int {
 	if len(password) == 0 {
 		return 0
 	}
+
 	if len(password) < 8 {
 		return 0
 	}
@@ -346,12 +353,15 @@ func calculatePasswordStrength(password string) int {
 	if hasLower {
 		strength++
 	}
+
 	if hasUpper {
 		strength++
 	}
+
 	if hasDigit {
 		strength++
 	}
+
 	if hasSpecial {
 		strength++
 	}
@@ -382,23 +392,28 @@ func calculateTotalPages(totalItems, pageSize int) int {
 	if pageSize == 0 {
 		return 0
 	}
+
 	if totalItems == 0 {
 		return 0
 	}
+
 	pages := totalItems / pageSize
 	if totalItems%pageSize != 0 {
 		pages++
 	}
+
 	return pages
 }
 
 func sanitizeString(s string, maxLen int) string {
 	// 去除前后空格
 	start := 0
+
 	end := len(s)
 	for start < end && s[start] == ' ' {
 		start++
 	}
+
 	for end > start && s[end-1] == ' ' {
 		end--
 	}
@@ -407,11 +422,13 @@ func sanitizeString(s string, maxLen int) string {
 	// 压缩多个空格
 	result := ""
 	prevSpace := false
+
 	for _, ch := range trimmed {
 		if ch == ' ' {
 			if !prevSpace {
 				result += " "
 			}
+
 			prevSpace = true
 		} else {
 			result += string(ch)
@@ -423,6 +440,7 @@ func sanitizeString(s string, maxLen int) string {
 	if len(result) > maxLen {
 		return result[:maxLen]
 	}
+
 	return result
 }
 
@@ -430,9 +448,11 @@ func canDeleteUser(isSystemUser, hasActiveMemberships bool) bool {
 	if isSystemUser {
 		return false
 	}
+
 	if hasActiveMemberships {
 		return false
 	}
+
 	return true
 }
 

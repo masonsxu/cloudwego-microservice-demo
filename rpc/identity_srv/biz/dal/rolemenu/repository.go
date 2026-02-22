@@ -25,10 +25,14 @@ func (r *roleMenuPermissionRepository) Create(ctx context.Context, permission *m
 }
 
 // BatchCreate 批量创建角色菜单权限
-func (r *roleMenuPermissionRepository) BatchCreate(ctx context.Context, permissions []*models.RoleMenuPermission) error {
+func (r *roleMenuPermissionRepository) BatchCreate(
+	ctx context.Context,
+	permissions []*models.RoleMenuPermission,
+) error {
 	if len(permissions) == 0 {
 		return nil
 	}
+
 	return r.db.WithContext(ctx).CreateInBatches(permissions, 100).Error
 }
 
@@ -50,54 +54,77 @@ func (r *roleMenuPermissionRepository) DeleteByRoleID(ctx context.Context, roleI
 // GetByID 根据ID获取角色菜单权限
 func (r *roleMenuPermissionRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.RoleMenuPermission, error) {
 	var permission models.RoleMenuPermission
+
 	err := r.db.WithContext(ctx).First(&permission, "id = ?", id).Error
 	if err != nil {
 		return nil, err
 	}
+
 	return &permission, nil
 }
 
 // GetByRoleID 获取指定角色的所有菜单权限
-func (r *roleMenuPermissionRepository) GetByRoleID(ctx context.Context, roleID uuid.UUID) ([]*models.RoleMenuPermission, error) {
+func (r *roleMenuPermissionRepository) GetByRoleID(
+	ctx context.Context,
+	roleID uuid.UUID,
+) ([]*models.RoleMenuPermission, error) {
 	var permissions []*models.RoleMenuPermission
+
 	err := r.db.WithContext(ctx).
 		Where("role_id = ?", roleID).
 		Find(&permissions).Error
 	if err != nil {
 		return nil, err
 	}
+
 	return permissions, nil
 }
 
 // GetByRoleIDs 批量获取多个角色的菜单权限
-func (r *roleMenuPermissionRepository) GetByRoleIDs(ctx context.Context, roleIDs []uuid.UUID) ([]*models.RoleMenuPermission, error) {
+func (r *roleMenuPermissionRepository) GetByRoleIDs(
+	ctx context.Context,
+	roleIDs []uuid.UUID,
+) ([]*models.RoleMenuPermission, error) {
 	if len(roleIDs) == 0 {
 		return []*models.RoleMenuPermission{}, nil
 	}
+
 	var permissions []*models.RoleMenuPermission
+
 	err := r.db.WithContext(ctx).
 		Where("role_id IN ?", roleIDs).
 		Find(&permissions).Error
 	if err != nil {
 		return nil, err
 	}
+
 	return permissions, nil
 }
 
 // GetByRoleAndMenu 获取指定角色和菜单的权限
-func (r *roleMenuPermissionRepository) GetByRoleAndMenu(ctx context.Context, roleID uuid.UUID, menuID string) (*models.RoleMenuPermission, error) {
+func (r *roleMenuPermissionRepository) GetByRoleAndMenu(
+	ctx context.Context,
+	roleID uuid.UUID,
+	menuID string,
+) (*models.RoleMenuPermission, error) {
 	var permission models.RoleMenuPermission
+
 	err := r.db.WithContext(ctx).
 		Where("role_id = ? AND menu_id = ?", roleID, menuID).
 		First(&permission).Error
 	if err != nil {
 		return nil, err
 	}
+
 	return &permission, nil
 }
 
 // SyncRoleMenus 同步角色菜单权限（先删除旧的，再创建新的）
-func (r *roleMenuPermissionRepository) SyncRoleMenus(ctx context.Context, roleID uuid.UUID, permissions []*models.RoleMenuPermission) error {
+func (r *roleMenuPermissionRepository) SyncRoleMenus(
+	ctx context.Context,
+	roleID uuid.UUID,
+	permissions []*models.RoleMenuPermission,
+) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		// 1. 删除角色的所有旧权限（使用硬删除，避免唯一索引冲突）
 		if err := tx.Unscoped().Delete(&models.RoleMenuPermission{}, "role_id = ?", roleID).Error; err != nil {
@@ -110,6 +137,7 @@ func (r *roleMenuPermissionRepository) SyncRoleMenus(ctx context.Context, roleID
 			for _, perm := range permissions {
 				perm.RoleID = roleID
 			}
+
 			if err := tx.CreateInBatches(permissions, 100).Error; err != nil {
 				return err
 			}
@@ -122,6 +150,7 @@ func (r *roleMenuPermissionRepository) SyncRoleMenus(ctx context.Context, roleID
 // GetMenuIDsByRoleID 获取指定角色有权限的菜单ID列表
 func (r *roleMenuPermissionRepository) GetMenuIDsByRoleID(ctx context.Context, roleID uuid.UUID) ([]string, error) {
 	var menuIDs []string
+
 	err := r.db.WithContext(ctx).
 		Model(&models.RoleMenuPermission{}).
 		Where("role_id = ?", roleID).
@@ -129,6 +158,7 @@ func (r *roleMenuPermissionRepository) GetMenuIDsByRoleID(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
+
 	return menuIDs, nil
 }
 
@@ -137,7 +167,9 @@ func (r *roleMenuPermissionRepository) GetMenuIDsByRoleIDs(ctx context.Context, 
 	if len(roleIDs) == 0 {
 		return []string{}, nil
 	}
+
 	var menuIDs []string
+
 	err := r.db.WithContext(ctx).
 		Model(&models.RoleMenuPermission{}).
 		Where("role_id IN ?", roleIDs).
@@ -146,12 +178,19 @@ func (r *roleMenuPermissionRepository) GetMenuIDsByRoleIDs(ctx context.Context, 
 	if err != nil {
 		return nil, err
 	}
+
 	return menuIDs, nil
 }
 
 // HasPermission 检查角色是否具有指定菜单的指定权限
-func (r *roleMenuPermissionRepository) HasPermission(ctx context.Context, roleID uuid.UUID, menuID string, permissionType models.MenuPermissionType) (bool, error) {
+func (r *roleMenuPermissionRepository) HasPermission(
+	ctx context.Context,
+	roleID uuid.UUID,
+	menuID string,
+	permissionType models.MenuPermissionType,
+) (bool, error) {
 	var count int64
+
 	err := r.db.WithContext(ctx).
 		Model(&models.RoleMenuPermission{}).
 		Where("role_id = ? AND menu_id = ? AND permission_type >= ?", roleID, menuID, permissionType).
@@ -159,11 +198,15 @@ func (r *roleMenuPermissionRepository) HasPermission(ctx context.Context, roleID
 	if err != nil {
 		return false, err
 	}
+
 	return count > 0, nil
 }
 
 // GetMergedPermissions 获取多个角色的合并权限（每个菜单取最高权限）
-func (r *roleMenuPermissionRepository) GetMergedPermissions(ctx context.Context, roleIDs []uuid.UUID) ([]models.MenuPermissionInfo, error) {
+func (r *roleMenuPermissionRepository) GetMergedPermissions(
+	ctx context.Context,
+	roleIDs []uuid.UUID,
+) ([]models.MenuPermissionInfo, error) {
 	if len(roleIDs) == 0 {
 		return []models.MenuPermissionInfo{}, nil
 	}

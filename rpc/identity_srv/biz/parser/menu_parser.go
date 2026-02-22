@@ -102,7 +102,15 @@ func ParseAndFlattenMenu(yamlContent string, productLine string, version int) ([
 	flatList := make([]*models.Menu, 0)
 	semanticIDSet := make(map[string]bool) // 用于检测同一版本中的重复语义ID
 
-	if err := flattenNodes(container.Menu, nil, productLine, version, contentHash, &flatList, semanticIDSet); err != nil {
+	if err := flattenNodes(
+		container.Menu,
+		nil,
+		productLine,
+		version,
+		contentHash,
+		&flatList,
+		semanticIDSet,
+	); err != nil {
 		return nil, "", err
 	}
 
@@ -159,7 +167,15 @@ func flattenNodes(
 
 		if len(node.Children) > 0 {
 			// 递归调用子节点，并将当前节点的新ID作为其父ID传入
-			if err := flattenNodes(node.Children, &newID, productLine, version, contentHash, flatList, semanticIDSet); err != nil {
+			if err := flattenNodes(
+				node.Children,
+				&newID,
+				productLine,
+				version,
+				contentHash,
+				flatList,
+				semanticIDSet,
+			); err != nil {
 				return err
 			}
 		}

@@ -42,10 +42,12 @@ func (c *ConverterImpl) ModelToThrift(
 
 	// 转换父角色ID和部门ID
 	var parentRoleID, departmentID *string
+
 	if model.ParentRoleID != nil {
 		s := model.ParentRoleID.String()
 		parentRoleID = &s
 	}
+
 	if model.DepartmentID != nil {
 		s := model.DepartmentID.String()
 		departmentID = &s
@@ -85,5 +87,6 @@ func (c *ConverterImpl) ModelsToThrift(
 			result = append(result, thrift)
 		}
 	}
+
 	return result
 }

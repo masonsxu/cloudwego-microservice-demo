@@ -154,25 +154,31 @@ func extractInt64Claim(claims jwt.MapClaims, key string) (int64, bool) {
 // extractStringSliceClaim 从claims中提取字符串切片值
 // JWT claims 在解码后可能将 []string 表示为 []interface{}
 func extractStringSliceClaim(claims jwt.MapClaims, key string) ([]string, bool) {
-	if value, exists := claims[key]; exists {
-		// 直接尝试 []string 类型
-		if strSlice, ok := value.([]string); ok && len(strSlice) > 0 {
-			return strSlice, true
-		}
+	value, exists := claims[key]
+	if !exists {
+		return nil, false
+	}
 
-		// JWT 解码后通常是 []interface{} 类型
-		if ifaceSlice, ok := value.([]interface{}); ok && len(ifaceSlice) > 0 {
-			result := make([]string, 0, len(ifaceSlice))
-			for _, item := range ifaceSlice {
-				if str, ok := item.(string); ok {
-					result = append(result, str)
-				}
-			}
+	// 直接尝试 []string 类型
+	if strSlice, ok := value.([]string); ok && len(strSlice) > 0 {
+		return strSlice, true
+	}
 
-			if len(result) > 0 {
-				return result, true
-			}
+	// JWT 解码后通常是 []interface{} 类型
+	ifaceSlice, ok := value.([]interface{})
+	if !ok || len(ifaceSlice) == 0 {
+		return nil, false
+	}
+
+	result := make([]string, 0, len(ifaceSlice))
+	for _, item := range ifaceSlice {
+		if str, ok := item.(string); ok {
+			result = append(result, str)
 		}
+	}
+
+	if len(result) > 0 {
+		return result, true
 	}
 
 	return nil, false
