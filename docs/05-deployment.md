@@ -4,7 +4,7 @@
 
 ## 目录
 
-- [Docker 部署](#docker-部署)
+- [容器部署](#容器部署)
 - [部署命令参考](#部署命令参考)
 - [生产环境配置](#生产环境配置)
 - [生产环境检查清单](#生产环境检查清单)
@@ -12,13 +12,13 @@
 
 ---
 
-## Docker 部署
+## 容器部署
 
 ### 开发环境
 
 ```bash
 # 1. 启动基础设施
-cd docker && ./deploy.sh up
+cd docker && podman-compose up -d
 
 # 2. 启动 RPC 服务（新终端）
 cd rpc/identity_srv
@@ -31,10 +31,10 @@ cp .env.example .env
 sh build.sh && sh output/bootstrap.sh
 
 # 查看基础设施状态
-./deploy.sh ps
+podman-compose ps
 
 # 查看日志
-./deploy.sh logs
+podman-compose logs -f
 ```
 
 ### 生产环境
@@ -48,19 +48,19 @@ sh build.sh && sh output/bootstrap.sh
 ### 基础设施管理
 
 ```bash
-./deploy.sh up              # 启动基础设施
-./deploy.sh down            # 停止基础设施
-./deploy.sh restart         # 重启基础设施
-./deploy.sh ps              # 查看服务状态
-./deploy.sh clean           # 清理环境（删除数据）
+podman-compose up -d                    # 启动基础设施
+podman-compose down                     # 停止基础设施
+podman-compose restart                  # 重启基础设施
+podman-compose ps                       # 查看服务状态
+podman-compose down -v --remove-orphans # 清理环境（删除数据）
 ```
 
 ### 日志查看
 
 ```bash
-./deploy.sh logs            # 所有日志
-./deploy.sh logs postgres   # 特定服务日志
-./deploy.sh logs redis      # Redis 日志
+podman-compose logs -f            # 所有日志
+podman-compose logs -f postgres   # 特定服务日志
+podman-compose logs -f redis      # Redis 日志
 ```
 
 ---

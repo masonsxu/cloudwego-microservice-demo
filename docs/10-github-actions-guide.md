@@ -63,7 +63,7 @@
 golangci-lint run --disable-all --enable goimports,go vet
 
 # 2. 运行测试（需要基础设施）
-cd docker && ./deploy.sh up
+cd docker && podman-compose up -d
 cd rpc/identity_srv && go test ./... -v
 cd gateway && go test ./... -v
 

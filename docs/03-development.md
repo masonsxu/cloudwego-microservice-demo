@@ -260,7 +260,7 @@ Handler 层: errno.ToKitexError() → BizStatusError
 
 ```bash
 # 1. 启动基础设施（PostgreSQL、etcd、Redis、RustFS、Jaeger）
-cd docker && ./deploy.sh up
+cd docker && podman-compose up -d
 
 # 2. 启动 RPC 服务（新终端）
 cd rpc/identity_srv && sh build.sh && sh output/bootstrap.sh
@@ -269,9 +269,9 @@ cd rpc/identity_srv && sh build.sh && sh output/bootstrap.sh
 cd gateway && sh build.sh && sh output/bootstrap.sh
 
 # 基础设施管理
-./deploy.sh down            # 停止基础设施
-./deploy.sh ps              # 查看状态
-./deploy.sh logs            # 查看日志
+podman-compose down               # 停止基础设施
+podman-compose ps                 # 查看状态
+podman-compose logs -f            # 查看日志
 ```
 
 ### 测试命令

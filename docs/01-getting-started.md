@@ -7,10 +7,10 @@
 | 依赖 | 版本 | 下载链接 |
 |------|------|----------|
 | Go | 1.24+ | [下载](https://go.dev/dl/) |
-| Docker | 20.10+ | [安装](https://docs.docker.com/get-docker/) |
-| Docker Compose | 2.0+ | [安装](https://docs.docker.com/compose/install/) |
+| Podman | 4.0+ | [安装](https://podman.io/getting-started/installation) |
+| podman-compose | latest | `pip3 install podman-compose` |
 
-## Docker 快速启动（推荐）
+## 快速启动（推荐）
 
 这是最简单的启动方式，适合快速体验和开发。
 
@@ -20,7 +20,7 @@ git clone https://github.com/masonsxu/cloudwego-microservice-demo.git
 cd cloudwego-microservice-demo
 
 # 2. 启动基础设施（PostgreSQL、etcd、Redis、RustFS、Jaeger）
-cd docker && ./deploy.sh up
+cd docker && podman-compose up -d
 
 # 3. 启动 RPC 服务（新终端）
 cd rpc/identity_srv
@@ -49,11 +49,11 @@ curl http://localhost:8080/ping
 ### 常用基础设施命令
 
 ```bash
-./deploy.sh up          # 启动基础设施
-./deploy.sh down        # 停止基础设施
-./deploy.sh ps          # 查看服务状态
-./deploy.sh logs        # 查看日志
-./deploy.sh logs postgres  # 查看特定服务日志
+podman-compose up -d              # 启动基础设施
+podman-compose down               # 停止基础设施
+podman-compose ps                 # 查看服务状态
+podman-compose logs -f            # 查看日志
+podman-compose logs -f postgres   # 查看特定服务日志
 ```
 
 ## 本地开发模式
@@ -76,7 +76,7 @@ export PATH=$PATH:$(go env GOPATH)/bin
 
 ```bash
 cd docker
-./deploy.sh up-base
+podman-compose up -d
 ```
 
 ### 3. 启动 RPC 服务

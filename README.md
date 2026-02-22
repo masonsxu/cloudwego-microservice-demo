@@ -145,8 +145,8 @@ graph TD
 ### 环境要求
 
 - Go 1.24+
-- Docker 20.10+
-- Docker Compose 2.0+
+- Docker 20.10+ / Podman 4.0+
+- Docker Compose 2.0+ / podman-compose
 
 ### 使用 Docker 运行
 
@@ -156,7 +156,7 @@ git clone https://github.com/masonsxu/cloudwego-microservice-demo.git
 cd cloudwego-microservice-demo
 
 # 2. 启动基础设施（PostgreSQL、etcd、Redis、RustFS、Jaeger）
-cd docker && ./deploy.sh up
+cd docker && podman-compose up -d
 
 # 3. 启动 RPC 服务（新终端）
 cd rpc/identity_srv && sh build.sh && sh output/bootstrap.sh

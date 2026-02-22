@@ -5,10 +5,10 @@
 # 包含：PostgreSQL、etcd、Redis、RustFS、Jaeger
 #
 # 使用方式：
-#   ./deploy.sh up      # 启动所有基础设施服务
-#   ./deploy.sh down    # 停止所有服务
-#   ./deploy.sh ps      # 查看服务状态
-#   ./deploy.sh logs    # 查看日志
+#   cd docker && podman-compose up -d     # 启动所有基础设施服务
+#   cd docker && podman-compose down       # 停止所有服务
+#   cd docker && podman-compose ps         # 查看服务状态
+#   cd docker && podman-compose logs -f    # 查看日志
 #
 # 注意：Go 应用服务请在本地启动调试
 # =============================================================================

@@ -7,7 +7,7 @@
 - [服务启动问题](#服务启动问题)
 - [代码生成问题](#代码生成问题)
 - [运行时问题](#运行时问题)
-- [Docker 环境问题](#docker-环境问题)
+- [容器环境问题](#容器环境问题)
 - [性能问题](#性能问题)
 - [日志和调试](#日志和调试)
 - [常见问题 FAQ](#常见问题-faq)
@@ -34,8 +34,8 @@ kill -9 $(lsof -t -i:8891)
 # 或修改服务端口（在 .env 文件中）
 SERVER_ADDRESS=:8893
 
-# Docker 环境清理
-cd docker && ./deploy.sh down && ./deploy.sh up
+# Docker/Podman 环境清理
+cd docker && podman-compose down && podman-compose up -d
 ```
 
 ### 数据库连接失败
@@ -51,7 +51,7 @@ dial tcp 127.0.0.1:5432: connect: connection refused
 
 ```bash
 # 检查 PostgreSQL 是否运行
-cd docker && ./deploy.sh ps
+cd docker && podman-compose ps
 
 # 检查端口监听
 lsof -i :5432
@@ -62,7 +62,7 @@ psql -h localhost -p 5432 -U postgres -d identity_srv
 
 **解决方法**：
 
-1. 启动数据库：`cd docker && ./deploy.sh up-base`
+1. 启动数据库：`cd docker && podman-compose up -d`
 2. 检查 `.env` 配置中的 `DB_HOST`、`DB_PORT`、`DB_PASSWORD`
 3. 创建数据库（如果不存在）：
    ```sql
@@ -82,7 +82,7 @@ context deadline exceeded
 
 ```bash
 # 检查 etcd 状态
-cd docker && ./deploy.sh ps
+cd docker && podman-compose ps
 
 # 测试连接
 curl http://localhost:2379/version
@@ -90,7 +90,7 @@ curl http://localhost:2379/version
 
 **解决方法**：
 
-1. 启动 etcd：`cd docker && ./deploy.sh up-base`
+1. 启动 etcd：`cd docker && podman-compose up -d`
 2. 检查 `ETCD_ADDRESS` 配置
 
 ---
@@ -177,7 +177,7 @@ dial tcp 127.0.0.1:6379: connect: connection refused
 
 ```bash
 # 检查 Redis 是否运行
-cd docker && ./deploy.sh ps
+cd docker && podman-compose ps
 
 # 测试连接
 redis-cli -h localhost -p 6379 ping
@@ -185,7 +185,7 @@ redis-cli -h localhost -p 6379 ping
 
 **解决方法**：
 
-1. 启动 Redis：`cd docker && ./deploy.sh up-base`
+1. 启动 Redis：`cd docker && podman-compose up -d`
 2. 检查 `.env` 配置中的 `REDIS_HOST`、`REDIS_PORT`
 
 ### RPC 调用超时
@@ -200,10 +200,10 @@ rpc timeout: deadline exceeded
 
 ```bash
 # 检查服务是否运行
-cd docker && ./deploy.sh ps
+cd docker && podman-compose ps
 
 # 查看日志
-docker logs -f backend-identity_srv-1
+podman logs -f backend-identity_srv-1
 ```
 
 **解决方法**：
@@ -214,7 +214,7 @@ docker logs -f backend-identity_srv-1
    ```
 2. 检查服务注册：
    ```bash
-   docker exec etcd etcdctl get --prefix /kitex
+   podman exec etcd etcdctl get --prefix /kitex
    ```
 
 ### JWT 认证失败
@@ -238,7 +238,7 @@ token is expired
 
 ---
 
-## Docker 环境问题
+## 容器环境问题
 
 ### 容器启动后立即退出
 
@@ -246,13 +246,13 @@ token is expired
 
 ```bash
 # 查看容器状态
-docker ps -a | grep cloudwego
+podman ps -a | grep cloudwego
 
 # 查看退出码
-docker inspect identity-srv | grep ExitCode
+podman inspect identity-srv | grep ExitCode
 
 # 查看日志
-./deploy.sh logs identity_srv
+podman-compose logs -f identity_srv
 ```
 
 **常见原因**：
@@ -267,7 +267,7 @@ docker inspect identity-srv | grep ExitCode
 
 ```bash
 # 检查网络
-docker network ls
+podman network ls
 
 # 容器内部使用服务名
 DB_HOST=postgres       # 而不是 127.0.0.1
@@ -307,7 +307,7 @@ SERVER_DEBUG=true
 
 ```bash
 # 查看容器资源
-docker stats
+podman stats
 ```
 
 **解决方法**：
@@ -324,9 +324,9 @@ docker stats
 
 ```bash
 # 基础设施日志
-cd docker && ./deploy.sh logs
-./deploy.sh logs postgres       # PostgreSQL 日志
-./deploy.sh logs redis          # Redis 日志
+cd docker && podman-compose logs -f
+podman-compose logs -f postgres    # PostgreSQL 日志
+podman-compose logs -f redis       # Redis 日志
 
 # 应用服务日志（查看终端输出）
 # RPC 服务和网关服务日志直接输出到启动终端
@@ -394,4 +394,4 @@ A:
 2. 提交新 Issue 并附上：
    - 错误信息
    - 复现步骤
-   - 环境信息（Go 版本、Docker 版本等）
+   - 环境信息（Go 版本、Podman 版本等）
