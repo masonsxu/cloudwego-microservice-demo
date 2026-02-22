@@ -94,7 +94,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:15-alpine
+        image: postgres:17-alpine
         env:
           POSTGRES_DB: identity_db_test
           POSTGRES_USER: test_user
@@ -118,7 +118,7 @@ jobs:
           --health-retries 5
 
       etcd:
-        image: bitnami/etcd:3.5
+        image: bitnami/etcd:latest
         env:
           ALLOW_NONE_AUTHENTICATION: "yes"
         ports:
