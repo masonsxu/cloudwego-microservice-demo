@@ -121,7 +121,7 @@
             position: relative;
             display: inline-block;
         }
-        
+
         .date::before, .date::after {
             content: '';
             position: absolute;
@@ -234,7 +234,7 @@
             fill: var(--c-accent);
             animation: float 4s ease-in-out infinite;
         }
-        
+
         /* SVG Specifics */
         .constellation-lines {
             stroke: url(#lineGradient);
@@ -269,10 +269,10 @@
                     </feMerge>
                 </filter>
             </defs>
-            
+
             <g transform="translate(50, 100) scale(0.8)">
                 <path class="constellation-lines" d="M 60,80 L 140,50 L 220,90 L 280,180 L 240,250 L 120,260 L 60,180 L 60,80 M 280,180 L 320,160" />
-                
+
                 <circle cx="60" cy="80" r="3" class="star" style="animation-delay: 0.1s" fill="var(--c-text-main)" filter="url(#glow)"/>
                 <circle cx="140" cy="50" r="4" class="star" style="animation-delay: 0.3s" fill="var(--c-text-main)" filter="url(#glow)"/>
                 <circle cx="220" cy="90" r="3" class="star" style="animation-delay: 0.5s" fill="var(--c-accent)"/>

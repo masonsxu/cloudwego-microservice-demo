@@ -191,15 +191,15 @@ cloudwego-microservice-demo/
 
 详细文档请查看 [docs/](docs/README.md)：
 
-- [快速开始](docs/01-getting-started.md)
-- [架构设计](docs/02-architecture.md)
-- [开发指南](docs/03-development.md)
-- [配置参考](docs/04-configuration.md)
-- [部署指南](docs/05-deployment.md)
-- [故障排查](docs/06-troubleshooting.md)
-- [权限管理](docs/07-permission-management.md)
-- [奢华摩羯座配色规范](docs/08-capricorn-theme-guide.md)
-- [测试指南](docs/09-testing-guide.md)
+- [快速开始](docs/01-快速入门/快速开始.md)
+- [架构设计](docs/00-项目概览/架构设计.md)
+- [开发指南](docs/02-开发规范/开发指南.md)
+- [配置参考](docs/01-快速入门/配置参考.md)
+- [部署指南](docs/03-部署运维/部署指南.md)
+- [故障排查](docs/03-部署运维/故障排查.md)
+- [权限管理](docs/04-权限管理/权限管理设计.md)
+- [奢华摩羯座配色规范](docs/05-UI设计/配色规范.md)
+- [测试指南](docs/02-开发规范/测试指南.md)
 
 ## 测试
 
@@ -229,7 +229,7 @@ go tool cover -html=coverage.out
 | biz/dal | 0.0% | ❌ |
 | biz/logic | 0.0% | ❌ |
 
-详细的测试指南请参考 [测试文档](docs/09-testing-guide.md)。
+详细的测试指南请参考 [测试文档](docs/02-开发规范/测试指南.md)。
 
 ## 许可证
 

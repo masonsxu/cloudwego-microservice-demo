@@ -1,3 +1,9 @@
+---
+name: write-tests
+description: 按项目规范编写测试用例
+argument-hint: <target-path>
+---
+
 # 按项目规范编写测试
 
 为指定代码路径按照项目测试规范编写测试用例。
@@ -10,7 +16,7 @@
 
 ### Step 1: 读取测试规范
 
-先读取 `docs/09-testing-guide.md`，了解：
+先读取 `docs/02-开发规范/测试指南.md`，了解：
 - 分层测试策略
 - 覆盖率目标
 - 测试命名规范
@@ -66,7 +72,7 @@ go test <target_package> -coverprofile=coverage.out
 go tool cover -func=coverage.out
 ```
 
-确认测试全部通过，覆盖率达到 `docs/09-testing-guide.md` 中的目标。
+确认测试全部通过，覆盖率达到 `docs/02-开发规范/测试指南.md` 中的目标。
 
 ### Step 6: 代码检查
 

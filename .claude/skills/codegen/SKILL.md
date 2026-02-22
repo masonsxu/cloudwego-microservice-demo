@@ -1,3 +1,9 @@
+---
+name: codegen
+description: 执行代码生成（Kitex/Hertz/Wire，支持自动检测）
+argument-hint: "[kitex|hertz|wire|all]"
+---
+
 # 执行代码生成
 
 统一入口执行 Kitex / Hertz / Wire 代码生成，支持自动检测或手动指定。
@@ -81,7 +87,7 @@ cd gateway && go build ./...
 - 执行了哪些生成步骤
 - 各步骤是否成功
 - 编译验证结果
-- 如有失败，给出修复建议（可参考 `docs/06-troubleshooting.md`）
+- 如有失败，给出修复建议（可参考 `docs/03-部署运维/故障排查.md`）
 
 ---
 
@@ -89,4 +95,4 @@ cd gateway && go build ./...
 
 - **禁止手动修改** `kitex_gen/` 目录下的任何文件
 - 代码生成脚本需要 `kitex`、`thriftgo`、`hz` 命令行工具已安装
-- 如果遇到代码生成错误，读取 `docs/06-troubleshooting.md` 中的排查指南
+- 如果遇到代码生成错误，读取 `docs/03-部署运维/故障排查.md` 中的排查指南

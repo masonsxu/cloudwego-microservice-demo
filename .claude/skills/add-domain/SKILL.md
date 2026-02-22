@@ -1,3 +1,9 @@
+---
+name: add-domain
+description: 创建新业务领域模块骨架（Model→DAL→Converter→Logic→Wire）
+argument-hint: <domain-name>
+---
+
 # 创建新业务领域模块
 
 为 RPC 服务创建完整的业务领域目录结构和骨架代码，并集成到三个聚合接口。
@@ -101,7 +107,7 @@ cd rpc/identity_srv && go vet ./...
 
 ## 注意事项
 
-- 先读取 `docs/02-architecture.md` 和 `docs/03-development.md` 了解架构和开发规范
+- 先读取 `docs/00-项目概览/架构设计.md` 和 `docs/02-开发规范/开发指南.md` 了解架构和开发规范
 - 命名规范：接口无 `I` 前缀，实现加 `Impl` 后缀
 - 导入顺序：标准库 → 第三方库 → 项目内部包
 - 错误码：按 `A-BB-CCC` 格式在 `pkg/errno/` 中定义新领域错误码

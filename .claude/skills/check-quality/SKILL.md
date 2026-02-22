@@ -1,3 +1,9 @@
+---
+name: check-quality
+description: 代码质量检查（编译、Lint、测试覆盖率、架构合规）
+argument-hint: "[scope]"
+---
+
 # 代码质量检查
 
 依次执行全套代码质量检查，输出综合报告和改进建议。
@@ -43,7 +49,7 @@ cd rpc/identity_srv && go test ./... -coverprofile=coverage.out && go tool cover
 cd gateway && go test ./... -coverprofile=coverage.out && go tool cover -func=coverage.out | grep total
 ```
 
-先读取 `docs/09-testing-guide.md` 中的覆盖率目标，对比实际覆盖率。
+先读取 `docs/02-开发规范/测试指南.md` 中的覆盖率目标，对比实际覆盖率。
 
 ### Step 5: 架构合规检查
 
@@ -77,8 +83,8 @@ cd gateway && go test ./... -coverprofile=coverage.out && go tool cover -func=co
 ## 代码质量检查报告
 
 ### 编译状态
-- rpc/identity_srv: ✅ / ❌
-- gateway: ✅ / ❌
+- rpc/identity_srv: pass / fail
+- gateway: pass / fail
 
 ### Lint 检查
 - rpc/identity_srv: X 个告警
@@ -102,5 +108,5 @@ cd gateway && go test ./... -coverprofile=coverage.out && go tool cover -func=co
 ## 注意事项
 
 - 检查过程中如遇到编译错误，仍继续执行后续检查步骤
-- 覆盖率目标以 `docs/09-testing-guide.md` 中的定义为准
+- 覆盖率目标以 `docs/02-开发规范/测试指南.md` 中的定义为准
 - 架构合规检查通过代码搜索完成，不需要运行额外工具

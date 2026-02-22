@@ -1,3 +1,9 @@
+---
+name: diagnose
+description: 根据错误信息进行分类诊断，定位根因并给出修复方案
+argument-hint: "<error message>"
+---
+
 # 故障诊断
 
 根据错误信息进行分类诊断，定位根因并给出修复方案。
@@ -10,7 +16,7 @@
 
 ### Step 1: 读取排查指南
 
-先读取 `docs/06-troubleshooting.md` 获取完整排查参考。
+先读取 `docs/03-部署运维/故障排查.md` 获取完整排查参考。
 
 ### Step 2: 错误分类
 
@@ -37,7 +43,7 @@
 - 排查方向：
   1. 检查基础设施是否启动：`cd docker && podman-compose ps`
   2. 检查端口：PostgreSQL(5432)、etcd(2379)、Redis(6379)、RPC(8891)、Gateway(8080)
-  3. 检查环境变量配置（读取 `docs/04-configuration.md`）
+  3. 检查环境变量配置（读取 `docs/01-快速入门/配置参考.md`）
   4. 检查服务注册发现（etcd）
 
 #### Lint/格式错误
@@ -57,7 +63,7 @@
 #### 权限/认证错误
 - 特征：`401 Unauthorized`、`403 Forbidden`、Casbin 相关
 - 排查方向：
-  1. 读取 `docs/07-permission-management.md`
+  1. 读取 `docs/04-权限管理/权限管理设计.md`
   2. 检查 JWT Token 配置
   3. 检查 Casbin 策略配置
   4. 检查中间件执行顺序
@@ -81,6 +87,6 @@
 
 ## 注意事项
 
-- 不确定时多读文档，尤其是 `docs/06-troubleshooting.md`
-- 配置相关问题参考 `docs/04-configuration.md`
-- 权限相关问题参考 `docs/07-permission-management.md`
+- 不确定时多读文档，尤其是 `docs/03-部署运维/故障排查.md`
+- 配置相关问题参考 `docs/01-快速入门/配置参考.md`
+- 权限相关问题参考 `docs/04-权限管理/权限管理设计.md`

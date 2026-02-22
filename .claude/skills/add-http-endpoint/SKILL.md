@@ -1,3 +1,9 @@
+---
+name: add-http-endpoint
+description: 添加新 HTTP 端点（IDL→网关层全流程）
+argument-hint: <METHOD /api/v1/path>
+---
+
 # 添加新 HTTP 端点
 
 端到端引导在网关层添加新的 HTTP 端点，前提是对应的 RPC 接口已存在。
@@ -73,7 +79,7 @@ cd gateway && ./script/gen_hertz_code.sh <service>
 ### Step 8: 权限配置
 
 如果端点需要 Casbin 权限控制：
-1. 先读取 `docs/07-permission-management.md` 了解权限体系
+1. 先读取 `docs/04-权限管理/权限管理设计.md` 了解权限体系
 2. 配置 Casbin 策略（角色 → 资源 → 操作的映射）
 3. 确认中间件执行顺序：JWT → Casbin
 
@@ -89,7 +95,7 @@ cd gateway && golangci-lint run
 
 ## 注意事项
 
-- 先读取 `docs/03-development.md` 了解完整开发规范
+- 先读取 `docs/02-开发规范/开发指南.md` 了解完整开发规范
 - 中间件执行顺序：OpenTelemetry → RequestID → ResponseHeader → Trace → CORS → ErrorHandler → JWT → Casbin → ETag
 - 不使用 YAML 配置文件，配置通过环境变量管理
 - 导入顺序：标准库 → 第三方库 → 项目内部包

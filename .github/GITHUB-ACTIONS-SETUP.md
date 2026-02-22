@@ -57,7 +57,7 @@ coverage:
 - `*_test.go` - 测试文件
 - `wire*.go` - Wire 生成代码
 
-### 3. **使用文档** (`docs/10-github-actions-guide.md`)
+### 3. **使用文档** (`docs/03-部署运维/CI-CD指南.md`)
 
 完整的使用指南，包括：
 - 📋 Workflow 概览
@@ -144,7 +144,7 @@ git push origin main
 
 ## 🔗 相关链接
 
-- **测试指南**: [docs/09-testing-guide.md](docs/09-testing-guide.md)
+- **测试指南**: [docs/02-开发规范/测试指南.md](docs/02-开发规范/测试指南.md)
 - **测试进度**: [docs/TESTING-PROGRESS.md](docs/TESTING-PROGRESS.md)
 - **工作总结**: [docs/TESTING-SUMMARY.md](docs/TESTING-SUMMARY.md)
 
@@ -159,4 +159,4 @@ git push origin main
 
 ---
 
-**提示**：查看完整使用指南：[docs/10-github-actions-guide.md](docs/10-github-actions-guide.md) 📖
+**提示**：查看完整使用指南：[docs/03-部署运维/CI-CD指南.md](docs/03-部署运维/CI-CD指南.md) 📖

@@ -1,3 +1,9 @@
+---
+name: add-rpc-method
+description: 端到端添加新 RPC 接口（IDL→全层实现）
+argument-hint: <MethodName>
+---
+
 # 添加新 RPC 接口方法
 
 端到端引导新增 RPC 接口，覆盖从 IDL 定义到全层实现的完整流程。
@@ -85,7 +91,7 @@ cd rpc/identity_srv && golangci-lint run
 
 ### Step 7: 编写测试
 
-按 `docs/09-testing-guide.md` 规范为新代码编写测试：
+按 `docs/02-开发规范/测试指南.md` 规范为新代码编写测试：
 - Converter 层：纯函数测试，参考 `biz/converter/user/user_profile_test.go`
 - Logic 层：mock DAL 测试，参考 `biz/logic/user/user_logic_validation_test.go`
 - 测试命名：`Test<InterfaceName>_<MethodName>`
@@ -94,7 +100,7 @@ cd rpc/identity_srv && golangci-lint run
 
 ## 注意事项
 
-- 先读取 `docs/03-development.md` 了解完整开发规范
+- 先读取 `docs/02-开发规范/开发指南.md` 了解完整开发规范
 - 错误码格式 `A-BB-CCC`，参考 `rpc/identity_srv/pkg/errno/` 已有定义
 - 导入顺序：标准库 → 第三方库 → 项目内部包
 - 最大行长度 120 字符

@@ -191,16 +191,16 @@ Logo 存储有两个端点：
 
 | 文档 | 适用场景 |
 |------|----------|
-| `docs/01-getting-started.md` | 首次搭建环境、启动服务、验证基础设施 |
-| `docs/02-architecture.md` | 理解整体架构、服务间关系、数据模型设计、技术选型决策 |
-| `docs/03-development.md` | IDL-First 开发流程、代码生成、分层实现规范、Wire 依赖注入、错误处理 |
-| `docs/04-configuration.md` | 环境变量配置、数据库/Redis/JWT/S3 参数、多环境配置差异 |
-| `docs/05-deployment.md` | Docker 部署、生产环境配置、服务端口、部署检查清单 |
-| `docs/06-troubleshooting.md` | 服务启动失败、代码生成报错、运行时异常、Docker 问题、性能排查 |
-| `docs/07-permission-management.md` | Casbin RBAC 策略、角色权限设计、API 权限配置、策略同步机制 |
-| `docs/08-capricorn-theme-guide.md` | UI 配色规范、CSS 变量定义、设计理念 |
-| `docs/09-testing-guide.md` | 分层测试策略、覆盖率目标、测试编写规范、测试运行方式 |
-| `docs/10-github-actions-guide.md` | CI/CD 流水线配置、自动化检查项、Workflow 调试 |
+| `docs/01-快速入门/快速开始.md` | 首次搭建环境、启动服务、验证基础设施 |
+| `docs/00-项目概览/架构设计.md` | 理解整体架构、服务间关系、数据模型设计、技术选型决策 |
+| `docs/02-开发规范/开发指南.md` | IDL-First 开发流程、代码生成、分层实现规范、Wire 依赖注入、错误处理 |
+| `docs/01-快速入门/配置参考.md` | 环境变量配置、数据库/Redis/JWT/S3 参数、多环境配置差异 |
+| `docs/03-部署运维/部署指南.md` | Docker 部署、生产环境配置、服务端口、部署检查清单 |
+| `docs/03-部署运维/故障排查.md` | 服务启动失败、代码生成报错、运行时异常、Docker 问题、性能排查 |
+| `docs/04-权限管理/权限管理设计.md` | Casbin RBAC 策略、角色权限设计、API 权限配置、策略同步机制 |
+| `docs/05-UI设计/配色规范.md` | UI 配色规范、CSS 变量定义、设计理念 |
+| `docs/02-开发规范/测试指南.md` | 分层测试策略、覆盖率目标、测试编写规范、测试运行方式 |
+| `docs/03-部署运维/CI-CD指南.md` | CI/CD 流水线配置、自动化检查项、Workflow 调试 |
 
 ## 可用 Skills
 

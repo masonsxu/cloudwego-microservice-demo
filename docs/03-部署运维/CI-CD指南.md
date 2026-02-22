@@ -231,4 +231,4 @@ git commit -m "feat: add feature [skip ci]"
 
 - [GitHub Actions 文档](https://docs.github.com/en/actions)
 - [golangci-lint 文档](https://golangci-lint.run/)
-- [Go Testing 指南](09-testing-guide.md)
+- [测试指南](../02-开发规范/测试指南.md)
