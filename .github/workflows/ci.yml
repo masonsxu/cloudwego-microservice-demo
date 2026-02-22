@@ -105,7 +105,6 @@ jobs:
           gocovmerge rpc/identity_srv/coverage.out gateway/coverage.out > coverage.out
           go tool cover -func=coverage.out
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./coverage.out
+      - name: Generate coverage summary
+        run: |
+          go tool cover -func=coverage.out | tee coverage-summary.txt

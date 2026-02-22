@@ -56,11 +56,6 @@ jobs:
           go-version: '1.24'
           cache: true
 
-      - name: Install coverage tools
-        run: |
-          go install github.com/mattn/goveralls@latest
-          go install github.com/axw/gocov/gocov@latest
-
       - name: Run RPC tests with coverage
         working-directory: rpc/identity_srv
         env:
@@ -110,16 +105,25 @@ jobs:
         with:
           script: |
             const coverage = '${{ steps.coverage.outputs.coverage }}';
-            const comment = `## 测试覆盖率报告 📊
+            
+            // 根据覆盖率选择颜色
+            let color = 'red';
+            if (coverage >= 80) color = 'brightgreen';
+            else if (coverage >= 60) color = 'yellow';
+            
+            const comment = `## 📊 测试覆盖率报告
 
             总体覆盖率: **${coverage}%**
 
-            [查看详细报告](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            <details>
+            <summary>查看详细信息</summary>
 
-            <!--
-            覆盖率徽章生成：
-            ![coverage](https://img.shields.io/badge/coverage-${coverage}-${coverage >= 80 ? 'brightgreen' : coverage >= 60 ? 'yellow' : 'red'})
-            -->
+            - RPC 服务: [查看报告](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            - Gateway 服务: [查看报告](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            
+            </details>
+
+            ![coverage](https://img.shields.io/badge/coverage-${coverage}-${color})
             `;
 
             github.rest.issues.createComment({
@@ -132,7 +136,7 @@ jobs:
       - name: Upload coverage artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-reports
+          name: coverage-reports-${{ github.run_number }}
           path: |
             coverage.out
             coverage.html
@@ -141,14 +145,7 @@ jobs:
             rpc/identity_srv/coverage.html
             gateway/coverage.out
             gateway/coverage.html
-
-      - name: Upload to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./coverage.out
-          flags: full-coverage
-          name: full-coverage-report
-          fail_ci_if_error: false
+          retention-days: 30
 
       - name: Check coverage threshold
         run: |
