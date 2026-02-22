@@ -27,7 +27,9 @@ jobs:
           goimports-reviser -check -format ./...
 
       - name: Run go vet
-        run: go vet ./...
+        run: |
+          cd rpc/identity_srv && go vet ./...
+          cd ../../gateway && go vet ./...
 
       - name: Check for TODO/FIXME/HACK
         run: |
@@ -61,12 +63,12 @@ jobs:
       etcd:
         image: quay.io/coreos/etcd:v3.5.9
         env:
-          ETCD_NAME: etcd0
-          ETCD_INITIAL_ADVERTISE_PEER_URLS: http://etcd0:2379
+          ETCD_NAME: node1
+          ETCD_INITIAL_ADVERTISE_PEER_URLS: http://0.0.0.0:2380
           ETCD_LISTEN_PEER_URLS: http://0.0.0.0:2380
           ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
-          ETCD_ADVERTISE_CLIENT_URLS: http://etcd0:2379
-          ETCD_INITIAL_CLUSTER: etcd0=http://etcd0:2380
+          ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
+          ETCD_INITIAL_CLUSTER: node1=http://0.0.0.0:2380
           ETCD_INITIAL_CLUSTER_TOKEN: etcd-cluster
           ETCD_INITIAL_CLUSTER_STATE: new
         ports:
@@ -85,7 +87,14 @@ jobs:
       - name: Download dependencies
         run: |
           cd rpc/identity_srv && go mod download
-          cd ../gateway && go mod download
+          cd ../../gateway && go mod download
+
+      - name: Install swag
+        run: go install github.com/swaggo/swag/cmd/swag@latest
+
+      - name: Generate Swagger docs
+        working-directory: gateway
+        run: swag init --parseDependencyLevel 1 --useStructName true
 
       - name: Run RPC tests
         working-directory: rpc/identity_srv
