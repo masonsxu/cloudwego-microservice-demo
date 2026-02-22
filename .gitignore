@@ -76,6 +76,7 @@ vendor/
 coverage.out
 coverage.html
 *.cover
+coverage-reports/
 
 # 临时文件
 *.tmp
