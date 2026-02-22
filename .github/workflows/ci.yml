@@ -44,7 +44,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24"
+          go-version: "1.25"
 
       - name: Generate Swagger docs
         run: |
@@ -54,14 +54,14 @@ jobs:
       - name: Lint RPC Service
         uses: golangci/golangci-lint-action@v7
         with:
-          version: v2.1
+          version: v2.2
           working-directory: rpc/identity_srv
           args: --timeout=5m
 
       - name: Lint Gateway Service
         uses: golangci/golangci-lint-action@v7
         with:
-          version: v2.1
+          version: v2.2
           working-directory: gateway
           args: --timeout=5m
 
@@ -131,10 +131,10 @@ jobs:
         ports:
           - 2379:2379
         options: >-
-          --health-cmd "etcdctl endpoint health"
+          --health-cmd "etcdctl --endpoints=http://127.0.0.1:2379 endpoint health"
           --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-timeout 10s
+          --health-retries 10
 
     steps:
       - name: Checkout code
@@ -143,7 +143,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24"
+          go-version: "1.25"
           cache-dependency-path: rpc/identity_srv/go.sum
 
       - name: Download dependencies
@@ -178,7 +178,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24"
+          go-version: "1.25"
           cache-dependency-path: gateway/go.sum
 
       - name: Download dependencies
@@ -216,7 +216,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24"
+          go-version: "1.25"
 
       - name: Generate Swagger docs
         run: |
@@ -247,7 +247,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24"
+          go-version: "1.25"
 
       - name: Download RPC coverage
         uses: actions/download-artifact@v4
