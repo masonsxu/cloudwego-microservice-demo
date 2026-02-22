@@ -133,7 +133,7 @@ func WithTraceAndService(ctx context.Context, logger zerolog.Logger, service, me
 		Logger()
 }
 
-// Event 为 zerolog.Event 添加追踪字段和固定的 service 字段
+// Event 为 zerolog.Event 添加追踪字段（通过 context 传递给 Hook）
 // 适用于链式调用场景
 //
 // 使用方式:
@@ -142,8 +142,7 @@ func WithTraceAndService(ctx context.Context, logger zerolog.Logger, service, me
 //	    Str("component", "user_handler").
 //	    Msg("hello")
 func Event(ctx context.Context, event *zerolog.Event) *zerolog.Event {
-	// 固定添加 service 字段为 "radius-identity"
-	return event.Ctx(ctx).Str(FieldService, "radius-identity")
+	return event.Ctx(ctx)
 }
 
 // BindToContext 将带追踪信息的 logger 绑定到 context

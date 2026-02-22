@@ -120,6 +120,8 @@ func (m *MetaInfoMiddleware) logTraceInfo(ctx context.Context) {
 
 	// 使用 log.Event 动态提取追踪信息（包括 OpenTelemetry trace_id/span_id）
 	log.Event(ctx, m.logger.Info()).
+		Str("request_id", requestID).
+		Str("service", "identity_srv").
 		Str("method", methodName).
 		Msg("RPC request started")
 }
@@ -139,6 +141,7 @@ func (m *MetaInfoMiddleware) logRequestComplete(
 
 	// 使用 log.Event 添加追踪字段
 	event = log.Event(ctx, event).
+		Str("service", "identity_srv").
 		Str("method", methodName).
 		Dur("duration_ms", duration)
 
