@@ -659,7 +659,7 @@ func (s *userManagementServiceImpl) removeRolesWithRollback(
 	rolesToRemove []string,
 	operatorID string,
 ) error {
-	var revokedRoles []string // 记录已成功撤销的角色，用于可能的回滚
+	revokedRoles := make([]string, 0, len(rolesToRemove)) // 记录已成功撤销的角色，用于可能的回滚
 
 	for _, roleID := range rolesToRemove {
 		err := s.identityClient.RevokeRoleFromUser(
