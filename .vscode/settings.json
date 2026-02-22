@@ -1,30 +1,50 @@
 {
-	// ========== LINT ==========
-	"go.lintTool": "golangci-lint-v2",
-	"go.lintOnSave": "package",
-	"go.lintFlags": ["--path-mode=abs", "--fast-only"],
-	// ========== FORMAT (via gopls) ==========
+	// 使用 golangci-lint 作为 lint 工具
+	"go.lintTool": "golangci-lint",
+	// lint 时自动修复问题
+	"go.lintFlags": [
+	  "--path-mode=abs",
+	  "--fix",
+	],
+	// 使用自定义格式化工具
 	"go.formatTool": "custom",
+	// 使用自定义 lint 工具
 	"go.alternateTools": {
-		"customFormatter": "golangci-lint-v2"
+	  "customFormatter": "golangci-lint"
 	},
-	"go.formatFlags": ["fmt", "--stdin"],
-	"editor.formatOnSave": true,
-	// ========== FIX ==========
-	"editor.codeActionsOnSave": {
-		"source.organizeImports": "explicit",
-		"source.fixAll": "explicit"
-	},
-	// ========== GO-SPECIFIC ==========
+	// 格式化时使用的命令和参数
+	"go.formatFlags": [
+	  "fmt",
+	  "--stdin"
+	],
+	// Go 语言特定设置
 	"[go]": {
-		"editor.formatOnSave": true
+	  // 保存时自动格式化
+	  "editor.formatOnSave": true
 	},
+	// 启用代码镜头功能，如运行测试的快捷按钮
 	"go.enableCodeLens": {
-		"runtest": true
+	  "runtest": true
 	},
+	// 保存时是否显示覆盖率
 	"go.coverOnSave": false,
+	// 覆盖率装饰器设置
 	"go.coverageDecorator": {
-		"type": "gutter"
+	  "type": "gutter"
 	},
-	"go.diagnostic.vulncheck": "Imports"
-}
+	// 保存时自动格式化（全局设置）
+	"editor.formatOnSave": true,
+	// 保存时执行的代码操作
+	"editor.codeActionsOnSave": {
+	  // 自动整理导入包
+	  "source.organizeImports": "explicit",
+	  // 自动修复所有可修复的问题
+	  "source.fixAll": "explicit"
+	},
+	// gopls 语言服务器设置
+	"gopls": {
+	  // 构建标志，支持 wireinject 标签用于依赖注入
+	  // "buildFlags": ["-tags=wireinject"]
+	},
+	"kiroAgent.configureMCP": "Disabled"
+  }
