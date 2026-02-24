@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  /* 奢华摩羯座配色方案 */
+  --color-bg-base: #141416;
+  --color-gold: #D4AF37;
+  --color-gold-light: #E8C56B;
+  --color-gold-dark: #C4A033;
+  --color-vellum: #F2F0E4;
+  --color-mineral: #8B9bb4;
+  --color-bronze: #2C2E33;
+  --color-bronze-light: #3D4047;
+  --color-bronze-dark: #1E1F22;
+  --color-highlight: #FFF8E7;
+
+  /* 字体 */
+  --font-family-cinzel: 'Cinzel', serif;
+  --font-family-noto-serif-sc: '"Noto Serif SC"', serif;
+  --font-family-lato: 'Lato', sans-serif;
+}
+
+/* 导入 Element Plus 主题覆盖 */
+@import './element-theme.scss';
+
+/* 全局样式 */
+body {
+  background-color: var(--color-bg-base);
+  color: var(--color-vellum);
+  background-image: radial-gradient(circle at 50% 10%, #2a2d35 0%, #000000 100%);
+  min-height: 100vh;
+  font-family: var(--font-family-lato);
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: rgba(44, 46, 51, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(212, 175, 55, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(212, 175, 55, 0.7);
+}
+
+/* Element Plus 组件样式覆盖 */
+.el-card {
+  background-color: rgba(44, 46, 51, 0.4);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.el-input__wrapper {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.el-input__inner {
+  color: var(--color-vellum);
+}

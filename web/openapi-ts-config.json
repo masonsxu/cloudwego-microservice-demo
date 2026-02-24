@@ -1,0 +1,37 @@
+{
+  "$schema": "https://openapi-ts.org/schema/ts-config.json",
+    "entryPoints": [
+    {
+      "entryPoint": "api",
+      "name": "api",
+      "target": "src/api/generated",
+      "client": "axios",
+      "output": "src/api/generated",
+      "schemas": {
+        "ignore": [
+          "apidocs"
+        ]
+      },
+      " httpClient": {
+        "name": "axios"
+      },
+      "services": {
+        "include": [
+          "IdentityService"
+        ],
+        "exclude": []
+      },
+      "types": {
+        "enums": "javascript",
+        "enumsOrUnions": "javascript"
+      },
+      "operations": {
+        "include": [
+          ".*"
+        ]
+      },
+      "output": "src/api/generated",
+      "input": "../gateway/docs/swagger.yaml"
+    }
+  ]
+}

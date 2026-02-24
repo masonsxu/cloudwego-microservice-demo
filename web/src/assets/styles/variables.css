@@ -1,0 +1,9 @@
+:root {
+  /* Palette Definition - Luxury Capricorn */
+  --bg-base: #141416;              /* 深岩灰 - 背景基础 */
+  --c-accent: #D4AF37;             /* 香槟金 - 核心高亮/图标 */
+  --c-text-main: #F2F0E4;         /* 羊皮纸白 - 主标题 */
+  --c-text-sub: #8B9bb4;          /* 矿石灰 - 副文本 */
+  --c-btn-bg: #2C2E33;            /* 青铜褐 - 按钮底色 */
+  --c-highlight: #FFF8E7;         /* 亮光色 - 极亮部 */
+}
