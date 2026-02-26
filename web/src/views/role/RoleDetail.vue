@@ -125,15 +125,20 @@
             </div>
           </template>
           <div v-if="roleUsers.user_ids?.length" class="user-tags">
-            <el-tag
+            <el-tooltip
               v-for="uid in roleUsers.user_ids"
               :key="uid"
-              closable
-              class="user-tag"
-              @close="handleRemoveUser(uid)"
+              :content="`ID: ${uid}`"
+              placement="top"
             >
-              {{ uid }}
-            </el-tag>
+              <el-tag
+                closable
+                class="user-tag"
+                @close="handleRemoveUser(uid)"
+              >
+                {{ userDisplayName(uid) }}
+              </el-tag>
+            </el-tooltip>
           </div>
           <el-empty v-else :description="t('common.noData')" :image-size="60" />
         </el-card>
@@ -294,9 +299,9 @@ import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'elem
 import { Edit, Delete, Key, Lock, User, Menu, Search, InfoFilled } from '@element-plus/icons-vue'
 import { roleApi } from '@/api/role'
 import { menuApi } from '@/api/menu'
-import { getUserList } from '@/api/user'
+import { getUserList, getUserDetail } from '@/api/user'
 import type { RoleDefinitionDTO, MenuNodeDTO } from '@/api/role'
-import type { MenuItem, UserListItem } from '@/types/user'
+import type { MenuItem, UserListItem, UserProfile } from '@/types/user'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -310,6 +315,7 @@ const saving = ref(false)
 const roleDetail = ref<RoleDefinitionDTO | null>(null)
 const menuTree = ref<MenuNodeDTO[]>([])
 const roleUsers = ref<{ role_id?: string; user_ids?: string[] }>({})
+const userDetailMap = ref<Record<string, UserProfile>>({})
 
 // ── 对话框控制 ───────────────────────────────────────────────────────
 const showEditDialog = ref(false)
@@ -367,9 +373,22 @@ const loadRoleUsers = async () => {
   try {
     const res = await roleApi.getRoleUsers(roleId)
     roleUsers.value = res
+    await loadRoleUserDetails(res.user_ids || [])
   } catch {
     // 静默失败
   }
+}
+
+const loadRoleUserDetails = async (userIds: string[]) => {
+  if (!userIds.length) return
+  const results = await Promise.allSettled(userIds.map(id => getUserDetail(id)))
+  const map: Record<string, UserProfile> = {}
+  results.forEach((result, i) => {
+    if (result.status === 'fulfilled') {
+      map[userIds[i]] = result.value.user
+    }
+  })
+  userDetailMap.value = map
 }
 
 // ════════════════════ 编辑角色 ════════════════════
@@ -562,6 +581,12 @@ const handleRemoveUser = async (userId: string) => {
 // ════════════════════ 工具函数 ════════════════════
 
 const handleBack = () => router.back()
+
+const userDisplayName = (uid: string) => {
+  const u = userDetailMap.value[uid]
+  if (!u) return uid
+  return u.real_name || u.username
+}
 
 const getStatusType = (status: number) =>
   ({ 1: 'success', 2: 'info', 3: 'danger' } as Record<number, string>)[status] || ''
