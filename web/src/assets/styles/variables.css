@@ -1,9 +1,117 @@
-:root {
-  /* Palette Definition - Luxury Capricorn */
-  --bg-base: #141416;              /* 深岩灰 - 背景基础 */
-  --c-accent: #D4AF37;             /* 香槟金 - 核心高亮/图标 */
-  --c-text-main: #F2F0E4;         /* 羊皮纸白 - 主标题 */
-  --c-text-sub: #8B9bb4;          /* 矿石灰 - 副文本 */
-  --c-btn-bg: #2C2E33;            /* 青铜褐 - 按钮底色 */
-  --c-highlight: #FFF8E7;         /* 亮光色 - 极亮部 */
+/* 深色主题（默认） */
+:root,
+[data-theme="dark"] {
+  --bg-base: #141416;
+  --bg-surface: #1E1F22;
+  --bg-card: rgba(30, 32, 36, 0.9);
+  --bg-input: rgba(255, 255, 255, 0.05);
+  --c-accent: #D4AF37;
+  --c-accent-hover: #E8C56B;
+  --c-accent-dark: #C4A033;
+  --c-text-main: #F2F0E4;
+  --c-text-sub: #8B9bb4;
+  --c-text-muted: #6E8A9F;
+  --c-btn-bg: #2C2E33;
+  --c-highlight: #FFF8E7;
+  --c-border: rgba(255, 255, 255, 0.05);
+  --c-border-accent: rgba(212, 175, 55, 0.2);
+  --c-danger: #F56C6C;
+  --c-success: #67C23A;
+  --c-warning: #E6A23C;
+  --shadow-card: 0 20px 50px rgba(0, 0, 0, 0.5);
+  --tech-grid-color: rgba(212, 175, 55, 0.08);
+
+  /* Element Plus CSS 变量覆盖（暗黑模式保险机制） */
+  --el-color-primary: #D4AF37;
+  --el-color-primary-light-3: #E8C56B;
+  --el-color-primary-light-5: #DEC080;
+  --el-color-primary-light-7: #D4AF37;
+  --el-color-primary-light-8: #C4A033;
+  --el-color-primary-light-9: rgba(212, 175, 55, 0.15);
+  --el-color-primary-dark-2: #C4A033;
+  --el-bg-color: #141416;
+  --el-bg-color-page: #0e0e10;
+  --el-bg-color-overlay: #1E1F22;
+  --el-fill-color-blank: #1E1F22;
+  --el-fill-color: rgba(44, 46, 51, 0.6);
+  --el-fill-color-light: rgba(44, 46, 51, 0.4);
+  --el-fill-color-lighter: rgba(44, 46, 51, 0.2);
+  --el-text-color-primary: #F2F0E4;
+  --el-text-color-regular: #8B9bb4;
+  --el-text-color-secondary: #6E8A9F;
+  --el-text-color-placeholder: rgba(242, 240, 228, 0.4);
+  --el-border-color: rgba(255, 255, 255, 0.08);
+  --el-border-color-light: rgba(212, 175, 55, 0.2);
+  --el-border-color-lighter: rgba(212, 175, 55, 0.1);
+  --el-border-color-extra-light: rgba(212, 175, 55, 0.05);
+  --el-border-color-dark: #2C2E33;
+  --el-border-color-darker: #1E1F22;
+  --el-table-bg-color: #1E1F22;
+  --el-table-tr-bg-color: #1E1F22;
+  --el-table-header-bg-color: #141416;
+  --el-table-row-hover-bg-color: rgba(212, 175, 55, 0.07);
+  --el-table-border-color: rgba(255, 255, 255, 0.06);
+  --el-table-text-color: #F2F0E4;
+  --el-table-header-text-color: #D4AF37;
+  --el-menu-bg-color: transparent;
+  --el-menu-hover-bg-color: rgba(212, 175, 55, 0.08);
+  --el-menu-text-color: #8B9bb4;
+  --el-menu-active-color: #D4AF37;
 }
+
+/* 浅色主题 */
+[data-theme="light"] {
+  --bg-base: #F4F5F7;
+  --bg-surface: #FFFFFF;
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --bg-input: rgba(0, 0, 0, 0.04);
+  --c-accent: #B8960C;
+  --c-accent-hover: #D4AF37;
+  --c-accent-dark: #9A7A00;
+  --c-text-main: #1A1C20;
+  --c-text-sub: #5A6478;
+  --c-text-muted: #8492A6;
+  --c-btn-bg: #E8EAED;
+  --c-highlight: #FFFBF0;
+  --c-border: rgba(0, 0, 0, 0.08);
+  --c-border-accent: rgba(184, 150, 12, 0.25);
+  --c-danger: #E53935;
+  --c-success: #43A047;
+  --c-warning: #FB8C00;
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
+  --tech-grid-color: rgba(184, 150, 12, 0.06);
+
+  /* Element Plus CSS 变量覆盖（浅色模式） */
+  --el-color-primary: #B8960C;
+  --el-color-primary-light-3: #D4AF37;
+  --el-color-primary-light-5: #DEC080;
+  --el-color-primary-light-7: #EDD280;
+  --el-color-primary-light-8: #F5E4A8;
+  --el-color-primary-light-9: rgba(184, 150, 12, 0.1);
+  --el-color-primary-dark-2: #9A7A00;
+  --el-bg-color: #FFFFFF;
+  --el-bg-color-page: #F4F5F7;
+  --el-bg-color-overlay: #FFFFFF;
+  --el-fill-color-blank: #FFFFFF;
+  --el-fill-color: rgba(0, 0, 0, 0.04);
+  --el-fill-color-light: rgba(0, 0, 0, 0.02);
+  --el-fill-color-lighter: rgba(0, 0, 0, 0.01);
+  --el-text-color-primary: #1A1C20;
+  --el-text-color-regular: #5A6478;
+  --el-text-color-secondary: #8492A6;
+  --el-text-color-placeholder: rgba(26, 28, 32, 0.35);
+  --el-border-color: rgba(0, 0, 0, 0.1);
+  --el-border-color-light: rgba(184, 150, 12, 0.25);
+  --el-table-bg-color: #FFFFFF;
+  --el-table-tr-bg-color: #FFFFFF;
+  --el-table-header-bg-color: #F4F5F7;
+  --el-table-row-hover-bg-color: rgba(184, 150, 12, 0.05);
+  --el-table-border-color: rgba(0, 0, 0, 0.08);
+  --el-table-text-color: #1A1C20;
+  --el-table-header-text-color: #B8960C;
+  --el-menu-bg-color: transparent;
+  --el-menu-hover-bg-color: rgba(184, 150, 12, 0.08);
+  --el-menu-text-color: #5A6478;
+  --el-menu-active-color: #B8960C;
+}
+
