@@ -8,6 +8,7 @@ import (
 	"github.com/rs/zerolog"
 
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/errors"
+	tracelog "github.com/masonsxu/cloudwego-microservice-demo/gateway/pkg/log"
 )
 
 // BaseService 基础服务结构
@@ -26,20 +27,37 @@ func NewBaseService(logger *hertzZerolog.Logger) *BaseService {
 }
 
 // Logger 获取日志记录器
+// Deprecated: 使用 Log(ctx) 替代，Logger() 返回的 hertzZerolog 不支持通过 OTelHook 自动上报 span
 func (bs *BaseService) Logger() *hertzZerolog.Logger {
 	return bs.logger
 }
 
 // Log 获取带追踪上下文的 *zerolog.Logger
+// 优先从 context 获取已绑定的 logger（由 TraceMiddleware 通过 BindToContext 注入），
+// 回退时将 ctx 绑定到基础 logger，由 OTelHook 在写入时动态注入追踪字段。
 // 用法：s.Log(ctx).Error().Err(err).Msg("失败")
 func (bs *BaseService) Log(ctx context.Context) *zerolog.Logger {
-	l := bs.logger.Unwrap().With().Ctx(ctx).Logger()
-	return &l
+	return bs.getTracedLogger(ctx)
 }
 
 // ResponseBuilder 获取响应构建器
 func (bs *BaseService) ResponseBuilder() *ResponseBuilder {
 	return bs.responseBuilder
+}
+
+// getTracedLogger 获取带追踪信息的 logger（私有方法）
+func (bs *BaseService) getTracedLogger(ctx context.Context) *zerolog.Logger {
+	// 优先尝试从 context 获取已绑定的 logger（由 TraceMiddleware 绑定）
+	logger := tracelog.Ctx(ctx)
+	if logger != nil {
+		return logger
+	}
+
+	// 回退：使用 WithTrace 将 ctx 绑定到基础 logger，OTelHook 动态注入追踪字段
+	base := bs.logger.Unwrap()
+	traced := tracelog.WithTrace(ctx, base)
+
+	return &traced
 }
 
 // ProcessRPCCall 处理RPC调用的通用模板
@@ -113,7 +131,22 @@ func (bs *BaseService) logWithFields(
 	msg string,
 	fields ...interface{},
 ) {
-	event := bs.logger.Unwrap().With().Ctx(ctx)
+	logger := bs.getTracedLogger(ctx)
+
+	// 先根据级别创建 event，ctx 已通过 getTracedLogger 绑定到 logger.ctx，
+	// zerolog 创建 event 时会自动将 logger.ctx 传播到 event，OTelHook 因此能拿到 span。
+	var event *zerolog.Event
+
+	switch level {
+	case zerolog.ErrorLevel:
+		event = logger.Error()
+	case zerolog.WarnLevel:
+		event = logger.Warn()
+	case zerolog.DebugLevel:
+		event = logger.Debug()
+	default:
+		event = logger.Info()
+	}
 
 	// 处理字段对 (key, value)
 	for i := 0; i < len(fields)-1; i += 2 {
@@ -141,19 +174,5 @@ func (bs *BaseService) logWithFields(
 		}
 	}
 
-	// 发送日志
-	logger := event.Logger()
-
-	switch level {
-	case zerolog.InfoLevel:
-		logger.Info().Msg(msg)
-	case zerolog.ErrorLevel:
-		logger.Error().Msg(msg)
-	case zerolog.DebugLevel:
-		logger.Debug().Msg(msg)
-	case zerolog.WarnLevel:
-		logger.Warn().Msg(msg)
-	default:
-		logger.Info().Msg(msg)
-	}
+	event.Msg(msg)
 }

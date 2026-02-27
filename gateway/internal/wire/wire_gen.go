@@ -19,7 +19,11 @@ import (
 func InitializeApp() (*AppContainer, func(), error) {
 	configuration := ProvideConfig()
 	logger := ProvideLogger(configuration)
-	identityClient := ProvideIdentityClient(logger)
+	provider, cleanup, err := ProvideOtelProvider(configuration)
+	if err != nil {
+		return nil, nil, err
+	}
+	identityClient := ProvideIdentityClient(logger, provider)
 	iAuthAssembler := identity.NewAuthAssembler()
 	iUserAssembler := identity.NewUserAssembler()
 	iOrgAssembler := identity.NewOrgAssembler()
@@ -51,6 +55,7 @@ func InitializeApp() (*AppContainer, func(), error) {
 	redisConfig := ProvideRedisConfig(configuration)
 	client, err := ProvideRedisClient(redisConfig)
 	if err != nil {
+		cleanup()
 		return nil, nil, err
 	}
 	tokenCacheService := ProvideTokenCache(client, logger)
@@ -60,10 +65,6 @@ func InitializeApp() (*AppContainer, func(), error) {
 	casbinMiddleware := ProvideCasbinMiddleware(config, logger)
 	middlewareContainer := NewMiddlewareContainer(traceMiddlewareService, corsMiddlewareService, errorHandlerMiddlewareService, jwtMiddlewareService, responseHeaderMiddlewareService, casbinMiddleware)
 	tracer := ProvideTracer(configuration)
-	provider, cleanup, err := ProvideOtelProvider(configuration)
-	if err != nil {
-		return nil, nil, err
-	}
 	serverFactory := ProvideServerFactory(configuration, tracer, provider)
 	handlerRegistry := ProvideHandlerRegistry(serverFactory, tracer, middlewareContainer, serviceContainer, logger)
 	appContainer := NewAppContainer(configuration, logger, serviceContainer, middlewareContainer, handlerRegistry)

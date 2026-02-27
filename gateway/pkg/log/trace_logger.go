@@ -5,14 +5,17 @@
 // - span_id: OpenTelemetry Span ID
 // - request_id: 业务层请求 ID (从 metainfo 传播)
 //
+// 追踪字段由 OTelHook 在日志写入时动态注入（非静态固化），需通过 Ctx(ctx) 或
+// event.Ctx(ctx) 将 context 绑定到 logger/event，OTelHook 才能读取 span 信息。
+//
 // 使用示例:
 //
-//	// 在业务代码中获取带追踪信息的 logger
+//	// 在业务代码中获取带追踪信息的 logger（TraceMiddleware 已绑定到 ctx）
 //	logger := log.Ctx(ctx)
 //	logger.Info().Str("user_id", "123").Msg("User created")
 //
-//	// 或者使用 WithTrace 为现有 logger 添加追踪字段
-//	logger := log.WithTrace(ctx, existingLogger)
+//	// 链式调用场景
+//	log.Event(ctx, logger.Error()).Err(err).Msg("操作失败")
 package log
 
 import (
@@ -20,6 +23,7 @@ import (
 
 	"github.com/bytedance/gopkg/cloud/metainfo"
 	"github.com/rs/zerolog"
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -89,8 +93,8 @@ func GetRequestID(ctx context.Context) string {
 }
 
 // Ctx 获取带追踪信息的 logger
-// 如果 context 中已有 logger (通过 zerolog.Ctx)，则返回该 logger
-// 否则返回带有追踪字段的新 logger
+// 优先从 context 获取已绑定的 logger（由 TraceMiddleware 通过 BindToContext 绑定），
+// 回退时使用 WithTrace 将 ctx 绑定到基础 logger，由 OTelHook 在写入时动态注入追踪字段。
 //
 // 使用方式:
 //
@@ -103,66 +107,97 @@ func Ctx(ctx context.Context) *zerolog.Logger {
 		return logger
 	}
 
-	// 创建默认 logger 并附加追踪字段
-	l := zerolog.New(nil).With().
-		Timestamp().
-		Fields(TraceFields(ctx)).
-		Logger()
-
-	return &l
+	return nil
 }
 
-// WithTrace 为 logger 添加追踪字段
-// 返回包含 trace_id, span_id, request_id 的新 logger
+// WithTrace 为 logger 绑定 context，追踪字段由 OTelHook 在日志写入时动态注入
 //
 // 使用方式:
 //
 //	logger := log.WithTrace(ctx, existingLogger)
 //	logger.Info().Msg("hello")
 func WithTrace(ctx context.Context, logger zerolog.Logger) zerolog.Logger {
-	return logger.With().Fields(TraceFields(ctx)).Logger()
+	return logger.With().Ctx(ctx).Logger()
 }
 
-// WithTraceAndService 为 logger 添加追踪字段和服务信息
-// 返回包含完整追踪上下文的 logger
+// WithTraceAndService 为 logger 绑定 context 和服务信息
+// 追踪字段由 OTelHook 在日志写入时动态注入（而非静态固化到 logger 中）
+//
+// Deprecated: 使用 BindToContext 替代
 func WithTraceAndService(
 	ctx context.Context,
 	logger zerolog.Logger,
 	service, method string,
 ) zerolog.Logger {
 	return logger.With().
-		Fields(TraceFields(ctx)).
 		Str(FieldService, service).
 		Str(FieldMethod, method).
+		Ctx(ctx).
 		Logger()
 }
 
-// Event 为 zerolog.Event 添加追踪字段和固定的 service 字段
-// 适用于链式调用场景
+// Event 为 zerolog.Event 绑定 context，追踪字段由 OTelHook 在日志写入时动态注入
+// 这是让 OTelHook 能够调用 span.RecordError()/span.SetStatus() 的关键——
+// OTelHook.Run() 通过 e.GetCtx() 获取 span，必须先调用 event.Ctx(ctx)。
 //
 // 使用方式:
 //
-//	log.Event(ctx, logger.Info()).
+//	log.Event(ctx, logger.Error()).
+//	    Err(err).
 //	    Str("component", "user_handler").
-//	    Msg("hello")
+//	    Msg("操作失败")
 func Event(ctx context.Context, event *zerolog.Event) *zerolog.Event {
-	fields := TraceFields(ctx)
-	for k, v := range fields {
-		if s, ok := v.(string); ok {
-			event = event.Str(k, s)
-		}
-	}
-	// 固定添加 service 字段为 "gateway"
-	return event.Str(FieldService, "gateway")
+	return event.Ctx(ctx).Str(FieldService, "gateway")
 }
 
-// BindToContext 将带追踪信息的 logger 绑定到 context
+// BindToContext 将带服务信息的 logger 绑定到 context
+// 追踪字段由 OTelHook 在日志写入时动态注入（而非静态固化到 logger 中）
 // 后续代码可通过 zerolog.Ctx(ctx) 或 log.Ctx(ctx) 获取
 func BindToContext(
 	ctx context.Context,
 	logger zerolog.Logger,
 	service, method string,
 ) context.Context {
-	ctxLogger := WithTraceAndService(ctx, logger, service, method)
+	ctxLogger := logger.With().
+		Str(FieldService, service).
+		Str(FieldMethod, method).
+		Ctx(ctx).
+		Logger()
 	return ctxLogger.WithContext(ctx)
+}
+
+// RecordSpanHTTPError 将 HTTP 错误的详细信息作为 span attributes 直接写入 OTel Span
+//
+// OTelHook 只将日志消息（msg）传给 span.RecordError()/span.AddEvent()，
+// zerolog 的结构化字段不会自动成为 span attributes。
+// 本函数补充这一缺口，将 status_code、path、method、error_body 等附加到 span，
+// 使其在 Jaeger span 详情中可见。
+//
+// 4xx 使用 span.AddEvent + attributes（不标红），5xx 使用 span.SetAttributes + RecordError（标红）。
+func RecordSpanHTTPError(
+	ctx context.Context,
+	statusCode int,
+	method, path, errorBody string,
+) {
+	span := trace.SpanFromContext(ctx)
+	if !span.IsRecording() {
+		return
+	}
+
+	attrs := []attribute.KeyValue{
+		attribute.Int("http.status_code", statusCode),
+		attribute.String("http.method", method),
+		attribute.String("http.path", path),
+	}
+	if errorBody != "" {
+		attrs = append(attrs, attribute.String("error.body", errorBody))
+	}
+
+	if statusCode >= 500 {
+		// 5xx：将属性附加到 span 本身，配合 OTelHook 的 RecordError 一起在 Jaeger 中显示
+		span.SetAttributes(attrs...)
+	} else {
+		// 4xx：以具名 span event 的形式记录，不覆盖 OTelHook 已添加的事件
+		span.AddEvent("http.client_error", trace.WithAttributes(attrs...))
+	}
 }

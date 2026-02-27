@@ -9,6 +9,7 @@ import (
 
 	identitycli "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/client/identity_cli"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
+	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/otel"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/redis"
 )
 
@@ -47,7 +48,9 @@ func ProvideLogger(cfg *config.Configuration) *hertzZerolog.Logger {
 
 // ProvideIdentityClient 提供身份服务客户端
 // 创建与身份认证RPC服务的客户端连接
-func ProvideIdentityClient(logger *hertzZerolog.Logger) identitycli.IdentityClient {
+// 依赖 *otel.Provider 确保 OpenTelemetry 全局 TracerProvider 在 Kitex Client Suite 初始化前已就绪，
+// 否则 kitextracing.NewClientSuite() 拿到的是 no-op Tracer，RPC 调用不会产生任何 span。
+func ProvideIdentityClient(logger *hertzZerolog.Logger, _ *otel.Provider) identitycli.IdentityClient {
 	client, err := identitycli.NewIdentityClient()
 	if err != nil {
 		zl := logger.Unwrap()

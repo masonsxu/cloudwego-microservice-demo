@@ -74,7 +74,9 @@ func (ehm *ErrorHandlerMiddlewareImpl) MiddlewareFunc() app.HandlerFunc {
 		// 执行下一个处理器
 		c.Next(ctx)
 
-		if c.Response.StatusCode() == 500 && len(c.Response.Body()) == 0 {
+		statusCode := c.Response.StatusCode()
+
+		if statusCode == 500 && len(c.Response.Body()) == 0 {
 			tracelog.Event(ctx, ehm.logger.Warn()).
 				Str("component", "error_middleware").
 				Str("method", string(c.Method())).
@@ -86,15 +88,11 @@ func (ehm *ErrorHandlerMiddlewareImpl) MiddlewareFunc() app.HandlerFunc {
 			return
 		}
 
-		// 处理完成后检查是否有错误
-		if c.IsAborted() {
-			// 请求已被中断，可能是认证失败或其他错误
-			return
-		}
-
-		// 检查响应状态码，处理HTTP状态错误
-		if statusCode := c.Response.StatusCode(); statusCode >= 400 {
-			ehm.handleHTTPStatusError(ctx, c, statusCode)
+		// 检查响应状态码并记录错误日志
+		// 注意：不能依赖 c.IsAborted() 判断，因为 AbortWithError 会设置 Abort 标志，
+		// 但我们仍然需要对所有 4xx/5xx 响应进行日志和 span 上报
+		if statusCode >= 400 {
+			ehm.logHTTPError(ctx, c, statusCode)
 			return
 		}
 
@@ -142,20 +140,33 @@ func (ehm *ErrorHandlerMiddlewareImpl) handlePanicError(
 	errors.AbortWithError(c, bizErr)
 }
 
-// handleHTTPStatusError 处理HTTP状态码错误
-func (ehm *ErrorHandlerMiddlewareImpl) handleHTTPStatusError(
+// logHTTPError 记录 HTTP 错误日志并上报到 OTel Span
+// 4xx 客户端错误使用 Warn 级别（span.AddEvent），5xx 服务端错误使用 Error 级别（span.RecordError + span 标红）
+// 不修改响应体——响应已由 AbortWithError 写入具体错误信息
+func (ehm *ErrorHandlerMiddlewareImpl) logHTTPError(
 	ctx context.Context,
 	c *app.RequestContext,
 	statusCode int,
 ) {
-	// 使用结构化日志记录 HTTP 状态错误
-	event := tracelog.Event(ctx, ehm.logger.Warn()).
+	// 从已写入的响应体中提取错误信息（避免信息丢失）
+	responseBody := string(c.Response.Body())
+
+	var event *zerolog.Event
+	if statusCode >= 500 {
+		// 5xx 服务端错误：Error 级别 → OTelHook 调用 span.RecordError() + span.SetStatus(Error)，Jaeger 标红
+		event = ehm.logger.Error()
+	} else {
+		// 4xx 客户端错误：Warn 级别 → OTelHook 调用 span.AddEvent()，Jaeger span 详情中可见
+		event = ehm.logger.Warn()
+	}
+
+	event = tracelog.Event(ctx, event).
 		Str("component", "error_middleware").
 		Int("status_code", statusCode).
 		Str("path", string(c.Request.Path())).
-		Str("method", string(c.Method()))
+		Str("method", string(c.Method())).
+		Str("response_body", responseBody)
 
-	// 如果有用户上下文，记录用户信息
 	if userID, ok := auth_context.GetCurrentUserProfileID(c); ok && userID != "" {
 		event = event.Str("user_id", userID)
 	}
@@ -164,16 +175,27 @@ func (ehm *ErrorHandlerMiddlewareImpl) handleHTTPStatusError(
 		event = event.Str("org_id", orgID)
 	}
 
-	// 如果启用了详细错误信息，添加更多上下文
 	if ehm.config.EnableDetailedErrors {
 		event = event.
 			Str("remote_addr", c.RemoteAddr().String()).
 			Str("user_agent", string(c.UserAgent()))
 	}
 
-	event.Msg("HTTP status error")
+	event.Msg("HTTP error response")
 
-	errors.HandleHTTPStatusError(c, statusCode)
+	// OTelHook 只将日志消息传给 span，结构化字段不会成为 span attributes。
+	// 直接写入 span attributes，使 response_body 等信息在 Jaeger 中可见。
+	tracelog.RecordSpanHTTPError(ctx, statusCode, string(c.Method()), string(c.Request.Path()), responseBody)
+}
+
+// handleHTTPStatusError 处理HTTP状态码错误
+// Deprecated: 改用 logHTTPError，此方法仅保留以兼容 panic 恢复路径
+func (ehm *ErrorHandlerMiddlewareImpl) handleHTTPStatusError(
+	ctx context.Context,
+	c *app.RequestContext,
+	statusCode int,
+) {
+	ehm.logHTTPError(ctx, c, statusCode)
 }
 
 // logRequestInfo 记录请求信息

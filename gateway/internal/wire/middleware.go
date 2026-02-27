@@ -60,14 +60,10 @@ func NewMiddlewareContainer(
 }
 
 // ProvideTraceMiddleware 提供追踪中间件
-// 自动生成和传播请求追踪信息
+// 自动生成和传播请求追踪信息，并将带追踪上下文的 logger 绑定到每个请求的 context
 func ProvideTraceMiddleware(logger *hertzZerolog.Logger) tracemdw.TraceMiddlewareService {
-	middleware := tracemdw.NewTraceMiddleware()
-
 	zl := logger.Unwrap()
-	zl.Info().Msg("Trace middleware created successfully")
-
-	return middleware
+	return tracemdw.NewTraceMiddleware(&zl)
 }
 
 // ProvideJWTMiddleware 提供JWT中间件
