@@ -1,16 +1,17 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { authApi } from '@/api/auth'
+import { clearApiClient } from '@/api/config'
 import type { UserProfile, LoginRequest } from '@/types/user'
-import type { MenuNodeDTO, RoleInfoDTO, MenuPermissionDTO } from '@/api/generated'
+import type { MenuItem, MenuPermission, Role } from '@/types/user'
 
 export const useAuthStore = defineStore('auth', () => {
   // 状态
   const token = ref<string>(localStorage.getItem('token') || '')
   const user = ref<UserProfile | null>(null)
-  const menuTree = ref<MenuNodeDTO[]>([])
-  const menuPermissions = ref<MenuPermissionDTO[]>([])
-  const roles = ref<RoleInfoDTO[]>([])
+  const menuTree = ref<MenuItem[]>([])
+  const menuPermissions = ref<MenuPermission[]>([])
+  const roles = ref<Role[]>([])
 
   // 计算属性
   const isAuthenticated = computed(() => !!token.value)
@@ -53,7 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       token.value = response.token_info?.access_token || ''
       user.value = response.user_profile as unknown as UserProfile
-      menuTree.value = (response.menu_tree || []) as unknown as MenuNodeDTO[]
+      menuTree.value = (response.menu_tree || []) as unknown as MenuItem[]
       menuPermissions.value = response.permissions || []
       roles.value = response.roles || []
 
@@ -90,6 +91,9 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.removeItem('user')
       localStorage.removeItem('menuTree')
       localStorage.removeItem('menuPermissions')
+
+      // 清除 API 客户端配置
+      clearApiClient()
     }
   }
 

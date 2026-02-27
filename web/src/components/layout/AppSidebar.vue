@@ -47,7 +47,7 @@ import { useRoute } from 'vue-router'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
-import type { MenuNodeDTO } from '@/api/generated'
+import type { MenuNodeDTO } from '@/api/role'
 
 const appStore = useAppStore()
 const route = useRoute()

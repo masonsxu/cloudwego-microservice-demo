@@ -93,7 +93,7 @@
               </el-form-item>
             </el-col>
             <el-col :xs="24" :md="12">
-              <el-form-item :label="t('user.gender')" prop="gender">
+              <el-form-item :label="t('user.gender.label')" prop="gender">
                 <el-radio-group v-model="form.gender">
                   <el-radio :value="0">{{ t('user.gender.unknown') }}</el-radio>
                   <el-radio :value="1">{{ t('user.gender.male') }}</el-radio>

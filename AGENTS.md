@@ -55,6 +55,34 @@ go test ./... -coverprofile=coverage.out
 go tool cover -func=coverage.out | grep total
 ```
 
+## AI 行为约束
+
+### 🚫 禁止自动启动服务
+
+**规则**：AI **严禁**自动启动前端开发服务器（`npm run dev`）或任何长期运行的服务。
+
+**原因**：
+- 开发服务器会占用端口（5173、5174、5175等），多次启动会导致端口冲突
+- 用户可能已经在运行其他服务的实例
+- 启动服务是用户的主动操作，不应由AI自动执行
+
+**正确做法**：
+- 当需要测试前端页面时，AI应该**提示用户**手动在终端执行启动命令
+- AI只负责代码生成、文件编辑、配置修改等工作
+- 示例提示："前端页面已实现完成，请在终端手动运行 `cd web && npm run dev` 启动开发服务器"
+
+**适用范围**：
+- ✅ 可以执行：代码生成、编译测试、lint检查、数据库迁移等一次性任务
+- ❌ 禁止执行：`npm run dev`、`sh build.sh && sh output/bootstrap.sh` 等长期运行的服务
+
+### 测试
+go test ./biz/logic/user -run TestUserLogic_CreateUser -v -count=1
+
+# 测试覆盖率
+go test ./... -coverprofile=coverage.out
+go tool cover -func=coverage.out | grep total
+```
+
 ### 代码检查和格式化
 
 ```bash

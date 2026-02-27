@@ -1,5 +1,8 @@
 <template>
   <el-container class="layout-container">
+    <!-- Tech Grid 背景层 -->
+    <div class="tech-grid-overlay" />
+
     <el-aside :width="sidebarWidth" class="sidebar">
       <AppSidebar />
     </el-aside>
@@ -34,34 +37,54 @@ const sidebarWidth = computed(() => {
 <style scoped lang="scss">
 .layout-container {
   height: 100vh;
+  position: relative;
+
+  .tech-grid-overlay {
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(var(--tech-grid-color) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: linear-gradient(to bottom, black 0%, transparent 80%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 80%);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
 
   .sidebar {
     transition: width 0.3s ease;
-    background: linear-gradient(145deg, rgba(30, 32, 36, 0.9), rgba(20, 20, 22, 0.95));
-    border-right: 1px solid rgba(212, 175, 55, 0.2);
+    background: var(--bg-card);
+    border-right: 1px solid var(--c-border-accent);
     overflow: hidden;
+    z-index: 10;
+    position: relative;
+    backdrop-filter: blur(8px);
   }
 
   .header {
-    background: linear-gradient(145deg, rgba(30, 32, 36, 0.9), rgba(20, 20, 22, 0.95));
-    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--c-border-accent);
     padding: 0;
     height: 60px;
     display: flex;
     align-items: center;
+    z-index: 10;
+    position: relative;
+    backdrop-filter: blur(8px);
   }
 
   .main-content {
-    background-color: #141416;
-    background-image: radial-gradient(circle at 50% 10%, #2a2d35 0%, #000000 100%);
-    padding: 20px;
+    background-color: transparent;
+    padding: 24px;
     overflow-y: auto;
+    position: relative;
+    z-index: 1;
   }
 }
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s ease;
+  transition: opacity 0.25s ease;
 }
 
 .fade-enter-from,

@@ -1,0 +1,5122 @@
+{
+    "schemes": [],
+    "swagger": "2.0",
+    "info": {
+        "description": "",
+        "title": "",
+        "contact": {},
+        "version": ""
+    },
+    "host": "",
+    "basePath": "",
+    "paths": {
+        "/api/v1/identity/auth/login": {
+            "post": {
+                "description": "验证用户凭据并返回访问令牌和用户信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "认证管理"
+                ],
+                "summary": "用户登录",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/LoginRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/LoginResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/auth/logout": {
+            "post": {
+                "description": "注销当前会话并使令牌失效",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "认证管理"
+                ],
+                "summary": "用户登出",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/LogoutRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/auth/password": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "用户修改自己的密码（需要提供旧密码）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "认证管理"
+                ],
+                "summary": "修改密码",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ChangePasswordRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/auth/password/force-change": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "管理员标记用户需要在下次登录时强制修改密码",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "认证管理"
+                ],
+                "summary": "强制下次登录修改密码",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ForcePasswordChangeRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "403": {
+                        "description": "权限不足",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/auth/password/reset": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "管理员重置用户密码（管理员权限）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "认证管理"
+                ],
+                "summary": "重置密码",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ResetPasswordRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "403": {
+                        "description": "权限不足",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/auth/refresh": {
+            "post": {
+                "description": "使用刷新令牌获取新的访问令牌",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "认证管理"
+                ],
+                "summary": "刷新访问令牌",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/RefreshTokenRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/RefreshTokenResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/departments": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "在指定组织下创建新部门",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "部门管理"
+                ],
+                "summary": "创建部门",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CreateDepartmentRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/DepartmentResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "403": {
+                        "description": "权限不足",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/departments/{departmentID}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "根据部门ID获取部门详细信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "部门管理"
+                ],
+                "summary": "获取部门信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "部门ID",
+                        "name": "departmentID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/DepartmentResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "部门未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "更新指定部门的信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "部门管理"
+                ],
+                "summary": "更新部门信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "部门ID",
+                        "name": "departmentID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateDepartmentRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/DepartmentResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "403": {
+                        "description": "权限不足",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "部门未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "软删除指定部门",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "部门管理"
+                ],
+                "summary": "删除部门",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "部门ID",
+                        "name": "departmentID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DeleteDepartmentRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "403": {
+                        "description": "权限不足",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "部门未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/organization-logos/temporary": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "上传组织Logo文件到临时存储（7天后自动过期），返回Logo元数据和预签名下载URL",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "组织管理"
+                ],
+                "summary": "上传临时Logo",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "文件名",
+                        "name": "file_name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "文件内容",
+                        "name": "file_content",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "MIME类型",
+                        "name": "mime_type",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/OrganizationLogoResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "413": {
+                        "description": "文件过大",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "415": {
+                        "description": "不支持的文件类型",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/organization-logos/{logoID}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "根据Logo ID获取Logo元数据和预签名下载URL（有效期7天）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "组织管理"
+                ],
+                "summary": "获取Logo信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Logo ID",
+                        "name": "logoID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/OrganizationLogoResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Logo未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "删除Logo文件和数据库记录（软删除），同时删除S3存储的文件",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "组织管理"
+                ],
+                "summary": "删除Logo",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Logo ID",
+                        "name": "logoID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "403": {
+                        "description": "权限不足",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Logo未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/organizations": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "分页查询组织列表，支持按父组织筛选",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "组织管理"
+                ],
+                "summary": "获取组织列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "每页数量",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "字段级过滤",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序规则",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "指定返回字段",
+                        "name": "fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "是否返回总数",
+                        "name": "include_total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "按父组织ID筛选",
+                        "name": "parent_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/ListOrganizationsResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "创建新的组织机构",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "组织管理"
+                ],
+                "summary": "创建组织",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CreateOrganizationRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/OrganizationResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "403": {
+                        "description": "权限不足",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/organizations/{organizationID}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "根据组织ID获取组织详细信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "组织管理"
+                ],
+                "summary": "获取组织信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "组织ID",
+                        "name": "organizationID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/OrganizationResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "组织未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "更新指定组织的信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "组织管理"
+                ],
+                "summary": "更新组织信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "组织ID",
+                        "name": "organizationID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateOrganizationRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/OrganizationResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "403": {
+                        "description": "权限不足",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "组织未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "软删除指定组织",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "组织管理"
+                ],
+                "summary": "删除组织",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DeleteOrganizationRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "403": {
+                        "description": "权限不足",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "组织未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/organizations/{organizationID}/departments": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "获取指定组织下的所有部门",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "部门管理"
+                ],
+                "summary": "获取组织部门列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "组织ID",
+                        "name": "organizationID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "每页数量",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "字段级过滤",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序规则",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "指定返回字段",
+                        "name": "fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "是否返回总数",
+                        "name": "include_total",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/GetOrganizationDepartmentsResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "组织未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/organizations/{organizationID}/logo": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "将临时Logo绑定到组织，Logo状态从临时变更为永久保存，并更新组织的Logo信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "组织管理"
+                ],
+                "summary": "绑定Logo到组织",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "组织ID",
+                        "name": "organizationID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/BindLogoToOrganizationRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/OrganizationResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "403": {
+                        "description": "权限不足",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Logo或组织未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/users": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "分页查询用户列表，支持按组织、状态等条件筛选",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "获取用户列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "每页数量",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "字段级过滤",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序规则",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "指定返回字段",
+                        "name": "fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "是否返回总数",
+                        "name": "include_total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "按组织ID筛选",
+                        "name": "organization_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "按用户状态筛选",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "是否获取所有数据（不分页）",
+                        "name": "fetch_all",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/ListUsersResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "管理员创建新用户账户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "创建用户",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CreateUserRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/UserProfileResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "403": {
+                        "description": "权限不足",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/users/me": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "获取当前登录用户的详细信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "获取当前用户信息",
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/UserProfileResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "用户更新自己的基本信息（从认证上下文获取用户ID）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "更新当前用户信息",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateMeRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/UserProfileResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/users/search": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "按关键词搜索用户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "搜索用户",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "每页数量",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "字段级过滤",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序规则",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "指定返回字段",
+                        "name": "fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "是否返回总数",
+                        "name": "include_total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "按组织ID筛选",
+                        "name": "organization_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/SearchUsersResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/users/{userID}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "根据用户ID获取用户详细信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "获取用户信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/UserProfileResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "用户未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "更新指定用户的基本信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "更新用户信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateUserRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/UserProfileResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "403": {
+                        "description": "权限不足",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "用户未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "软删除指定用户（管理员权限）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "删除用户",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/DeleteUserRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "403": {
+                        "description": "权限不足",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "用户未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/users/{userID}/memberships": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "获取指定用户的所有组织成员关系",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "成员关系管理"
+                ],
+                "summary": "获取用户成员关系",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "每页数量",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "字段级过滤",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序规则",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "指定返回字段",
+                        "name": "fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "是否返回总数",
+                        "name": "include_total",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/GetUserMembershipsResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "用户未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/users/{userID}/primary-membership": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "获取指定用户的主成员关系",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "成员关系管理"
+                ],
+                "summary": "获取用户主成员关系",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/GetPrimaryMembershipRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/UserMembershipResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "403": {
+                        "description": "权限不足",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "主成员关系未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/users/{userID}/status": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "管理员变更用户状态（激活、停用、锁定等）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "变更用户状态",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ChangeUserStatusRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "403": {
+                        "description": "权限不足",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "用户未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/identity/users/{userID}/unlock": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "管理员解锁被锁定的用户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理"
+                ],
+                "summary": "解锁用户",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UnlockUserRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "403": {
+                        "description": "权限不足",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "用户未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/permission/menu/tree": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "获取完整的菜单树结构，用于前端展示导航菜单预览",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "菜单权限管理"
+                ],
+                "summary": "获取菜单树结构",
+                "responses": {
+                    "200": {
+                        "description": "成功返回菜单树结构",
+                        "schema": {
+                            "$ref": "#/definitions/GetMenuTreeResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/permission/menu/upload": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "上传YAML格式的菜单配置文件，用于更新系统菜单",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "菜单权限管理"
+                ],
+                "summary": "上传菜单配置文件",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "YAML格式的菜单配置文件",
+                        "name": "menu_file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "菜单上传成功",
+                        "schema": {
+                            "$ref": "#/definitions/GetMenuTreeResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/permission/roles": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "分页列出角色定义",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "权限管理"
+                ],
+                "summary": "列出角色定义",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "每页数量",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "字段级过滤",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序规则",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "指定返回字段",
+                        "name": "fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "是否返回总数",
+                        "name": "include_total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "角色名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "角色状态",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否为系统角色",
+                        "name": "is_system_role",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "是否获取所有数据（不分页）",
+                        "name": "fetch_all",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/RoleDefinitionListResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "创建一个新的角色定义",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "权限管理"
+                ],
+                "summary": "创建角色定义",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/RoleDefinitionCreateRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/RoleDefinitionCreateResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/permission/roles/{roleDefinitionID}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "更新指定角色定义的信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "权限管理"
+                ],
+                "summary": "更新角色定义",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "角色定义ID",
+                        "name": "roleDefinitionID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/RoleDefinitionUpdateRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/RoleDefinitionUpdateResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/permission/roles/{roleID}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "根据ID获取角色定义",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "权限管理"
+                ],
+                "summary": "获取角色定义",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "角色ID",
+                        "name": "roleID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/RoleDefinitionGetResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "角色未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "删除一个角色定义",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "权限管理"
+                ],
+                "summary": "删除角色定义",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "角色ID",
+                        "name": "roleID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "角色未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/permission/roles/{roleID}/check-menu-permission": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "检查指定角色是否具有对指定菜单的特定权限",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "菜单权限管理"
+                ],
+                "summary": "检查角色是否具有指定菜单权限",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "角色ID",
+                        "name": "roleID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/HasMenuPermissionRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/HasMenuPermissionResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/permission/roles/{roleID}/menu-permissions": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "获取指定角色的所有菜单权限配置列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "菜单权限管理"
+                ],
+                "summary": "获取角色的菜单权限列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "角色ID",
+                        "name": "roleID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/GetRoleMenuPermissionsResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/permission/roles/{roleID}/menu-tree": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "根据角色的权限配置，返回该角色可访问的菜单树结构",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "菜单权限管理"
+                ],
+                "summary": "获取角色的菜单树",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "角色ID",
+                        "name": "roleID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/GetRoleMenuTreeResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/permission/roles/{roleID}/menus": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "为指定角色配置菜单权限，会清除角色的旧菜单映射，然后添加新的映射",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "菜单权限管理"
+                ],
+                "summary": "配置角色的菜单权限",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "角色ID",
+                        "name": "roleID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ConfigureRoleMenusRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/ConfigureRoleMenusResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/permission/roles/{roleID}/users": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "获取指定角色下所有用户的ID列表（不分页）",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "权限管理"
+                ],
+                "summary": "根据角色ID获取所有用户",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "角色ID",
+                        "name": "roleID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/GetUsersByRoleResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "角色未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/permission/roles/{roleID}/users/batch-bind": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "批量为角色绑定用户，覆盖旧的绑定关系",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "权限管理"
+                ],
+                "summary": "批量绑定用户到角色",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "角色ID",
+                        "name": "roleID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/BatchBindUsersToRoleRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/BatchBindUsersToRoleResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "角色未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/permission/user-roles": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "分页列出用户的角色分配记录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "权限管理"
+                ],
+                "summary": "列出用户的角色分配记录",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "每页数量",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "字段级过滤",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "排序规则",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "指定返回字段",
+                        "name": "fields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "是否返回总数",
+                        "name": "include_total",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "user_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "角色ID",
+                        "name": "role_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/UserRoleListResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/permission/users/{userID}/menu-tree": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "根据用户的最新角色绑定，返回该用户可访问的菜单树结构",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "菜单权限管理"
+                ],
+                "summary": "获取用户的菜单树",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/GetUserMenuTreeResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/permission/users/{userID}/roles/latest": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "获取用户最后一次角色分配",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "权限管理"
+                ],
+                "summary": "获取用户最后一次角色分配",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/AssignRoleToUserResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "认证失败",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "分配未找到",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/OperationStatusResponseDTO"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "AssignRoleToUserResponseDTO": {
+            "type": "object",
+            "properties": {
+                "assignment_id": {
+                    "description": "* 创建的分配记录ID",
+                    "type": "string"
+                },
+                "base_resp": {
+                    "description": "* 响应状态码",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                }
+            }
+        },
+        "BaseResponseDTO": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "错误码，0表示成功",
+                    "type": "integer"
+                },
+                "message": {
+                    "description": "人类可读的提示信息",
+                    "type": "string"
+                }
+            }
+        },
+        "BatchBindUsersToRoleRequestDTO": {
+            "type": "object",
+            "properties": {
+                "user_ids": {
+                    "description": "* 用户ID列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "BatchBindUsersToRoleResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 响应状态码",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "message": {
+                    "description": "* 响应消息",
+                    "type": "string"
+                },
+                "success": {
+                    "description": "* 操作是否成功",
+                    "type": "boolean"
+                },
+                "success_count": {
+                    "description": "* 成功绑定的用户数量",
+                    "type": "integer"
+                }
+            }
+        },
+        "BindLogoToOrganizationRequestDTO": {
+            "type": "object",
+            "properties": {
+                "logo_id": {
+                    "description": "* Logo ID",
+                    "type": "string"
+                }
+            }
+        },
+        "ChangePasswordRequestDTO": {
+            "type": "object",
+            "properties": {
+                "new_password": {
+                    "description": "* 新密码",
+                    "type": "string"
+                },
+                "old_password": {
+                    "description": "* 当前密码",
+                    "type": "string"
+                }
+            }
+        },
+        "ChangeUserStatusRequestDTO": {
+            "type": "object",
+            "properties": {
+                "new_status": {
+                    "description": "* 新状态",
+                    "type": "integer"
+                },
+                "reason": {
+                    "description": "* 修改原因",
+                    "type": "string"
+                }
+            }
+        },
+        "ConfigureRoleMenusRequestDTO": {
+            "type": "object",
+            "properties": {
+                "menu_configs": {
+                    "description": "* 菜单权限配置列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/MenuConfigDTO"
+                    }
+                }
+            }
+        },
+        "ConfigureRoleMenusResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 响应状态码",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "message": {
+                    "description": "* 响应消息",
+                    "type": "string"
+                },
+                "success": {
+                    "description": "* 配置成功标志",
+                    "type": "boolean"
+                }
+            }
+        },
+        "CreateDepartmentRequestDTO": {
+            "type": "object",
+            "properties": {
+                "department_type": {
+                    "description": "* 部门类型",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "* 部门名称",
+                    "type": "string"
+                },
+                "organization_id": {
+                    "description": "* 所属组织ID",
+                    "type": "string"
+                }
+            }
+        },
+        "CreateOrganizationRequestDTO": {
+            "type": "object",
+            "properties": {
+                "accreditation_status": {
+                    "description": "* 认证状态",
+                    "type": "string"
+                },
+                "facility_type": {
+                    "description": "* 机构类型",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "* 组织名称",
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "* 父组织ID（可选）",
+                    "type": "string"
+                },
+                "province_city": {
+                    "description": "* 所在省市列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "CreateUserRequestDTO": {
+            "type": "object",
+            "properties": {
+                "account_expiry": {
+                    "description": "* 账户过期时间",
+                    "type": "integer"
+                },
+                "email": {
+                    "description": "* 邮箱地址",
+                    "type": "string"
+                },
+                "employee_id": {
+                    "description": "* 员工工号",
+                    "type": "string"
+                },
+                "first_name": {
+                    "description": "* 名",
+                    "type": "string"
+                },
+                "gender": {
+                    "description": "* 性别（非必填，0:未知, 1:男, 2:女）",
+                    "type": "integer"
+                },
+                "last_name": {
+                    "description": "* 姓",
+                    "type": "string"
+                },
+                "license_number": {
+                    "description": "* 执业证书号",
+                    "type": "string"
+                },
+                "must_change_password": {
+                    "description": "* 是否必须在下次登录时修改密码",
+                    "type": "boolean"
+                },
+                "organization_id": {
+                    "description": "* 组织ID",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "* 密码",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "* 手机号码",
+                    "type": "string"
+                },
+                "professional_title": {
+                    "description": "* 职业头衔",
+                    "type": "string"
+                },
+                "real_name": {
+                    "description": "* 真实姓名",
+                    "type": "string"
+                },
+                "role_ids": {
+                    "description": "* 角色ID列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "specialties": {
+                    "description": "* 专业特长列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "username": {
+                    "description": "* 用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "DeleteDepartmentRequestDTO": {
+            "type": "object"
+        },
+        "DeleteOrganizationRequestDTO": {
+            "type": "object"
+        },
+        "DeleteUserRequestDTO": {
+            "type": "object",
+            "properties": {
+                "reason": {
+                    "description": "* 删除原因",
+                    "type": "string"
+                }
+            }
+        },
+        "DepartmentDTO": {
+            "type": "object",
+            "properties": {
+                "available_equipment": {
+                    "description": "* 可用设备列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "code": {
+                    "description": "* 部门代码",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "* 创建时间",
+                    "type": "integer"
+                },
+                "department_type": {
+                    "description": "* 部门类型",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "* 部门唯一标识符",
+                    "type": "string"
+                },
+                "member_count": {
+                    "description": "* 成员数量",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "* 部门名称",
+                    "type": "string"
+                },
+                "organization": {
+                    "description": "关联信息\n* 所属组织信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/OrganizationDTO"
+                        }
+                    ]
+                },
+                "organization_id": {
+                    "description": "* 所属组织ID",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "* 更新时间",
+                    "type": "integer"
+                }
+            }
+        },
+        "DepartmentResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 基础响应信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "department": {
+                    "description": "* 部门信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/DepartmentDTO"
+                        }
+                    ]
+                }
+            }
+        },
+        "ForcePasswordChangeRequestDTO": {
+            "type": "object",
+            "properties": {
+                "reason": {
+                    "description": "* 强制修改原因",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "* 目标用户ID",
+                    "type": "string"
+                }
+            }
+        },
+        "GetMenuTreeResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 响应状态码",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "menu_tree": {
+                    "description": "* 完整的菜单树结构",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/MenuNodeDTO"
+                    }
+                }
+            }
+        },
+        "GetOrganizationDepartmentsResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 基础响应信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "departments": {
+                    "description": "* 部门列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/DepartmentDTO"
+                    }
+                },
+                "page": {
+                    "description": "* 分页信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/PageResponseDTO"
+                        }
+                    ]
+                }
+            }
+        },
+        "GetPrimaryMembershipRequestDTO": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "description": "* 用户ID",
+                    "type": "string"
+                }
+            }
+        },
+        "GetRoleMenuPermissionsResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 响应状态码",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "permissions": {
+                    "description": "* 角色的菜单权限列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/MenuPermissionDTO"
+                    }
+                },
+                "role_id": {
+                    "description": "* 角色ID",
+                    "type": "string"
+                }
+            }
+        },
+        "GetRoleMenuTreeResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 响应状态码",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "menu_tree": {
+                    "description": "* 角色可访问的菜单树",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/MenuNodeDTO"
+                    }
+                },
+                "role_id": {
+                    "description": "* 角色ID",
+                    "type": "string"
+                }
+            }
+        },
+        "GetUserMembershipsResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 基础响应信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "memberships": {
+                    "description": "* 成员关系列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/UserMembershipDTO"
+                    }
+                },
+                "page": {
+                    "description": "* 分页信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/PageResponseDTO"
+                        }
+                    ]
+                }
+            }
+        },
+        "GetUserMenuTreeResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 响应状态码",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "menu_tree": {
+                    "description": "* 用户可访问的菜单树",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/MenuNodeDTO"
+                    }
+                },
+                "permissions": {
+                    "description": "* 用户菜单权限列表（扁平化格式，用于前端按钮级权限控制）",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/MenuPermissionDTO"
+                    }
+                },
+                "role_ids": {
+                    "description": "* 用户拥有的角色列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "user_id": {
+                    "description": "* 用户ID",
+                    "type": "string"
+                }
+            }
+        },
+        "GetUsersByRoleResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 响应状态码",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "role_id": {
+                    "description": "* 角色ID",
+                    "type": "string"
+                },
+                "user_ids": {
+                    "description": "* 该角色下所有用户的ID列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "HasMenuPermissionRequestDTO": {
+            "type": "object",
+            "properties": {
+                "menu_id": {
+                    "description": "* 菜单ID",
+                    "type": "string"
+                },
+                "permission": {
+                    "description": "* 权限级别",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/PermissionLevel"
+                        }
+                    ]
+                }
+            }
+        },
+        "HasMenuPermissionResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 响应状态码",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "has_permission": {
+                    "description": "* 是否具有权限",
+                    "type": "boolean"
+                },
+                "menu_id": {
+                    "description": "* 菜单ID",
+                    "type": "string"
+                },
+                "permission": {
+                    "description": "* 权限级别",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/PermissionLevel"
+                        }
+                    ]
+                },
+                "role_id": {
+                    "description": "* 角色ID",
+                    "type": "string"
+                }
+            }
+        },
+        "ListOrganizationsResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 基础响应信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "organizations": {
+                    "description": "* 组织列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/OrganizationDTO"
+                    }
+                },
+                "page": {
+                    "description": "* 分页信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/PageResponseDTO"
+                        }
+                    ]
+                }
+            }
+        },
+        "ListUsersResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 基础响应信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "page": {
+                    "description": "* 分页信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/PageResponseDTO"
+                        }
+                    ]
+                },
+                "users": {
+                    "description": "* 用户列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/UserProfileDTO"
+                    }
+                }
+            }
+        },
+        "LoginRequestDTO": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "description": "* 密码",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "* 用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "LoginResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 基础响应信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "memberships": {
+                    "description": "* 用户成员关系列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/UserMembershipDTO"
+                    }
+                },
+                "menu_tree": {
+                    "description": "* 用户菜单树（新增字段，推荐使用）",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/MenuNodeDTO"
+                    }
+                },
+                "permissions": {
+                    "description": "* 用户菜单权限列表（用于前端按钮级权限控制）",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/MenuPermissionDTO"
+                    }
+                },
+                "role_ids": {
+                    "description": "* 用户角色ID列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "roles": {
+                    "description": "* 用户角色详情列表（包含角色编码、名称和数据范围）",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/RoleInfoDTO"
+                    }
+                },
+                "token_info": {
+                    "description": "* 访问令牌信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/TokenInfoDTO"
+                        }
+                    ]
+                },
+                "user_profile": {
+                    "description": "* 用户个人信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/UserProfileDTO"
+                        }
+                    ]
+                }
+            }
+        },
+        "LogoutRequestDTO": {
+            "type": "object",
+            "properties": {
+                "refresh_token": {
+                    "description": "* 刷新令牌（可选，用于撤销）",
+                    "type": "string"
+                }
+            }
+        },
+        "MenuConfigDTO": {
+            "type": "object",
+            "properties": {
+                "menu_id": {
+                    "description": "* 菜单ID",
+                    "type": "string"
+                },
+                "permission": {
+                    "description": "* 权限级别",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/PermissionLevel"
+                        }
+                    ]
+                }
+            }
+        },
+        "MenuNodeDTO": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "description": "* 子菜单列表 (可选)",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/MenuNodeDTO"
+                    }
+                },
+                "component": {
+                    "description": "* 前端组件路径 (可选)",
+                    "type": "string"
+                },
+                "has_permission": {
+                    "description": "* 是否有权限访问此菜单 (可选, 用于权限标记)",
+                    "type": "boolean"
+                },
+                "icon": {
+                    "description": "* 菜单图标 (可选)",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "* 菜单唯一标识符",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "* 菜单名称 (用于显示)",
+                    "type": "string"
+                },
+                "path": {
+                    "description": "* 路由路径",
+                    "type": "string"
+                },
+                "permission_level": {
+                    "description": "* 权限级别",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/PermissionLevel"
+                        }
+                    ]
+                }
+            }
+        },
+        "MenuPermissionDTO": {
+            "type": "object",
+            "properties": {
+                "menu_id": {
+                    "description": "* 菜单ID",
+                    "type": "string"
+                },
+                "permission": {
+                    "description": "* 权限级别",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/PermissionLevel"
+                        }
+                    ]
+                }
+            }
+        },
+        "OperationStatusResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "基础响应信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                }
+            }
+        },
+        "OrganizationDTO": {
+            "type": "object",
+            "properties": {
+                "accreditation_status": {
+                    "description": "* 认证状态",
+                    "type": "string"
+                },
+                "children": {
+                    "description": "* 子组织列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/OrganizationDTO"
+                    }
+                },
+                "code": {
+                    "description": "* 组织代码",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "* 创建时间",
+                    "type": "integer"
+                },
+                "department_count": {
+                    "description": "* 部门数量",
+                    "type": "integer"
+                },
+                "facility_type": {
+                    "description": "* 机构类型",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "* 组织唯一标识符",
+                    "type": "string"
+                },
+                "logo": {
+                    "description": "* 组织Logo地址",
+                    "type": "string"
+                },
+                "logo_id": {
+                    "description": "* 绑定的Logo ID",
+                    "type": "string"
+                },
+                "member_count": {
+                    "description": "* 成员数量",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "* 组织名称",
+                    "type": "string"
+                },
+                "parent": {
+                    "description": "关联信息\n* 父组织信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/OrganizationDTO"
+                        }
+                    ]
+                },
+                "parent_id": {
+                    "description": "* 父组织ID",
+                    "type": "string"
+                },
+                "province_city": {
+                    "description": "* 所在省市列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "updated_at": {
+                    "description": "* 更新时间",
+                    "type": "integer"
+                }
+            }
+        },
+        "OrganizationLogoDTO": {
+            "type": "object",
+            "properties": {
+                "bound_organization_id": {
+                    "description": "* 绑定的组织ID（临时状态时为空）",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "* 创建时间",
+                    "type": "integer"
+                },
+                "download_url": {
+                    "description": "* 下载URL（预签名URL）",
+                    "type": "string"
+                },
+                "expires_at": {
+                    "description": "* 过期时间（临时状态）",
+                    "type": "integer"
+                },
+                "file_id": {
+                    "description": "* 文件存储ID（S3路径: bucket/key）",
+                    "type": "string"
+                },
+                "file_name": {
+                    "description": "* 原始文件名",
+                    "type": "string"
+                },
+                "file_size": {
+                    "description": "* 文件大小（字节）",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "* Logo唯一标识符",
+                    "type": "string"
+                },
+                "mime_type": {
+                    "description": "* MIME类型",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "* Logo状态（TEMPORARY=临时, BOUND=已绑定, DELETED=已删除）",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "* 更新时间",
+                    "type": "integer"
+                },
+                "uploaded_by": {
+                    "description": "* 上传者ID",
+                    "type": "string"
+                }
+            }
+        },
+        "OrganizationLogoResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 基础响应信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "logo": {
+                    "description": "* Logo信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/OrganizationLogoDTO"
+                        }
+                    ]
+                }
+            }
+        },
+        "OrganizationResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 基础响应信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "organization": {
+                    "description": "* 组织信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/OrganizationDTO"
+                        }
+                    ]
+                }
+            }
+        },
+        "PageResponseDTO": {
+            "type": "object",
+            "properties": {
+                "has_next": {
+                    "description": "是否有下一页",
+                    "type": "boolean"
+                },
+                "has_prev": {
+                    "description": "是否有上一页",
+                    "type": "boolean"
+                },
+                "limit": {
+                    "description": "每页数量",
+                    "type": "integer"
+                },
+                "page": {
+                    "description": "当前页码",
+                    "type": "integer"
+                },
+                "total": {
+                    "description": "总记录数",
+                    "type": "integer"
+                },
+                "total_pages": {
+                    "description": "总页数",
+                    "type": "integer"
+                }
+            }
+        },
+        "PermissionDTO": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "description": "* 对资源执行的操作",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "* 权限描述",
+                    "type": "string"
+                },
+                "resource": {
+                    "description": "* 权限作用的资源",
+                    "type": "string"
+                }
+            }
+        },
+        "PermissionLevel": {
+            "type": "integer",
+            "format": "int64",
+            "enum": [
+                0,
+                1,
+                2,
+                3
+            ],
+            "x-enum-varnames": [
+                "PermissionLevel_NONE",
+                "PermissionLevel_READ",
+                "PermissionLevel_WRITE",
+                "PermissionLevel_FULL"
+            ]
+        },
+        "RefreshTokenRequestDTO": {
+            "type": "object",
+            "properties": {
+                "refresh_token": {
+                    "description": "* 刷新令牌",
+                    "type": "string"
+                }
+            }
+        },
+        "RefreshTokenResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 基础响应信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "token_info": {
+                    "description": "* 新的令牌信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/TokenInfoDTO"
+                        }
+                    ]
+                }
+            }
+        },
+        "ResetPasswordRequestDTO": {
+            "type": "object",
+            "properties": {
+                "new_password": {
+                    "description": "* 新密码（可选，为空时系统生成）",
+                    "type": "string"
+                },
+                "reset_reason": {
+                    "description": "* 重置原因",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "* 目标用户ID",
+                    "type": "string"
+                }
+            }
+        },
+        "RoleDefinitionCreateRequestDTO": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "* 角色描述",
+                    "type": "string"
+                },
+                "is_system_role": {
+                    "description": "* 是否为系统内置角色",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "* 角色唯一名称 (英文，用于程序识别)",
+                    "type": "string"
+                },
+                "permissions": {
+                    "description": "* 角色包含的权限列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/PermissionDTO"
+                    }
+                }
+            }
+        },
+        "RoleDefinitionCreateResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 响应状态码",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "role": {
+                    "description": "* 创建成功的角色定义信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/RoleDefinitionDTO"
+                        }
+                    ]
+                }
+            }
+        },
+        "RoleDefinitionDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "* 创建时间",
+                    "type": "integer"
+                },
+                "created_by": {
+                    "description": "* 创建者用户ID",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "* 角色详细描述",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "* 角色唯一ID",
+                    "type": "string"
+                },
+                "is_system_role": {
+                    "description": "* 是否为系统内置角色，不可删除",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "* 角色唯一名称 (中文，页面展示使用)",
+                    "type": "string"
+                },
+                "permissions": {
+                    "description": "* 该角色拥有的权限列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/PermissionDTO"
+                    }
+                },
+                "status": {
+                    "description": "* 角色状态",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "description": "* 最后更新时间",
+                    "type": "integer"
+                },
+                "updated_by": {
+                    "description": "* 更新者用户ID",
+                    "type": "string"
+                },
+                "user_count": {
+                    "description": "* 当前角色绑定的用户数量（非持久化字段，查询时动态计算）",
+                    "type": "integer"
+                }
+            }
+        },
+        "RoleDefinitionGetResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 响应状态码",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "role": {
+                    "description": "* 角色定义信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/RoleDefinitionDTO"
+                        }
+                    ]
+                }
+            }
+        },
+        "RoleDefinitionListResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 响应状态码",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "page": {
+                    "description": "* 分页响应参数",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/PageResponseDTO"
+                        }
+                    ]
+                },
+                "roles": {
+                    "description": "* 角色定义列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/RoleDefinitionDTO"
+                    }
+                }
+            }
+        },
+        "RoleDefinitionUpdateRequestDTO": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "* 角色描述",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "* 角色名称",
+                    "type": "string"
+                },
+                "permissions": {
+                    "description": "* 权限列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/PermissionDTO"
+                    }
+                },
+                "status": {
+                    "description": "* 角色状态",
+                    "type": "integer"
+                }
+            }
+        },
+        "RoleDefinitionUpdateResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 响应状态码",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "role": {
+                    "description": "* 更新后的角色定义信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/RoleDefinitionDTO"
+                        }
+                    ]
+                }
+            }
+        },
+        "RoleInfoDTO": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "* 角色编码（如：ROLE_ADMIN, ROLE_DOCTOR）",
+                    "type": "string"
+                },
+                "data_scope": {
+                    "description": "* 数据范围（1:仅自己, 2:本部门, 3:全组织）",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "* 角色唯一标识符",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "* 角色名称（中文显示名称）",
+                    "type": "string"
+                }
+            }
+        },
+        "SearchUsersResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 基础响应信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "page": {
+                    "description": "* 分页信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/PageResponseDTO"
+                        }
+                    ]
+                },
+                "users": {
+                    "description": "* 用户列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/UserProfileDTO"
+                    }
+                }
+            }
+        },
+        "TokenInfoDTO": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "description": "访问令牌",
+                    "type": "string"
+                },
+                "expires_in": {
+                    "description": "访问令牌过期时间（秒）",
+                    "type": "integer"
+                },
+                "token_type": {
+                    "description": "令牌类型（通常是\"Bearer\"）",
+                    "type": "string"
+                }
+            }
+        },
+        "UnlockUserRequestDTO": {
+            "type": "object"
+        },
+        "UpdateDepartmentRequestDTO": {
+            "type": "object",
+            "properties": {
+                "department_type": {
+                    "description": "* 部门类型",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "* 部门名称",
+                    "type": "string"
+                }
+            }
+        },
+        "UpdateMeRequestDTO": {
+            "type": "object",
+            "properties": {
+                "account_expiry": {
+                    "description": "* 账户过期时间",
+                    "type": "integer"
+                },
+                "email": {
+                    "description": "* 邮箱地址",
+                    "type": "string"
+                },
+                "employee_id": {
+                    "description": "* 员工工号",
+                    "type": "string"
+                },
+                "first_name": {
+                    "description": "* 名",
+                    "type": "string"
+                },
+                "gender": {
+                    "description": "* 性别",
+                    "type": "integer"
+                },
+                "last_name": {
+                    "description": "* 姓",
+                    "type": "string"
+                },
+                "medical_license_number": {
+                    "description": "* 许可证号",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "* 手机号码",
+                    "type": "string"
+                },
+                "professional_title": {
+                    "description": "* 职业头衔",
+                    "type": "string"
+                },
+                "real_name": {
+                    "description": "* 真实姓名",
+                    "type": "string"
+                },
+                "specialties": {
+                    "description": "* 专业特长列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "UpdateOrganizationRequestDTO": {
+            "type": "object",
+            "properties": {
+                "accreditation_status": {
+                    "description": "* 认证状态",
+                    "type": "string"
+                },
+                "facility_type": {
+                    "description": "* 机构类型",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "* 组织名称",
+                    "type": "string"
+                },
+                "parent_id": {
+                    "description": "* 父组织ID",
+                    "type": "string"
+                },
+                "province_city": {
+                    "description": "* 所在省市列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "UpdateUserRequestDTO": {
+            "type": "object",
+            "properties": {
+                "account_expiry": {
+                    "description": "* 账户过期时间",
+                    "type": "integer"
+                },
+                "email": {
+                    "description": "* 邮箱地址",
+                    "type": "string"
+                },
+                "employee_id": {
+                    "description": "* 员工工号",
+                    "type": "string"
+                },
+                "first_name": {
+                    "description": "* 名",
+                    "type": "string"
+                },
+                "gender": {
+                    "description": "* 性别",
+                    "type": "integer"
+                },
+                "last_name": {
+                    "description": "* 姓",
+                    "type": "string"
+                },
+                "license_number": {
+                    "description": "* 执业证书号",
+                    "type": "string"
+                },
+                "organization_id": {
+                    "description": "* 组织ID",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "* 手机号码",
+                    "type": "string"
+                },
+                "professional_title": {
+                    "description": "* 职业头衔",
+                    "type": "string"
+                },
+                "real_name": {
+                    "description": "* 真实姓名",
+                    "type": "string"
+                },
+                "role_ids": {
+                    "description": "* 角色ID列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "specialties": {
+                    "description": "* 专业特长列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "UserMembershipDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "* 创建时间",
+                    "type": "integer"
+                },
+                "department": {
+                    "description": "* 所属部门信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/DepartmentDTO"
+                        }
+                    ]
+                },
+                "department_id": {
+                    "description": "* 部门ID（可选）",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "* 成员关系唯一标识符",
+                    "type": "string"
+                },
+                "is_primary": {
+                    "description": "* 是否为主要成员关系",
+                    "type": "boolean"
+                },
+                "organization": {
+                    "description": "关联信息\n* 所属组织信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/OrganizationDTO"
+                        }
+                    ]
+                },
+                "organization_id": {
+                    "description": "* 组织ID",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "* 更新时间",
+                    "type": "integer"
+                },
+                "user_id": {
+                    "description": "* 用户ID",
+                    "type": "string"
+                }
+            }
+        },
+        "UserMembershipResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 基础响应信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "membership": {
+                    "description": "* 成员关系信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/UserMembershipDTO"
+                        }
+                    ]
+                }
+            }
+        },
+        "UserProfileDTO": {
+            "type": "object",
+            "properties": {
+                "account_expiry": {
+                    "description": "* 账户过期时间",
+                    "type": "integer"
+                },
+                "created_at": {
+                    "description": "* 创建时间",
+                    "type": "integer"
+                },
+                "created_by": {
+                    "description": "* 创建者用户ID",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "* 邮箱地址",
+                    "type": "string"
+                },
+                "employee_id": {
+                    "description": "* 员工工号",
+                    "type": "string"
+                },
+                "first_name": {
+                    "description": "* 名",
+                    "type": "string"
+                },
+                "gender": {
+                    "description": "* 性别",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "* 用户唯一标识符",
+                    "type": "string"
+                },
+                "last_login_time": {
+                    "description": "* 最后登录时间",
+                    "type": "integer"
+                },
+                "last_name": {
+                    "description": "* 姓",
+                    "type": "string"
+                },
+                "license_number": {
+                    "description": "* 执业证书号",
+                    "type": "string"
+                },
+                "login_attempts": {
+                    "description": "* 连续登录失败次数",
+                    "type": "integer"
+                },
+                "must_change_password": {
+                    "description": "* 是否必须修改密码",
+                    "type": "boolean"
+                },
+                "phone": {
+                    "description": "* 手机号码",
+                    "type": "string"
+                },
+                "primary_department_id": {
+                    "description": "* 主部门ID",
+                    "type": "string"
+                },
+                "primary_organization_id": {
+                    "description": "* 主组织ID",
+                    "type": "string"
+                },
+                "professional_title": {
+                    "description": "* 职业头衔",
+                    "type": "string"
+                },
+                "real_name": {
+                    "description": "* 真实姓名",
+                    "type": "string"
+                },
+                "role_ids": {
+                    "description": "* 用户角色ID列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "specialties": {
+                    "description": "* 专业特长列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "status": {
+                    "description": "* 用户状态",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "description": "* 更新时间",
+                    "type": "integer"
+                },
+                "updated_by": {
+                    "description": "* 最后更新者用户ID",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "* 用户名（登录名）",
+                    "type": "string"
+                }
+            }
+        },
+        "UserProfileResponseDTO": {
+            "type": "object",
+            "properties": {
+                "base_resp": {
+                    "description": "* 基础响应信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "user": {
+                    "description": "* 用户个人信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/UserProfileDTO"
+                        }
+                    ]
+                }
+            }
+        },
+        "UserRoleAssignmentDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "* 创建时间",
+                    "type": "integer"
+                },
+                "created_by": {
+                    "description": "* 创建者用户ID",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "* 分配记录的唯一ID",
+                    "type": "string"
+                },
+                "role_id": {
+                    "description": "* 分配的角色ID (对应 RoleDefinition.id)",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "* 最后更新时间",
+                    "type": "integer"
+                },
+                "updated_by": {
+                    "description": "* 更新者用户ID",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "* 被分配角色的用户ID",
+                    "type": "string"
+                }
+            }
+        },
+        "UserRoleListResponseDTO": {
+            "type": "object",
+            "properties": {
+                "assignments": {
+                    "description": "* 用户角色分配列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/UserRoleAssignmentDTO"
+                    }
+                },
+                "base_resp": {
+                    "description": "* 响应状态码",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BaseResponseDTO"
+                        }
+                    ]
+                },
+                "page": {
+                    "description": "* 分页响应参数",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/PageResponseDTO"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

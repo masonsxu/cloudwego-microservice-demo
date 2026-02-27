@@ -90,6 +90,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'organization.detail', hidden: true }
       },
       {
+        path: 'roles/:id',
+        name: 'RoleDetail',
+        component: () => import('@/views/role/RoleDetail.vue'),
+        meta: { title: 'role.roleDetail', hidden: true }
+      },
+      {
         path: 'system',
         name: 'System',
         meta: { title: 'system.title', icon: 'Setting', hidden: true },

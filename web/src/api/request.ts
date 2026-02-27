@@ -15,8 +15,11 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const authStore = useAuthStore()
-    if (authStore.token) {
-      config.headers.Authorization = `Bearer ${authStore.token}`
+    // 优先使用 authStore 中的 token，如果为空则从 localStorage 读取（备用方案）
+    const token = authStore.token || localStorage.getItem('token')
+    
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
     }
     return config
   },

@@ -94,7 +94,7 @@
               <el-descriptions-item :label="t('user.lastName')">
                 {{ userDetail?.last_name || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="t('user.gender')">
+              <el-descriptions-item :label="t('user.gender.label')">
                 {{ t(`user.gender.${getGenderKey(userDetail?.gender)}`) }}
               </el-descriptions-item>
               <el-descriptions-item :label="t('user.employeeId')">

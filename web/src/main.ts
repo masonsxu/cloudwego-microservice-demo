@@ -7,8 +7,8 @@ import 'element-plus/dist/index.css'
 import App from './App.vue'
 import router from './router'
 import createI18n from './locales'
-import './assets/styles/tailwind.css'
 import './assets/styles/variables.css'
+import './assets/styles/tailwind.css'
 
 const app = createApp(App)
 
