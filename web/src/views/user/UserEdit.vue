@@ -32,7 +32,7 @@
               </el-form-item>
             </el-col>
             <el-col :xs="24" :md="12">
-              <el-form-item :label="t('user.status')">
+              <el-form-item :label="t('common.status')">
                 <el-tag :type="getStatusType(userDetail?.status)">
                   {{ t(`user.status.${getStatusKey(userDetail?.status)}`) }}
                 </el-tag>

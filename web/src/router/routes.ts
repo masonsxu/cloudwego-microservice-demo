@@ -5,7 +5,7 @@ const routes: RouteRecordRaw[] = [
     path: '/login',
     name: 'Login',
     component: () => import('@/views/auth/Login.vue'),
-    meta: { requiresAuth: false, title: '登录' }
+    meta: { requiresAuth: false, title: 'auth.login' }
   },
   {
     path: '/',
@@ -23,7 +23,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'system-settings',
         name: 'SystemSettings',
-        meta: { title: '系统设置', icon: 'Setting', menuId: 'system_settings' },
+        meta: { title: 'system.title', icon: 'Setting', menuId: 'system_settings' },
         redirect: '/system-settings/organization',
         children: [
           {
@@ -31,7 +31,7 @@ const routes: RouteRecordRaw[] = [
             name: 'OrganizationManagement',
             component: () => import('@/views/organization/OrgList.vue'),
             meta: {
-              title: '组织管理',
+              title: 'organization.title',
               icon: 'OfficeBuilding',
               menuId: 'organization_management'
             }
@@ -41,7 +41,7 @@ const routes: RouteRecordRaw[] = [
             name: 'RoleManagement',
             component: () => import('@/views/role/RoleList.vue'),
             meta: {
-              title: '角色权限',
+              title: 'role.title',
               icon: 'Key',
               menuId: 'role_permissions'
             }
@@ -51,7 +51,7 @@ const routes: RouteRecordRaw[] = [
             name: 'AccountManagement',
             component: () => import('@/views/user/UserList.vue'),
             meta: {
-              title: '账号管理',
+              title: 'user.title',
               icon: 'User',
               menuId: 'account_management'
             }

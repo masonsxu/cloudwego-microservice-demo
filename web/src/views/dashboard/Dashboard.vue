@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard">
+  <div class="dashboard" v-loading="loading">
     <el-row :gutter="20" class="stats-row">
       <el-col :xs="24" :sm="12" :md="6">
         <el-card class="stat-card">
@@ -67,7 +67,7 @@
             <p class="greeting">{{ greeting }}</p>
             <p class="username">{{ authStore.username }}</p>
             <p class="description">
-              欢迎使用 CloudWeGo 微服务管理平台，这是一个基于 CloudWeGo 生态构建的生产级微服务架构演示项目。
+              {{ t('dashboard.welcomeDescription') }}
             </p>
           </div>
         </el-card>
@@ -107,10 +107,13 @@
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
+import { getDashboardStats } from '@/api/dashboard'
+import { ElMessage } from 'element-plus'
 
 const authStore = useAuthStore()
 const { t } = useI18n()
 
+const loading = ref(false)
 const stats = ref({
   userCount: 0,
   orgCount: 0,
@@ -120,19 +123,26 @@ const stats = ref({
 
 const greeting = computed(() => {
   const hour = new Date().getHours()
-  if (hour < 12) return '早上好'
-  if (hour < 18) return '下午好'
-  return '晚上好'
+  if (hour < 12) return t('dashboard.greetingMorning')
+  if (hour < 18) return t('dashboard.greetingAfternoon')
+  return t('dashboard.greetingEvening')
 })
 
-onMounted(async () => {
-  // TODO: 从 API 获取统计数据
-  stats.value = {
-    userCount: 156,
-    orgCount: 12,
-    roleCount: 8,
-    activityCount: 23
+async function fetchStats() {
+  loading.value = true
+  try {
+    const data = await getDashboardStats()
+    stats.value = data
+  } catch (error: any) {
+    console.error('Failed to fetch dashboard stats:', error)
+    ElMessage.error(error.message || t('common.operationFailed'))
+  } finally {
+    loading.value = false
   }
+}
+
+onMounted(() => {
+  fetchStats()
 })
 </script>
 

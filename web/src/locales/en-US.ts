@@ -61,6 +61,10 @@ export default {
   dashboard: {
     title: 'Dashboard',
     welcome: 'Welcome back',
+    welcomeDescription: 'Welcome to CloudWeGo Microservice Management Platform, a production-grade microservice architecture demo built with CloudWeGo ecosystem.',
+    greetingMorning: 'Good Morning',
+    greetingAfternoon: 'Good Afternoon',
+    greetingEvening: 'Good Evening',
     overview: 'Overview',
     statistics: 'Statistics',
     userCount: 'Total Users',
@@ -108,6 +112,7 @@ export default {
       female: 'Female'
     },
     status: {
+      unknown: 'Unknown',
       active: 'Active',
       inactive: 'Inactive',
       suspended: 'Suspended',
@@ -117,6 +122,7 @@ export default {
 
   organization: {
     title: 'Organization Management',
+    detail: 'Organization Detail',
     orgList: 'Organization List',
     createOrganization: 'Create Organization',
     editOrganization: 'Edit Organization',

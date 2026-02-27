@@ -64,6 +64,10 @@ export default {
   dashboard: {
     title: '仪表盘',
     welcome: '欢迎回来',
+    welcomeDescription: '欢迎使用 CloudWeGo 微服务管理平台，这是一个基于 CloudWeGo 生态构建的生产级微服务架构演示项目。',
+    greetingMorning: '早上好',
+    greetingAfternoon: '下午好',
+    greetingEvening: '晚上好',
     overview: '概览',
     statistics: '统计数据',
     userCount: '用户总数',
@@ -111,6 +115,7 @@ export default {
       female: '女'
     },
     status: {
+      unknown: '未知',
       active: '活跃',
       inactive: '未激活',
       suspended: '暂停',
@@ -120,6 +125,7 @@ export default {
 
   organization: {
     title: '组织管理',
+    detail: '组织详情',
     orgList: '组织列表',
     createOrganization: '创建组织',
     editOrganization: '编辑组织',

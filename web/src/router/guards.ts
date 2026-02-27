@@ -1,12 +1,17 @@
 import type { Router } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { ElMessage } from 'element-plus'
+import { i18n } from '@/locales'
 
 export function setupRouterGuard(router: Router) {
   // 前置守卫
   router.beforeEach((to, from, next) => {
-    // 设置页面标题
-    document.title = `${to.meta.title || 'CloudWeGo'} - ${import.meta.env.VITE_APP_TITLE}`
+    // 设置页面标题（支持 i18n 翻译）
+    const title = to.meta.title || 'CloudWeGo'
+    const translatedTitle = typeof title === 'string' && title.includes('.') 
+      ? i18n.global.t(title) 
+      : title
+    document.title = `${translatedTitle} - ${import.meta.env.VITE_APP_TITLE}`
 
     const authStore = useAuthStore()
 
