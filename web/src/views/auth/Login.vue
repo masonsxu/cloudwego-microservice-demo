@@ -185,10 +185,6 @@ function getStarStyle(_i: number) {
     .login-form {
       .el-form-item {
         margin-bottom: 25px;
-
-        :deep(.el-input__wrapper) {
-          padding: 12px 15px;
-        }
       }
 
       .login-button {

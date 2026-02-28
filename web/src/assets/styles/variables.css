@@ -4,7 +4,7 @@
   --bg-base: #141416;
   --bg-surface: #1E1F22;
   --bg-card: rgba(30, 32, 36, 0.9);
-  --bg-input: rgba(255, 255, 255, 0.05);
+  --bg-input: rgba(20, 20, 22, 1);
   --c-accent: #D4AF37;
   --c-accent-hover: #E8C56B;
   --c-accent-dark: #C4A033;
@@ -27,7 +27,7 @@
   --bg-base: #F4F5F7;
   --bg-surface: #FFFFFF;
   --bg-card: rgba(255, 255, 255, 0.95);
-  --bg-input: rgba(0, 0, 0, 0.04);
+  --bg-input: #f5f6f7;
   --c-accent: #B8960C;
   --c-accent-hover: #D4AF37;
   --c-accent-dark: #9A7A00;

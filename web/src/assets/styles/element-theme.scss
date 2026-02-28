@@ -238,6 +238,7 @@
   border-radius: 10px;
   box-shadow: none !important;
   transition: all 0.25s ease;
+  position: relative;
 
   &:hover {
     border-color: var(--c-border-accent);
@@ -250,11 +251,130 @@
 }
 
 .el-input__inner {
+  background-color: transparent !important;
   color: var(--c-text-main);
+  color-scheme: dark;
 
   &::placeholder {
     color: var(--c-text-muted);
   }
+}
+
+/* ===== 浏览器自动填充防御：7层保护 ===== */
+
+/* Layer 1: Box-shadow inset 核心覆盖（最有效） */
+.el-input__inner:-webkit-autofill,
+.el-input__inner:-webkit-autofill:hover,
+.el-input__inner:-webkit-autofill:focus,
+.el-textarea__inner:-webkit-autofill,
+.el-textarea__inner:-webkit-autofill:hover,
+.el-textarea__inner:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-input) inset !important;
+  -webkit-text-fill-color: var(--c-text-main) !important;
+  caret-color: var(--c-text-main) !important;
+}
+
+/* Layer 2: 极长 transition delay 欺骗浏览器 */
+.el-input__inner,
+.el-textarea__inner {
+  transition: background-color 5000s ease-in-out 0s, color 5000s ease-in-out 0s !important;
+}
+
+/* Layer 3: 移除浏览器默认滤镜 */
+.el-input__inner:-webkit-autofill,
+.el-textarea__inner:-webkit-autofill {
+  filter: none !important;
+}
+
+/* Layer 4: 自动填充状态的动态移除动画 */
+@keyframes removeAutofill {
+  0% {
+    background-color: transparent;
+  }
+  100% {
+    background-color: transparent;
+    -webkit-box-shadow: 0 0 0 1000px var(--bg-input) inset !important;
+  }
+}
+
+/* Layer 5: 为原生 input 元素添加覆盖（非 Element Plus 组件） */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-input) inset !important;
+  -webkit-text-fill-color: var(--c-text-main) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Layer 6: 强化所有输入相关元素的背景 */
+.el-input,
+.el-input__wrapper,
+.el-input__inner,
+.el-textarea,
+.el-textarea__inner {
+  background-color: var(--bg-input) !important;
+}
+
+.el-input__inner,
+.el-textarea__inner {
+  background-color: transparent !important;
+}
+
+/* Layer 7: 确保特殊输入框（密码框、带前缀/后缀）也有正确的背景 */
+.el-input--prefix .el-input__wrapper,
+.el-input--suffix .el-input__wrapper,
+.el-input--prefix .el-input__inner,
+.el-input--suffix .el-input__inner,
+.el-input--password .el-input__wrapper,
+.el-input--password .el-input__inner {
+  background-color: transparent !important;
+}
+
+/* 输入框内的图标颜色 */
+.el-input__prefix,
+.el-input__suffix,
+.el-input__prefix-inner,
+.el-input__suffix-inner {
+  color: var(--c-text-sub);
+}
+
+/* ===== 视觉补偿：微妙的渐变边框增强层次感 ===== */
+.el-input__wrapper {
+  background: linear-gradient(
+    145deg,
+    rgba(20, 20, 22, 1) 0%,
+    rgba(26, 27, 30, 1) 100%
+  ) !important;
+}
+
+[data-theme="light"] .el-input__wrapper {
+  background: linear-gradient(
+    145deg,
+    #ffffff 0%,
+    #f5f6f7 100%
+  ) !important;
+}
+
+/* 浅色主题自动填充防御 */
+[data-theme="light"] .el-input__inner:-webkit-autofill,
+[data-theme="light"] .el-input__inner:-webkit-autofill:hover,
+[data-theme="light"] .el-input__inner:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: var(--c-text-main) !important;
+  color-scheme: light;
+}
+
+[data-theme="light"] .el-textarea__inner:-webkit-autofill,
+[data-theme="light"] .el-textarea__inner:-webkit-autofill:hover,
+[data-theme="light"] .el-textarea__inner:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: var(--c-text-main) !important;
+  color-scheme: light;
 }
 
 /* ===== Select ===== */
@@ -427,10 +547,11 @@
 
 /* ===== Textarea ===== */
 .el-textarea__inner {
-  background-color: var(--bg-input) !important;
+  background-color: transparent !important;
   border-color: var(--c-border) !important;
   color: var(--c-text-main) !important;
   border-radius: 10px;
+  color-scheme: dark;
 
   &:hover {
     border-color: var(--c-border-accent) !important;
@@ -440,6 +561,17 @@
     border-color: var(--c-accent) !important;
     box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
   }
+
+  /* Textarea 自动填充防御 */
+  &:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px var(--bg-input) inset !important;
+    -webkit-text-fill-color: var(--c-text-main) !important;
+    transition: background-color 5000s ease-in-out 0s !important;
+  }
+}
+
+[data-theme="light"] .el-textarea__inner {
+  color-scheme: light;
 }
 
 /* ===== Descriptions ===== */
@@ -532,6 +664,36 @@
 .el-popper.is-light .el-popper__arrow::before {
   background: var(--bg-card) !important;
   border-color: var(--c-border-accent) !important;
+}
+
+/* ===== 强制修复：输入框所有白色背景 ===== */
+.el-input,
+.el-input__wrapper,
+.el-input__inner,
+.el-textarea__inner {
+  background-color: var(--bg-input) !important;
+}
+
+.el-input__inner {
+  background-color: transparent !important;
+}
+
+/* 确保密码输入框、带前缀/后缀的输入框也有正确的背景 */
+.el-input--prefix .el-input__wrapper,
+.el-input--suffix .el-input__wrapper,
+.el-input--prefix .el-input__inner,
+.el-input--suffix .el-input__inner,
+.el-input--password .el-input__wrapper,
+.el-input--password .el-input__inner {
+  background-color: transparent !important;
+}
+
+/* 输入框内的图标颜色 */
+.el-input__prefix,
+.el-input__suffix,
+.el-input__prefix-inner,
+.el-input__suffix-inner {
+  color: var(--c-text-sub);
 }
 
 /* ===== 强制修复：对话框遮罩背景 ===== */
