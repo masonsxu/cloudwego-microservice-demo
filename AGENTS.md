@@ -76,26 +76,49 @@ go tool cover -func=coverage.out | grep total
 - ❌ 禁止执行：`npm run dev`、`sh build.sh && sh output/bootstrap.sh` 等长期运行的服务
 
 ### 测试
-go test ./biz/logic/user -run TestUserLogic_CreateUser -v -count=1
-
-# 测试覆盖率
-go test ./... -coverprofile=coverage.out
-go tool cover -func=coverage.out | grep total
-```
-
-### 代码检查和格式化
 
 ```bash
-# 代码检查（Lint）
-golangci-lint run
-
 # 自动格式化（gofumpt + golines + gci）
 golangci-lint format
 
-# 修复导入排序
+# 代码检查（Lint）
+golangci-lint run
+
+# 修复导入排序（独立使用）
 cd rpc/identity_srv && gci write .
 cd gateway && gci write .
 ```
+
+### 📋 提交前检查规范（避免 CI 失败）
+
+**问题**：CI 中 `golangci-lint run` 只检查不修复，导致 push 后 lint 失败。
+
+**解决方案**：每次 commit 前必须执行以下步骤：
+
+```bash
+# 1. 确保本地 golangci-lint 版本与 CI 一致（v2.4.0）
+golangci-lint version
+
+# 2. 自动修复格式问题
+golangci-lint format
+
+# 3. 验证是否还有问题（需手动修复 unused 代码等）
+golangci-lint run
+
+# 4. 确保测试通过
+go test ./... -v
+```
+
+**安装 pre-commit hook**（自动检查）：
+```bash
+ln -sf ../../scripts/git-hooks/pre-commit .git/hooks/pre-commit
+```
+
+**常见 CI 失败原因**：
+- `gci` 导入顺序问题 → `golangci-lint format` 自动修复
+- `wsl_v5` 空行问题 → `golangci-lint format` 自动修复
+- `unused` 函数/变量 → 需手动删除代码
+- 本地版本与 CI 不一致 → 重新安装 v2.4.0
 
 ### 代码生成
 
