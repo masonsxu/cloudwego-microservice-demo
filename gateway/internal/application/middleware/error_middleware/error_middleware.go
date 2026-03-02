@@ -188,7 +188,6 @@ func (ehm *ErrorHandlerMiddlewareImpl) logHTTPError(
 	tracelog.RecordSpanHTTPError(ctx, statusCode, string(c.Method()), string(c.Request.Path()), responseBody)
 }
 
-
 // logRequestInfo 记录请求信息
 func (ehm *ErrorHandlerMiddlewareImpl) logRequestInfo(ctx context.Context, c *app.RequestContext) {
 	userID, hasUserID := auth_context.GetCurrentUserProfileID(c)
