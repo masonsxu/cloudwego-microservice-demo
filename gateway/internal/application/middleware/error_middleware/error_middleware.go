@@ -188,15 +188,6 @@ func (ehm *ErrorHandlerMiddlewareImpl) logHTTPError(
 	tracelog.RecordSpanHTTPError(ctx, statusCode, string(c.Method()), string(c.Request.Path()), responseBody)
 }
 
-// handleHTTPStatusError 处理HTTP状态码错误
-// Deprecated: 改用 logHTTPError，此方法仅保留以兼容 panic 恢复路径
-func (ehm *ErrorHandlerMiddlewareImpl) handleHTTPStatusError(
-	ctx context.Context,
-	c *app.RequestContext,
-	statusCode int,
-) {
-	ehm.logHTTPError(ctx, c, statusCode)
-}
 
 // logRequestInfo 记录请求信息
 func (ehm *ErrorHandlerMiddlewareImpl) logRequestInfo(ctx context.Context, c *app.RequestContext) {
