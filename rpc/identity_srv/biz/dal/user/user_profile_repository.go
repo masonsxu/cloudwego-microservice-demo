@@ -306,7 +306,7 @@ func (r *UserProfileRepositoryImpl) FindByMedicalLicense(
 	var user models.UserProfile
 
 	err := r.db.WithContext(ctx).
-		Where("medical_license_number = ?", licenseNumber).
+		Where("license_number = ?", licenseNumber).
 		First(&user).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -447,7 +447,7 @@ func (r *UserProfileRepositoryImpl) applyUserProfileConditions(
 	if conditions.MedicalLicense != nil {
 		qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
 			return db.Where(
-				"user_profiles.medical_license_number = ?",
+				"user_profiles.license_number = ?",
 				*conditions.MedicalLicense,
 			)
 		})
