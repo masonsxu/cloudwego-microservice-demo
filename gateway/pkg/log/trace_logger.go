@@ -163,6 +163,7 @@ func BindToContext(
 		Str(FieldMethod, method).
 		Ctx(ctx).
 		Logger()
+
 	return ctxLogger.WithContext(ctx)
 }
 
