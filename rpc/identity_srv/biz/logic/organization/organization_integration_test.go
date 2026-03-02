@@ -96,6 +96,7 @@ func (s *OrganizationLogicIntegrationTestSuite) SetupSuite() {
 
 	s.cleanup = func() {
 		sqlDB.Close()
+
 		_ = postgresContainer.Terminate(ctx)
 	}
 }
@@ -315,7 +316,6 @@ func (s *OrganizationLogicIntegrationTestSuite) TestDeleteOrganization_SystemOrg
 
 	// 尝试删除 - 系统可能允许删除，这是合理的设计
 	err = s.orgLogic.DeleteOrganization(s.ctx, *org.ID)
-
 	if err != nil {
 		// 如果系统不允许删除系统组织
 		assert.Contains(s.T(), err.Error(), "不能删除系统组织")

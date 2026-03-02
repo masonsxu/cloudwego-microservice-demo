@@ -36,37 +36,43 @@ func (s *UserLogicIntegrationTestSuite) SetupSuite() {
 	ctx := context.Background()
 
 	// 启动 PostgreSQL 容器
-	container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
-		ContainerRequest: testcontainers.ContainerRequest{
-			Image:        "postgres:16-alpine",
-			ExposedPorts: []string{"5432/tcp"},
-			Env: map[string]string{
-				"POSTGRES_DB":       "testdb",
-				"POSTGRES_USER":     "testuser",
-				"POSTGRES_PASSWORD": "testpass",
-			},
-			WaitingFor: wait.ForLog("database system is ready to accept connections").
-				WithOccurrence(2).
-				WithStartupTimeout(30 * time.Second),
+	req := testcontainers.ContainerRequest{
+		Image:        "postgres:17-alpine",
+		ExposedPorts: []string{"5432/tcp"},
+		Env: map[string]string{
+			"POSTGRES_DB":       "testdb",
+			"POSTGRES_USER":     "testuser",
+			"POSTGRES_PASSWORD": "testpass",
 		},
-		Started: true,
+		WaitingFor: wait.ForLog("database system is ready to accept connections").
+			WithOccurrence(2).
+			WithStartupTimeout(60 * time.Second),
+	}
+
+	container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+		ContainerRequest: req,
+		Started:          true,
 	})
-	require.NoError(s.T(), err)
+	require.NoError(s.T(), err, "Failed to start PostgreSQL container")
 
 	// 获取数据库连接信息
 	host, err := container.Host(ctx)
-	require.NoError(s.T(), err)
+	require.NoError(s.T(), err, "获取容器主机地址失败")
 
 	port, err := container.MappedPort(ctx, "5432")
-	require.NoError(s.T(), err)
-
-	dsn := "host=" + host + " port=" + port.Port() + " user=testuser password=testpass dbname=testdb sslmode=disable TimeZone=Asia/Shanghai"
+	require.NoError(s.T(), err, "获取容器映射端口失败")
 
 	// 连接数据库
+	dsn := "host=" + host + " port=" + port.Port() +
+		" user=testuser password=testpass dbname=testdb sslmode=disable TimeZone=Asia/Shanghai"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		Logger: logger.Default.LogMode(logger.Silent),
 	})
-	require.NoError(s.T(), err)
+	require.NoError(s.T(), err, "连接数据库失败")
+
+	sqlDB, err := db.DB()
+	require.NoError(s.T(), err, "获取 SQL DB 失败")
+	require.NoError(s.T(), sqlDB.Ping())
 
 	// 自动迁移
 	err = db.AutoMigrate(
@@ -90,19 +96,23 @@ func (s *UserLogicIntegrationTestSuite) SetupSuite() {
 	// 初始化 Logic
 	logic := NewLogic(dalImpl, conv)
 
-	s.db = db
 	s.dalImpl = dalImpl
-	s.conv = conv
+	s.converterImpl = conv
 	s.logic = logic
 	s.ctx = context.Background()
+	s.sqlDB = sqlDB
+	s.container = container
 	s.cleanup = func() {
-		container.Terminate(ctx)
+		_ = container.Terminate(ctx)
 	}
 }
 
 func (s *UserLogicIntegrationTestSuite) TearDownSuite() {
 	if s.cleanup != nil {
 		s.cleanup()
+	}
+	if s.sqlDB != nil {
+		s.sqlDB.Close()
 	}
 }
 

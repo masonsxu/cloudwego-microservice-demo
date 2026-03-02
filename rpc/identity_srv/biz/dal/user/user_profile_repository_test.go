@@ -73,7 +73,9 @@ func (s *UserProfileRepositoryTestSuite) SetupSuite() {
 
 	s.db = db
 	s.repo = NewUserProfileRepository(db)
-	s.cleanup = func() { container.Terminate(ctx) }
+	s.cleanup = func() {
+		_ = container.Terminate(ctx)
+	}
 }
 
 func (s *UserProfileRepositoryTestSuite) TearDownSuite() {
@@ -601,6 +603,7 @@ func (s *UserProfileRepositoryTestSuite) TestFindSystemUsers() {
 	for i, u := range users {
 		usernames[i] = u.Username
 	}
+
 	assert.Contains(s.T(), usernames, "system1")
 	assert.Contains(s.T(), usernames, "system2")
 	assert.NotContains(s.T(), usernames, "normal")
@@ -840,6 +843,7 @@ func (s *UserProfileRepositoryTestSuite) TestFindBySpecialty_Success() {
 	for i, u := range users {
 		usernames[i] = u.Username
 	}
+
 	assert.Contains(s.T(), usernames, "user1")
 	assert.Contains(s.T(), usernames, "user2")
 	assert.NotContains(s.T(), usernames, "user3")
@@ -934,12 +938,14 @@ func (s *UserProfileRepositoryTestSuite) TestFindWithConditions_StatusFilter() {
 	assert.GreaterOrEqual(s.T(), len(users), 1)
 
 	hasActiveUser := false
+
 	for _, u := range users {
 		if u.Username == "active_user" {
 			hasActiveUser = true
 			break
 		}
 	}
+
 	assert.True(s.T(), hasActiveUser, "应该包含活跃用户")
 }
 
@@ -968,12 +974,14 @@ func (s *UserProfileRepositoryTestSuite) TestFindWithConditions_EmailSearch() {
 	assert.Greater(s.T(), len(users), 0)
 
 	found := false
+
 	for _, u := range users {
 		if u.Username == "searchuser" {
 			found = true
 			break
 		}
 	}
+
 	assert.True(s.T(), found)
 }
 
@@ -1101,6 +1109,7 @@ func (s *UserProfileRepositoryTestSuite) TestWithTx_TransactionCommit() {
 		if err != nil {
 			return err
 		}
+
 		if found == nil {
 			return errors.New("用户未找到")
 		}
@@ -1120,9 +1129,4 @@ func (s *UserProfileRepositoryTestSuite) TestWithTx_TransactionCommit() {
 
 func TestUserProfileRepositorySuite(t *testing.T) {
 	suite.Run(t, new(UserProfileRepositoryTestSuite))
-}
-
-// 辅助函数
-func ptr(s string) *string {
-	return &s
 }
