@@ -96,8 +96,9 @@ func (s *UserLogicIntegrationTestSuite) SetupSuite() {
 	// 初始化 Logic
 	logic := NewLogic(dalImpl, conv)
 
+	s.db = db
 	s.dalImpl = dalImpl
-	s.converterImpl = conv
+	s.conv = conv
 	s.logic = logic
 	s.ctx = context.Background()
 	s.sqlDB = sqlDB
