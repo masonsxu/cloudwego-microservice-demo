@@ -75,11 +75,71 @@ go tool cover -func=coverage.out | grep total
 - ✅ 可以执行：代码生成、编译测试、lint检查、数据库迁移等一次性任务
 - ❌ 禁止执行：`npm run dev`、`sh build.sh && sh output/bootstrap.sh` 等长期运行的服务
 
-### 测试
+### 🔒 代码一致性规范（防止 CI 测试失败）
+
+以下规则来源于历次 CI 失败的复盘，旨在从源头杜绝"本地不报错、CI 必定失败"的问题。
+
+#### 规则 1：Model 字段变更必须同步 DAL 层原生 SQL
+
+修改 `models/` 中 GORM struct 的字段名或 `gorm:"column:xxx"` tag 后，**必须全局搜索旧列名**，同步更新所有 DAL 层手写 SQL 查询。
+
+```bash
+# 示例：将 medical_license_number 改为 license_number 后
+grep -r "medical_license_number" rpc/identity_srv/
+```
+
+**反面教材**：`user_profile_repository.go` 中 `applySearchConditions` 引用了已不存在的 `medical_license_number` 列，导致搜索查询运行时报 `column does not exist`。
+
+#### 规则 2：测试代码必须匹配函数签名
+
+编写或修改测试时，**必须先确认被测函数的完整签名**（参数类型、返回值类型），断言中的类型必须精确匹配。
+
+```go
+// ❌ 错误：FindWithConditions 返回 *PageResult，不是 int64
+users, total, err := s.repo.FindWithConditions(ctx, conditions)
+assert.GreaterOrEqual(s.T(), total, int64(5))
+
+// ✅ 正确：使用 pageResult.Total (int32)
+users, pageResult, err := s.repo.FindWithConditions(ctx, conditions)
+assert.GreaterOrEqual(s.T(), pageResult.Total, int32(5))
+```
+
+#### 规则 3：Test Suite Struct 必须包含所有引用字段
+
+`SetupSuite`/`TearDownSuite` 中使用的字段必须在 struct 中显式声明，否则编译失败。**添加测试辅助字段时必须同步更新 struct 定义。**
+
+```go
+// ❌ 错误：SetupSuite 赋值了 s.sqlDB 和 s.container，但 struct 中没有定义
+type MySuite struct {
+    suite.Suite
+    db *gorm.DB
+}
+
+// ✅ 正确：所有 Setup/TearDown 中使用的字段都有定义
+type MySuite struct {
+    suite.Suite
+    db        *gorm.DB
+    sqlDB     *sql.DB
+    container testcontainers.Container
+}
+```
+
+#### 规则 4：CI 配置变更必须验证后合并
+
+修改 `.github/workflows/ci.yml` 中的以下内容时，**必须先在分支上推送并确认 CI 通过后再合并到 main**：
+
+- 容器镜像版本（如 etcd、PostgreSQL、Redis）
+- 健康检查方式（`--health-cmd`、`options`）
+- 环境变量（`ETCD_ADVERTISE_CLIENT_URLS` 等）
+- 测试执行命令（`go test` 参数）
+
+**反面教材**：将 etcd 从 v3.5.21（curl 健康检查）改为 v3.5.16（etcdctl 健康检查），导致容器初始化持续失败，整个 Integration 测试 job 无法运行。
+
+### 格式化与 Lint
 
 ```bash
 # 自动格式化（gofumpt + golines + gci）
-golangci-lint format
+golangci-lint fmt
 
 # 代码检查（Lint）
 golangci-lint run
@@ -100,7 +160,7 @@ cd gateway && gci write .
 golangci-lint version
 
 # 2. 自动修复格式问题
-golangci-lint format
+golangci-lint fmt
 
 # 3. 验证是否还有问题（需手动修复 unused 代码等）
 golangci-lint run
@@ -115,10 +175,14 @@ ln -sf ../../scripts/git-hooks/pre-commit .git/hooks/pre-commit
 ```
 
 **常见 CI 失败原因**：
-- `gci` 导入顺序问题 → `golangci-lint format` 自动修复
-- `wsl_v5` 空行问题 → `golangci-lint format` 自动修复
+- `gci` 导入顺序问题 → `golangci-lint fmt` 自动修复
+- `wsl_v5` 空行问题 → `golangci-lint fmt` 自动修复
 - `unused` 函数/变量 → 需手动删除代码
 - 本地版本与 CI 不一致 → 重新安装 v2.4.0
+
+**关键原则：本地检查 = CI 检查**：
+- pre-commit hook 必须使用 `golangci-lint run`（全量检查），**禁止** `--new-from-rev=HEAD` 等增量参数
+- 增量检查会导致"本地通过但 CI 失败"的盲区（如：commit A 引入错误但 hook 未拦截，后续 commit 只要不改同一文件就永远检测不到）
 
 ### 代码生成
 
