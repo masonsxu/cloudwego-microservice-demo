@@ -478,7 +478,7 @@ func (r *UserProfileRepositoryImpl) applySearchConditions(
 		  user_profiles.first_name LIKE ? OR
 		  user_profiles.last_name LIKE ? OR
 		  user_profiles.real_name LIKE ? OR
-		  user_profiles.medical_license_number LIKE ?)`,
+		  user_profiles.license_number LIKE ?)`,
 		searchPattern,
 		searchPattern,
 		searchPattern,

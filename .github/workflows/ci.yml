@@ -176,17 +176,12 @@ jobs:
           - 6379:6379
 
       etcd:
-        image: quay.io/coreos/etcd:v3.5.16
+        image: quay.io/coreos/etcd:v3.5.21
         env:
-          ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
-          ETCD_ADVERTISE_CLIENT_URLS: http://0.0.0.0:2379
+          ETCD_ADVERTISE_CLIENT_URLS: "http://localhost:2379"
+          ETCD_LISTEN_CLIENT_URLS: "http://0.0.0.0:2379"
         ports:
           - 2379:2379
-        options: >-
-          --health-cmd "ETCDCTL_API=3 etcdctl get hello"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
       - name: Checkout code
@@ -198,10 +193,18 @@ jobs:
           go-version: "1.25"
           cache-dependency-path: rpc/identity_srv/go.sum
 
-      - name: Wait for services
+      - name: Wait for etcd
         run: |
-          echo "Waiting for services to be ready..."
-          sleep 10
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:2379/health > /dev/null 2>&1; then
+              echo "etcd is ready"
+              exit 0
+            fi
+            echo "Waiting for etcd... ($i/30)"
+            sleep 1
+          done
+          echo "::error::etcd failed to start"
+          exit 1
 
       - name: Download dependencies
         working-directory: rpc/identity_srv
