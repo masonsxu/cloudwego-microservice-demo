@@ -185,9 +185,7 @@ EOF
 
                     info "检查模块：$module"
 
-                    # --new-from-rev=HEAD：仅检查相对于 HEAD 的新增/修改代码
-                    # 这是增量检查设计，避免因历史遗留问题阻塞提交
-                    if ! (cd "$module" && golangci-lint run --modules-download-mode=readonly --new-from-rev=HEAD); then
+                    if ! (cd "$module" && golangci-lint run --modules-download-mode=readonly); then
                         lint_failed=1
                         error "模块 '$module' 的 golangci-lint 检查失败。"
                     fi
@@ -212,7 +210,7 @@ EOF
         fi
     else
         # 非 workspace 项目，直接运行
-        if ! golangci-lint run --modules-download-mode=readonly --new-from-rev=HEAD; then
+        if ! golangci-lint run --modules-download-mode=readonly; then
             error "golangci-lint 检查失败。"
             cat >&2 <<'EOF'
 

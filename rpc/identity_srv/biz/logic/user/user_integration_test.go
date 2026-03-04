@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"database/sql"
 	"testing"
 	"time"
 
@@ -24,12 +25,14 @@ import (
 // UserLogicIntegrationTestSuite Integration 测试套件
 type UserLogicIntegrationTestSuite struct {
 	suite.Suite
-	db      *gorm.DB
-	dalImpl dal.DAL
-	conv    converter.Converter
-	logic   ProfileLogic
-	ctx     context.Context
-	cleanup func()
+	db        *gorm.DB
+	sqlDB     *sql.DB
+	container testcontainers.Container
+	dalImpl   dal.DAL
+	conv      converter.Converter
+	logic     ProfileLogic
+	ctx       context.Context
+	cleanup   func()
 }
 
 func (s *UserLogicIntegrationTestSuite) SetupSuite() {
@@ -112,6 +115,7 @@ func (s *UserLogicIntegrationTestSuite) TearDownSuite() {
 	if s.cleanup != nil {
 		s.cleanup()
 	}
+
 	if s.sqlDB != nil {
 		s.sqlDB.Close()
 	}
