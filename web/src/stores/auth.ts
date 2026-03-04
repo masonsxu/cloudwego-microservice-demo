@@ -7,14 +7,15 @@ import type { MenuItem, MenuPermission, Role } from '@/types/user'
 
 export const useAuthStore = defineStore('auth', () => {
   // 状态
-  const token = ref<string>(localStorage.getItem('token') || '')
+  // Cookie 方案：token 由浏览器自动管理，前端不存储
+  const isLoggedIn = ref<boolean>(false)
   const user = ref<UserProfile | null>(null)
   const menuTree = ref<MenuItem[]>([])
   const menuPermissions = ref<MenuPermission[]>([])
   const roles = ref<Role[]>([])
 
   // 计算属性
-  const isAuthenticated = computed(() => !!token.value)
+  const isAuthenticated = computed(() => isLoggedIn.value)
   const username = computed(() => user.value?.username || '')
   const userId = computed(() => user.value?.id || '')
 
@@ -52,14 +53,14 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const response = await authApi.login(credentials)
 
-      token.value = response.token_info?.access_token || ''
+      // Cookie 方案：后端自动设置 HttpOnly Cookie，前端不处理 token
+      isLoggedIn.value = true
       user.value = response.user_profile as unknown as UserProfile
       menuTree.value = (response.menu_tree || []) as unknown as MenuItem[]
       menuPermissions.value = response.permissions || []
       roles.value = response.roles || []
 
-      // 保存到本地存储
-      localStorage.setItem('token', token.value)
+      // 保存用户相关信息到本地存储（token 存在 Cookie 中）
       localStorage.setItem('user', JSON.stringify(user.value))
       localStorage.setItem('menuTree', JSON.stringify(response.menu_tree))
       localStorage.setItem('menuPermissions', JSON.stringify(response.permissions))
@@ -71,49 +72,67 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // 清除本地认证状态（不调用后端接口）
+  // 用于 token 刷新失败等场景，避免发起新的 HTTP 请求造成循环
+  function clearAuthState() {
+    isLoggedIn.value = false
+    user.value = null
+    menuTree.value = []
+    menuPermissions.value = []
+    roles.value = []
+    localStorage.removeItem('user')
+    localStorage.removeItem('menuTree')
+    localStorage.removeItem('menuPermissions')
+    clearApiClient()
+  }
+
   // 登出
   async function logout() {
     try {
-      // 后端不需要 refresh token，直接清除本地状态
-      // await authApi.logout(refreshTokenValue.value)
+      // Cookie 方案：调用后端登出接口清除 HttpOnly Cookie
+      await authApi.logout()
     } catch (error) {
       console.error('Logout error:', error)
     } finally {
-      // 清除状态
-      token.value = ''
-      user.value = null
-      menuTree.value = []
-      menuPermissions.value = []
-      roles.value = []
-
-      // 清除本地存储
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
-      localStorage.removeItem('menuTree')
-      localStorage.removeItem('menuPermissions')
-
-      // 清除 API 客户端配置
-      clearApiClient()
+      clearAuthState()
     }
   }
 
-  // 刷新访问令牌（暂时不可用，因为后端没有提供 refresh endpoint）
+  // 刷新访问令牌（Cookie 方案）
+  // 浏览器自动携带 HttpOnly Cookie，后端读取 Cookie 中的 token 进行刷新
   async function refreshAccessToken() {
-    // TODO: 后端如果支持 token 刷新，在这里实现
-    throw new Error('Token refresh not supported')
+    try {
+      const response = await authApi.refreshToken()
+
+      if (response.token_info) {
+        // Cookie 方案：后端会设置新的 Cookie，前端不需要存储 token
+        isLoggedIn.value = true
+        return response.token_info.access_token
+      }
+      throw new Error('Token refresh failed: invalid response')
+    } catch (error) {
+      console.error('Token refresh failed:', error)
+      // 仅清除本地状态，不调用登出接口，避免产生循环请求
+      clearAuthState()
+      throw error
+    }
   }
 
   // 从本地存储恢复状态
+  // Cookie 方案：token 存在 HttpOnly Cookie 中，isLoggedIn 会在首次 API 调用时确认
   function restoreState() {
     const savedUser = localStorage.getItem('user')
     const savedMenuTree = localStorage.getItem('menuTree')
     const savedPermissions = localStorage.getItem('menuPermissions')
 
+    // 如果有保存的用户数据，假设已登录（实际状态会在首次 API 调用时验证）
     if (savedUser) {
       try {
         user.value = JSON.parse(savedUser)
+        isLoggedIn.value = true
       } catch (error) {
         console.error('Failed to parse user from localStorage:', error)
+        isLoggedIn.value = false
       }
     }
 
@@ -139,7 +158,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   return {
     // 状态
-    token,
+    isLoggedIn,
     user,
     menuTree,
     menuPermissions,
@@ -157,6 +176,7 @@ export const useAuthStore = defineStore('auth', () => {
     hasAllPermissions,
     login,
     logout,
+    clearAuthState,
     refreshAccessToken,
     restoreState
   }

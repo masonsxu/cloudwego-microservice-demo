@@ -62,6 +62,9 @@ func mapEnvVarsToConfig(v *viper.Viper) {
 
 	// Logo存储配置映射
 	mapLogoStorageEnvVars(v)
+
+	// 超级管理员配置映射
+	mapSuperAdminEnvVars(v)
 }
 
 // mapDatabaseEnvVars 映射数据库相关环境变量
@@ -245,6 +248,28 @@ func mapLogoStorageEnvVars(v *viper.Viper) {
 			result := make([]string, 0, len(types))
 			for _, t := range types {
 				trimmed := strings.TrimSpace(t)
+				if trimmed != "" {
+					result = append(result, trimmed)
+				}
+			}
+
+			return result
+		},
+	)
+}
+
+// mapSuperAdminEnvVars 映射超级管理员相关环境变量
+func mapSuperAdminEnvVars(v *viper.Viper) {
+	mapToViper(
+		v,
+		"SUPER_ADMIN_ROLE_NAMES",
+		"super_admin.role_names",
+		func(value string) interface{} {
+			roles := strings.Split(value, ",")
+
+			result := make([]string, 0, len(roles))
+			for _, r := range roles {
+				trimmed := strings.TrimSpace(r)
 				if trimmed != "" {
 					result = append(result, trimmed)
 				}

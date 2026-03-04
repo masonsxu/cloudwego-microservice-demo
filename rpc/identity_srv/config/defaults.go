@@ -28,7 +28,7 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("database.max_open_conns", 20)
 	v.SetDefault("database.conn_max_lifetime", 60*time.Minute)
 	v.SetDefault("database.conn_max_idle_time", 5*time.Minute)
-	v.SetDefault("database.ssl_mode", "disable")
+	v.SetDefault("database.sslmode", "disable")
 	v.SetDefault("database.timezone", "UTC")
 
 	// etcd配置默认值

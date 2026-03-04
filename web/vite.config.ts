@@ -17,6 +17,9 @@ export default defineConfig({
       "/api": {
         target: "http://localhost:8088",
         changeOrigin: true,
+        // 允许跨域携带 Cookie
+        cookieDomainRewrite: "localhost",
+        // 后端路由也是 /api 开头，所以不需要 rewrite，直接原样转发
       },
     },
   },

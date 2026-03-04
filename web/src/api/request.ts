@@ -3,24 +3,44 @@ import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 
 // 创建 axios 实例
+// Cookie 方案：启用 withCredentials 允许跨域携带 Cookie
+// 注意：开发环境下使用相对路径 ''，API 调用已经包含 /api 前缀，通过 Vite 代理转发到后端
+// 生产环境下使用完整的 API URL
+const isDev = import.meta.env.DEV
+const apiBaseURL = isDev ? '' : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
+console.log('[Request] Environment:', isDev ? 'development' : 'production', 'API Base URL:', apiBaseURL || '(relative)')
+
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080',
+  baseURL: apiBaseURL,
   timeout: 15000,
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  withCredentials: true // 允许跨域携带 Cookie（包括 HttpOnly Cookie）
 })
 
+// 标记是否正在刷新 token
+let isRefreshing = false
+// 存储等待刷新完成的请求队列
+let refreshSubscribers: Array<(success: boolean) => void> = []
+
+// 将等待中的请求添加到队列
+function subscribeTokenRefresh(callback: (success: boolean) => void) {
+  refreshSubscribers.push(callback)
+}
+
+// 通知所有等待中的请求
+function onTokenRefreshed(success: boolean) {
+  refreshSubscribers.forEach(callback => callback(success))
+  refreshSubscribers = []
+}
+
 // 请求拦截器
+// Cookie 方案：不需要手动设置 Authorization Header，浏览器自动携带 Cookie
 instance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const authStore = useAuthStore()
-    // 优先使用 authStore 中的 token，如果为空则从 localStorage 读取（备用方案）
-    const token = authStore.token || localStorage.getItem('token')
-    
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
+    // Cookie 方案：浏览器会自动携带 HttpOnly Cookie
+    // 不需要手动设置 Authorization Header
     return config
   },
   (error: AxiosError) => {
@@ -48,17 +68,57 @@ instance.interceptors.response.use(
     return data
   },
   async (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
+
     if (error.response) {
       const status = error.response.status
 
       switch (status) {
         case 401:
-          // Token 过期或无效，直接跳转登录
-          const authStore = useAuthStore()
-          authStore.logout()
-          window.location.href = '/login'
-          ElMessage.error('登录已过期，请重新登录')
-          break
+          // 避免重复刷新导致的循环
+          if (originalRequest._retry) {
+            const authStore = useAuthStore()
+            authStore.clearAuthState()
+            window.location.href = '/login'
+            return Promise.reject(error)
+          }
+
+          // Cookie 方案：检查是否正在刷新
+          if (isRefreshing) {
+            return new Promise((resolve, reject) => {
+              subscribeTokenRefresh((success) => {
+                if (success) {
+                  // 刷新成功，重试原请求（浏览器会自动携带新 Cookie）
+                  resolve(instance(originalRequest))
+                } else {
+                  // 刷新失败，拒绝请求
+                  reject(error)
+                }
+              })
+            })
+          }
+
+          // 开始刷新 token
+          isRefreshing = true
+          originalRequest._retry = true
+
+          try {
+            const authStore = useAuthStore()
+            await authStore.refreshAccessToken()
+
+            // 通知所有等待中的请求刷新成功
+            onTokenRefreshed(true)
+            isRefreshing = false
+
+            // 重试原请求（浏览器会自动携带新 Cookie）
+            return instance(originalRequest)
+          } catch (refreshError) {
+            isRefreshing = false
+            onTokenRefreshed(false)
+            // clearAuthState 已在 refreshAccessToken 内部调用，直接跳转登录页
+            window.location.href = '/login'
+            return Promise.reject(refreshError)
+          }
 
         case 403:
           ElMessage.error('没有权限访问')

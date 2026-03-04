@@ -48,12 +48,19 @@ export function resetPassword(userId: string, newPassword: string, resetReason?:
   })
 }
 
-// 刷新访问令牌
-export function refreshToken(refreshTokenValue: string) {
-  return request<{ token_info: { access_token: string; expires_in: number; token_type: string } }>({
+// 刷新访问令牌（单 Token 方案）
+// 后端从 Authorization Header 读取当前 token 作为刷新凭证
+export function refreshToken() {
+  return request<{
+    token_info: {
+      access_token: string
+      expires_in: number
+      token_type: string
+    }
+  }>({
     url: '/api/v1/identity/auth/refresh',
     method: 'POST',
-    data: { refresh_token: refreshTokenValue },
+    data: {},
   })
 }
 

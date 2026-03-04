@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/protocol"
 	"github.com/hertz-contrib/jwt"
 	"github.com/rs/zerolog"
 
@@ -58,10 +59,29 @@ func (m *JWTMiddlewareImpl) LoginHandler(ctx context.Context, c *app.RequestCont
 }
 
 // LogoutHandler 处理登出请求
-// 从请求中提取Token并吊销，即使Token无效也返回成功响应
+// 从请求中提取Token并吊销，清除Cookie，即使Token无效也返回成功响应
 func (m *JWTMiddlewareImpl) LogoutHandler(ctx context.Context, c *app.RequestContext) {
 	// 从请求中提取token字符串
 	tokenString := m.tokenExtractor.ExtractToken(c)
+
+	// 清除Cookie（无论是否有token，都清除Cookie）
+	if m.jwtConfig.Cookie.SendCookie && m.jwtConfig.Cookie.CookieName != "" {
+		c.SetCookie(
+			m.jwtConfig.Cookie.CookieName,
+			"",
+			-1, // 过期时间为负数，立即删除Cookie
+			m.jwtConfig.Cookie.CookiePath,
+			m.jwtConfig.Cookie.CookieDomain,
+			protocol.CookieSameSite(parseSameSite(m.jwtConfig.Cookie.CookieSameSite)),
+			m.jwtConfig.Cookie.SecureCookie,
+			m.jwtConfig.Cookie.CookieHTTPOnly,
+		)
+		tracelog.Event(ctx, m.logger.Debug()).
+			Str("component", "jwt_middleware").
+			Str("cookie_name", m.jwtConfig.Cookie.CookieName).
+			Msg("Cookie cleared during logout")
+	}
+
 	if tokenString == "" {
 		tracelog.Event(ctx, m.logger.Warn()).
 			Str("component", "jwt_middleware").

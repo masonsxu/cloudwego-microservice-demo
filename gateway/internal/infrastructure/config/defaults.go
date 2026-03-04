@@ -36,7 +36,15 @@ func setDefaults(v *viper.Viper) {
 	// 中间件默认值
 	v.SetDefault("middleware.cors.enabled", true)
 	// CORS 允许的来源、方法和头部
-	v.SetDefault("middleware.cors.allow_origins", []string{"*"})
+	// 注意：使用 withCredentials 时不能设置为 *，必须指定具体的 origin
+	v.SetDefault("middleware.cors.allow_origins", []string{
+		"http://localhost:5173",
+		"http://localhost:5174",
+		"http://localhost:5175",
+		"http://192.168.20.66:5173",
+		"http://192.168.20.66:5174",
+		"http://192.168.20.66:5175",
+	})
 	v.SetDefault(
 		"middleware.cors.allow_methods",
 		[]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -46,7 +54,8 @@ func setDefaults(v *viper.Viper) {
 		"Authorization",
 		"X-Requested-With",
 	})
-	v.SetDefault("middleware.cors.allow_credentials", false)
+	// 启用 credentials 支持跨域 Cookie
+	v.SetDefault("middleware.cors.allow_credentials", true)
 
 	v.SetDefault("middleware.rate_limit.enabled", false)
 	v.SetDefault("middleware.jwt.enabled", true)

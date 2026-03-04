@@ -34,6 +34,13 @@ func NewCORSMiddleware(
 		zlogger = &nop
 	}
 
+	// 输出 CORS 配置信息（帮助调试）
+	zlogger.Info().
+		Bool("enabled", config.Enabled).
+		Strs("allow_origins", config.AllowOrigins).
+		Bool("allow_credentials", config.AllowCredentials).
+		Msg("CORS middleware initialized")
+
 	return &CORSMiddleware{
 		config: config,
 		logger: zlogger,
@@ -69,11 +76,21 @@ func (cm *CORSMiddleware) MiddlewareFunc() app.HandlerFunc {
 
 // setAccessControlHeaders 设置Access-Control相关头部
 func (cm *CORSMiddleware) setAccessControlHeaders(c *app.RequestContext) {
+	origin := string(c.GetHeader("Origin"))
+
+	// 调试日志：检查配置
+	cm.logger.Debug().
+		Str("origin", origin).
+		Strs("allowed_origins", cm.config.AllowOrigins).
+		Bool("allow_credentials", cm.config.AllowCredentials).
+		Msg("CORS config check")
+
 	// 设置 Allow-Origin
 	if len(cm.config.AllowOrigins) > 0 {
-		origin := string(c.GetHeader("Origin"))
 		if cm.isOriginAllowed(origin) {
 			c.Header("Access-Control-Allow-Origin", origin)
+			// 当使用动态 Origin 时，必须设置 Vary: Origin
+			c.Header("Vary", "Origin")
 		} else if cm.hasWildcardOrigin() {
 			c.Header("Access-Control-Allow-Origin", "*")
 		}
@@ -102,6 +119,9 @@ func (cm *CORSMiddleware) setAccessControlHeaders(c *app.RequestContext) {
 	if cm.config.AllowCredentials {
 		c.Header("Access-Control-Allow-Credentials", "true")
 	}
+
+	// 设置 Expose-Headers（允许前端访问的响应头）
+	c.Header("Access-Control-Expose-Headers", "Content-Length, Content-Type, X-Request-ID")
 
 	// 设置 Max-Age
 	c.Header("Access-Control-Max-Age", "86400") // 24小时
