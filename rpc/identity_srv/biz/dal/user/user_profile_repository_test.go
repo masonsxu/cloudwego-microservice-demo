@@ -1006,11 +1006,11 @@ func (s *UserProfileRepositoryTestSuite) TestFindWithConditions_Pagination() {
 			PageSize: 2,
 		},
 	}
-	users, total, err := s.repo.FindWithConditions(ctx, conditions)
+	users, pageResult, err := s.repo.FindWithConditions(ctx, conditions)
 
 	require.NoError(s.T(), err)
 	assert.LessOrEqual(s.T(), len(users), 2)
-	assert.GreaterOrEqual(s.T(), total, int64(5))
+	assert.GreaterOrEqual(s.T(), pageResult.Total, int32(5))
 }
 
 func (s *UserProfileRepositoryTestSuite) TestFindWithConditions_Sorting() {
