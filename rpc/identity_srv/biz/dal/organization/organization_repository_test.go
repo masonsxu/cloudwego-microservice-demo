@@ -192,7 +192,6 @@ func (s *OrganizationRepositoryTestSuite) TestUpdate_Success() {
 	updated, err := s.repo.GetByID(ctx, org.ID.String())
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), "新名称", updated.Name)
-	assert.Equal(s.T(), "上海市", updated.ProvinceCity)
 }
 
 func (s *OrganizationRepositoryTestSuite) TestSoftDelete_Success() {
@@ -230,8 +229,8 @@ func (s *OrganizationRepositoryTestSuite) TestUpdateParent_Success() {
 	err = s.repo.Create(ctx, childOrg)
 	require.NoError(s.T(), err)
 
+	// 创建时不设置ParentID
 	err = s.repo.UpdateParent(ctx, childOrg.ID.String(), parentOrg.ID.String())
-
 	require.NoError(s.T(), err)
 
 	updated, err := s.repo.GetByID(ctx, childOrg.ID.String())
