@@ -399,9 +399,8 @@ func (s *RoleDefinitionRepositoryTestSuite) TestFindWithConditions_SystemRoleFil
 
 	require.NoError(s.T(), err)
 	assert.GreaterOrEqual(s.T(), len(roles), 1)
+
 	for _, role := range roles {
-
-
 		assert.True(s.T(), role.IsSystemRole)
 	}
 }

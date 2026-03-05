@@ -520,16 +520,15 @@ func (s *OrganizationRepositoryTestSuite) TestFindWithConditions_RootOrganizatio
 	assert.GreaterOrEqual(s.T(), len(orgs), 1)
 
 	foundRoot := false
-	for _, org := range orgs {
 
+	for _, org := range orgs {
 		if org.ID == rootOrg.ID {
 			foundRoot = true
 			break
 		}
 	}
+
 	assert.True(s.T(), foundRoot)
-
-
 }
 
 func (s *OrganizationRepositoryTestSuite) TestFindWithConditions_Search() {
