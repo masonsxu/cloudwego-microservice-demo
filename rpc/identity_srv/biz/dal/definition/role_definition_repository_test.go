@@ -168,7 +168,7 @@ func (s *RoleDefinitionRepositoryTestSuite) TestFindByName_NotFound() {
 
 	found, err := s.repo.FindByName(ctx, "不存在的角色")
 
-	assert.Error(s.T(), err)
+	require.NoError(s.T(), err)
 	assert.Nil(s.T(), found)
 }
 

@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -399,7 +400,7 @@ func (s *OrganizationRepositoryTestSuite) TestCheckNameConflict_Conflict() {
 	err = s.repo.Create(ctx, org2)
 	require.NoError(s.T(), err)
 
-	conflict, err := s.repo.CheckNameConflict(ctx, "冲突名称", "", org2.ID.String())
+	conflict, err := s.repo.CheckNameConflict(ctx, "冲突名称", uuid.Nil.String(), org2.ID.String())
 
 	require.NoError(s.T(), err)
 	assert.True(s.T(), conflict)
@@ -408,7 +409,7 @@ func (s *OrganizationRepositoryTestSuite) TestCheckNameConflict_Conflict() {
 func (s *OrganizationRepositoryTestSuite) TestCheckNameConflict_NoConflict() {
 	ctx := context.Background()
 
-	conflict, err := s.repo.CheckNameConflict(ctx, "不存在名称", "")
+	conflict, err := s.repo.CheckNameConflict(ctx, "不存在名称", uuid.Nil.String())
 
 	require.NoError(s.T(), err)
 	assert.False(s.T(), conflict)
@@ -424,7 +425,7 @@ func (s *OrganizationRepositoryTestSuite) TestCheckNameConflict_ExcludeID() {
 	err := s.repo.Create(ctx, org)
 	require.NoError(s.T(), err)
 
-	conflict, err := s.repo.CheckNameConflict(ctx, "测试组织", "", org.ID.String())
+	conflict, err := s.repo.CheckNameConflict(ctx, "测试组织", uuid.Nil.String(), org.ID.String())
 
 	require.NoError(s.T(), err)
 	assert.False(s.T(), conflict)
