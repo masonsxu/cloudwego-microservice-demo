@@ -6,6 +6,7 @@ import (
 	"net"
 
 	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/cloudwego/kitex/pkg/limit"
 	"github.com/cloudwego/kitex/pkg/registry"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/pkg/transmeta"
@@ -102,6 +103,29 @@ func ProvideServerOptions(
 		server.WithRegistry(reg),
 		server.WithServiceAddr(addr),
 		server.WithMetaHandler(transmeta.ServerTTHeaderHandler),
+	}
+
+	// 并发限流：防止资源耗尽
+	if cfg.Server.MaxConnections > 0 || cfg.Server.MaxQPS > 0 {
+		opts = append(opts, server.WithLimit(&limit.Option{
+			MaxConnections: cfg.Server.MaxConnections,
+			MaxQPS:         cfg.Server.MaxQPS,
+		}))
+
+		klog.Infof("Server limit configured: max_connections=%d, max_qps=%d",
+			cfg.Server.MaxConnections, cfg.Server.MaxQPS)
+	}
+
+	// 读写超时：防止慢请求长时间占用连接
+	if cfg.Server.ReadWriteTimeout > 0 {
+		opts = append(opts, server.WithReadWriteTimeout(cfg.Server.ReadWriteTimeout))
+		klog.Infof("Server read_write_timeout: %v", cfg.Server.ReadWriteTimeout)
+	}
+
+	// 优雅关闭等待时间：收到停止信号后等待已有请求完成
+	if cfg.Server.ExitWaitTime > 0 {
+		opts = append(opts, server.WithExitWaitTime(cfg.Server.ExitWaitTime))
+		klog.Infof("Server exit_wait_time: %v", cfg.Server.ExitWaitTime)
 	}
 
 	// 如果启用追踪，添加 OpenTelemetry Suite（必须在 MetaInfoMiddleware 之前）

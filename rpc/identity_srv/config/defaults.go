@@ -12,7 +12,11 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("server.name", "identity-service")
 	v.SetDefault("server.host", "0.0.0.0")
 	v.SetDefault("server.port", 8891)
-	v.SetDefault("server.debug", false) // 默认关闭，开发环境通过 .env 设置为 true
+	v.SetDefault("server.debug", false)
+	v.SetDefault("server.max_connections", 10000)            // 最大并发连接数
+	v.SetDefault("server.max_qps", 0)                        // 最大 QPS（0=不限制）
+	v.SetDefault("server.read_write_timeout", 5*time.Second) // 读写超时
+	v.SetDefault("server.exit_wait_time", 5*time.Second)     // 优雅关闭等待时间
 
 	// 健康检查配置默认值
 	v.SetDefault("health_check.port", 10000)

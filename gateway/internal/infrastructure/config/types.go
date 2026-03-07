@@ -51,9 +51,11 @@ type ClientConfig struct {
 }
 
 // ConnectionPoolConfig 连接池配置
-// 相关环境变量：CLIENT_POOL_MAX_IDLE_PER_ADDRESS, CLIENT_POOL_MAX_IDLE_GLOBAL, CLIENT_POOL_MAX_IDLE_TIMEOUT
+// 相关环境变量：CLIENT_POOL_MAX_IDLE_PER_ADDRESS, CLIENT_POOL_MAX_IDLE_GLOBAL,
+// CLIENT_POOL_MAX_IDLE_TIMEOUT, CLIENT_POOL_MIN_IDLE_PER_ADDRESS
 type ConnectionPoolConfig struct {
 	MaxIdlePerAddress int           `mapstructure:"max_idle_per_address"`
+	MinIdlePerAddress int           `mapstructure:"min_idle_per_address"`
 	MaxIdleGlobal     int           `mapstructure:"max_idle_global"`
 	MaxIdleTimeout    time.Duration `mapstructure:"max_idle_timeout"`
 }

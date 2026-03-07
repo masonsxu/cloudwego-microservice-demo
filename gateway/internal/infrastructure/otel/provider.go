@@ -85,6 +85,9 @@ func NewServerFactory(cfg *appconfig.Configuration, tracer *Tracer, _ *Provider)
 	serverOpts := []config.Option{
 		server.WithHostPorts(addr),
 		server.WithMaxRequestBodySize(100 * 1024 * 1024),
+		server.WithReadTimeout(cfg.Server.ReadTimeout),
+		server.WithWriteTimeout(cfg.Server.WriteTimeout),
+		server.WithIdleTimeout(cfg.Server.IdleTimeout),
 	}
 
 	// 添加 tracer 选项

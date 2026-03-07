@@ -22,13 +22,15 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("etcd.timeout", 5*time.Second)
 
 	// 客户端默认值
-	v.SetDefault("client.connection_timeout", 2*time.Second)
-	v.SetDefault("client.request_timeout", 60*time.Second)
+	v.SetDefault("client.connection_timeout", 500*time.Millisecond)
+	v.SetDefault("client.request_timeout", 3*time.Second)
 
 	// 连接池默认值
+	// MaxIdlePerAddress 估算: QPS_per_host * avg_response_time_sec
 	v.SetDefault("client.pool.max_idle_per_address", 10)
-	v.SetDefault("client.pool.max_idle_global", 100)
-	v.SetDefault("client.pool.max_idle_timeout", 5*time.Minute)
+	v.SetDefault("client.pool.min_idle_per_address", 2)
+	v.SetDefault("client.pool.max_idle_global", 1000)
+	v.SetDefault("client.pool.max_idle_timeout", time.Minute)
 
 	// 默认服务配置
 	v.SetDefault("client.services.identity.name", "identity-service")

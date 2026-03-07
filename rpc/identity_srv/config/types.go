@@ -38,15 +38,20 @@ type DatabaseConfig struct {
 }
 
 // ServerConfig 服务器配置
-// 相关环境变量：SERVER_NAME, SERVER_HOST, SERVER_PORT, SERVER_ADDRESS, SERVER_DEBUG
+// 相关环境变量：SERVER_NAME, SERVER_HOST, SERVER_PORT, SERVER_ADDRESS, SERVER_DEBUG,
+// SERVER_MAX_CONNECTIONS, SERVER_MAX_QPS, SERVER_READ_WRITE_TIMEOUT, SERVER_EXIT_WAIT_TIME
 // Address 可直接提供监听地址（如 ":8891" 或 "0.0.0.0:8891"），
 // 若未设置 Address，则由 Host + Port 组合生成。
 type ServerConfig struct {
-	Name    string `mapstructure:"name"`    // 服务名称（用于服务发现、RPC调用标识）
-	Host    string `mapstructure:"host"`    // 服务监听主机
-	Port    int    `mapstructure:"port"`    // 服务监听端口
-	Address string `mapstructure:"address"` // 兼容旧配置，可直接提供完整地址
-	Debug   bool   `mapstructure:"debug"`   // 调试模式开关（控制日志详细度、GORM SQL日志等）
+	Name             string        `mapstructure:"name"`               // 服务名称（用于服务发现、RPC调用标识）
+	Host             string        `mapstructure:"host"`               // 服务监听主机
+	Port             int           `mapstructure:"port"`               // 服务监听端口
+	Address          string        `mapstructure:"address"`            // 兼容旧配置，可直接提供完整地址
+	Debug            bool          `mapstructure:"debug"`              // 调试模式开关（控制日志详细度、GORM SQL日志等）
+	MaxConnections   int           `mapstructure:"max_connections"`    // 最大并发连接数（0=不限制）
+	MaxQPS           int           `mapstructure:"max_qps"`            // 最大 QPS 限制（0=不限制）
+	ReadWriteTimeout time.Duration `mapstructure:"read_write_timeout"` // 读写超时
+	ExitWaitTime     time.Duration `mapstructure:"exit_wait_time"`     // 优雅关闭等待时间
 }
 
 // HealthCheckConfig 健康检查配置
