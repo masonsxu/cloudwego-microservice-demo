@@ -17,6 +17,7 @@ type Service interface {
 	OrganizationService
 	DepartmentService
 	LogoService
+	AuditLogService
 }
 
 // =================================================================
@@ -221,4 +222,13 @@ type LogoService interface {
 		ctx context.Context,
 		req *identity.BindLogoToOrganizationRequestDTO,
 	) (*identity.OrganizationResponseDTO, error)
+}
+
+// AuditLogService 审计日志查询服务接口
+type AuditLogService interface {
+	// ListAuditLogs 查询审计日志列表 - 分页查询审计日志，支持多条件筛选
+	ListAuditLogs(
+		ctx context.Context,
+		req *identity.ListAuditLogsRequestDTO,
+	) (*identity.ListAuditLogsResponseDTO, error)
 }

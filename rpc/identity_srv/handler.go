@@ -822,3 +822,26 @@ func (s *IdentityServiceImpl) GetUserDataScope(
 
 	return resp, nil
 }
+
+// CreateAuditLog implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) CreateAuditLog(ctx context.Context, req *identity_srv.CreateAuditLogRequest) (err error) {
+	err = s.logic.CreateAuditLog(ctx, req)
+	if err != nil {
+		return errno.ToKitexError(err)
+	}
+
+	return nil
+}
+
+// ListAuditLogs implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) ListAuditLogs(
+	ctx context.Context,
+	req *identity_srv.ListAuditLogsRequest,
+) (resp *identity_srv.ListAuditLogsResponse, err error) {
+	resp, err = s.logic.ListAuditLogs(ctx, req)
+	if err != nil {
+		return nil, errno.ToKitexError(err)
+	}
+
+	return resp, nil
+}

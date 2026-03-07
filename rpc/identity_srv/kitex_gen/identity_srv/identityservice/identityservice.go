@@ -413,6 +413,20 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"CreateAuditLog": kitex.NewMethodInfo(
+		createAuditLogHandler,
+		newIdentityServiceCreateAuditLogArgs,
+		newIdentityServiceCreateAuditLogResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"ListAuditLogs": kitex.NewMethodInfo(
+		listAuditLogsHandler,
+		newIdentityServiceListAuditLogsArgs,
+		newIdentityServiceListAuditLogsResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 }
 
 var (
@@ -1505,6 +1519,42 @@ func newIdentityServiceGetUserDataScopeResult() interface{} {
 	return identity_srv.NewIdentityServiceGetUserDataScopeResult()
 }
 
+func createAuditLogHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceCreateAuditLogArgs)
+
+	err := handler.(identity_srv.IdentityService).CreateAuditLog(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func newIdentityServiceCreateAuditLogArgs() interface{} {
+	return identity_srv.NewIdentityServiceCreateAuditLogArgs()
+}
+
+func newIdentityServiceCreateAuditLogResult() interface{} {
+	return identity_srv.NewIdentityServiceCreateAuditLogResult()
+}
+
+func listAuditLogsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceListAuditLogsArgs)
+	realResult := result.(*identity_srv.IdentityServiceListAuditLogsResult)
+	success, err := handler.(identity_srv.IdentityService).ListAuditLogs(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newIdentityServiceListAuditLogsArgs() interface{} {
+	return identity_srv.NewIdentityServiceListAuditLogsArgs()
+}
+
+func newIdentityServiceListAuditLogsResult() interface{} {
+	return identity_srv.NewIdentityServiceListAuditLogsResult()
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -2078,6 +2128,26 @@ func (p *kClient) GetUserDataScope(ctx context.Context, req *identity_srv.GetUse
 	_args.Req = req
 	var _result identity_srv.IdentityServiceGetUserDataScopeResult
 	if err = p.c.Call(ctx, "GetUserDataScope", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) CreateAuditLog(ctx context.Context, req *identity_srv.CreateAuditLogRequest) (err error) {
+	var _args identity_srv.IdentityServiceCreateAuditLogArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceCreateAuditLogResult
+	if err = p.c.Call(ctx, "CreateAuditLog", &_args, &_result); err != nil {
+		return
+	}
+	return nil
+}
+
+func (p *kClient) ListAuditLogs(ctx context.Context, req *identity_srv.ListAuditLogsRequest) (r *identity_srv.ListAuditLogsResponse, err error) {
+	var _args identity_srv.IdentityServiceListAuditLogsArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceListAuditLogsResult
+	if err = p.c.Call(ctx, "ListAuditLogs", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

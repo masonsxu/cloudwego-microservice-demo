@@ -22,6 +22,7 @@ var DomainServiceSet = wire.NewSet(
 	ProvideOrganizationService,
 	ProvideDepartmentService,
 	ProvideLogoService,
+	ProvideAuditLogService,
 
 	// 角色与权限管理领域服务
 	ProvideRoleDefinitionService,
@@ -95,6 +96,15 @@ func ProvideLogoService(
 	return identityservice.NewLogoService(identityClient, assembler, logger)
 }
 
+// ProvideAuditLogService 提供审计日志查询服务
+func ProvideAuditLogService(
+	identityClient identitycli.IdentityClient,
+	assembler identityassembler.Assembler,
+	logger *hertzZerolog.Logger,
+) identityservice.AuditLogService {
+	return identityservice.NewAuditLogService(identityClient, assembler, logger)
+}
+
 // ProvideRoleDefinitionService 提供角色定义服务
 func ProvideRoleDefinitionService(
 	identityClient identitycli.IdentityClient,
@@ -134,6 +144,7 @@ func ProvideIdentityService(
 	orgService identityservice.OrganizationService,
 	deptService identityservice.DepartmentService,
 	logoService identityservice.LogoService,
+	auditLogService identityservice.AuditLogService,
 ) identityservice.Service {
 	return identityservice.NewService(
 		authService,
@@ -142,6 +153,7 @@ func ProvideIdentityService(
 		orgService,
 		deptService,
 		logoService,
+		auditLogService,
 	)
 }
 

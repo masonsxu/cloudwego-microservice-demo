@@ -24,3 +24,9 @@ menu:
         path: "account-management"
         icon: "IconAccountManagement"
         component: "views/system-settings/AccountManagement"
+
+      - name: "审计日志"
+        id: "audit_logs"
+        path: "audit-logs"
+        icon: "IconAuditLogs"
+        component: "views/system-settings/AuditLogs"

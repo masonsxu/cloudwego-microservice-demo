@@ -2,6 +2,7 @@ package converter
 
 import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/assignment"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/auditlog"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/authentication"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/base"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/definition"
@@ -49,6 +50,7 @@ type Impl struct {
 	menuConverter               menu.Converter
 	roleDefinitionConverter     definition.Converter
 	userRoleAssignmentConverter assignment.Converter
+	auditLogConverter           auditlog.Converter
 	// ============================================================================
 	// 基础设施转换器 - 通用工具
 	// ============================================================================
@@ -91,6 +93,7 @@ func NewConverter() Converter {
 		menuConverter:               menu.NewConverter(),
 		roleDefinitionConverter:     definition.NewConverter(enumConverter),
 		userRoleAssignmentConverter: assignment.NewConverter(),
+		auditLogConverter:           auditlog.NewConverter(),
 		// 基础设施转换器
 		enumConverter: enumConverter,
 		baseConverter: baseConverter,
@@ -152,6 +155,11 @@ func (c *Impl) RoleDefinition() definition.Converter {
 // UserRoleAssignment 返回用户角色分配转换器
 func (c *Impl) UserRoleAssignment() assignment.Converter {
 	return c.userRoleAssignmentConverter
+}
+
+// AuditLog 返回审计日志转换器
+func (c *Impl) AuditLog() auditlog.Converter {
+	return c.auditLogConverter
 }
 
 // ============================================================================

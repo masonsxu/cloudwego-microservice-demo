@@ -17,6 +17,7 @@ type identityAssembler struct {
 	departmentAssembler IDepartmentAssembler
 	membershipAssembler IMembershipAssembler
 	logoAssembler       ILogoAssembler
+	auditLogAssembler   IAuditLogAssembler
 }
 
 // NewIdentityAggregateAssembler 创建身份管理聚合组装器
@@ -27,6 +28,7 @@ func NewIdentityAggregateAssembler(
 	departmentAssembler IDepartmentAssembler,
 	membershipAssembler IMembershipAssembler,
 	logoAssembler ILogoAssembler,
+	auditLogAssembler IAuditLogAssembler,
 ) Assembler {
 	return &identityAssembler{
 		authAssembler:       authAssembler,
@@ -35,6 +37,7 @@ func NewIdentityAggregateAssembler(
 		departmentAssembler: departmentAssembler,
 		membershipAssembler: membershipAssembler,
 		logoAssembler:       logoAssembler,
+		auditLogAssembler:   auditLogAssembler,
 	}
 }
 
@@ -45,6 +48,7 @@ func (a *identityAssembler) Organization() IOrgAssembler      { return a.orgAsse
 func (a *identityAssembler) Department() IDepartmentAssembler { return a.departmentAssembler }
 func (a *identityAssembler) Membership() IMembershipAssembler { return a.membershipAssembler }
 func (a *identityAssembler) Logo() ILogoAssembler             { return a.logoAssembler }
+func (a *identityAssembler) AuditLog() IAuditLogAssembler     { return a.auditLogAssembler }
 
 // 通用转换方法
 func (a *identityAssembler) ToHTTPPageResponse(

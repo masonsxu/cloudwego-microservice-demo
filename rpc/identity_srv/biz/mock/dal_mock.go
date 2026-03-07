@@ -15,6 +15,7 @@ import (
 
 	dal "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal"
 	assignment "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/assignment"
+	auditlog "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/auditlog"
 	definition "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/definition"
 	department "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/department"
 	logo "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/logo"
@@ -176,6 +177,20 @@ func (m *MockDAL) RoleMenuPermission() rolemenu.RoleMenuPermissionRepository {
 func (mr *MockDALMockRecorder) RoleMenuPermission() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RoleMenuPermission", reflect.TypeOf((*MockDAL)(nil).RoleMenuPermission))
+}
+
+// AuditLog mocks base method.
+func (m *MockDAL) AuditLog() auditlog.AuditLogRepository {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AuditLog")
+	ret0, _ := ret[0].(auditlog.AuditLogRepository)
+	return ret0
+}
+
+// AuditLog indicates an expected call of AuditLog.
+func (mr *MockDALMockRecorder) AuditLog() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuditLog", reflect.TypeOf((*MockDAL)(nil).AuditLog))
 }
 
 // Rollback mocks base method.

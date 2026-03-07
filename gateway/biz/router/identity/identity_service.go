@@ -23,6 +23,7 @@ func Register(r *server.Hertz) {
 			_v1 := _api.Group("/v1", _v1Mw()...)
 			{
 				_identity := _v1.Group("/identity", _identityMw()...)
+				_identity.GET("/audit-logs", append(_listauditlogsMw(), identity.ListAuditLogs)...)
 				_identity.POST("/departments", append(_createdepartmentMw(), identity.CreateDepartment)...)
 				_departments := _identity.Group("/departments", _departmentsMw()...)
 				_departments.DELETE("/:departmentID", append(_deletedepartmentMw(), identity.DeleteDepartment)...)

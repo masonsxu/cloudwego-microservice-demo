@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/assignment"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/auditlog"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/base"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/definition"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/department"
@@ -36,6 +37,7 @@ type DALImpl struct {
 	roleDefinitionRepo     definition.RoleDefinitionRepository
 	userRoleAssignmentRepo assignment.UserRoleAssignmentRepository
 	roleMenuPermissionRepo rolemenu.RoleMenuPermissionRepository
+	auditLogRepo           auditlog.AuditLogRepository
 
 	// 事务状态
 	isTransaction bool
@@ -55,6 +57,7 @@ func newDALImpl(db *gorm.DB) DAL {
 		roleDefinitionRepo:     definition.NewRoleDefinitionRepository(db),
 		userRoleAssignmentRepo: assignment.NewUserRoleAssignmentRepository(db),
 		roleMenuPermissionRepo: rolemenu.NewRoleMenuPermissionRepository(db),
+		auditLogRepo:           auditlog.NewAuditLogRepository(db),
 		isTransaction:          false,
 	}
 }
@@ -106,6 +109,11 @@ func (dal *DALImpl) UserRoleAssignment() assignment.UserRoleAssignmentRepository
 // RoleMenuPermission 获取角色菜单权限仓储
 func (dal *DALImpl) RoleMenuPermission() rolemenu.RoleMenuPermissionRepository {
 	return dal.roleMenuPermissionRepo
+}
+
+// AuditLog 获取审计日志仓储
+func (dal *DALImpl) AuditLog() auditlog.AuditLogRepository {
+	return dal.auditLogRepo
 }
 
 // ============================================================================
@@ -181,6 +189,7 @@ func (dal *DALImpl) WithDB(db *gorm.DB) DAL {
 		roleDefinitionRepo:     definition.NewRoleDefinitionRepository(db),
 		userRoleAssignmentRepo: assignment.NewUserRoleAssignmentRepository(db),
 		roleMenuPermissionRepo: rolemenu.NewRoleMenuPermissionRepository(db),
+		auditLogRepo:           auditlog.NewAuditLogRepository(db),
 		isTransaction:          dal.isTransaction,
 	}
 }

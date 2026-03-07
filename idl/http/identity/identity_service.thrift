@@ -238,4 +238,13 @@ service IdentityService {
      * 将临时Logo绑定到组织（永久保存）
      */
     identity_model.OrganizationResponseDTO bindLogoToOrganization(1: identity_model.BindLogoToOrganizationRequestDTO req) (api.put = "/api/v1/identity/organizations/:organizationID/logo"),
+    // =================================================================
+    // 7. 审计日志模块 (Audit Log)
+    // =================================================================
+
+    /**
+     * 查询审计日志列表
+     * 分页查询审计日志，支持按操作类型、用户、时间范围等条件筛选
+     */
+    identity_model.ListAuditLogsResponseDTO listAuditLogs(1: identity_model.ListAuditLogsRequestDTO req) (api.get = "/api/v1/identity/audit-logs"),
 }

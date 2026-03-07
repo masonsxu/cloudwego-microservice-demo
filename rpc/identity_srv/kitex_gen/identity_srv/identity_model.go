@@ -9,6 +9,68 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
 )
 
+type AuditAction int64
+
+const (
+	AuditAction_CREATE          AuditAction = 1
+	AuditAction_UPDATE          AuditAction = 2
+	AuditAction_DELETE          AuditAction = 3
+	AuditAction_LOGIN           AuditAction = 4
+	AuditAction_LOGOUT          AuditAction = 5
+	AuditAction_PASSWORD_CHANGE AuditAction = 6
+)
+
+func (p AuditAction) String() string {
+	switch p {
+	case AuditAction_CREATE:
+		return "CREATE"
+	case AuditAction_UPDATE:
+		return "UPDATE"
+	case AuditAction_DELETE:
+		return "DELETE"
+	case AuditAction_LOGIN:
+		return "LOGIN"
+	case AuditAction_LOGOUT:
+		return "LOGOUT"
+	case AuditAction_PASSWORD_CHANGE:
+		return "PASSWORD_CHANGE"
+	}
+	return "<UNSET>"
+}
+
+func AuditActionFromString(s string) (AuditAction, error) {
+	switch s {
+	case "CREATE":
+		return AuditAction_CREATE, nil
+	case "UPDATE":
+		return AuditAction_UPDATE, nil
+	case "DELETE":
+		return AuditAction_DELETE, nil
+	case "LOGIN":
+		return AuditAction_LOGIN, nil
+	case "LOGOUT":
+		return AuditAction_LOGOUT, nil
+	case "PASSWORD_CHANGE":
+		return AuditAction_PASSWORD_CHANGE, nil
+	}
+	return AuditAction(0), fmt.Errorf("not a valid AuditAction string")
+}
+
+func AuditActionPtr(v AuditAction) *AuditAction { return &v }
+func (p *AuditAction) Scan(value interface{}) (err error) {
+	var result sql.NullInt64
+	err = result.Scan(value)
+	*p = AuditAction(result.Int64)
+	return
+}
+
+func (p *AuditAction) Value() (driver.Value, error) {
+	if p == nil {
+		return nil, nil
+	}
+	return int64(*p), nil
+}
+
 type PermissionLevel int64
 
 const (
@@ -153,6 +215,314 @@ func (p *OrganizationLogoStatus) Value() (driver.Value, error) {
 		return nil, nil
 	}
 	return int64(*p), nil
+}
+
+type AuditLog struct {
+	Id             *core.UUID        `thrift:"id,1,optional" frugal:"1,optional,string" json:"id,omitempty"`
+	RequestID      *string           `thrift:"requestID,2,optional" frugal:"2,optional,string" json:"requestID,omitempty"`
+	TraceID        *string           `thrift:"traceID,3,optional" frugal:"3,optional,string" json:"traceID,omitempty"`
+	UserID         *core.UUID        `thrift:"userID,4,optional" frugal:"4,optional,string" json:"userID,omitempty"`
+	Username       *string           `thrift:"username,5,optional" frugal:"5,optional,string" json:"username,omitempty"`
+	OrganizationID *core.UUID        `thrift:"organizationID,6,optional" frugal:"6,optional,string" json:"organizationID,omitempty"`
+	Action         *AuditAction      `thrift:"action,7,optional" frugal:"7,optional,AuditAction" json:"action,omitempty"`
+	Resource       *string           `thrift:"resource,8,optional" frugal:"8,optional,string" json:"resource,omitempty"`
+	ResourceID     *string           `thrift:"resourceID,9,optional" frugal:"9,optional,string" json:"resourceID,omitempty"`
+	StatusCode     *int32            `thrift:"statusCode,10,optional" frugal:"10,optional,i32" json:"statusCode,omitempty"`
+	Success        *bool             `thrift:"success,11,optional" frugal:"11,optional,bool" json:"success,omitempty"`
+	ClientIP       *string           `thrift:"clientIP,12,optional" frugal:"12,optional,string" json:"clientIP,omitempty"`
+	UserAgent      *string           `thrift:"userAgent,13,optional" frugal:"13,optional,string" json:"userAgent,omitempty"`
+	RequestBody    *string           `thrift:"requestBody,14,optional" frugal:"14,optional,string" json:"requestBody,omitempty"`
+	DurationMs     *int32            `thrift:"durationMs,15,optional" frugal:"15,optional,i32" json:"durationMs,omitempty"`
+	CreatedAt      *core.TimestampMS `thrift:"createdAt,16,optional" frugal:"16,optional,i64" json:"createdAt,omitempty"`
+}
+
+func NewAuditLog() *AuditLog {
+	return &AuditLog{}
+}
+
+func (p *AuditLog) InitDefault() {
+}
+
+var AuditLog_Id_DEFAULT core.UUID
+
+func (p *AuditLog) GetId() (v core.UUID) {
+	if !p.IsSetId() {
+		return AuditLog_Id_DEFAULT
+	}
+	return *p.Id
+}
+
+var AuditLog_RequestID_DEFAULT string
+
+func (p *AuditLog) GetRequestID() (v string) {
+	if !p.IsSetRequestID() {
+		return AuditLog_RequestID_DEFAULT
+	}
+	return *p.RequestID
+}
+
+var AuditLog_TraceID_DEFAULT string
+
+func (p *AuditLog) GetTraceID() (v string) {
+	if !p.IsSetTraceID() {
+		return AuditLog_TraceID_DEFAULT
+	}
+	return *p.TraceID
+}
+
+var AuditLog_UserID_DEFAULT core.UUID
+
+func (p *AuditLog) GetUserID() (v core.UUID) {
+	if !p.IsSetUserID() {
+		return AuditLog_UserID_DEFAULT
+	}
+	return *p.UserID
+}
+
+var AuditLog_Username_DEFAULT string
+
+func (p *AuditLog) GetUsername() (v string) {
+	if !p.IsSetUsername() {
+		return AuditLog_Username_DEFAULT
+	}
+	return *p.Username
+}
+
+var AuditLog_OrganizationID_DEFAULT core.UUID
+
+func (p *AuditLog) GetOrganizationID() (v core.UUID) {
+	if !p.IsSetOrganizationID() {
+		return AuditLog_OrganizationID_DEFAULT
+	}
+	return *p.OrganizationID
+}
+
+var AuditLog_Action_DEFAULT AuditAction
+
+func (p *AuditLog) GetAction() (v AuditAction) {
+	if !p.IsSetAction() {
+		return AuditLog_Action_DEFAULT
+	}
+	return *p.Action
+}
+
+var AuditLog_Resource_DEFAULT string
+
+func (p *AuditLog) GetResource() (v string) {
+	if !p.IsSetResource() {
+		return AuditLog_Resource_DEFAULT
+	}
+	return *p.Resource
+}
+
+var AuditLog_ResourceID_DEFAULT string
+
+func (p *AuditLog) GetResourceID() (v string) {
+	if !p.IsSetResourceID() {
+		return AuditLog_ResourceID_DEFAULT
+	}
+	return *p.ResourceID
+}
+
+var AuditLog_StatusCode_DEFAULT int32
+
+func (p *AuditLog) GetStatusCode() (v int32) {
+	if !p.IsSetStatusCode() {
+		return AuditLog_StatusCode_DEFAULT
+	}
+	return *p.StatusCode
+}
+
+var AuditLog_Success_DEFAULT bool
+
+func (p *AuditLog) GetSuccess() (v bool) {
+	if !p.IsSetSuccess() {
+		return AuditLog_Success_DEFAULT
+	}
+	return *p.Success
+}
+
+var AuditLog_ClientIP_DEFAULT string
+
+func (p *AuditLog) GetClientIP() (v string) {
+	if !p.IsSetClientIP() {
+		return AuditLog_ClientIP_DEFAULT
+	}
+	return *p.ClientIP
+}
+
+var AuditLog_UserAgent_DEFAULT string
+
+func (p *AuditLog) GetUserAgent() (v string) {
+	if !p.IsSetUserAgent() {
+		return AuditLog_UserAgent_DEFAULT
+	}
+	return *p.UserAgent
+}
+
+var AuditLog_RequestBody_DEFAULT string
+
+func (p *AuditLog) GetRequestBody() (v string) {
+	if !p.IsSetRequestBody() {
+		return AuditLog_RequestBody_DEFAULT
+	}
+	return *p.RequestBody
+}
+
+var AuditLog_DurationMs_DEFAULT int32
+
+func (p *AuditLog) GetDurationMs() (v int32) {
+	if !p.IsSetDurationMs() {
+		return AuditLog_DurationMs_DEFAULT
+	}
+	return *p.DurationMs
+}
+
+var AuditLog_CreatedAt_DEFAULT core.TimestampMS
+
+func (p *AuditLog) GetCreatedAt() (v core.TimestampMS) {
+	if !p.IsSetCreatedAt() {
+		return AuditLog_CreatedAt_DEFAULT
+	}
+	return *p.CreatedAt
+}
+func (p *AuditLog) SetId(val *core.UUID) {
+	p.Id = val
+}
+func (p *AuditLog) SetRequestID(val *string) {
+	p.RequestID = val
+}
+func (p *AuditLog) SetTraceID(val *string) {
+	p.TraceID = val
+}
+func (p *AuditLog) SetUserID(val *core.UUID) {
+	p.UserID = val
+}
+func (p *AuditLog) SetUsername(val *string) {
+	p.Username = val
+}
+func (p *AuditLog) SetOrganizationID(val *core.UUID) {
+	p.OrganizationID = val
+}
+func (p *AuditLog) SetAction(val *AuditAction) {
+	p.Action = val
+}
+func (p *AuditLog) SetResource(val *string) {
+	p.Resource = val
+}
+func (p *AuditLog) SetResourceID(val *string) {
+	p.ResourceID = val
+}
+func (p *AuditLog) SetStatusCode(val *int32) {
+	p.StatusCode = val
+}
+func (p *AuditLog) SetSuccess(val *bool) {
+	p.Success = val
+}
+func (p *AuditLog) SetClientIP(val *string) {
+	p.ClientIP = val
+}
+func (p *AuditLog) SetUserAgent(val *string) {
+	p.UserAgent = val
+}
+func (p *AuditLog) SetRequestBody(val *string) {
+	p.RequestBody = val
+}
+func (p *AuditLog) SetDurationMs(val *int32) {
+	p.DurationMs = val
+}
+func (p *AuditLog) SetCreatedAt(val *core.TimestampMS) {
+	p.CreatedAt = val
+}
+
+func (p *AuditLog) IsSetId() bool {
+	return p.Id != nil
+}
+
+func (p *AuditLog) IsSetRequestID() bool {
+	return p.RequestID != nil
+}
+
+func (p *AuditLog) IsSetTraceID() bool {
+	return p.TraceID != nil
+}
+
+func (p *AuditLog) IsSetUserID() bool {
+	return p.UserID != nil
+}
+
+func (p *AuditLog) IsSetUsername() bool {
+	return p.Username != nil
+}
+
+func (p *AuditLog) IsSetOrganizationID() bool {
+	return p.OrganizationID != nil
+}
+
+func (p *AuditLog) IsSetAction() bool {
+	return p.Action != nil
+}
+
+func (p *AuditLog) IsSetResource() bool {
+	return p.Resource != nil
+}
+
+func (p *AuditLog) IsSetResourceID() bool {
+	return p.ResourceID != nil
+}
+
+func (p *AuditLog) IsSetStatusCode() bool {
+	return p.StatusCode != nil
+}
+
+func (p *AuditLog) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *AuditLog) IsSetClientIP() bool {
+	return p.ClientIP != nil
+}
+
+func (p *AuditLog) IsSetUserAgent() bool {
+	return p.UserAgent != nil
+}
+
+func (p *AuditLog) IsSetRequestBody() bool {
+	return p.RequestBody != nil
+}
+
+func (p *AuditLog) IsSetDurationMs() bool {
+	return p.DurationMs != nil
+}
+
+func (p *AuditLog) IsSetCreatedAt() bool {
+	return p.CreatedAt != nil
+}
+
+func (p *AuditLog) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("AuditLog(%+v)", *p)
+}
+
+var fieldIDToName_AuditLog = map[int16]string{
+	1:  "id",
+	2:  "requestID",
+	3:  "traceID",
+	4:  "userID",
+	5:  "username",
+	6:  "organizationID",
+	7:  "action",
+	8:  "resource",
+	9:  "resourceID",
+	10: "statusCode",
+	11: "success",
+	12: "clientIP",
+	13: "userAgent",
+	14: "requestBody",
+	15: "durationMs",
+	16: "createdAt",
 }
 
 type UserProfile struct {

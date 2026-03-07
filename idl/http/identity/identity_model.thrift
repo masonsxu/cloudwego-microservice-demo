@@ -1007,3 +1007,125 @@ struct BindLogoToOrganizationRequestDTO {
     /** Logo ID */
     2: optional string logoID (api.body = "logo_id", api.vd = "@:len($)==36; msg:'Logo ID格式不正确'", go.tag = "json:\"logo_id\""),
 }
+
+// =================================================================
+// 8. 审计日志模块 DTO (Audit Log)
+// =================================================================
+
+/**
+ * 审计日志数据传输对象
+ * 包含单条审计日志的完整信息
+ */
+struct AuditLogDTO {
+
+    /** 日志唯一标识符 */
+    1: optional string id (go.tag = "json:\"id\""),
+
+    /** 请求ID */
+    2: optional string requestID (go.tag = "json:\"request_id\""),
+
+    /** 链路追踪ID */
+    3: optional string traceID (go.tag = "json:\"trace_id\""),
+
+    /** 操作用户ID */
+    4: optional string userID (go.tag = "json:\"user_id,omitempty\""),
+
+    /** 操作用户名 */
+    5: optional string username (go.tag = "json:\"username,omitempty\""),
+
+    /** 所属组织ID */
+    6: optional string organizationID (go.tag = "json:\"organization_id,omitempty\""),
+
+    /** 操作类型（1:创建, 2:更新, 3:删除, 4:登录, 5:登出, 6:密码修改） */
+    7: optional i32 action (go.tag = "json:\"action\""),
+
+    /** 资源路径 */
+    8: optional string resource (go.tag = "json:\"resource\""),
+
+    /** 资源ID */
+    9: optional string resourceID (go.tag = "json:\"resource_id,omitempty\""),
+
+    /** HTTP 状态码 */
+    10: optional i32 statusCode (go.tag = "json:\"status_code\""),
+
+    /** 操作是否成功 */
+    11: optional bool success (go.tag = "json:\"success\""),
+
+    /** 客户端IP地址 */
+    12: optional string clientIP (go.tag = "json:\"client_ip\""),
+
+    /** 用户代理 */
+    13: optional string userAgent (go.tag = "json:\"user_agent,omitempty\""),
+
+    /** 请求体 */
+    14: optional string requestBody (go.tag = "json:\"request_body,omitempty\""),
+
+    /** 请求耗时（毫秒） */
+    15: optional i32 durationMs (go.tag = "json:\"duration_ms\""),
+
+    /** 创建时间 */
+    16: optional core.TimestampMS createdAt (go.tag = "json:\"created_at\""),
+}
+
+/**
+ * 审计日志列表查询请求
+ * 支持分页和多条件筛选
+ */
+struct ListAuditLogsRequestDTO {
+
+    /** 分页信息 */
+    1: optional base.PageRequestDTO page (api.none = "true", go.tag = "json:\"page,omitempty\""),
+
+    /** 按用户ID筛选 */
+    2: optional string userID (api.query = "user_id", go.tag = "json:\"user_id,omitempty\""),
+
+    /** 按操作类型筛选 */
+    3: optional i32 action (api.query = "action", go.tag = "json:\"action,omitempty\""),
+
+    /** 按资源路径筛选 */
+    4: optional string resource (api.query = "resource", go.tag = "json:\"resource,omitempty\""),
+
+    /** 按成功/失败筛选 */
+    5: optional bool success (api.query = "success", go.tag = "json:\"success,omitempty\""),
+
+    /** 起始时间 */
+    6: optional core.TimestampMS startTime (api.query = "start_time", go.tag = "json:\"start_time,omitempty\""),
+
+    /** 结束时间 */
+    7: optional core.TimestampMS endTime (api.query = "end_time", go.tag = "json:\"end_time,omitempty\""),
+}
+
+/**
+ * 审计日志统计数据传输对象
+ * 包含基于筛选条件的全局统计信息（不受分页限制）
+ */
+struct AuditLogStatsDTO {
+
+    /** 符合筛选条件的总记录数 */
+    1: optional i64 totalCount (go.tag = "json:\"total_count\""),
+
+    /** 符合筛选条件的成功记录数 */
+    2: optional i64 successCount (go.tag = "json:\"success_count\""),
+
+    /** 符合筛选条件的平均耗时（毫秒） */
+    3: optional i32 avgDurationMs (go.tag = "json:\"avg_duration_ms\""),
+}
+
+/**
+ * 审计日志列表查询响应
+ * 包含审计日志列表和分页信息
+ */
+struct ListAuditLogsResponseDTO {
+
+    /** 基础响应信息 */
+    1: optional base.BaseResponseDTO baseResp (go.tag = "json:\"base_resp\""),
+
+    /** 审计日志列表 */
+    2: optional list<AuditLogDTO> auditLogs (go.tag = "json:\"audit_logs,omitempty\""),
+
+    /** 分页信息 */
+    3: optional base.PageResponseDTO page (go.tag = "json:\"page,omitempty\""),
+
+    /** 全局统计信息（基于相同筛选条件，不受分页限制） */
+    4: optional AuditLogStatsDTO stats (go.tag = "json:\"stats,omitempty\""),
+}

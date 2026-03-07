@@ -55,6 +55,16 @@ const routes: RouteRecordRaw[] = [
               icon: 'User',
               menuId: 'account_management'
             }
+          },
+          {
+            path: 'audit-logs',
+            name: 'AuditLogs',
+            component: () => import('@/views/audit/AuditLog.vue'),
+            meta: {
+              title: 'audit.title',
+              icon: 'Document',
+              menuId: 'audit_logs'
+            }
           }
         ]
       },

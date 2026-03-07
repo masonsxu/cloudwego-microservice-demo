@@ -18,6 +18,7 @@ type Assembler interface {
 	Department() IDepartmentAssembler
 	Membership() IMembershipAssembler
 	Logo() ILogoAssembler
+	AuditLog() IAuditLogAssembler
 
 	// 通用转换方法（避免重复代码）
 	ToHTTPPageResponse(*rpc_base.PageResponse) *http_base.PageResponseDTO
@@ -128,6 +129,17 @@ type ILogoAssembler interface {
 	ToRPCBindLogoToOrganizationRequest(
 		*identityModel.BindLogoToOrganizationRequestDTO,
 	) *identity_srv.BindLogoToOrganizationRequest
+}
+
+type IAuditLogAssembler interface {
+	ToHTTPAuditLog(*identity_srv.AuditLog) *identityModel.AuditLogDTO
+	ToHTTPAuditLogs([]*identity_srv.AuditLog) []*identityModel.AuditLogDTO
+	ToRPCListAuditLogsRequest(
+		*identityModel.ListAuditLogsRequestDTO,
+	) *identity_srv.ListAuditLogsRequest
+	ToHTTPListAuditLogsResponse(
+		*identity_srv.ListAuditLogsResponse,
+	) *identityModel.ListAuditLogsResponseDTO
 }
 
 // ToHTTPPageResponse is a generic function to convert RPC PageResponse to HTTP PageResponseDTO.

@@ -2,6 +2,7 @@ package converter
 
 import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/assignment"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/auditlog"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/authentication"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/base"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/definition"
@@ -82,6 +83,7 @@ type Converter interface {
 	Menu() menu.Converter
 	RoleDefinition() definition.Converter
 	UserRoleAssignment() assignment.Converter
+	AuditLog() auditlog.Converter
 	// ============================================================================
 	// 基础设施转换器 - 通用工具
 	// ============================================================================

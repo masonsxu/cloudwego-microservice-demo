@@ -69,6 +69,8 @@ type Client interface {
 	CheckPermission(ctx context.Context, req *identity_srv.CheckPermissionRequest, callOptions ...callopt.Option) (r *identity_srv.CheckPermissionResponse, err error)
 	SyncPolicies(ctx context.Context, callOptions ...callopt.Option) (r *identity_srv.SyncPoliciesResponse, err error)
 	GetUserDataScope(ctx context.Context, req *identity_srv.GetUserDataScopeRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserDataScopeResponse, err error)
+	CreateAuditLog(ctx context.Context, req *identity_srv.CreateAuditLogRequest, callOptions ...callopt.Option) (err error)
+	ListAuditLogs(ctx context.Context, req *identity_srv.ListAuditLogsRequest, callOptions ...callopt.Option) (r *identity_srv.ListAuditLogsResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -383,4 +385,14 @@ func (p *kIdentityServiceClient) SyncPolicies(ctx context.Context, callOptions .
 func (p *kIdentityServiceClient) GetUserDataScope(ctx context.Context, req *identity_srv.GetUserDataScopeRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserDataScopeResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.GetUserDataScope(ctx, req)
+}
+
+func (p *kIdentityServiceClient) CreateAuditLog(ctx context.Context, req *identity_srv.CreateAuditLogRequest, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CreateAuditLog(ctx, req)
+}
+
+func (p *kIdentityServiceClient) ListAuditLogs(ctx context.Context, req *identity_srv.ListAuditLogsRequest, callOptions ...callopt.Option) (r *identity_srv.ListAuditLogsResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ListAuditLogs(ctx, req)
 }

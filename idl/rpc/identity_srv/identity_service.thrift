@@ -430,6 +430,22 @@ service IdentityService {
      * @return 用户在指定资源上的数据范围。
      */
     GetUserDataScopeResponse GetUserDataScope(1: GetUserDataScopeRequest req),
+    // -----------------------------------------------------------------
+    // 审计日志模块 (Audit Log)
+    // -----------------------------------------------------------------
+
+    /**
+     * 创建审计日志记录。
+     * @param req 包含审计日志的详细信息。
+     */
+    void CreateAuditLog(1: CreateAuditLogRequest req),
+
+    /**
+     * 分页查询审计日志。
+     * @param req 查询条件，支持按用户、操作类型、资源、时间范围等筛选。
+     * @return 审计日志列表及分页信息。
+     */
+    ListAuditLogsResponse ListAuditLogs(1: ListAuditLogsRequest req),
 }
 
 // =================================================================
@@ -1178,4 +1194,105 @@ struct GetUserDataScopeResponse {
 
     /** 操作类型 */
     4: optional string action,
+}
+
+// =================================================================
+// 审计日志 (Audit Log)
+// =================================================================
+
+/** 创建审计日志请求 */
+struct CreateAuditLogRequest {
+
+    /** 请求ID */
+    1: optional string requestID,
+
+    /** 链路追踪ID */
+    2: optional string traceID,
+
+    /** 操作者用户ID */
+    3: optional core.UUID userID,
+
+    /** 操作者用户名 */
+    4: optional string username,
+
+    /** 操作者所属组织ID */
+    5: optional core.UUID organizationID,
+
+    /** 审计操作类型 */
+    6: optional identity_model.AuditAction action,
+
+    /** 操作的资源路径 */
+    7: optional string resource,
+
+    /** 操作的资源ID */
+    8: optional string resourceID,
+
+    /** HTTP 状态码 */
+    9: optional i32 statusCode,
+
+    /** 操作是否成功 */
+    10: optional bool success,
+
+    /** 客户端IP地址 */
+    11: optional string clientIP,
+
+    /** 客户端User-Agent */
+    12: optional string userAgent,
+
+    /** 请求体（已脱敏） */
+    13: optional string requestBody,
+
+    /** 请求耗时（毫秒） */
+    14: optional i32 durationMs,
+}
+
+/** 查询审计日志请求 */
+struct ListAuditLogsRequest {
+
+    /** 分页信息 */
+    1: optional base.PageRequest page,
+
+    /** 按用户ID筛选 */
+    2: optional core.UUID userID,
+
+    /** 按操作类型筛选 */
+    3: optional identity_model.AuditAction action,
+
+    /** 按资源路径筛选 */
+    4: optional string resource,
+
+    /** 按成功/失败筛选 */
+    5: optional bool success,
+
+    /** 开始时间（毫秒时间戳） */
+    6: optional core.TimestampMS startTime,
+
+    /** 结束时间（毫秒时间戳） */
+    7: optional core.TimestampMS endTime,
+}
+
+/** 审计日志统计信息 */
+struct AuditLogStats {
+
+    /** 符合筛选条件的总记录数 */
+    1: optional i64 totalCount,
+
+    /** 符合筛选条件的成功记录数 */
+    2: optional i64 successCount,
+
+    /** 符合筛选条件的平均耗时（毫秒） */
+    3: optional i32 avgDurationMs,
+}
+
+/** 查询审计日志响应 */
+struct ListAuditLogsResponse {
+
+    /** 审计日志列表 */
+    1: optional list<identity_model.AuditLog> auditLogs,
+
+    /** 分页信息 */
+    2: optional base.PageResponse page,
+
+    /** 全局统计信息（基于相同筛选条件，不受分页限制） */
+    3: optional AuditLogStats stats,
 }

@@ -204,5 +204,33 @@ export default {
     roleManagement: 'Role Management',
     systemSettings: 'System Settings',
     menuManagement: 'Menu Management'
+  },
+
+  audit: {
+    title: 'Audit Logs',
+    subtitle: 'View system operation records and security events',
+    totalRecords: 'Total Records',
+    successRate: 'Success Rate',
+    avgDuration: 'Avg Duration',
+    user: 'User',
+    action: 'Action',
+    resource: 'Resource',
+    statusCode: 'Status Code',
+    success: 'Success',
+    failed: 'Failed',
+    clientIP: 'Client IP',
+    duration: 'Duration',
+    requestBody: 'Request Body',
+    dateRange: 'Date Range',
+    allActions: 'All Actions',
+    allStatus: 'All Status',
+    actionType: {
+      create: 'Create',
+      update: 'Update',
+      delete: 'Delete',
+      login: 'Login',
+      logout: 'Logout',
+      passwordChange: 'Password Change'
+    }
   }
 }

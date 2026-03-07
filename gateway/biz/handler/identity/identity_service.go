@@ -1188,3 +1188,24 @@ func BindLogoToOrganization(ctx context.Context, c *app.RequestContext) {
 
 	errors.JSON(c, consts.StatusOK, resp)
 }
+
+// ListAuditLogs .
+// @router /api/v1/identity/audit-logs [GET]
+func ListAuditLogs(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req identity.ListAuditLogsRequestDTO
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage(err.Error()))
+		return
+	}
+
+	// 调用业务服务层
+	resp, err := identityService.ListAuditLogs(ctx, &req)
+	if err != nil {
+		errors.HandleServiceError(c, err, "查询审计日志失败")
+		return
+	}
+
+	errors.JSON(c, consts.StatusOK, resp)
+}

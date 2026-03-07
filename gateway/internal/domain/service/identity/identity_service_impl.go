@@ -16,6 +16,7 @@ type identityServiceImpl struct {
 	orgService        OrganizationService
 	deptService       DepartmentService
 	logoService       LogoService
+	auditLogService   AuditLogService
 }
 
 // NewService 创建身份管理聚合服务
@@ -26,6 +27,7 @@ func NewService(
 	orgService OrganizationService,
 	deptService DepartmentService,
 	logoService LogoService,
+	auditLogService AuditLogService,
 ) Service {
 	return &identityServiceImpl{
 		authService:       authService,
@@ -34,6 +36,7 @@ func NewService(
 		orgService:        orgService,
 		deptService:       deptService,
 		logoService:       logoService,
+		auditLogService:   auditLogService,
 	}
 }
 
@@ -275,4 +278,15 @@ func (s *identityServiceImpl) BindLogoToOrganization(
 	req *identity.BindLogoToOrganizationRequestDTO,
 ) (*identity.OrganizationResponseDTO, error) {
 	return s.logoService.BindLogoToOrganization(ctx, req)
+}
+
+// =================================================================
+// AuditLogService 接口实现 - 委托给 auditLogService
+// =================================================================
+
+func (s *identityServiceImpl) ListAuditLogs(
+	ctx context.Context,
+	req *identity.ListAuditLogsRequestDTO,
+) (*identity.ListAuditLogsResponseDTO, error) {
+	return s.auditLogService.ListAuditLogs(ctx, req)
 }

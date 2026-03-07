@@ -9,6 +9,86 @@ include "../../base/core.thrift"
 include "../../base/enums.thrift"
 
 /**
+ * 审计操作类型 (Audit Action)
+ * 定义审计日志记录的操作类型
+ */
+enum AuditAction {
+    /** 创建操作 */
+    CREATE = 1,
+
+    /** 更新操作 */
+    UPDATE = 2,
+
+    /** 删除操作 */
+    DELETE = 3,
+
+    /** 登录操作 */
+    LOGIN = 4,
+
+    /** 登出操作 */
+    LOGOUT = 5,
+
+    /** 密码修改操作 */
+    PASSWORD_CHANGE = 6,
+}
+
+/**
+ * 审计日志 (AuditLog)
+ * 记录系统中所有写操作和认证事件，支持安全审计和问题排查。
+ * 审计日志是只追加的不可变记录，不支持更新和删除。
+ */
+struct AuditLog {
+
+    /** 审计日志唯一ID */
+    1: optional core.UUID id,
+
+    /** 请求ID */
+    2: optional string requestID,
+
+    /** 链路追踪ID */
+    3: optional string traceID,
+
+    /** 操作者用户ID */
+    4: optional core.UUID userID,
+
+    /** 操作者用户名 */
+    5: optional string username,
+
+    /** 操作者所属组织ID */
+    6: optional core.UUID organizationID,
+
+    /** 审计操作类型 */
+    7: optional AuditAction action,
+
+    /** 操作的资源路径（如 /api/v1/users） */
+    8: optional string resource,
+
+    /** 操作的资源ID */
+    9: optional string resourceID,
+
+    /** HTTP 状态码 */
+    10: optional i32 statusCode,
+
+    /** 操作是否成功 */
+    11: optional bool success,
+
+    /** 客户端IP地址 */
+    12: optional string clientIP,
+
+    /** 客户端User-Agent */
+    13: optional string userAgent,
+
+    /** 请求体（已脱敏） */
+    14: optional string requestBody,
+
+    /** 请求耗时（毫秒） */
+    15: optional i32 durationMs,
+
+    /** 创建时间 */
+    16: optional core.TimestampMS createdAt,
+}
+
+/**
  * 权限级别枚举 (Permission Level)
  * 定义菜单权限的访问级别
  */

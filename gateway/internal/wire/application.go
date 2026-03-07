@@ -18,6 +18,7 @@ var ApplicationSet = wire.NewSet(
 	identityassembler.NewDepartmentAssembler,
 	identityassembler.NewMembershipAssembler,
 	identityassembler.NewLogoAssembler,
+	identityassembler.NewAuditLogAssembler,
 
 	// 权限相关 assembler
 	permasm.NewPermissionAssembler,

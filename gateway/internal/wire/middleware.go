@@ -6,6 +6,7 @@ import (
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
 	"github.com/rs/zerolog"
 
+	auditmdw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/audit_middleware"
 	casbnmw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/casbin_middleware"
 	corsmdw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/cors_middleware"
 	errormw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/error_middleware"
@@ -13,6 +14,7 @@ import (
 	respmw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/response_middleware"
 	tracemdw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/trace_middleware"
 	identityService "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/identity"
+	identitycli "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/client/identity_cli"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/redis"
 )
@@ -26,6 +28,7 @@ var MiddlewareSet = wire.NewSet(
 	ProvideResponseHeaderMiddleware,
 	ProvideCasbinConfig,
 	ProvideCasbinMiddleware,
+	ProvideAuditMiddleware,
 	NewMiddlewareContainer,
 )
 
@@ -38,6 +41,7 @@ type MiddlewareContainer struct {
 	JWTMiddleware            jwtmdw.JWTMiddlewareService
 	ResponseHeaderMiddleware respmw.ResponseHeaderMiddlewareService
 	CasbinMiddleware         *casbnmw.CasbinMiddleware
+	AuditMiddleware          auditmdw.AuditMiddlewareService
 }
 
 // NewMiddlewareContainer 创建中间件容器
@@ -48,6 +52,7 @@ func NewMiddlewareContainer(
 	jwtMiddleware jwtmdw.JWTMiddlewareService,
 	responseHeaderMiddleware respmw.ResponseHeaderMiddlewareService,
 	casbinMiddleware *casbnmw.CasbinMiddleware,
+	auditMiddleware auditmdw.AuditMiddlewareService,
 ) *MiddlewareContainer {
 	return &MiddlewareContainer{
 		TraceMiddleware:          traceMiddleware,
@@ -56,6 +61,7 @@ func NewMiddlewareContainer(
 		JWTMiddleware:            jwtMiddleware,
 		ResponseHeaderMiddleware: responseHeaderMiddleware,
 		CasbinMiddleware:         casbinMiddleware,
+		AuditMiddleware:          auditMiddleware,
 	}
 }
 
@@ -140,6 +146,20 @@ func ProvideCasbinMiddleware(
 
 	zl := logger.Unwrap()
 	zl.Info().Msg("Casbin middleware created successfully (memory adapter)")
+
+	return middleware
+}
+
+// ProvideAuditMiddleware 提供审计日志中间件
+// 自动记录写操作和认证事件的审计日志
+func ProvideAuditMiddleware(
+	identityClient identitycli.IdentityClient,
+	logger *hertzZerolog.Logger,
+) auditmdw.AuditMiddlewareService {
+	zl := logger.Unwrap()
+	middleware := auditmdw.NewAuditMiddleware(identityClient, &zl)
+
+	zl.Info().Msg("Audit middleware created successfully")
 
 	return middleware
 }

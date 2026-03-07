@@ -4,6 +4,7 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal"
 	roleAssignLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/assignment"
+	auditLogLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/auditlog"
 	authenticationLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/authentication"
 	casbinLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/casbin"
 	roleDefLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/definition"
@@ -67,6 +68,13 @@ type Impl struct {
 
 	// Casbin 权限服务
 	casbinLogic.Service
+
+	// ============================================================================
+	// 审计日志 - 记录系统操作
+	// ============================================================================
+
+	// 审计日志
+	auditLogLogic.AuditLogLogic
 }
 
 // NewLogicImpl 创建业务逻辑层实例
@@ -161,6 +169,12 @@ func NewLogicImpl(dal dal.DAL, cfg *config.Config, casbinService casbinLogic.Ser
 
 		// Casbin 权限服务
 		Service: casbinService,
+
+		// ============================================================================
+		// 审计日志初始化
+		// ============================================================================
+
+		AuditLogLogic: auditLogLogic.NewLogic(dal, conv),
 	}
 }
 

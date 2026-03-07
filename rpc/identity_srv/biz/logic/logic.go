@@ -2,6 +2,7 @@ package logic
 
 import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/assignment"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/auditlog"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/authentication"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/casbin"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/definition"
@@ -71,4 +72,12 @@ type Logic interface {
 	// Casbin 权限管理
 	// 负责策略同步、权限检查、数据范围获取等 Casbin 相关功能
 	casbin.Service
+
+	// ============================================================================
+	// 审计日志模块
+	// ============================================================================
+
+	// AuditLog 审计日志
+	// 负责审计日志的创建和查询
+	auditlog.AuditLogLogic
 }

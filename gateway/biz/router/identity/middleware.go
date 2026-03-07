@@ -235,3 +235,8 @@ func _uploadtemporarylogoMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _listauditlogsMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

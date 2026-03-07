@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/assignment"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/auditlog"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/definition"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/department"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/logo"
@@ -50,6 +51,9 @@ type DAL interface {
 
 	// RoleMenuPermission 角色菜单权限仓储
 	RoleMenuPermission() rolemenu.RoleMenuPermissionRepository
+
+	// AuditLog 审计日志仓储
+	AuditLog() auditlog.AuditLogRepository
 
 	// ============================================================================
 	// 事务管理

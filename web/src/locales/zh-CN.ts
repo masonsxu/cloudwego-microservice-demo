@@ -207,5 +207,33 @@ export default {
     roleManagement: '角色管理',
     systemSettings: '系统设置',
     menuManagement: '菜单管理'
+  },
+
+  audit: {
+    title: '审计日志',
+    subtitle: '查看系统操作记录与安全事件',
+    totalRecords: '总记录',
+    successRate: '成功率',
+    avgDuration: '平均耗时',
+    user: '操作用户',
+    action: '操作类型',
+    resource: '资源路径',
+    statusCode: '状态码',
+    success: '成功',
+    failed: '失败',
+    clientIP: '客户端IP',
+    duration: '耗时',
+    requestBody: '请求体',
+    dateRange: '时间范围',
+    allActions: '全部操作',
+    allStatus: '全部状态',
+    actionType: {
+      create: '创建',
+      update: '更新',
+      delete: '删除',
+      login: '登录',
+      logout: '登出',
+      passwordChange: '密码修改'
+    }
   }
 }
