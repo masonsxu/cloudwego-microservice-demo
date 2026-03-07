@@ -1,5 +1,5 @@
 <template>
-  <div class="role-detail" v-loading="loading">
+  <div class="role-detail">
     <el-page-header @back="handleBack" :title="t('common.back')">
       <template #content>
         <span class="page-title">{{ roleDetail?.name || t('role.roleDetail') }}</span>
@@ -23,7 +23,18 @@
       </template>
     </el-page-header>
 
-    <el-row :gutter="20" class="content-row">
+    <div class="content-row">
+      <DetailPageSkeleton
+        v-if="initialLoading"
+        :side-span="16"
+        :main-span="8"
+        :side-cards="2"
+        :main-cards="2"
+        :show-avatar="false"
+        :side-item-counts="[6, 4]"
+        :main-item-counts="[5, 4]"
+      />
+      <el-row v-else :gutter="20" v-loading="loading">
       <!-- 左列：基本信息 + API 权限 -->
       <el-col :span="16">
         <el-card class="detail-card" v-if="roleDetail">
@@ -144,6 +155,7 @@
         </el-card>
       </el-col>
     </el-row>
+    </div>
 
     <!-- 编辑角色对话框 -->
     <el-dialog
@@ -302,6 +314,7 @@ import { menuApi } from '@/api/menu'
 import { getUserList, getUserDetail } from '@/api/user'
 import type { RoleDefinitionDTO, MenuNodeDTO } from '@/api/role'
 import type { MenuItem, UserListItem, UserProfile } from '@/types/user'
+import DetailPageSkeleton from '@/components/skeleton/DetailPageSkeleton.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -310,6 +323,7 @@ const route = useRoute()
 const roleId = route.params.id as string
 
 // ── 主数据 ──────────────────────────────────────────────────────────
+const initialLoading = ref(true)
 const loading = ref(false)
 const saving = ref(false)
 const roleDetail = ref<RoleDefinitionDTO | null>(null)
@@ -607,10 +621,12 @@ const getPermissionText = (level: number) =>
 
 const formatTimestamp = (ts?: number) => (ts ? new Date(ts).toLocaleString('zh-CN') : '-')
 
-onMounted(() => {
-  loadRoleDetail()
-  loadMenuTree()
-  loadRoleUsers()
+onMounted(async () => {
+  try {
+    await Promise.all([loadRoleDetail(), loadMenuTree(), loadRoleUsers()])
+  } finally {
+    initialLoading.value = false
+  }
 })
 </script>
 
@@ -627,6 +643,7 @@ onMounted(() => {
 
   .content-row {
     margin-top: 20px;
+    min-height: 300px;
   }
 
   .detail-card {

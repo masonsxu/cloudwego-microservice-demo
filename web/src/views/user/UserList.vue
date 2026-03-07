@@ -78,91 +78,94 @@
 
     <!-- 数据表格 -->
     <div class="table-card spotlight-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
-      <el-table :data="tableData" v-loading="loading" class="modern-table" style="width: 100%">
-        <el-table-column prop="username" :label="t('user.username')" width="150">
-          <template #default="{ row }">
-            <div class="user-cell">
-              <div class="user-avatar-mini">{{ row.username?.charAt(0).toUpperCase() }}</div>
-              <span class="username">{{ row.username }}</span>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="real_name" :label="t('user.realName')" width="120">
-          <template #default="{ row }">
-            <span class="text-sub">{{ row.real_name || '-' }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="email" :label="t('user.email')" min-width="180">
-          <template #default="{ row }">
-            <span class="text-sub">{{ row.email || '-' }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column :label="t('user.organization')" min-width="160">
-          <template #default="{ row }">
-            <span v-if="getOrganizationName(row.primary_organization_id)" class="text-sub">{{ getOrganizationName(row.primary_organization_id) }}</span>
-            <span v-else class="text-muted">-</span>
-          </template>
-        </el-table-column>
-        <el-table-column :label="t('user.roles')" min-width="160">
-          <template #default="{ row }">
-            <div class="roles-cell">
-              <el-tag v-for="role in (row.roles || []).slice(0, 2)" :key="role" size="small" class="role-tag">{{ role }}</el-tag>
-              <span v-if="(row.roles || []).length > 2" class="more-tag">+{{ row.roles.length - 2 }}</span>
-              <span v-if="!row.roles || row.roles.length === 0" class="text-muted">-</span>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column :label="t('common.status')" width="110" align="center">
-          <template #default="{ row }">
-            <el-tag :type="getStatusType(row.status)" size="small" effect="dark">
-              {{ t(`user.status.${getStatusKey(row.status)}`) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column :label="t('common.actions')" width="160" align="right" fixed="right">
-          <template #default="{ row }">
-            <div class="action-group">
-              <button class="action-btn view-btn" @click="handleView(row)" :title="t('common.view')">
-                <el-icon><View /></el-icon>
-              </button>
-              <button class="action-btn edit-btn" @click="handleEdit(row)" :title="t('common.edit')">
-                <el-icon><Edit /></el-icon>
-              </button>
-              <el-dropdown @command="(cmd: string) => handleMoreAction(cmd as any, row)" trigger="click">
-                <button class="action-btn more-btn" :title="t('common.actions')">
-                  <el-icon><MoreFilled /></el-icon>
+      <ListPageSkeleton v-if="initialLoading" :columns="7" :rows="8" />
+      <template v-else>
+        <el-table :data="tableData" v-loading="loading" class="modern-table" style="width: 100%">
+          <el-table-column prop="username" :label="t('user.username')" width="150">
+            <template #default="{ row }">
+              <div class="user-cell">
+                <div class="user-avatar-mini">{{ row.username?.charAt(0).toUpperCase() }}</div>
+                <span class="username">{{ row.username }}</span>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="real_name" :label="t('user.realName')" width="120">
+            <template #default="{ row }">
+              <span class="text-sub">{{ row.real_name || '-' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="email" :label="t('user.email')" min-width="180">
+            <template #default="{ row }">
+              <span class="text-sub">{{ row.email || '-' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('user.organization')" min-width="160">
+            <template #default="{ row }">
+              <span v-if="getOrganizationName(row.primary_organization_id)" class="text-sub">{{ getOrganizationName(row.primary_organization_id) }}</span>
+              <span v-else class="text-muted">-</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('user.roles')" min-width="160">
+            <template #default="{ row }">
+              <div class="roles-cell">
+                <el-tag v-for="role in (row.roles || []).slice(0, 2)" :key="role" size="small" class="role-tag">{{ role }}</el-tag>
+                <span v-if="(row.roles || []).length > 2" class="more-tag">+{{ row.roles.length - 2 }}</span>
+                <span v-if="!row.roles || row.roles.length === 0" class="text-muted">-</span>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('common.status')" width="110" align="center">
+            <template #default="{ row }">
+              <el-tag :type="getStatusType(row.status)" size="small" effect="dark">
+                {{ t(`user.status.${getStatusKey(row.status)}`) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('common.actions')" width="160" align="right" fixed="right">
+            <template #default="{ row }">
+              <div class="action-group">
+                <button class="action-btn view-btn" @click="handleView(row)" :title="t('common.view')">
+                  <el-icon><View /></el-icon>
                 </button>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item command="changeStatus">
-                      <el-icon><RefreshRight /></el-icon>{{ t('user.changeStatus') }}
-                    </el-dropdown-item>
-                    <el-dropdown-item command="resetPassword">
-                      <el-icon><Lock /></el-icon>{{ t('user.resetPassword') }}
-                    </el-dropdown-item>
-                    <el-dropdown-item command="delete" divided>
-                      <el-icon><Delete /></el-icon>{{ t('user.deleteUser') }}
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
+                <button class="action-btn edit-btn" @click="handleEdit(row)" :title="t('common.edit')">
+                  <el-icon><Edit /></el-icon>
+                </button>
+                <el-dropdown @command="(cmd: string) => handleMoreAction(cmd as any, row)" trigger="click">
+                  <button class="action-btn more-btn" :title="t('common.actions')">
+                    <el-icon><MoreFilled /></el-icon>
+                  </button>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item command="changeStatus">
+                        <el-icon><RefreshRight /></el-icon>{{ t('user.changeStatus') }}
+                      </el-dropdown-item>
+                      <el-dropdown-item command="resetPassword">
+                        <el-icon><Lock /></el-icon>{{ t('user.resetPassword') }}
+                      </el-dropdown-item>
+                      <el-dropdown-item command="delete" divided>
+                        <el-icon><Delete /></el-icon>{{ t('user.deleteUser') }}
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
 
-      <div class="pagination-wrapper">
-        <el-pagination
-          v-model:current-page="pagination.page"
-          v-model:page-size="pagination.limit"
-          :total="pagination.total"
-          :page-sizes="[10, 20, 50, 100]"
-          :background="true"
-          layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSizeChange"
-          @current-change="handlePageChange"
-        />
-      </div>
+        <div class="pagination-wrapper">
+          <el-pagination
+            v-model:current-page="pagination.page"
+            v-model:page-size="pagination.limit"
+            :total="pagination.total"
+            :page-sizes="[10, 20, 50, 100]"
+            :background="true"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="handleSizeChange"
+            @current-change="handlePageChange"
+          />
+        </div>
+      </template>
     </div>
 
     <!-- 变更状态对话框 -->
@@ -198,10 +201,12 @@ import { getUserList, changeUserStatus, deleteUser } from '@/api/user'
 import { getOrganizationList } from '@/api/organization'
 import type { UserListItem } from '@/types/user'
 import type { Organization } from '@/types/organization'
+import ListPageSkeleton from '@/components/skeleton/ListPageSkeleton.vue'
 
 const router = useRouter()
 const { t } = useI18n()
 
+const initialLoading = ref(true)
 const loading = ref(false)
 const submitting = ref(false)
 const tableData = ref<UserListItem[]>([])
@@ -256,6 +261,7 @@ async function fetchData() {
     ElMessage.error(error.message || t('common.operationFailed'))
   } finally {
     loading.value = false
+    initialLoading.value = false
   }
 }
 

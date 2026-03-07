@@ -87,79 +87,82 @@
 
     <!-- 数据表格卡片 -->
     <div class="table-card spotlight-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
-      <el-table
-        :data="tableData"
-        v-loading="loading"
-        row-key="id"
-        class="modern-table"
-        :style="{ width: '100%' }"
-      >
-        <el-table-column prop="name" :label="t('organization.name')" min-width="220">
-          <template #default="{ row }">
-            <div class="org-name-cell">
-              <div class="org-icon">
-                <el-icon size="14"><OfficeBuilding /></el-icon>
+      <ListPageSkeleton v-if="initialLoading" :columns="6" :rows="8" />
+      <template v-else>
+        <el-table
+          :data="tableData"
+          v-loading="loading"
+          row-key="id"
+          class="modern-table"
+          :style="{ width: '100%' }"
+        >
+          <el-table-column prop="name" :label="t('organization.name')" min-width="220">
+            <template #default="{ row }">
+              <div class="org-name-cell">
+                <div class="org-icon">
+                  <el-icon size="14"><OfficeBuilding /></el-icon>
+                </div>
+                <span class="org-name">{{ row.name }}</span>
               </div>
-              <span class="org-name">{{ row.name }}</span>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="code" :label="t('organization.code')" width="140">
-          <template #default="{ row }">
-            <code class="code-badge">{{ row.code || '-' }}</code>
-          </template>
-        </el-table-column>
-        <el-table-column :label="t('organization.parentOrganization')" min-width="180">
-          <template #default="{ row }">
-            <span v-if="row.parent" class="text-sub">{{ row.parent.name }}</span>
-            <el-tag v-else size="small" class="root-tag">{{ t('organization.root') }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="facility_type" :label="t('organization.facilityType')" width="140">
-          <template #default="{ row }">
-            <span class="text-sub">{{ row.facility_type || '-' }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column :label="t('organization.memberCount')" width="110" align="center">
-          <template #default="{ row }">
-            <span class="count-badge">{{ row.member_count || 0 }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column :label="t('organization.departmentCount')" width="110" align="center">
-          <template #default="{ row }">
-            <span class="count-badge">{{ row.department_count || 0 }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column :label="t('common.actions')" width="180" align="right" fixed="right">
-          <template #default="{ row }">
-            <div class="action-group">
-              <button class="action-btn view-btn" @click="handleView(row)" :title="t('common.view')">
-                <el-icon><View /></el-icon>
-              </button>
-              <button class="action-btn edit-btn" @click="handleEdit(row)" :title="t('common.edit')">
-                <el-icon><Edit /></el-icon>
-              </button>
-              <button class="action-btn delete-btn" @click="handleDelete(row)" :title="t('common.delete')">
-                <el-icon><Delete /></el-icon>
-              </button>
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
+            </template>
+          </el-table-column>
+          <el-table-column prop="code" :label="t('organization.code')" width="140">
+            <template #default="{ row }">
+              <code class="code-badge">{{ row.code || '-' }}</code>
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('organization.parentOrganization')" min-width="180">
+            <template #default="{ row }">
+              <span v-if="row.parent" class="text-sub">{{ row.parent.name }}</span>
+              <el-tag v-else size="small" class="root-tag">{{ t('organization.root') }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="facility_type" :label="t('organization.facilityType')" width="140">
+            <template #default="{ row }">
+              <span class="text-sub">{{ row.facility_type || '-' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('organization.memberCount')" width="110" align="center">
+            <template #default="{ row }">
+              <span class="count-badge">{{ row.member_count || 0 }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('organization.departmentCount')" width="110" align="center">
+            <template #default="{ row }">
+              <span class="count-badge">{{ row.department_count || 0 }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('common.actions')" width="180" align="right" fixed="right">
+            <template #default="{ row }">
+              <div class="action-group">
+                <button class="action-btn view-btn" @click="handleView(row)" :title="t('common.view')">
+                  <el-icon><View /></el-icon>
+                </button>
+                <button class="action-btn edit-btn" @click="handleEdit(row)" :title="t('common.edit')">
+                  <el-icon><Edit /></el-icon>
+                </button>
+                <button class="action-btn delete-btn" @click="handleDelete(row)" :title="t('common.delete')">
+                  <el-icon><Delete /></el-icon>
+                </button>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
 
-      <!-- 分页 -->
-      <div class="pagination-wrapper">
-        <el-pagination
-          v-model:current-page="pagination.page"
-          v-model:page-size="pagination.limit"
-          :total="pagination.total"
-          :page-sizes="[10, 20, 50, 100]"
-          :background="true"
-          layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSizeChange"
-          @current-change="handlePageChange"
-        />
-      </div>
+        <!-- 分页 -->
+        <div class="pagination-wrapper">
+          <el-pagination
+            v-model:current-page="pagination.page"
+            v-model:page-size="pagination.limit"
+            :total="pagination.total"
+            :page-sizes="[10, 20, 50, 100]"
+            :background="true"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="handleSizeChange"
+            @current-change="handlePageChange"
+          />
+        </div>
+      </template>
     </div>
 
     <!-- 创建/编辑对话框 -->
@@ -217,10 +220,12 @@ import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'elem
 import { Search, Refresh, Plus, View, Edit, Delete, OfficeBuilding, Connection, User } from '@element-plus/icons-vue'
 import { organizationApi } from '@/api/organization'
 import type { OrganizationDTO, CreateOrganizationRequestDTO } from '@/api/organization'
+import ListPageSkeleton from '@/components/skeleton/ListPageSkeleton.vue'
 
 const router = useRouter()
 const { t } = useI18n()
 
+const initialLoading = ref(true)
 const loading = ref(false)
 const submitting = ref(false)
 const tableData = ref<OrganizationDTO[]>([])
@@ -288,6 +293,7 @@ async function fetchData() {
     ElMessage.error(error.message || t('common.operationFailed'))
   } finally {
     loading.value = false
+    initialLoading.value = false
   }
 }
 

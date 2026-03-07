@@ -113,7 +113,7 @@ import { ElMessage } from 'element-plus'
 const authStore = useAuthStore()
 const { t } = useI18n()
 
-const loading = ref(false)
+const loading = ref(true)
 const stats = ref({
   userCount: 0,
   orgCount: 0,

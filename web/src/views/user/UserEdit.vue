@@ -211,7 +211,7 @@ const route = useRoute()
 const { t } = useI18n()
 
 const formRef = ref<FormInstance>()
-const loading = ref(false)
+const loading = ref(true)
 const submitting = ref(false)
 const userDetail = ref<UserProfile | null>(null)
 const organizations = ref<Organization[]>([])
@@ -241,14 +241,15 @@ const rules: FormRules<UpdateUserRequest> = {
   ]
 }
 
-onMounted(() => {
-  fetchUserDetail()
-  fetchOrganizations()
-  fetchRoles()
+onMounted(async () => {
+  try {
+    await Promise.all([fetchUserDetail(), fetchOrganizations(), fetchRoles()])
+  } finally {
+    loading.value = false
+  }
 })
 
 async function fetchUserDetail() {
-  loading.value = true
   try {
     const userId = route.params.id as string
     const response = await getUserDetail(userId)
@@ -273,8 +274,6 @@ async function fetchUserDetail() {
   } catch (error: any) {
     console.error('Failed to fetch user detail:', error)
     ElMessage.error(error.message || t('common.operationFailed'))
-  } finally {
-    loading.value = false
   }
 }
 

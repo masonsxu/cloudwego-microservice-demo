@@ -77,66 +77,69 @@
 
     <!-- 角色列表 -->
     <div class="table-card spotlight-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
-      <el-table v-loading="loading" :data="roleList" class="modern-table" style="width: 100%">
-        <el-table-column prop="name" :label="t('role.roleName')" min-width="180">
-          <template #default="{ row }">
-            <div class="role-name-cell">
-              <div class="role-icon" :class="{ 'system-role': row.is_system_role }">
-                <el-icon size="13"><Key /></el-icon>
+      <ListPageSkeleton v-if="initialLoading" :columns="6" :rows="8" />
+      <template v-else>
+        <el-table v-loading="loading" :data="roleList" class="modern-table" style="width: 100%">
+          <el-table-column prop="name" :label="t('role.roleName')" min-width="180">
+            <template #default="{ row }">
+              <div class="role-name-cell">
+                <div class="role-icon" :class="{ 'system-role': row.is_system_role }">
+                  <el-icon size="13"><Key /></el-icon>
+                </div>
+                <span class="role-name">{{ row.name }}</span>
+                <el-tag v-if="row.is_system_role" size="small" class="sys-badge">系统</el-tag>
               </div>
-              <span class="role-name">{{ row.name }}</span>
-              <el-tag v-if="row.is_system_role" size="small" class="sys-badge">系统</el-tag>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="description" :label="t('role.description')" show-overflow-tooltip>
-          <template #default="{ row }">
-            <span class="text-sub">{{ row.description || '-' }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column :label="t('common.status')" width="110" align="center">
-          <template #default="{ row }">
-            <el-tag :type="getStatusType(row.status)" size="small">{{ getStatusText(row.status) }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="user_count" :label="t('role.userCount')" width="100" align="center">
-          <template #default="{ row }">
-            <span class="count-badge">{{ row.user_count || 0 }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column :label="t('common.createTime')" width="160">
-          <template #default="{ row }">
-            <span class="text-sub time-text">{{ formatTimestamp(row.created_at) }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column :label="t('common.actions')" width="160" align="right" fixed="right">
-          <template #default="{ row }">
-            <div class="action-group">
-              <button class="action-btn view-btn" @click="handleView(row)" :title="t('common.view')">
-                <el-icon><View /></el-icon>
-              </button>
-              <button class="action-btn edit-btn" @click="handleEdit(row)" :title="t('common.edit')">
-                <el-icon><Edit /></el-icon>
-              </button>
-              <button v-if="!row.is_system_role" class="action-btn delete-btn" @click="handleDelete(row)" :title="t('common.delete')">
-                <el-icon><Delete /></el-icon>
-              </button>
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
+            </template>
+          </el-table-column>
+          <el-table-column prop="description" :label="t('role.description')" show-overflow-tooltip>
+            <template #default="{ row }">
+              <span class="text-sub">{{ row.description || '-' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('common.status')" width="110" align="center">
+            <template #default="{ row }">
+              <el-tag :type="getStatusType(row.status)" size="small">{{ getStatusText(row.status) }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="user_count" :label="t('role.userCount')" width="100" align="center">
+            <template #default="{ row }">
+              <span class="count-badge">{{ row.user_count || 0 }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('common.createTime')" width="160">
+            <template #default="{ row }">
+              <span class="text-sub time-text">{{ formatTimestamp(row.created_at) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('common.actions')" width="160" align="right" fixed="right">
+            <template #default="{ row }">
+              <div class="action-group">
+                <button class="action-btn view-btn" @click="handleView(row)" :title="t('common.view')">
+                  <el-icon><View /></el-icon>
+                </button>
+                <button class="action-btn edit-btn" @click="handleEdit(row)" :title="t('common.edit')">
+                  <el-icon><Edit /></el-icon>
+                </button>
+                <button v-if="!row.is_system_role" class="action-btn delete-btn" @click="handleDelete(row)" :title="t('common.delete')">
+                  <el-icon><Delete /></el-icon>
+                </button>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
 
-      <div class="pagination-wrapper">
-        <el-pagination
-          v-model:current-page="pagination.page"
-          v-model:page-size="pagination.size"
-          :total="pagination.total"
-          :page-sizes="[10, 20, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper"
-          @size-change="loadRoles"
-          @current-change="loadRoles"
-        />
-      </div>
+        <div class="pagination-wrapper">
+          <el-pagination
+            v-model:current-page="pagination.page"
+            v-model:page-size="pagination.size"
+            :total="pagination.total"
+            :page-sizes="[10, 20, 50, 100]"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="loadRoles"
+            @current-change="loadRoles"
+          />
+        </div>
+      </template>
     </div>
 
     <!-- 创建/编辑角色对话框 -->
@@ -180,10 +183,12 @@ import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'elem
 import { Plus, Search, RefreshLeft, Key, Lock, User, View, Edit, Delete } from '@element-plus/icons-vue'
 import { roleApi } from '@/api/role'
 import type { RoleDefinitionDTO } from '@/api/role'
+import ListPageSkeleton from '@/components/skeleton/ListPageSkeleton.vue'
 
 const { t } = useI18n()
 const router = useRouter()
 
+const initialLoading = ref(true)
 const loading = ref(false)
 const roleList = ref<RoleDefinitionDTO[]>([])
 const showCreateDialog = ref(false)
@@ -239,6 +244,7 @@ const loadRoles = async () => {
     ElMessage.error('获取角色列表失败')
   } finally {
     loading.value = false
+    initialLoading.value = false
   }
 }
 

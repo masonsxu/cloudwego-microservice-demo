@@ -20,8 +20,18 @@
       </template>
     </el-page-header>
 
-    <div class="detail-content" v-loading="loading">
-      <el-row :gutter="20">
+    <div class="detail-content">
+      <DetailPageSkeleton
+        v-if="initialLoading"
+        :side-span="8"
+        :main-span="16"
+        :side-cards="2"
+        :main-cards="3"
+        :show-avatar="true"
+        :side-item-counts="[3, 2]"
+        :main-item-counts="[6, 4, 2]"
+      />
+      <el-row v-else v-loading="loading" :gutter="20">
         <!-- 基本信息 -->
         <el-col :xs="24" :lg="8">
           <el-card class="info-card">
@@ -278,6 +288,7 @@ import {
 import { organizationApi } from '@/api/organization'
 import { formatOptionalTimestamp } from '@/utils/date'
 import OrgLogoUpload from '@/components/OrgLogoUpload.vue'
+import DetailPageSkeleton from '@/components/skeleton/DetailPageSkeleton.vue'
 import type { OrganizationDTO, UpdateOrganizationRequestDTO } from '@/api/organization'
 
 const router = useRouter()
@@ -285,6 +296,7 @@ const route = useRoute()
 const { t } = useI18n()
 
 const loading = ref(false)
+const initialLoading = ref(true)
 const updating = ref(false)
 const orgDetail = ref<OrganizationDTO | null>(null)
 const organizationTree = ref<any[]>([])
@@ -349,9 +361,12 @@ const provinceCityOptions = [
 
 const orgId = route.params.id as string
 
-onMounted(() => {
-  fetchData()
-  fetchOrganizationTree()
+onMounted(async () => {
+  try {
+    await Promise.all([fetchData(), fetchOrganizationTree()])
+  } finally {
+    initialLoading.value = false
+  }
 })
 
 async function fetchOrganizationTree() {

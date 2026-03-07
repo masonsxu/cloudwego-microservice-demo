@@ -37,8 +37,18 @@
       </template>
     </el-page-header>
 
-    <div class="detail-content" v-loading="loading">
-      <el-row :gutter="20">
+    <div class="detail-content">
+      <DetailPageSkeleton
+        v-if="initialLoading"
+        :side-span="8"
+        :main-span="16"
+        :side-cards="1"
+        :main-cards="1"
+        :show-avatar="true"
+        :side-item-counts="[4]"
+        :main-item-counts="[12]"
+      />
+      <el-row v-else :gutter="20">
         <!-- 基本信息 -->
         <el-col :xs="24" :lg="8">
           <el-card class="info-card">
@@ -189,21 +199,26 @@ import { organizationApi } from '@/api/organization'
 import { departmentApi } from '@/api/department'
 import type { UserProfile } from '@/types/user'
 import { formatOptionalTimestamp } from '@/utils/date'
+import DetailPageSkeleton from '@/components/skeleton/DetailPageSkeleton.vue'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 
 const loading = ref(false)
+const initialLoading = ref(true)
 const userDetail = ref<UserProfile | null>(null)
 const memberships = ref<any[]>([])
 
-onMounted(() => {
-  fetchUserDetail()
+onMounted(async () => {
+  try {
+    await fetchUserDetail()
+  } finally {
+    initialLoading.value = false
+  }
 })
 
 async function fetchUserDetail() {
-  loading.value = true
   try {
     const userId = route.params.id as string
     const response = await getUserDetail(userId)
@@ -243,8 +258,6 @@ async function fetchUserDetail() {
   } catch (error: any) {
     console.error('Failed to fetch user detail:', error)
     ElMessage.error(error.message || t('common.operationFailed'))
-  } finally {
-    loading.value = false
   }
 }
 
