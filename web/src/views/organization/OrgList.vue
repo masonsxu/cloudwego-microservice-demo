@@ -89,11 +89,13 @@
     <div class="table-card spotlight-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
       <ListPageSkeleton v-if="initialLoading" :columns="6" :rows="8" />
       <template v-else>
+        <div class="table-body">
         <el-table
           :data="tableData"
           v-loading="loading"
           row-key="id"
           class="modern-table"
+          height="100%"
           :style="{ width: '100%' }"
         >
           <el-table-column prop="name" :label="t('organization.name')" min-width="220">
@@ -148,6 +150,7 @@
             </template>
           </el-table-column>
         </el-table>
+        </div>
 
         <!-- 分页 -->
         <div class="pagination-wrapper">
@@ -359,6 +362,10 @@ function handlePageChange(page: number) { pagination.page = page; fetchData() }
 
 <style scoped lang="scss">
 .org-list {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 108px);
+
   .page-header {
     display: flex;
     justify-content: space-between;
@@ -479,11 +486,20 @@ function handlePageChange(page: number) { pagination.page = page; fetchData() }
   }
 
   .table-card {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
     background: var(--bg-card);
     border: 1px solid var(--c-border-accent);
     border-radius: 14px;
     overflow: hidden;
     box-shadow: var(--shadow-card);
+
+    .table-body {
+      flex: 1;
+      min-height: 0;
+    }
 
     .modern-table {
       :deep(.el-table__header-wrapper) {

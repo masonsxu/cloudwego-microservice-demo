@@ -79,7 +79,8 @@
     <div class="table-card spotlight-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
       <ListPageSkeleton v-if="initialLoading" :columns="6" :rows="8" />
       <template v-else>
-        <el-table v-loading="loading" :data="roleList" class="modern-table" style="width: 100%">
+        <div class="table-body">
+        <el-table v-loading="loading" :data="roleList" class="modern-table" height="100%" style="width: 100%">
           <el-table-column prop="name" :label="t('role.roleName')" min-width="180">
             <template #default="{ row }">
               <div class="role-name-cell">
@@ -127,6 +128,7 @@
             </template>
           </el-table-column>
         </el-table>
+        </div>
 
         <div class="pagination-wrapper">
           <el-pagination
@@ -301,6 +303,10 @@ onMounted(() => { loadRoles() })
 
 <style scoped lang="scss">
 .role-list {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 108px);
+
   .page-header {
     display: flex;
     justify-content: space-between;
@@ -426,11 +432,20 @@ onMounted(() => { loadRoles() })
   }
 
   .table-card {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
     background: var(--bg-card);
     border: 1px solid var(--c-border-accent);
     border-radius: 14px;
     overflow: hidden;
     box-shadow: var(--shadow-card);
+
+    .table-body {
+      flex: 1;
+      min-height: 0;
+    }
 
     .modern-table {
       :deep(th.el-table__cell) { padding: 14px 12px; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; }

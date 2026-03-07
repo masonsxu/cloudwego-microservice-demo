@@ -80,7 +80,8 @@
     <div class="table-card spotlight-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
       <ListPageSkeleton v-if="initialLoading" :columns="7" :rows="8" />
       <template v-else>
-        <el-table :data="tableData" v-loading="loading" class="modern-table" style="width: 100%">
+        <div class="table-body">
+        <el-table :data="tableData" v-loading="loading" class="modern-table" height="100%" style="width: 100%">
           <el-table-column prop="username" :label="t('user.username')" width="150">
             <template #default="{ row }">
               <div class="user-cell">
@@ -152,6 +153,7 @@
             </template>
           </el-table-column>
         </el-table>
+        </div>
 
         <div class="pagination-wrapper">
           <el-pagination
@@ -322,6 +324,10 @@ function getStatusType(status: number) { return ({ 1: 'success', 2: 'info', 3: '
 
 <style scoped lang="scss">
 .user-list {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 108px);
+
   .page-header {
     display: flex;
     justify-content: space-between;
@@ -419,11 +425,20 @@ function getStatusType(status: number) { return ({ 1: 'success', 2: 'info', 3: '
   }
 
   .table-card {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
     background: var(--bg-card);
     border: 1px solid var(--c-border-accent);
     border-radius: 14px;
     overflow: hidden;
     box-shadow: var(--shadow-card);
+
+    .table-body {
+      flex: 1;
+      min-height: 0;
+    }
 
     .modern-table {
       :deep(th.el-table__cell) { padding: 14px 12px; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; }
