@@ -219,15 +219,26 @@ go tool cover -html=coverage.out
 
 ### 测试覆盖率
 
+**RPC 服务 (identity_srv)**
+
 | 模块 | 覆盖率 | 状态 |
 |------|--------|------|
 | pkg/errno | 100.0% | ✅ |
-| pkg/log | 84.8% | ✅ |
 | pkg/password | 83.3% | ✅ |
+| pkg/log | 41.4% | ⚠️ |
 | internal/middleware | 89.1% | ✅ |
-| biz/converter | 60.0% | ⚠️ |
+| biz/converter | 84.0% | ✅ |
+| biz/parser | 92.1% | ✅ |
 | biz/dal | 0.0% | ❌ |
 | biz/logic | 0.0% | ❌ |
+
+**Gateway 服务**
+
+| 模块 | 覆盖率 | 状态 |
+|------|--------|------|
+| middleware/casbin_middleware | 9.2% | ⚠️ |
+| infrastructure/redis | 6.7% | ⚠️ |
+| 其他包 | 0.0% | ❌ |
 
 详细的测试指南请参考 [测试文档](docs/02-开发规范/测试指南.md)。
 
