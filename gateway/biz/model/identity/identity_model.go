@@ -2458,10 +2458,6 @@ type UserProfileDTO struct {
 	RealName *string `thrift:"realName,7,optional" json:"real_name,omitempty" form:"realName" query:"realName"`
 	/** 职业头衔 */
 	ProfessionalTitle *string `thrift:"professionalTitle,8,optional" json:"professional_title,omitempty" form:"professionalTitle" query:"professionalTitle"`
-	/** 执业证书号 */
-	LicenseNumber *string `thrift:"licenseNumber,9,optional" json:"license_number,omitempty" form:"licenseNumber" query:"licenseNumber"`
-	/** 专业特长列表 */
-	Specialties []string `thrift:"specialties,10,optional,list<string>" json:"specialties,omitempty" form:"specialties" query:"specialties"`
 	/** 员工工号 */
 	EmployeeID *string `thrift:"employeeID,11,optional" json:"employee_id,omitempty" form:"employeeID" query:"employeeID"`
 	/** 用户状态 */
@@ -2569,24 +2565,6 @@ func (p *UserProfileDTO) GetProfessionalTitle() (v string) {
 		return UserProfileDTO_ProfessionalTitle_DEFAULT
 	}
 	return *p.ProfessionalTitle
-}
-
-var UserProfileDTO_LicenseNumber_DEFAULT string
-
-func (p *UserProfileDTO) GetLicenseNumber() (v string) {
-	if !p.IsSetLicenseNumber() {
-		return UserProfileDTO_LicenseNumber_DEFAULT
-	}
-	return *p.LicenseNumber
-}
-
-var UserProfileDTO_Specialties_DEFAULT []string
-
-func (p *UserProfileDTO) GetSpecialties() (v []string) {
-	if !p.IsSetSpecialties() {
-		return UserProfileDTO_Specialties_DEFAULT
-	}
-	return p.Specialties
 }
 
 var UserProfileDTO_EmployeeID_DEFAULT string
@@ -2724,8 +2702,6 @@ var fieldIDToName_UserProfileDTO = map[int16]string{
 	6:  "lastName",
 	7:  "realName",
 	8:  "professionalTitle",
-	9:  "licenseNumber",
-	10: "specialties",
 	11: "employeeID",
 	12: "status",
 	13: "mustChangePassword",
@@ -2772,14 +2748,6 @@ func (p *UserProfileDTO) IsSetRealName() bool {
 
 func (p *UserProfileDTO) IsSetProfessionalTitle() bool {
 	return p.ProfessionalTitle != nil
-}
-
-func (p *UserProfileDTO) IsSetLicenseNumber() bool {
-	return p.LicenseNumber != nil
-}
-
-func (p *UserProfileDTO) IsSetSpecialties() bool {
-	return p.Specialties != nil
 }
 
 func (p *UserProfileDTO) IsSetEmployeeID() bool {
@@ -2916,22 +2884,6 @@ func (p *UserProfileDTO) Read(iprot thrift.TProtocol) (err error) {
 		case 8:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField8(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 9:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField9(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 10:
-			if fieldTypeId == thrift.LIST {
-				if err = p.ReadField10(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -3166,40 +3118,6 @@ func (p *UserProfileDTO) ReadField8(iprot thrift.TProtocol) error {
 	p.ProfessionalTitle = _field
 	return nil
 }
-func (p *UserProfileDTO) ReadField9(iprot thrift.TProtocol) error {
-
-	var _field *string
-	if v, err := iprot.ReadString(); err != nil {
-		return err
-	} else {
-		_field = &v
-	}
-	p.LicenseNumber = _field
-	return nil
-}
-func (p *UserProfileDTO) ReadField10(iprot thrift.TProtocol) error {
-	_, size, err := iprot.ReadListBegin()
-	if err != nil {
-		return err
-	}
-	_field := make([]string, 0, size)
-	for i := 0; i < size; i++ {
-
-		var _elem string
-		if v, err := iprot.ReadString(); err != nil {
-			return err
-		} else {
-			_elem = v
-		}
-
-		_field = append(_field, _elem)
-	}
-	if err := iprot.ReadListEnd(); err != nil {
-		return err
-	}
-	p.Specialties = _field
-	return nil
-}
 func (p *UserProfileDTO) ReadField11(iprot thrift.TProtocol) error {
 
 	var _field *string
@@ -3403,14 +3321,6 @@ func (p *UserProfileDTO) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField8(oprot); err != nil {
 			fieldId = 8
-			goto WriteFieldError
-		}
-		if err = p.writeField9(oprot); err != nil {
-			fieldId = 9
-			goto WriteFieldError
-		}
-		if err = p.writeField10(oprot); err != nil {
-			fieldId = 10
 			goto WriteFieldError
 		}
 		if err = p.writeField11(oprot); err != nil {
@@ -3637,52 +3547,6 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 8 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
-}
-
-func (p *UserProfileDTO) writeField9(oprot thrift.TProtocol) (err error) {
-	if p.IsSetLicenseNumber() {
-		if err = oprot.WriteFieldBegin("licenseNumber", thrift.STRING, 9); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteString(*p.LicenseNumber); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 9 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 9 end error: ", p), err)
-}
-
-func (p *UserProfileDTO) writeField10(oprot thrift.TProtocol) (err error) {
-	if p.IsSetSpecialties() {
-		if err = oprot.WriteFieldBegin("specialties", thrift.LIST, 10); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteListBegin(thrift.STRING, len(p.Specialties)); err != nil {
-			return err
-		}
-		for _, v := range p.Specialties {
-			if err := oprot.WriteString(v); err != nil {
-				return err
-			}
-		}
-		if err := oprot.WriteListEnd(); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 10 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 10 end error: ", p), err)
 }
 
 func (p *UserProfileDTO) writeField11(oprot thrift.TProtocol) (err error) {
@@ -4197,10 +4061,6 @@ type CreateUserRequestDTO struct {
 	RealName *string `thrift:"realName,7,optional" json:"real_name,omitempty" form:"real_name" vd:"@:len($)<=100; msg:'真实姓名长度不能超过100个字符'"`
 	/** 职业头衔 */
 	ProfessionalTitle *string `thrift:"professionalTitle,8,optional" json:"professional_title,omitempty" form:"professional_title" vd:"@:len($)<=100; msg:'职业头衔长度不能超过100个字符'"`
-	/** 执业证书号 */
-	LicenseNumber *string `thrift:"licenseNumber,9,optional" json:"license_number,omitempty" form:"license_number" vd:"@:len($)<=100; msg:'执业证书号长度不能超过100个字符'"`
-	/** 专业特长列表 */
-	Specialties []string `thrift:"specialties,10,optional,list<string>" json:"specialties,omitempty" form:"specialties" `
 	/** 员工工号 */
 	EmployeeID *string `thrift:"employeeID,11,optional" json:"employee_id,omitempty" form:"employee_id" vd:"@:len($)<=50; msg:'员工工号长度不能超过50个字符'"`
 	/** 是否必须在下次登录时修改密码 */
@@ -4294,24 +4154,6 @@ func (p *CreateUserRequestDTO) GetProfessionalTitle() (v string) {
 	return *p.ProfessionalTitle
 }
 
-var CreateUserRequestDTO_LicenseNumber_DEFAULT string
-
-func (p *CreateUserRequestDTO) GetLicenseNumber() (v string) {
-	if !p.IsSetLicenseNumber() {
-		return CreateUserRequestDTO_LicenseNumber_DEFAULT
-	}
-	return *p.LicenseNumber
-}
-
-var CreateUserRequestDTO_Specialties_DEFAULT []string
-
-func (p *CreateUserRequestDTO) GetSpecialties() (v []string) {
-	if !p.IsSetSpecialties() {
-		return CreateUserRequestDTO_Specialties_DEFAULT
-	}
-	return p.Specialties
-}
-
 var CreateUserRequestDTO_EmployeeID_DEFAULT string
 
 func (p *CreateUserRequestDTO) GetEmployeeID() (v string) {
@@ -4375,8 +4217,6 @@ var fieldIDToName_CreateUserRequestDTO = map[int16]string{
 	6:  "lastName",
 	7:  "realName",
 	8:  "professionalTitle",
-	9:  "licenseNumber",
-	10: "specialties",
 	11: "employeeID",
 	12: "mustChangePassword",
 	13: "accountExpiry",
@@ -4415,14 +4255,6 @@ func (p *CreateUserRequestDTO) IsSetRealName() bool {
 
 func (p *CreateUserRequestDTO) IsSetProfessionalTitle() bool {
 	return p.ProfessionalTitle != nil
-}
-
-func (p *CreateUserRequestDTO) IsSetLicenseNumber() bool {
-	return p.LicenseNumber != nil
-}
-
-func (p *CreateUserRequestDTO) IsSetSpecialties() bool {
-	return p.Specialties != nil
 }
 
 func (p *CreateUserRequestDTO) IsSetEmployeeID() bool {
@@ -4527,22 +4359,6 @@ func (p *CreateUserRequestDTO) Read(iprot thrift.TProtocol) (err error) {
 		case 8:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField8(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 9:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField9(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 10:
-			if fieldTypeId == thrift.LIST {
-				if err = p.ReadField10(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -4713,40 +4529,6 @@ func (p *CreateUserRequestDTO) ReadField8(iprot thrift.TProtocol) error {
 	p.ProfessionalTitle = _field
 	return nil
 }
-func (p *CreateUserRequestDTO) ReadField9(iprot thrift.TProtocol) error {
-
-	var _field *string
-	if v, err := iprot.ReadString(); err != nil {
-		return err
-	} else {
-		_field = &v
-	}
-	p.LicenseNumber = _field
-	return nil
-}
-func (p *CreateUserRequestDTO) ReadField10(iprot thrift.TProtocol) error {
-	_, size, err := iprot.ReadListBegin()
-	if err != nil {
-		return err
-	}
-	_field := make([]string, 0, size)
-	for i := 0; i < size; i++ {
-
-		var _elem string
-		if v, err := iprot.ReadString(); err != nil {
-			return err
-		} else {
-			_elem = v
-		}
-
-		_field = append(_field, _elem)
-	}
-	if err := iprot.ReadListEnd(); err != nil {
-		return err
-	}
-	p.Specialties = _field
-	return nil
-}
 func (p *CreateUserRequestDTO) ReadField11(iprot thrift.TProtocol) error {
 
 	var _field *string
@@ -4862,14 +4644,6 @@ func (p *CreateUserRequestDTO) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField8(oprot); err != nil {
 			fieldId = 8
-			goto WriteFieldError
-		}
-		if err = p.writeField9(oprot); err != nil {
-			fieldId = 9
-			goto WriteFieldError
-		}
-		if err = p.writeField10(oprot); err != nil {
-			fieldId = 10
 			goto WriteFieldError
 		}
 		if err = p.writeField11(oprot); err != nil {
@@ -5064,52 +4838,6 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 8 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
-}
-
-func (p *CreateUserRequestDTO) writeField9(oprot thrift.TProtocol) (err error) {
-	if p.IsSetLicenseNumber() {
-		if err = oprot.WriteFieldBegin("licenseNumber", thrift.STRING, 9); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteString(*p.LicenseNumber); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 9 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 9 end error: ", p), err)
-}
-
-func (p *CreateUserRequestDTO) writeField10(oprot thrift.TProtocol) (err error) {
-	if p.IsSetSpecialties() {
-		if err = oprot.WriteFieldBegin("specialties", thrift.LIST, 10); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteListBegin(thrift.STRING, len(p.Specialties)); err != nil {
-			return err
-		}
-		for _, v := range p.Specialties {
-			if err := oprot.WriteString(v); err != nil {
-				return err
-			}
-		}
-		if err := oprot.WriteListEnd(); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 10 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 10 end error: ", p), err)
 }
 
 func (p *CreateUserRequestDTO) writeField11(oprot thrift.TProtocol) (err error) {
@@ -5417,10 +5145,6 @@ type UpdateUserRequestDTO struct {
 	RealName *string `thrift:"realName,6,optional" json:"real_name,omitempty" form:"real_name" vd:"@:len($)<=100; msg:'真实姓名长度不能超过100个字符'"`
 	/** 职业头衔 */
 	ProfessionalTitle *string `thrift:"professionalTitle,8,optional" json:"professional_title,omitempty" form:"professional_title" vd:"@:len($)<=100; msg:'职业头衔长度不能超过100个字符'"`
-	/** 执业证书号 */
-	LicenseNumber *string `thrift:"licenseNumber,9,optional" json:"license_number,omitempty" form:"license_number" vd:"@:len($)<=100; msg:'执业证书号长度不能超过100个字符'"`
-	/** 专业特长列表 */
-	Specialties []string `thrift:"specialties,10,optional,list<string>" json:"specialties,omitempty" form:"specialties" `
 	/** 员工工号 */
 	EmployeeID *string `thrift:"employeeID,11,optional" json:"employee_id,omitempty" form:"employee_id" vd:"@:len($)<=50; msg:'员工工号长度不能超过50个字符'"`
 	/** 账户过期时间 */
@@ -5503,24 +5227,6 @@ func (p *UpdateUserRequestDTO) GetProfessionalTitle() (v string) {
 	return *p.ProfessionalTitle
 }
 
-var UpdateUserRequestDTO_LicenseNumber_DEFAULT string
-
-func (p *UpdateUserRequestDTO) GetLicenseNumber() (v string) {
-	if !p.IsSetLicenseNumber() {
-		return UpdateUserRequestDTO_LicenseNumber_DEFAULT
-	}
-	return *p.LicenseNumber
-}
-
-var UpdateUserRequestDTO_Specialties_DEFAULT []string
-
-func (p *UpdateUserRequestDTO) GetSpecialties() (v []string) {
-	if !p.IsSetSpecialties() {
-		return UpdateUserRequestDTO_Specialties_DEFAULT
-	}
-	return p.Specialties
-}
-
 var UpdateUserRequestDTO_EmployeeID_DEFAULT string
 
 func (p *UpdateUserRequestDTO) GetEmployeeID() (v string) {
@@ -5574,8 +5280,6 @@ var fieldIDToName_UpdateUserRequestDTO = map[int16]string{
 	5:  "lastName",
 	6:  "realName",
 	8:  "professionalTitle",
-	9:  "licenseNumber",
-	10: "specialties",
 	11: "employeeID",
 	12: "accountExpiry",
 	13: "gender",
@@ -5609,14 +5313,6 @@ func (p *UpdateUserRequestDTO) IsSetRealName() bool {
 
 func (p *UpdateUserRequestDTO) IsSetProfessionalTitle() bool {
 	return p.ProfessionalTitle != nil
-}
-
-func (p *UpdateUserRequestDTO) IsSetLicenseNumber() bool {
-	return p.LicenseNumber != nil
-}
-
-func (p *UpdateUserRequestDTO) IsSetSpecialties() bool {
-	return p.Specialties != nil
 }
 
 func (p *UpdateUserRequestDTO) IsSetEmployeeID() bool {
@@ -5709,22 +5405,6 @@ func (p *UpdateUserRequestDTO) Read(iprot thrift.TProtocol) (err error) {
 		case 8:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField8(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 9:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField9(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 10:
-			if fieldTypeId == thrift.LIST {
-				if err = p.ReadField10(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -5876,40 +5556,6 @@ func (p *UpdateUserRequestDTO) ReadField8(iprot thrift.TProtocol) error {
 	p.ProfessionalTitle = _field
 	return nil
 }
-func (p *UpdateUserRequestDTO) ReadField9(iprot thrift.TProtocol) error {
-
-	var _field *string
-	if v, err := iprot.ReadString(); err != nil {
-		return err
-	} else {
-		_field = &v
-	}
-	p.LicenseNumber = _field
-	return nil
-}
-func (p *UpdateUserRequestDTO) ReadField10(iprot thrift.TProtocol) error {
-	_, size, err := iprot.ReadListBegin()
-	if err != nil {
-		return err
-	}
-	_field := make([]string, 0, size)
-	for i := 0; i < size; i++ {
-
-		var _elem string
-		if v, err := iprot.ReadString(); err != nil {
-			return err
-		} else {
-			_elem = v
-		}
-
-		_field = append(_field, _elem)
-	}
-	if err := iprot.ReadListEnd(); err != nil {
-		return err
-	}
-	p.Specialties = _field
-	return nil
-}
 func (p *UpdateUserRequestDTO) ReadField11(iprot thrift.TProtocol) error {
 
 	var _field *string
@@ -6010,14 +5656,6 @@ func (p *UpdateUserRequestDTO) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField8(oprot); err != nil {
 			fieldId = 8
-			goto WriteFieldError
-		}
-		if err = p.writeField9(oprot); err != nil {
-			fieldId = 9
-			goto WriteFieldError
-		}
-		if err = p.writeField10(oprot); err != nil {
-			fieldId = 10
 			goto WriteFieldError
 		}
 		if err = p.writeField11(oprot); err != nil {
@@ -6191,52 +5829,6 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
 }
 
-func (p *UpdateUserRequestDTO) writeField9(oprot thrift.TProtocol) (err error) {
-	if p.IsSetLicenseNumber() {
-		if err = oprot.WriteFieldBegin("licenseNumber", thrift.STRING, 9); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteString(*p.LicenseNumber); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 9 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 9 end error: ", p), err)
-}
-
-func (p *UpdateUserRequestDTO) writeField10(oprot thrift.TProtocol) (err error) {
-	if p.IsSetSpecialties() {
-		if err = oprot.WriteFieldBegin("specialties", thrift.LIST, 10); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteListBegin(thrift.STRING, len(p.Specialties)); err != nil {
-			return err
-		}
-		for _, v := range p.Specialties {
-			if err := oprot.WriteString(v); err != nil {
-				return err
-			}
-		}
-		if err := oprot.WriteListEnd(); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 10 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 10 end error: ", p), err)
-}
-
 func (p *UpdateUserRequestDTO) writeField11(oprot thrift.TProtocol) (err error) {
 	if p.IsSetEmployeeID() {
 		if err = oprot.WriteFieldBegin("employeeID", thrift.STRING, 11); err != nil {
@@ -6365,10 +5957,6 @@ type UpdateMeRequestDTO struct {
 	RealName *string `thrift:"realName,5,optional" json:"real_name,omitempty" form:"real_name" vd:"@:len($)<=100; msg:'真实姓名长度不能超过100个字符'"`
 	/** 职业头衔 */
 	ProfessionalTitle *string `thrift:"professionalTitle,7,optional" json:"professional_title,omitempty" form:"professional_title" vd:"@:len($)<=100; msg:'职业头衔长度不能超过100个字符'"`
-	/** 许可证号 */
-	LicenseNumber *string `thrift:"licenseNumber,8,optional" json:"medical_license_number,omitempty" form:"medical_license_number" vd:"@:len($)<=100; msg:'许可证号长度不能超过100个字符'"`
-	/** 专业特长列表 */
-	Specialties []string `thrift:"specialties,9,optional,list<string>" json:"specialties,omitempty" form:"specialties" `
 	/** 员工工号 */
 	EmployeeID *string `thrift:"employeeID,10,optional" json:"employee_id,omitempty" form:"employee_id" vd:"@:len($)<=50; msg:'员工工号长度不能超过50个字符'"`
 	/** 账户过期时间 */
@@ -6438,24 +6026,6 @@ func (p *UpdateMeRequestDTO) GetProfessionalTitle() (v string) {
 	return *p.ProfessionalTitle
 }
 
-var UpdateMeRequestDTO_LicenseNumber_DEFAULT string
-
-func (p *UpdateMeRequestDTO) GetLicenseNumber() (v string) {
-	if !p.IsSetLicenseNumber() {
-		return UpdateMeRequestDTO_LicenseNumber_DEFAULT
-	}
-	return *p.LicenseNumber
-}
-
-var UpdateMeRequestDTO_Specialties_DEFAULT []string
-
-func (p *UpdateMeRequestDTO) GetSpecialties() (v []string) {
-	if !p.IsSetSpecialties() {
-		return UpdateMeRequestDTO_Specialties_DEFAULT
-	}
-	return p.Specialties
-}
-
 var UpdateMeRequestDTO_EmployeeID_DEFAULT string
 
 func (p *UpdateMeRequestDTO) GetEmployeeID() (v string) {
@@ -6490,8 +6060,6 @@ var fieldIDToName_UpdateMeRequestDTO = map[int16]string{
 	4:  "lastName",
 	5:  "realName",
 	7:  "professionalTitle",
-	8:  "licenseNumber",
-	9:  "specialties",
 	10: "employeeID",
 	11: "accountExpiry",
 	12: "gender",
@@ -6519,14 +6087,6 @@ func (p *UpdateMeRequestDTO) IsSetRealName() bool {
 
 func (p *UpdateMeRequestDTO) IsSetProfessionalTitle() bool {
 	return p.ProfessionalTitle != nil
-}
-
-func (p *UpdateMeRequestDTO) IsSetLicenseNumber() bool {
-	return p.LicenseNumber != nil
-}
-
-func (p *UpdateMeRequestDTO) IsSetSpecialties() bool {
-	return p.Specialties != nil
 }
 
 func (p *UpdateMeRequestDTO) IsSetEmployeeID() bool {
@@ -6603,22 +6163,6 @@ func (p *UpdateMeRequestDTO) Read(iprot thrift.TProtocol) (err error) {
 		case 7:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField7(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 8:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField8(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 9:
-			if fieldTypeId == thrift.LIST {
-				if err = p.ReadField9(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -6743,40 +6287,6 @@ func (p *UpdateMeRequestDTO) ReadField7(iprot thrift.TProtocol) error {
 	p.ProfessionalTitle = _field
 	return nil
 }
-func (p *UpdateMeRequestDTO) ReadField8(iprot thrift.TProtocol) error {
-
-	var _field *string
-	if v, err := iprot.ReadString(); err != nil {
-		return err
-	} else {
-		_field = &v
-	}
-	p.LicenseNumber = _field
-	return nil
-}
-func (p *UpdateMeRequestDTO) ReadField9(iprot thrift.TProtocol) error {
-	_, size, err := iprot.ReadListBegin()
-	if err != nil {
-		return err
-	}
-	_field := make([]string, 0, size)
-	for i := 0; i < size; i++ {
-
-		var _elem string
-		if v, err := iprot.ReadString(); err != nil {
-			return err
-		} else {
-			_elem = v
-		}
-
-		_field = append(_field, _elem)
-	}
-	if err := iprot.ReadListEnd(); err != nil {
-		return err
-	}
-	p.Specialties = _field
-	return nil
-}
 func (p *UpdateMeRequestDTO) ReadField10(iprot thrift.TProtocol) error {
 
 	var _field *string
@@ -6839,14 +6349,6 @@ func (p *UpdateMeRequestDTO) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField7(oprot); err != nil {
 			fieldId = 7
-			goto WriteFieldError
-		}
-		if err = p.writeField8(oprot); err != nil {
-			fieldId = 8
-			goto WriteFieldError
-		}
-		if err = p.writeField9(oprot); err != nil {
-			fieldId = 9
 			goto WriteFieldError
 		}
 		if err = p.writeField10(oprot); err != nil {
@@ -6991,52 +6493,6 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 7 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
-}
-
-func (p *UpdateMeRequestDTO) writeField8(oprot thrift.TProtocol) (err error) {
-	if p.IsSetLicenseNumber() {
-		if err = oprot.WriteFieldBegin("licenseNumber", thrift.STRING, 8); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteString(*p.LicenseNumber); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 8 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
-}
-
-func (p *UpdateMeRequestDTO) writeField9(oprot thrift.TProtocol) (err error) {
-	if p.IsSetSpecialties() {
-		if err = oprot.WriteFieldBegin("specialties", thrift.LIST, 9); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteListBegin(thrift.STRING, len(p.Specialties)); err != nil {
-			return err
-		}
-		for _, v := range p.Specialties {
-			if err := oprot.WriteString(v); err != nil {
-				return err
-			}
-		}
-		if err := oprot.WriteListEnd(); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 9 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 9 end error: ", p), err)
 }
 
 func (p *UpdateMeRequestDTO) writeField10(oprot thrift.TProtocol) (err error) {

@@ -103,19 +103,6 @@
               <el-descriptions-item :label="t('user.professionalTitle')">
                 {{ userDetail?.professional_title || '-' }}
               </el-descriptions-item>
-              <el-descriptions-item :label="t('user.licenseNumber')">
-                {{ userDetail?.license_number || '-' }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('user.specialties')" :span="2">
-                <el-tag
-                  v-for="specialty in userDetail?.specialties"
-                  :key="specialty"
-                  class="mr-1"
-                >
-                  {{ specialty }}
-                </el-tag>
-                <span v-if="!userDetail?.specialties || userDetail.specialties.length === 0">-</span>
-              </el-descriptions-item>
               <el-descriptions-item :label="t('user.organization')">
                 {{ userDetail?.organization?.name || '-' }}
               </el-descriptions-item>
@@ -198,6 +185,8 @@ import {
 } from '@element-plus/icons-vue'
 import { getUserDetail } from '@/api/user'
 import { deleteUser } from '@/api/user'
+import { organizationApi } from '@/api/organization'
+import { departmentApi } from '@/api/department'
 import type { UserProfile } from '@/types/user'
 import { formatOptionalTimestamp } from '@/utils/date'
 
@@ -218,7 +207,35 @@ async function fetchUserDetail() {
   try {
     const userId = route.params.id as string
     const response = await getUserDetail(userId)
-    userDetail.value = response.user
+    const user = response.user
+
+    // 根据后端返回的 primary_organization_id 查询组织名称
+    if (user.primary_organization_id) {
+      try {
+        const orgResponse = await organizationApi.getOrganization(user.primary_organization_id)
+        user.organization = {
+          id: orgResponse.organization.id,
+          name: orgResponse.organization.name
+        }
+      } catch (e) {
+        console.error('Failed to fetch organization:', e)
+      }
+    }
+
+    // 根据后端返回的 primary_department_id 查询部门名称
+    if (user.primary_department_id) {
+      try {
+        const deptResponse = await departmentApi.getDepartment(user.primary_department_id)
+        user.department = {
+          id: deptResponse.department.id,
+          name: deptResponse.department.name
+        }
+      } catch (e) {
+        console.error('Failed to fetch department:', e)
+      }
+    }
+
+    userDetail.value = user
 
     // TODO: 获取成员关系
     // const membershipsResponse = await getUserMemberships(userId)

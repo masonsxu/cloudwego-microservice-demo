@@ -169,34 +169,6 @@ func (p *UserProfile) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
-		case 9:
-			if fieldTypeId == thrift.STRING {
-				l, err = p.FastReadField9(buf[offset:])
-				offset += l
-				if err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
-				offset += l
-				if err != nil {
-					goto SkipFieldError
-				}
-			}
-		case 10:
-			if fieldTypeId == thrift.LIST {
-				l, err = p.FastReadField10(buf[offset:])
-				offset += l
-				if err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
-				offset += l
-				if err != nil {
-					goto SkipFieldError
-				}
-			}
 		case 11:
 			if fieldTypeId == thrift.STRING {
 				l, err = p.FastReadField11(buf[offset:])
@@ -539,44 +511,6 @@ func (p *UserProfile) FastReadField8(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *UserProfile) FastReadField9(buf []byte) (int, error) {
-	offset := 0
-
-	var _field *string
-	if v, l, err := thrift.Binary.ReadString(buf[offset:]); err != nil {
-		return offset, err
-	} else {
-		offset += l
-		_field = &v
-	}
-	p.LicenseNumber = _field
-	return offset, nil
-}
-
-func (p *UserProfile) FastReadField10(buf []byte) (int, error) {
-	offset := 0
-
-	_, size, l, err := thrift.Binary.ReadListBegin(buf[offset:])
-	offset += l
-	if err != nil {
-		return offset, err
-	}
-	_field := make([]string, 0, size)
-	for i := 0; i < size; i++ {
-		var _elem string
-		if v, l, err := thrift.Binary.ReadString(buf[offset:]); err != nil {
-			return offset, err
-		} else {
-			offset += l
-			_elem = v
-		}
-
-		_field = append(_field, _elem)
-	}
-	p.Specialties = _field
-	return offset, nil
-}
-
 func (p *UserProfile) FastReadField11(buf []byte) (int, error) {
 	offset := 0
 
@@ -808,8 +742,6 @@ func (p *UserProfile) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 		offset += p.fastWriteField7(buf[offset:], w)
 		offset += p.fastWriteField26(buf[offset:], w)
 		offset += p.fastWriteField8(buf[offset:], w)
-		offset += p.fastWriteField9(buf[offset:], w)
-		offset += p.fastWriteField10(buf[offset:], w)
 		offset += p.fastWriteField11(buf[offset:], w)
 		offset += p.fastWriteField12(buf[offset:], w)
 		offset += p.fastWriteField18(buf[offset:], w)
@@ -834,8 +766,6 @@ func (p *UserProfile) BLength() int {
 		l += p.field7Length()
 		l += p.field26Length()
 		l += p.field8Length()
-		l += p.field9Length()
-		l += p.field10Length()
 		l += p.field11Length()
 		l += p.field12Length()
 		l += p.field13Length()
@@ -932,31 +862,6 @@ func (p *UserProfile) fastWriteField8(buf []byte, w thrift.NocopyWriter) int {
 	if p.IsSetProfessionalTitle() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 8)
 		offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, *p.ProfessionalTitle)
-	}
-	return offset
-}
-
-func (p *UserProfile) fastWriteField9(buf []byte, w thrift.NocopyWriter) int {
-	offset := 0
-	if p.IsSetLicenseNumber() {
-		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 9)
-		offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, *p.LicenseNumber)
-	}
-	return offset
-}
-
-func (p *UserProfile) fastWriteField10(buf []byte, w thrift.NocopyWriter) int {
-	offset := 0
-	if p.IsSetSpecialties() {
-		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.LIST, 10)
-		listBeginOffset := offset
-		offset += thrift.Binary.ListBeginLength()
-		var length int
-		for _, v := range p.Specialties {
-			length++
-			offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, v)
-		}
-		thrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.STRING, length)
 	}
 	return offset
 }
@@ -1171,28 +1076,6 @@ func (p *UserProfile) field8Length() int {
 	if p.IsSetProfessionalTitle() {
 		l += thrift.Binary.FieldBeginLength()
 		l += thrift.Binary.StringLengthNocopy(*p.ProfessionalTitle)
-	}
-	return l
-}
-
-func (p *UserProfile) field9Length() int {
-	l := 0
-	if p.IsSetLicenseNumber() {
-		l += thrift.Binary.FieldBeginLength()
-		l += thrift.Binary.StringLengthNocopy(*p.LicenseNumber)
-	}
-	return l
-}
-
-func (p *UserProfile) field10Length() int {
-	l := 0
-	if p.IsSetSpecialties() {
-		l += thrift.Binary.FieldBeginLength()
-		l += thrift.Binary.ListBeginLength()
-		for _, v := range p.Specialties {
-			_ = v
-			l += thrift.Binary.StringLengthNocopy(v)
-		}
 	}
 	return l
 }

@@ -35,8 +35,6 @@ func (a *userAssembler) ToHTTPUserProfile(
 		RealName:          common.CopyStringPtr(rpc.RealName),
 		Gender:            common.ConvertGenderPtrToHTTP(rpc.Gender),
 		ProfessionalTitle: common.CopyStringPtr(rpc.ProfessionalTitle),
-		LicenseNumber:     common.CopyStringPtr(rpc.LicenseNumber),
-		Specialties:       common.CopyStringSlice(rpc.Specialties),
 		EmployeeID:        common.CopyStringPtr(rpc.EmployeeID),
 
 		// 状态与安全字段
@@ -99,12 +97,6 @@ func (a *userAssembler) ToRPCCreateUserRequest(
 	common.ApplyIfSet(dto.IsSetProfessionalTitle, dto.ProfessionalTitle, func(v *string) {
 		req.ProfessionalTitle = v
 	})
-	common.ApplyIfSet(dto.IsSetLicenseNumber, dto.LicenseNumber, func(v *string) {
-		req.LicenseNumber = v
-	})
-	common.ApplyIfSetSlice(dto.IsSetSpecialties, dto.Specialties, func(v []string) {
-		req.Specialties = v
-	})
 	common.ApplyIfSet(dto.IsSetEmployeeID, dto.EmployeeID, func(v *string) { req.EmployeeID = v })
 	common.ApplyIfSet(dto.IsSetMustChangePassword, dto.MustChangePassword, func(v *bool) {
 		req.MustChangePassword = v
@@ -152,12 +144,6 @@ func (a *userAssembler) ToRPCUpdateUserRequest(
 	common.ApplyIfSet(dto.IsSetProfessionalTitle, dto.ProfessionalTitle, func(v *string) {
 		req.ProfessionalTitle = v
 	})
-	common.ApplyIfSet(dto.IsSetLicenseNumber, dto.LicenseNumber, func(v *string) {
-		req.LicenseNumber = v
-	})
-	common.ApplyIfSetSlice(dto.IsSetSpecialties, dto.Specialties, func(v []string) {
-		req.Specialties = v
-	})
 	common.ApplyIfSet(dto.IsSetEmployeeID, dto.EmployeeID, func(v *string) { req.EmployeeID = v })
 	common.ApplyIfSet(dto.IsSetAccountExpiry, dto.AccountExpiry, func(v *int64) {
 		req.AccountExpiry = v
@@ -190,12 +176,6 @@ func (a *userAssembler) ToRPCUpdateMeRequest(
 	})
 	common.ApplyIfSet(dto.IsSetProfessionalTitle, dto.ProfessionalTitle, func(v *string) {
 		req.ProfessionalTitle = v
-	})
-	common.ApplyIfSet(dto.IsSetLicenseNumber, dto.LicenseNumber, func(v *string) {
-		req.LicenseNumber = v
-	})
-	common.ApplyIfSetSlice(dto.IsSetSpecialties, dto.Specialties, func(v []string) {
-		req.Specialties = v
 	})
 	common.ApplyIfSet(dto.IsSetEmployeeID, dto.EmployeeID, func(v *string) { req.EmployeeID = v })
 	common.ApplyIfSet(dto.IsSetAccountExpiry, dto.AccountExpiry, func(v *int64) {

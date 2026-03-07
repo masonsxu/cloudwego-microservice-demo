@@ -150,26 +150,6 @@
               maxlength="100"
             />
           </el-form-item>
-
-          <el-form-item :label="t('user.licenseNumber')" prop="license_number">
-            <el-input
-              v-model="form.license_number"
-              :placeholder="t('user.licenseNumber')"
-              maxlength="50"
-            />
-          </el-form-item>
-
-          <el-form-item :label="t('user.specialties')" prop="specialties">
-            <el-select
-              v-model="form.specialties"
-              :placeholder="t('user.specialties')"
-              multiple
-              filterable
-              allow-create
-              style="width: 100%"
-            >
-            </el-select>
-          </el-form-item>
         </el-card>
 
         <el-card class="form-section">
@@ -255,8 +235,6 @@ const form = reactive<CreateUserRequest>({
   last_name: '',
   real_name: '',
   professional_title: '',
-  license_number: '',
-  specialties: [],
   employee_id: '',
   must_change_password: false,
   account_expiry: undefined,

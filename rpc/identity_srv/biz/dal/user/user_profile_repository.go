@@ -3,7 +3,6 @@ package user
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"gorm.io/gorm"
 
@@ -291,81 +290,6 @@ func (r *UserProfileRepositoryImpl) CheckPhoneExists(
 }
 
 // ============================================================================
-// 专业信息查询实现
-// ============================================================================
-
-// FindByMedicalLicense 根据执照号查询用户档案
-func (r *UserProfileRepositoryImpl) FindByMedicalLicense(
-	ctx context.Context,
-	licenseNumber string,
-) (*models.UserProfile, error) {
-	if licenseNumber == "" {
-		return nil, nil
-	}
-
-	var user models.UserProfile
-
-	err := r.db.WithContext(ctx).
-		Where("license_number = ?", licenseNumber).
-		First(&user).Error
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, errno.ErrUserNotFound
-		}
-
-		return nil, fmt.Errorf("根据执照号查询用户失败: %w", err)
-	}
-
-	return &user, nil
-}
-
-// FindBySpecialty 根据专业领域查询用户档案列表
-func (r *UserProfileRepositoryImpl) FindBySpecialty(
-	ctx context.Context,
-	specialty string,
-	opts *base.QueryOptions,
-) ([]*models.UserProfile, *models.PageResult, error) {
-	if opts == nil {
-		opts = base.NewQueryOptions()
-	}
-
-	// 构建查询条件：在JSON字段中搜索专业领域
-	query := r.db.WithContext(ctx).Model(&models.UserProfile{}).
-		Where("specialties LIKE ?", "%"+specialty+"%")
-
-	// 处理其他过滤条件
-	for field, value := range opts.Filters {
-		query = query.Where(fmt.Sprintf("%s = ?", field), value)
-	}
-
-	// 处理搜索
-	if opts.Search != "" {
-		query = r.applySearchConditions(query, opts.Search)
-	}
-
-	// 计算总数
-	var total int64
-	if err := query.Count(&total).Error; err != nil {
-		return nil, nil, fmt.Errorf("查询专业领域用户总数失败: %w", err)
-	}
-
-	// 分页查询
-	var users []*models.UserProfile
-
-	offset := (opts.Page - 1) * opts.PageSize
-	orderClause := r.buildOrderClause(opts)
-
-	if err := query.Order(orderClause).Offset(int(offset)).Limit(int(opts.PageSize)).Find(&users).Error; err != nil {
-		return nil, nil, fmt.Errorf("查询专业领域用户列表失败: %w", err)
-	}
-
-	// 构建分页结果
-	pageResult := models.NewPageResult(int32(total), opts.Page, opts.PageSize)
-
-	return users, pageResult, nil
-}
-
-// ============================================================================
 // 统一查询方法实现
 // ============================================================================
 
@@ -444,22 +368,6 @@ func (r *UserProfileRepositoryImpl) applyUserProfileConditions(
 		})
 	}
 
-	if conditions.MedicalLicense != nil {
-		qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
-			return db.Where(
-				"user_profiles.license_number = ?",
-				*conditions.MedicalLicense,
-			)
-		})
-	}
-
-	// Specialty 模糊匹配
-	if conditions.Specialty != nil {
-		qb = qb.WhereCustom(func(db *gorm.DB) *gorm.DB {
-			return db.Where("user_profiles.specialties LIKE ?", "%"+*conditions.Specialty+"%")
-		})
-	}
-
 	return qb
 }
 
@@ -477,36 +385,13 @@ func (r *UserProfileRepositoryImpl) applySearchConditions(
 		  user_profiles.email LIKE ? OR
 		  user_profiles.first_name LIKE ? OR
 		  user_profiles.last_name LIKE ? OR
-		  user_profiles.real_name LIKE ? OR
-		  user_profiles.license_number LIKE ?)`,
-		searchPattern,
+		  user_profiles.real_name LIKE ?)`,
 		searchPattern,
 		searchPattern,
 		searchPattern,
 		searchPattern,
 		searchPattern,
 	)
-}
-
-// buildOrderClause 构建排序子句
-func (r *UserProfileRepositoryImpl) buildOrderClause(opts *base.QueryOptions) string {
-	orderBy := "user_profiles.created_at" // 默认使用主表的全限定名
-
-	if opts.OrderBy != "" {
-		// 简单的安全检查，防止SQL注入
-		// 在实际应用中，这里应该有一个更健壮的允许列表
-		if strings.Contains(opts.OrderBy, ";") || strings.Contains(opts.OrderBy, " ") {
-			orderBy = "user_profiles.created_at"
-		} else {
-			orderBy = "user_profiles." + opts.OrderBy
-		}
-	}
-
-	if opts.OrderDesc {
-		return orderBy + " DESC"
-	}
-
-	return orderBy + " ASC"
 }
 
 // WithTx 使用指定事务创建新的仓储实例

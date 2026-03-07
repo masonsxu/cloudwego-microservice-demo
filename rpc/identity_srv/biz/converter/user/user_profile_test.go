@@ -164,8 +164,6 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 			RealName:           "John Doe",
 			Gender:             models.GenderMale,
 			ProfessionalTitle:  "Software Engineer",
-			LicenseNumber:      "LICENSE123",
-			Specialties:        `["Go", "Python", "Docker"]`,
 			EmployeeID:         "EMP001",
 			Status:             models.UserStatusActive,
 			LoginAttempts:      2,
@@ -188,8 +186,6 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 		assert.Equal(t, "John Doe", *result.RealName)
 		assert.Equal(t, core.Gender_MALE, *result.Gender)
 		assert.Equal(t, "Software Engineer", *result.ProfessionalTitle)
-		assert.Equal(t, "LICENSE123", *result.LicenseNumber)
-		assert.Equal(t, []string{"Go", "Python", "Docker"}, result.Specialties)
 		assert.Equal(t, "EMP001", *result.EmployeeID)
 		assert.Equal(t, core.UserStatus_ACTIVE, *result.Status)
 		assert.Equal(t, int32(2), result.LoginAttempts)
@@ -231,8 +227,6 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 		assert.Nil(t, result.RealName)
 		assert.Nil(t, result.Gender)
 		assert.Nil(t, result.ProfessionalTitle)
-		assert.Nil(t, result.LicenseNumber)
-		assert.Empty(t, result.Specialties)
 		assert.Nil(t, result.EmployeeID)
 		assert.Equal(t, int32(0), result.LoginAttempts)
 		assert.False(t, result.MustChangePassword)
@@ -252,14 +246,13 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 				CreatedAt: now,
 				UpdatedAt: now,
 			},
-			Username:    "emptyfields",
-			Email:       "",
-			Phone:       "",
-			FirstName:   "",
-			LastName:    "",
-			RealName:    "",
-			Specialties: "",
-			Status:      models.UserStatusActive,
+			Username:  "emptyfields",
+			Email:     "",
+			Phone:     "",
+			FirstName: "",
+			LastName:  "",
+			RealName:  "",
+			Status:    models.UserStatusActive,
 		}
 
 		result := converter.ModelUserProfileToThrift(model)
@@ -273,7 +266,6 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 		assert.Nil(t, result.FirstName)
 		assert.Nil(t, result.LastName)
 		assert.Nil(t, result.RealName)
-		assert.Empty(t, result.Specialties)
 	})
 
 	t.Run("零值字段处理", func(t *testing.T) {
@@ -315,28 +307,6 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 		// 布尔值总是设置
 		assert.False(t, result.MustChangePassword)
 	})
-
-	t.Run("无效JSON处理", func(t *testing.T) {
-		now := time.Now().UnixMilli()
-		userID := uuid.New()
-
-		model := &models.UserProfile{
-			BaseModel: models.BaseModel{
-				ID:        userID,
-				CreatedAt: now,
-				UpdatedAt: now,
-			},
-			Username:    "invalidjson",
-			Specialties: "invalid json string[",
-			Status:      models.UserStatusActive,
-		}
-
-		result := converter.ModelUserProfileToThrift(model)
-
-		require.NotNil(t, result)
-		assert.Equal(t, "invalidjson", *result.Username)
-		assert.Empty(t, result.Specialties) // 无效JSON应该返回空切片
-	})
 }
 
 // TestConverterImpl_CreateUserRequestToModel 测试 CreateUserRequestToModel 方法
@@ -362,8 +332,6 @@ func TestConverterImpl_CreateUserRequestToModel(t *testing.T) {
 		realName := "Jane Smith"
 		gender := core.Gender_FEMALE
 		professionalTitle := "Product Manager"
-		licenseNumber := "LICENSE456"
-		specialties := []string{"Product", "Marketing", "Strategy"}
 		employeeID := "EMP002"
 		mustChangePassword := true
 
@@ -377,8 +345,6 @@ func TestConverterImpl_CreateUserRequestToModel(t *testing.T) {
 			RealName:           &realName,
 			Gender:             &gender,
 			ProfessionalTitle:  &professionalTitle,
-			LicenseNumber:      &licenseNumber,
-			Specialties:        specialties,
 			EmployeeID:         &employeeID,
 			MustChangePassword: &mustChangePassword,
 			AccountExpiry:      &accountExpiry,
@@ -396,8 +362,6 @@ func TestConverterImpl_CreateUserRequestToModel(t *testing.T) {
 		assert.Equal(t, "Jane Smith", result.RealName)
 		assert.Equal(t, models.GenderFemale, result.Gender)
 		assert.Equal(t, "Product Manager", result.ProfessionalTitle)
-		assert.Equal(t, "LICENSE456", result.LicenseNumber)
-		assert.Equal(t, `["Product","Marketing","Strategy"]`, result.Specialties)
 		assert.Equal(t, "EMP002", result.EmployeeID)
 		assert.Equal(t, models.UserStatusActive, result.Status) // 默认激活状态
 		assert.True(t, result.MustChangePassword)
@@ -437,24 +401,6 @@ func TestConverterImpl_CreateUserRequestToModel(t *testing.T) {
 		assert.Equal(t, "testuser", result.Username)
 		assert.NotEmpty(t, result.PasswordHash) // 空密码也可以被哈希
 	})
-
-	t.Run("空专业列表处理", func(t *testing.T) {
-		username := "emptyuser"
-		password := "pass"
-		specialties := []string{}
-
-		req := &identity_srv.CreateUserRequest{
-			Username:    &username,
-			Password:    &password,
-			Specialties: specialties,
-		}
-
-		result := converter.CreateUserRequestToModel(req)
-
-		require.NotNil(t, result)
-		assert.Equal(t, "emptyuser", result.Username)
-		assert.Equal(t, "", result.Specialties) // 空列表在 StringSliceToJSON 中返回空字符串
-	})
 }
 
 // TestConverterImpl_ApplyUpdateUserToModel 测试 ApplyUpdateUserToModel 方法
@@ -484,8 +430,6 @@ func TestConverterImpl_ApplyUpdateUserToModel(t *testing.T) {
 		realName := "Updated Name"
 		gender := core.Gender_MALE
 		professionalTitle := "Senior Engineer"
-		licenseNumber := "LICENSE789"
-		specialties := []string{"Go", "Kubernetes", "AWS"}
 		employeeID := "EMP003"
 
 		req := &identity_srv.UpdateUserRequest{
@@ -496,8 +440,6 @@ func TestConverterImpl_ApplyUpdateUserToModel(t *testing.T) {
 			RealName:          &realName,
 			Gender:            &gender,
 			ProfessionalTitle: &professionalTitle,
-			LicenseNumber:     &licenseNumber,
-			Specialties:       specialties,
 			EmployeeID:        &employeeID,
 			AccountExpiry:     &accountExpiry,
 		}
@@ -517,8 +459,6 @@ func TestConverterImpl_ApplyUpdateUserToModel(t *testing.T) {
 		assert.Equal(t, "Updated Name", result.RealName)
 		assert.Equal(t, models.GenderMale, result.Gender)
 		assert.Equal(t, "Senior Engineer", result.ProfessionalTitle)
-		assert.Equal(t, "LICENSE789", result.LicenseNumber)
-		assert.Equal(t, `["Go","Kubernetes","AWS"]`, result.Specialties)
 		assert.Equal(t, "EMP003", result.EmployeeID)
 		assert.Equal(t, &accountExpiry, result.AccountExpiry)
 
@@ -548,24 +488,6 @@ func TestConverterImpl_ApplyUpdateUserToModel(t *testing.T) {
 		assert.Equal(t, "partialuser", result.Username)         // 应该保持不变
 		assert.Equal(t, models.UserStatusActive, result.Status) // 应该保持不变
 	})
-
-	t.Run("空专业列表更新", func(t *testing.T) {
-		specialties := []string{}
-		req := &identity_srv.UpdateUserRequest{
-			Specialties: specialties,
-		}
-
-		existing := &models.UserProfile{
-			Username:    "listuser",
-			Specialties: `["Old","Specialty"]`,
-		}
-
-		result := converter.ApplyUpdateUserToModel(existing, req)
-
-		require.NotNil(t, result)
-		assert.Equal(t, `["Old","Specialty"]`, result.Specialties) // 空列表不更新，保持原值
-		assert.Equal(t, "listuser", result.Username)               // 其他字段保持不变
-	})
 }
 
 // TestConverterImpl_CompleteRoundTrip 测试往返转换
@@ -592,8 +514,6 @@ func TestConverterImpl_CompleteRoundTrip(t *testing.T) {
 			RealName:           "Round Trip",
 			Gender:             models.GenderFemale,
 			ProfessionalTitle:  "Test Engineer",
-			LicenseNumber:      "LICENSE999",
-			Specialties:        `["Testing","QA","Automation"]`,
 			EmployeeID:         "EMP999",
 			Status:             models.UserStatusActive,
 			LoginAttempts:      1,
@@ -615,8 +535,6 @@ func TestConverterImpl_CompleteRoundTrip(t *testing.T) {
 		assert.Equal(t, original.RealName, *thrift.RealName)
 		assert.Equal(t, core.Gender_FEMALE, *thrift.Gender)
 		assert.Equal(t, original.ProfessionalTitle, *thrift.ProfessionalTitle)
-		assert.Equal(t, original.LicenseNumber, *thrift.LicenseNumber)
-		assert.Equal(t, []string{"Testing", "QA", "Automation"}, thrift.Specialties)
 		assert.Equal(t, original.EmployeeID, *thrift.EmployeeID)
 		assert.Equal(t, core.UserStatus_ACTIVE, *thrift.Status)
 		assert.Equal(t, original.LoginAttempts, thrift.LoginAttempts)
@@ -701,7 +619,6 @@ func TestConverterImpl_EdgeCases(t *testing.T) {
 			LastName:          "姓",
 			RealName:          "中文姓名",
 			ProfessionalTitle: "高级工程师🔧",
-			Specialties:       `["Go编程","容器技术","云计算☁️"]`,
 			Status:            models.UserStatusActive,
 		}
 
@@ -714,7 +631,6 @@ func TestConverterImpl_EdgeCases(t *testing.T) {
 		assert.Equal(t, "姓", *thrift.LastName)
 		assert.Equal(t, "中文姓名", *thrift.RealName)
 		assert.Equal(t, "高级工程师🔧", *thrift.ProfessionalTitle)
-		assert.Equal(t, []string{"Go编程", "容器技术", "云计算☁️"}, thrift.Specialties)
 	})
 
 	t.Run("特殊字符处理", func(t *testing.T) {
@@ -731,7 +647,6 @@ func TestConverterImpl_EdgeCases(t *testing.T) {
 			Username:          "special",
 			Email:             "special@example.com",
 			ProfessionalTitle: specialChars,
-			LicenseNumber:     specialChars,
 			EmployeeID:        specialChars,
 			Status:            models.UserStatusActive,
 		}
@@ -740,7 +655,6 @@ func TestConverterImpl_EdgeCases(t *testing.T) {
 		require.NotNil(t, thrift)
 
 		assert.Equal(t, specialChars, *thrift.ProfessionalTitle)
-		assert.Equal(t, specialChars, *thrift.LicenseNumber)
 		assert.Equal(t, specialChars, *thrift.EmployeeID)
 	})
 }
@@ -768,8 +682,6 @@ func BenchmarkConverterImpl_ModelUserProfileToThrift(b *testing.B) {
 		RealName:           "Benchmark User",
 		Gender:             models.GenderMale,
 		ProfessionalTitle:  "Performance Engineer",
-		LicenseNumber:      "LICENSE001",
-		Specialties:        `["Go","Performance","Testing"]`,
 		EmployeeID:         "EMP001",
 		Status:             models.UserStatusActive,
 		LoginAttempts:      1,
@@ -798,8 +710,6 @@ func BenchmarkConverterImpl_CreateUserRequestToModel(b *testing.B) {
 	realName := "Benchmark User"
 	gender := core.Gender_MALE
 	professionalTitle := "Performance Engineer"
-	licenseNumber := "LICENSE001"
-	specialties := []string{"Go", "Performance", "Testing"}
 	employeeID := "EMP001"
 	mustChangePassword := false
 	accountExpiry := time.Now().UnixMilli() + 86400000
@@ -814,8 +724,6 @@ func BenchmarkConverterImpl_CreateUserRequestToModel(b *testing.B) {
 		RealName:           &realName,
 		Gender:             &gender,
 		ProfessionalTitle:  &professionalTitle,
-		LicenseNumber:      &licenseNumber,
-		Specialties:        specialties,
 		EmployeeID:         &employeeID,
 		MustChangePassword: &mustChangePassword,
 		AccountExpiry:      &accountExpiry,
@@ -840,8 +748,6 @@ func BenchmarkConverterImpl_ApplyUpdateUserToModel(b *testing.B) {
 	realName := "Updated Name"
 	gender := core.Gender_FEMALE
 	professionalTitle := "Senior Engineer"
-	licenseNumber := "LICENSE002"
-	specialties := []string{"Go", "Kubernetes", "AWS"}
 	employeeID := "EMP002"
 	accountExpiry := time.Now().UnixMilli() + 86400000
 
@@ -853,8 +759,6 @@ func BenchmarkConverterImpl_ApplyUpdateUserToModel(b *testing.B) {
 		RealName:          &realName,
 		Gender:            &gender,
 		ProfessionalTitle: &professionalTitle,
-		LicenseNumber:     &licenseNumber,
-		Specialties:       specialties,
 		EmployeeID:        &employeeID,
 		AccountExpiry:     &accountExpiry,
 	}

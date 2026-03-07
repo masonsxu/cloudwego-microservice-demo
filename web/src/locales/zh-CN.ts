@@ -105,8 +105,6 @@ export default {
     accountExpiry: '账户过期时间',
     mustChangePassword: '必须修改密码',
     professionalTitle: '职业头衔',
-    licenseNumber: '执业证书号',
-    specialties: '专业特长',
     employeeId: '员工工号',
     gender: {
       label: '性别',

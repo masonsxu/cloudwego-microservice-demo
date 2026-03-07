@@ -30,8 +30,6 @@ type UserProfile struct {
 
 	// 专业信息（仅用于展示，不用于权限判断）
 	ProfessionalTitle string `gorm:"column:professional_title;size:100;comment:专业标题"`
-	LicenseNumber     string `gorm:"column:license_number;size:100;index;comment:许可证号，索引"`
-	Specialties       string `gorm:"column:specialties;type:text;comment:专业专长"`
 	EmployeeID        string `gorm:"column:employee_id;size:50;index;comment:员工ID，索引"`
 
 	// 状态管理

@@ -144,26 +144,6 @@
               maxlength="100"
             />
           </el-form-item>
-
-          <el-form-item :label="t('user.licenseNumber')" prop="license_number">
-            <el-input
-              v-model="form.license_number"
-              :placeholder="t('user.licenseNumber')"
-              maxlength="50"
-            />
-          </el-form-item>
-
-          <el-form-item :label="t('user.specialties')" prop="specialties">
-            <el-select
-              v-model="form.specialties"
-              :placeholder="t('user.specialties')"
-              multiple
-              filterable
-              allow-create
-              style="width: 100%"
-            >
-            </el-select>
-          </el-form-item>
         </el-card>
 
         <el-card class="form-section">
@@ -245,8 +225,6 @@ const form = reactive<UpdateUserRequest>({
   last_name: '',
   real_name: '',
   professional_title: '',
-  license_number: '',
-  specialties: [],
   employee_id: '',
   account_expiry: undefined,
   gender: 0,
@@ -283,13 +261,11 @@ async function fetchUserDetail() {
     form.last_name = response.user.last_name || ''
     form.real_name = response.user.real_name || ''
     form.professional_title = response.user.professional_title || ''
-    form.license_number = response.user.license_number || ''
-    form.specialties = response.user.specialties || []
     form.employee_id = response.user.employee_id || ''
     form.account_expiry = response.user.account_expiry
     form.gender = response.user.gender || 0
     form.role_ids = response.user.role_ids || []
-    form.organization_id = response.user.organization?.id || ''
+    form.organization_id = response.user.primary_organization_id || ''
 
     if (response.user.account_expiry) {
       accountExpiryDate.value = response.user.account_expiry

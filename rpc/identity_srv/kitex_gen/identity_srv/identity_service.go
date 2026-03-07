@@ -371,8 +371,6 @@ type CreateUserRequest struct {
 	RealName           *string           `thrift:"realName,7,optional" frugal:"7,optional,string" json:"realName,omitempty"`
 	Gender             *core.Gender      `thrift:"gender,14,optional" frugal:"14,optional,Gender" json:"gender,omitempty"`
 	ProfessionalTitle  *string           `thrift:"professionalTitle,8,optional" frugal:"8,optional,string" json:"professionalTitle,omitempty"`
-	LicenseNumber      *string           `thrift:"licenseNumber,9,optional" frugal:"9,optional,string" json:"licenseNumber,omitempty"`
-	Specialties        []string          `thrift:"specialties,10,optional" frugal:"10,optional,list<string>" json:"specialties,omitempty"`
 	EmployeeID         *string           `thrift:"employeeID,11,optional" frugal:"11,optional,string" json:"employeeID,omitempty"`
 	MustChangePassword *bool             `thrift:"mustChangePassword,12,optional" frugal:"12,optional,bool" json:"mustChangePassword,omitempty"`
 	AccountExpiry      *core.TimestampMS `thrift:"accountExpiry,13,optional" frugal:"13,optional,i64" json:"accountExpiry,omitempty"`
@@ -466,24 +464,6 @@ func (p *CreateUserRequest) GetProfessionalTitle() (v string) {
 	return *p.ProfessionalTitle
 }
 
-var CreateUserRequest_LicenseNumber_DEFAULT string
-
-func (p *CreateUserRequest) GetLicenseNumber() (v string) {
-	if !p.IsSetLicenseNumber() {
-		return CreateUserRequest_LicenseNumber_DEFAULT
-	}
-	return *p.LicenseNumber
-}
-
-var CreateUserRequest_Specialties_DEFAULT []string
-
-func (p *CreateUserRequest) GetSpecialties() (v []string) {
-	if !p.IsSetSpecialties() {
-		return CreateUserRequest_Specialties_DEFAULT
-	}
-	return p.Specialties
-}
-
 var CreateUserRequest_EmployeeID_DEFAULT string
 
 func (p *CreateUserRequest) GetEmployeeID() (v string) {
@@ -537,12 +517,6 @@ func (p *CreateUserRequest) SetGender(val *core.Gender) {
 func (p *CreateUserRequest) SetProfessionalTitle(val *string) {
 	p.ProfessionalTitle = val
 }
-func (p *CreateUserRequest) SetLicenseNumber(val *string) {
-	p.LicenseNumber = val
-}
-func (p *CreateUserRequest) SetSpecialties(val []string) {
-	p.Specialties = val
-}
 func (p *CreateUserRequest) SetEmployeeID(val *string) {
 	p.EmployeeID = val
 }
@@ -589,14 +563,6 @@ func (p *CreateUserRequest) IsSetProfessionalTitle() bool {
 	return p.ProfessionalTitle != nil
 }
 
-func (p *CreateUserRequest) IsSetLicenseNumber() bool {
-	return p.LicenseNumber != nil
-}
-
-func (p *CreateUserRequest) IsSetSpecialties() bool {
-	return p.Specialties != nil
-}
-
 func (p *CreateUserRequest) IsSetEmployeeID() bool {
 	return p.EmployeeID != nil
 }
@@ -626,8 +592,6 @@ var fieldIDToName_CreateUserRequest = map[int16]string{
 	7:  "realName",
 	14: "gender",
 	8:  "professionalTitle",
-	9:  "licenseNumber",
-	10: "specialties",
 	11: "employeeID",
 	12: "mustChangePassword",
 	13: "accountExpiry",
@@ -680,8 +644,6 @@ type UpdateUserRequest struct {
 	RealName          *string           `thrift:"realName,6,optional" frugal:"6,optional,string" json:"realName,omitempty"`
 	Gender            *core.Gender      `thrift:"gender,13,optional" frugal:"13,optional,Gender" json:"gender,omitempty"`
 	ProfessionalTitle *string           `thrift:"professionalTitle,8,optional" frugal:"8,optional,string" json:"professionalTitle,omitempty"`
-	LicenseNumber     *string           `thrift:"licenseNumber,9,optional" frugal:"9,optional,string" json:"licenseNumber,omitempty"`
-	Specialties       []string          `thrift:"specialties,10,optional" frugal:"10,optional,list<string>" json:"specialties,omitempty"`
 	EmployeeID        *string           `thrift:"employeeID,11,optional" frugal:"11,optional,string" json:"employeeID,omitempty"`
 	AccountExpiry     *core.TimestampMS `thrift:"accountExpiry,12,optional" frugal:"12,optional,i64" json:"accountExpiry,omitempty"`
 }
@@ -765,24 +727,6 @@ func (p *UpdateUserRequest) GetProfessionalTitle() (v string) {
 	return *p.ProfessionalTitle
 }
 
-var UpdateUserRequest_LicenseNumber_DEFAULT string
-
-func (p *UpdateUserRequest) GetLicenseNumber() (v string) {
-	if !p.IsSetLicenseNumber() {
-		return UpdateUserRequest_LicenseNumber_DEFAULT
-	}
-	return *p.LicenseNumber
-}
-
-var UpdateUserRequest_Specialties_DEFAULT []string
-
-func (p *UpdateUserRequest) GetSpecialties() (v []string) {
-	if !p.IsSetSpecialties() {
-		return UpdateUserRequest_Specialties_DEFAULT
-	}
-	return p.Specialties
-}
-
 var UpdateUserRequest_EmployeeID_DEFAULT string
 
 func (p *UpdateUserRequest) GetEmployeeID() (v string) {
@@ -824,12 +768,6 @@ func (p *UpdateUserRequest) SetGender(val *core.Gender) {
 func (p *UpdateUserRequest) SetProfessionalTitle(val *string) {
 	p.ProfessionalTitle = val
 }
-func (p *UpdateUserRequest) SetLicenseNumber(val *string) {
-	p.LicenseNumber = val
-}
-func (p *UpdateUserRequest) SetSpecialties(val []string) {
-	p.Specialties = val
-}
 func (p *UpdateUserRequest) SetEmployeeID(val *string) {
 	p.EmployeeID = val
 }
@@ -869,14 +807,6 @@ func (p *UpdateUserRequest) IsSetProfessionalTitle() bool {
 	return p.ProfessionalTitle != nil
 }
 
-func (p *UpdateUserRequest) IsSetLicenseNumber() bool {
-	return p.LicenseNumber != nil
-}
-
-func (p *UpdateUserRequest) IsSetSpecialties() bool {
-	return p.Specialties != nil
-}
-
 func (p *UpdateUserRequest) IsSetEmployeeID() bool {
 	return p.EmployeeID != nil
 }
@@ -901,8 +831,6 @@ var fieldIDToName_UpdateUserRequest = map[int16]string{
 	6:  "realName",
 	13: "gender",
 	8:  "professionalTitle",
-	9:  "licenseNumber",
-	10: "specialties",
 	11: "employeeID",
 	12: "accountExpiry",
 }

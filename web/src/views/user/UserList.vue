@@ -99,7 +99,7 @@
         </el-table-column>
         <el-table-column :label="t('user.organization')" min-width="160">
           <template #default="{ row }">
-            <span v-if="row.organization" class="text-sub">{{ row.organization.name }}</span>
+            <span v-if="getOrganizationName(row.primary_organization_id)" class="text-sub">{{ getOrganizationName(row.primary_organization_id) }}</span>
             <span v-else class="text-muted">-</span>
           </template>
         </el-table-column>
@@ -214,6 +214,12 @@ const statusForm = reactive({ user_id: '', new_status: 1, reason: '' })
 const currentUser = ref<UserListItem | null>(null)
 
 onMounted(() => { fetchData(); fetchOrganizations() })
+
+function getOrganizationName(orgId?: string): string {
+  if (!orgId) return ''
+  const org = organizations.value.find(o => o.id === orgId)
+  return org?.name || ''
+}
 
 function onMouseMove(e: MouseEvent) {
   const el = e.currentTarget as HTMLElement

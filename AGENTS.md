@@ -84,11 +84,9 @@ go tool cover -func=coverage.out | grep total
 修改 `models/` 中 GORM struct 的字段名或 `gorm:"column:xxx"` tag 后，**必须全局搜索旧列名**，同步更新所有 DAL 层手写 SQL 查询。
 
 ```bash
-# 示例：将 medical_license_number 改为 license_number 后
-grep -r "medical_license_number" rpc/identity_srv/
+# 示例：将某列名修改后，搜索旧列名确认所有引用已更新
+grep -r "old_column_name" rpc/identity_srv/
 ```
-
-**反面教材**：`user_profile_repository.go` 中 `applySearchConditions` 引用了已不存在的 `medical_license_number` 列，导致搜索查询运行时报 `column does not exist`。
 
 #### 规则 2：测试代码必须匹配函数签名
 

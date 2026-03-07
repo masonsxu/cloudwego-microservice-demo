@@ -192,12 +192,6 @@ struct UserProfileDTO {
     /** 职业头衔 */
     8: optional string professionalTitle (go.tag = "json:\"professional_title,omitempty\""),
 
-    /** 执业证书号 */
-    9: optional string licenseNumber (go.tag = "json:\"license_number,omitempty\""),
-
-    /** 专业特长列表 */
-    10: optional list<string> specialties (go.tag = "json:\"specialties,omitempty\""),
-
     /** 员工工号 */
     11: optional string employeeID (go.tag = "json:\"employee_id,omitempty\""),
 
@@ -286,12 +280,6 @@ struct CreateUserRequestDTO {
     /** 职业头衔 */
     8: optional string professionalTitle (api.body = "professional_title", api.vd = "@:len($)<=100; msg:'职业头衔长度不能超过100个字符'", go.tag = "json:\"professional_title,omitempty\""),
 
-    /** 执业证书号 */
-    9: optional string licenseNumber (api.body = "license_number", api.vd = "@:len($)<=100; msg:'执业证书号长度不能超过100个字符'", go.tag = "json:\"license_number,omitempty\""),
-
-    /** 专业特长列表 */
-    10: optional list<string> specialties (api.body = "specialties", go.tag = "json:\"specialties,omitempty\""),
-
     /** 员工工号 */
     11: optional string employeeID (api.body = "employee_id", api.vd = "@:len($)<=50; msg:'员工工号长度不能超过50个字符'", go.tag = "json:\"employee_id,omitempty\""),
 
@@ -348,12 +336,6 @@ struct UpdateUserRequestDTO {
     /** 职业头衔 */
     8: optional string professionalTitle (api.body = "professional_title", api.vd = "@:len($)<=100; msg:'职业头衔长度不能超过100个字符'", go.tag = "json:\"professional_title,omitempty\""),
 
-    /** 执业证书号 */
-    9: optional string licenseNumber (api.body = "license_number", api.vd = "@:len($)<=100; msg:'执业证书号长度不能超过100个字符'", go.tag = "json:\"license_number,omitempty\""),
-
-    /** 专业特长列表 */
-    10: optional list<string> specialties (api.body = "specialties", go.tag = "json:\"specialties,omitempty\""),
-
     /** 员工工号 */
     11: optional string employeeID (api.body = "employee_id", api.vd = "@:len($)<=50; msg:'员工工号长度不能超过50个字符'", go.tag = "json:\"employee_id,omitempty\""),
 
@@ -393,12 +375,6 @@ struct UpdateMeRequestDTO {
 
     /** 职业头衔 */
     7: optional string professionalTitle (api.body = "professional_title", api.vd = "@:len($)<=100; msg:'职业头衔长度不能超过100个字符'", go.tag = "json:\"professional_title,omitempty\""),
-
-    /** 许可证号 */
-    8: optional string licenseNumber (api.body = "medical_license_number", api.vd = "@:len($)<=100; msg:'许可证号长度不能超过100个字符'", go.tag = "json:\"medical_license_number,omitempty\""),
-
-    /** 专业特长列表 */
-    9: optional list<string> specialties (api.body = "specialties", go.tag = "json:\"specialties,omitempty\""),
 
     /** 员工工号 */
     10: optional string employeeID (api.body = "employee_id", api.vd = "@:len($)<=50; msg:'员工工号长度不能超过50个字符'", go.tag = "json:\"employee_id,omitempty\""),

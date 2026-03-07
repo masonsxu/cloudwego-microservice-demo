@@ -77,18 +77,6 @@ func (c *ConverterImpl) ModelUserProfileToThrift(
 		dto.ProfessionalTitle = convutil.StringPtr(model.ProfessionalTitle)
 	}
 
-	if model.LicenseNumber != "" {
-		dto.LicenseNumber = convutil.StringPtr(model.LicenseNumber)
-	}
-
-	// 处理 Specialties JSON 字段
-	if model.Specialties != "" {
-		specialtiesSlice := convutil.JSONToStringSlice(model.Specialties)
-		if len(specialtiesSlice) > 0 {
-			dto.Specialties = specialtiesSlice
-		}
-	}
-
 	if model.EmployeeID != "" {
 		dto.EmployeeID = convutil.StringPtr(model.EmployeeID)
 	}
@@ -176,14 +164,6 @@ func (c *ConverterImpl) CreateUserRequestToModel(
 		model.ProfessionalTitle = *req.ProfessionalTitle
 	}
 
-	if req.LicenseNumber != nil {
-		model.LicenseNumber = *req.LicenseNumber
-	}
-
-	if len(req.Specialties) > 0 {
-		model.Specialties = convutil.StringSliceToJSON(req.Specialties)
-	}
-
 	if req.EmployeeID != nil {
 		model.EmployeeID = *req.EmployeeID
 	}
@@ -236,14 +216,6 @@ func (c *ConverterImpl) ApplyUpdateUserToModel(
 
 	if req.ProfessionalTitle != nil {
 		existing.ProfessionalTitle = *req.ProfessionalTitle
-	}
-
-	if req.LicenseNumber != nil {
-		existing.LicenseNumber = *req.LicenseNumber
-	}
-
-	if len(req.Specialties) > 0 {
-		existing.Specialties = convutil.StringSliceToJSON(req.Specialties)
 	}
 
 	if req.EmployeeID != nil {

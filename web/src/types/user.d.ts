@@ -24,8 +24,6 @@ export interface UserProfile {
   last_name?: string
   real_name?: string
   professional_title?: string
-  license_number?: string
-  specialties?: string[]
   employee_id?: string
   gender?: Gender
   status: UserStatus
@@ -35,6 +33,8 @@ export interface UserProfile {
   must_change_password?: boolean
   // 扩展字段
   avatar?: string
+  primary_organization_id?: string
+  primary_department_id?: string
   organization?: {
     id: string
     name: string
@@ -102,8 +102,6 @@ export interface CreateUserRequest {
   last_name?: string
   real_name?: string
   professional_title?: string
-  license_number?: string
-  specialties?: string[]
   employee_id?: string
   must_change_password?: boolean
   account_expiry?: number
@@ -120,8 +118,6 @@ export interface UpdateUserRequest {
   last_name?: string
   real_name?: string
   professional_title?: string
-  license_number?: string
-  specialties?: string[]
   employee_id?: string
   account_expiry?: number
   gender?: Gender

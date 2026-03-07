@@ -102,8 +102,6 @@ export default {
     accountExpiry: 'Account Expiry',
     mustChangePassword: 'Must Change Password',
     professionalTitle: 'Professional Title',
-    licenseNumber: 'License Number',
-    specialties: 'Specialties',
     employeeId: 'Employee ID',
     gender: {
       label: 'Gender',

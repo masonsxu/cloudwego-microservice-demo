@@ -65,20 +65,6 @@ type UserProfileRepository interface {
 	SetMustChangePassword(ctx context.Context, userID string, mustChange bool) error
 
 	// ============================================================================
-	// 专业信息查询
-	// ============================================================================
-
-	// FindByMedicalLicense 根据执照号查询用户档案
-	FindByMedicalLicense(ctx context.Context, licenseNumber string) (*models.UserProfile, error)
-
-	// FindBySpecialty 根据专业领域查询用户档案列表
-	FindBySpecialty(
-		ctx context.Context,
-		specialty string,
-		opts *base.QueryOptions,
-	) ([]*models.UserProfile, *models.PageResult, error)
-
-	// ============================================================================
 	// 统一查询方法（新增）
 	// ============================================================================
 
@@ -102,12 +88,10 @@ type UserProfileRepository interface {
 // UserProfileQueryConditions 用户档案查询条件
 // 支持多条件组合查询，提供灵活的查询能力
 type UserProfileQueryConditions struct {
-	Username       *string            // 用户名（精确匹配）
-	Email          *string            // 邮箱（精确匹配）
-	Phone          *string            // 手机号（精确匹配）
-	Status         *models.UserStatus // 用户状态
-	OrgID          *string            // 组织ID（通过成员关系查询）
-	MedicalLicense *string            // 执照号
-	Specialty      *string            // 专业领域
-	Page           *base.QueryOptions // 分页、排序、搜索参数
+	Username *string            // 用户名（精确匹配）
+	Email    *string            // 邮箱（精确匹配）
+	Phone    *string            // 手机号（精确匹配）
+	Status   *models.UserStatus // 用户状态
+	OrgID    *string            // 组织ID（通过成员关系查询）
+	Page     *base.QueryOptions // 分页、排序、搜索参数
 }

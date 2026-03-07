@@ -75,12 +75,6 @@ struct UserProfile {
 
     /** 专业职称 */
     8: optional string professionalTitle,
-
-    /** 执业许可证号 */
-    9: optional string licenseNumber,
-
-    /** 专业领域列表 */
-    10: optional list<string> specialties,
     // --- 状态与安全 ---
 
     /** 员工工号 */

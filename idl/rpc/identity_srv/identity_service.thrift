@@ -513,8 +513,6 @@ struct CreateUserRequest {
     7: optional string realName,
     14: optional enums.Gender gender,
     8: optional string professionalTitle,
-    9: optional string licenseNumber,
-    10: optional list<string> specialties,
     11: optional string employeeID,
     12: optional bool mustChangePassword,
     13: optional core.TimestampMS accountExpiry,
@@ -535,8 +533,6 @@ struct UpdateUserRequest {
     6: optional string realName,
     13: optional enums.Gender gender,
     8: optional string professionalTitle,
-    9: optional string licenseNumber,
-    10: optional list<string> specialties,
     11: optional string employeeID,
     12: optional core.TimestampMS accountExpiry,
 }

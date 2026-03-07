@@ -165,8 +165,6 @@ type UserProfile struct {
 	RealName              *string           `thrift:"realName,7,optional" frugal:"7,optional,string" json:"realName,omitempty"`
 	Gender                *core.Gender      `thrift:"gender,26,optional" frugal:"26,optional,Gender" json:"gender,omitempty"`
 	ProfessionalTitle     *string           `thrift:"professionalTitle,8,optional" frugal:"8,optional,string" json:"professionalTitle,omitempty"`
-	LicenseNumber         *string           `thrift:"licenseNumber,9,optional" frugal:"9,optional,string" json:"licenseNumber,omitempty"`
-	Specialties           []string          `thrift:"specialties,10,optional" frugal:"10,optional,list<string>" json:"specialties,omitempty"`
 	EmployeeID            *string           `thrift:"employeeID,11,optional" frugal:"11,optional,string" json:"employeeID,omitempty"`
 	Status                *core.UserStatus  `thrift:"status,12,optional" frugal:"12,optional,UserStatus" json:"status,omitempty"`
 	LoginAttempts         int32             `thrift:"loginAttempts,13,optional" frugal:"13,optional,i32" json:"loginAttempts,omitempty"`
@@ -276,24 +274,6 @@ func (p *UserProfile) GetProfessionalTitle() (v string) {
 		return UserProfile_ProfessionalTitle_DEFAULT
 	}
 	return *p.ProfessionalTitle
-}
-
-var UserProfile_LicenseNumber_DEFAULT string
-
-func (p *UserProfile) GetLicenseNumber() (v string) {
-	if !p.IsSetLicenseNumber() {
-		return UserProfile_LicenseNumber_DEFAULT
-	}
-	return *p.LicenseNumber
-}
-
-var UserProfile_Specialties_DEFAULT []string
-
-func (p *UserProfile) GetSpecialties() (v []string) {
-	if !p.IsSetSpecialties() {
-		return UserProfile_Specialties_DEFAULT
-	}
-	return p.Specialties
 }
 
 var UserProfile_EmployeeID_DEFAULT string
@@ -448,12 +428,6 @@ func (p *UserProfile) SetGender(val *core.Gender) {
 func (p *UserProfile) SetProfessionalTitle(val *string) {
 	p.ProfessionalTitle = val
 }
-func (p *UserProfile) SetLicenseNumber(val *string) {
-	p.LicenseNumber = val
-}
-func (p *UserProfile) SetSpecialties(val []string) {
-	p.Specialties = val
-}
 func (p *UserProfile) SetEmployeeID(val *string) {
 	p.EmployeeID = val
 }
@@ -533,14 +507,6 @@ func (p *UserProfile) IsSetProfessionalTitle() bool {
 	return p.ProfessionalTitle != nil
 }
 
-func (p *UserProfile) IsSetLicenseNumber() bool {
-	return p.LicenseNumber != nil
-}
-
-func (p *UserProfile) IsSetSpecialties() bool {
-	return p.Specialties != nil
-}
-
 func (p *UserProfile) IsSetEmployeeID() bool {
 	return p.EmployeeID != nil
 }
@@ -614,8 +580,6 @@ var fieldIDToName_UserProfile = map[int16]string{
 	7:  "realName",
 	26: "gender",
 	8:  "professionalTitle",
-	9:  "licenseNumber",
-	10: "specialties",
 	11: "employeeID",
 	12: "status",
 	13: "loginAttempts",
