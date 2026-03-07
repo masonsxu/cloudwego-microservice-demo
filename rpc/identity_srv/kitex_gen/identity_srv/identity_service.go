@@ -369,11 +369,11 @@ type CreateUserRequest struct {
 	FirstName          *string           `thrift:"firstName,5,optional" frugal:"5,optional,string" json:"firstName,omitempty"`
 	LastName           *string           `thrift:"lastName,6,optional" frugal:"6,optional,string" json:"lastName,omitempty"`
 	RealName           *string           `thrift:"realName,7,optional" frugal:"7,optional,string" json:"realName,omitempty"`
-	Gender             *core.Gender      `thrift:"gender,14,optional" frugal:"14,optional,Gender" json:"gender,omitempty"`
-	ProfessionalTitle  *string           `thrift:"professionalTitle,8,optional" frugal:"8,optional,string" json:"professionalTitle,omitempty"`
-	EmployeeID         *string           `thrift:"employeeID,11,optional" frugal:"11,optional,string" json:"employeeID,omitempty"`
-	MustChangePassword *bool             `thrift:"mustChangePassword,12,optional" frugal:"12,optional,bool" json:"mustChangePassword,omitempty"`
-	AccountExpiry      *core.TimestampMS `thrift:"accountExpiry,13,optional" frugal:"13,optional,i64" json:"accountExpiry,omitempty"`
+	Gender             *core.Gender      `thrift:"gender,8,optional" frugal:"8,optional,Gender" json:"gender,omitempty"`
+	ProfessionalTitle  *string           `thrift:"professionalTitle,9,optional" frugal:"9,optional,string" json:"professionalTitle,omitempty"`
+	EmployeeID         *string           `thrift:"employeeID,10,optional" frugal:"10,optional,string" json:"employeeID,omitempty"`
+	MustChangePassword *bool             `thrift:"mustChangePassword,11,optional" frugal:"11,optional,bool" json:"mustChangePassword,omitempty"`
+	AccountExpiry      *core.TimestampMS `thrift:"accountExpiry,12,optional" frugal:"12,optional,i64" json:"accountExpiry,omitempty"`
 }
 
 func NewCreateUserRequest() *CreateUserRequest {
@@ -590,11 +590,11 @@ var fieldIDToName_CreateUserRequest = map[int16]string{
 	5:  "firstName",
 	6:  "lastName",
 	7:  "realName",
-	14: "gender",
-	8:  "professionalTitle",
-	11: "employeeID",
-	12: "mustChangePassword",
-	13: "accountExpiry",
+	8:  "gender",
+	9:  "professionalTitle",
+	10: "employeeID",
+	11: "mustChangePassword",
+	12: "accountExpiry",
 }
 
 type GetUserRequest struct {
@@ -642,10 +642,10 @@ type UpdateUserRequest struct {
 	FirstName         *string           `thrift:"firstName,4,optional" frugal:"4,optional,string" json:"firstName,omitempty"`
 	LastName          *string           `thrift:"lastName,5,optional" frugal:"5,optional,string" json:"lastName,omitempty"`
 	RealName          *string           `thrift:"realName,6,optional" frugal:"6,optional,string" json:"realName,omitempty"`
-	Gender            *core.Gender      `thrift:"gender,13,optional" frugal:"13,optional,Gender" json:"gender,omitempty"`
+	Gender            *core.Gender      `thrift:"gender,7,optional" frugal:"7,optional,Gender" json:"gender,omitempty"`
 	ProfessionalTitle *string           `thrift:"professionalTitle,8,optional" frugal:"8,optional,string" json:"professionalTitle,omitempty"`
-	EmployeeID        *string           `thrift:"employeeID,11,optional" frugal:"11,optional,string" json:"employeeID,omitempty"`
-	AccountExpiry     *core.TimestampMS `thrift:"accountExpiry,12,optional" frugal:"12,optional,i64" json:"accountExpiry,omitempty"`
+	EmployeeID        *string           `thrift:"employeeID,9,optional" frugal:"9,optional,string" json:"employeeID,omitempty"`
+	AccountExpiry     *core.TimestampMS `thrift:"accountExpiry,10,optional" frugal:"10,optional,i64" json:"accountExpiry,omitempty"`
 }
 
 func NewUpdateUserRequest() *UpdateUserRequest {
@@ -829,10 +829,10 @@ var fieldIDToName_UpdateUserRequest = map[int16]string{
 	4:  "firstName",
 	5:  "lastName",
 	6:  "realName",
-	13: "gender",
+	7:  "gender",
 	8:  "professionalTitle",
-	11: "employeeID",
-	12: "accountExpiry",
+	9:  "employeeID",
+	10: "accountExpiry",
 }
 
 type DeleteUserRequest struct {

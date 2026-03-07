@@ -141,22 +141,8 @@ func (p *UserProfile) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
-		case 26:
-			if fieldTypeId == thrift.I32 {
-				l, err = p.FastReadField26(buf[offset:])
-				offset += l
-				if err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
-				offset += l
-				if err != nil {
-					goto SkipFieldError
-				}
-			}
 		case 8:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I32 {
 				l, err = p.FastReadField8(buf[offset:])
 				offset += l
 				if err != nil {
@@ -169,8 +155,36 @@ func (p *UserProfile) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
-		case 11:
+		case 9:
 			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField9(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 10:
+			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField10(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 11:
+			if fieldTypeId == thrift.I32 {
 				l, err = p.FastReadField11(buf[offset:])
 				offset += l
 				if err != nil {
@@ -198,7 +212,7 @@ func (p *UserProfile) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 13:
-			if fieldTypeId == thrift.I32 {
+			if fieldTypeId == thrift.BOOL {
 				l, err = p.FastReadField13(buf[offset:])
 				offset += l
 				if err != nil {
@@ -212,7 +226,7 @@ func (p *UserProfile) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 14:
-			if fieldTypeId == thrift.BOOL {
+			if fieldTypeId == thrift.I64 {
 				l, err = p.FastReadField14(buf[offset:])
 				offset += l
 				if err != nil {
@@ -228,20 +242,6 @@ func (p *UserProfile) FastRead(buf []byte) (int, error) {
 		case 15:
 			if fieldTypeId == thrift.I64 {
 				l, err = p.FastReadField15(buf[offset:])
-				offset += l
-				if err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
-				offset += l
-				if err != nil {
-					goto SkipFieldError
-				}
-			}
-		case 20:
-			if fieldTypeId == thrift.I64 {
-				l, err = p.FastReadField20(buf[offset:])
 				offset += l
 				if err != nil {
 					goto ReadFieldError
@@ -309,8 +309,36 @@ func (p *UserProfile) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
-		case 22:
+		case 20:
 			if fieldTypeId == thrift.BOOL {
+				l, err = p.FastReadField20(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 21:
+			if fieldTypeId == thrift.LIST {
+				l, err = p.FastReadField21(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 22:
+			if fieldTypeId == thrift.STRING {
 				l, err = p.FastReadField22(buf[offset:])
 				offset += l
 				if err != nil {
@@ -324,36 +352,8 @@ func (p *UserProfile) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 23:
-			if fieldTypeId == thrift.LIST {
+			if fieldTypeId == thrift.STRING {
 				l, err = p.FastReadField23(buf[offset:])
-				offset += l
-				if err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
-				offset += l
-				if err != nil {
-					goto SkipFieldError
-				}
-			}
-		case 24:
-			if fieldTypeId == thrift.STRING {
-				l, err = p.FastReadField24(buf[offset:])
-				offset += l
-				if err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				l, err = thrift.Binary.Skip(buf[offset:], fieldTypeId)
-				offset += l
-				if err != nil {
-					goto SkipFieldError
-				}
-			}
-		case 25:
-			if fieldTypeId == thrift.STRING {
-				l, err = p.FastReadField25(buf[offset:])
 				offset += l
 				if err != nil {
 					goto ReadFieldError
@@ -481,7 +481,7 @@ func (p *UserProfile) FastReadField7(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *UserProfile) FastReadField26(buf []byte) (int, error) {
+func (p *UserProfile) FastReadField8(buf []byte) (int, error) {
 	offset := 0
 
 	var _field *core.Gender
@@ -497,7 +497,7 @@ func (p *UserProfile) FastReadField26(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *UserProfile) FastReadField8(buf []byte) (int, error) {
+func (p *UserProfile) FastReadField9(buf []byte) (int, error) {
 	offset := 0
 
 	var _field *string
@@ -511,7 +511,7 @@ func (p *UserProfile) FastReadField8(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *UserProfile) FastReadField11(buf []byte) (int, error) {
+func (p *UserProfile) FastReadField10(buf []byte) (int, error) {
 	offset := 0
 
 	var _field *string
@@ -525,7 +525,7 @@ func (p *UserProfile) FastReadField11(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *UserProfile) FastReadField12(buf []byte) (int, error) {
+func (p *UserProfile) FastReadField11(buf []byte) (int, error) {
 	offset := 0
 
 	var _field *core.UserStatus
@@ -541,7 +541,7 @@ func (p *UserProfile) FastReadField12(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *UserProfile) FastReadField13(buf []byte) (int, error) {
+func (p *UserProfile) FastReadField12(buf []byte) (int, error) {
 	offset := 0
 
 	var _field int32
@@ -555,7 +555,7 @@ func (p *UserProfile) FastReadField13(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *UserProfile) FastReadField14(buf []byte) (int, error) {
+func (p *UserProfile) FastReadField13(buf []byte) (int, error) {
 	offset := 0
 
 	var _field bool
@@ -569,7 +569,7 @@ func (p *UserProfile) FastReadField14(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *UserProfile) FastReadField15(buf []byte) (int, error) {
+func (p *UserProfile) FastReadField14(buf []byte) (int, error) {
 	offset := 0
 
 	var _field *core.TimestampMS
@@ -583,7 +583,7 @@ func (p *UserProfile) FastReadField15(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *UserProfile) FastReadField20(buf []byte) (int, error) {
+func (p *UserProfile) FastReadField15(buf []byte) (int, error) {
 	offset := 0
 
 	var _field *core.TimestampMS
@@ -653,7 +653,7 @@ func (p *UserProfile) FastReadField19(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *UserProfile) FastReadField22(buf []byte) (int, error) {
+func (p *UserProfile) FastReadField20(buf []byte) (int, error) {
 	offset := 0
 
 	var _field bool
@@ -667,7 +667,7 @@ func (p *UserProfile) FastReadField22(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *UserProfile) FastReadField23(buf []byte) (int, error) {
+func (p *UserProfile) FastReadField21(buf []byte) (int, error) {
 	offset := 0
 
 	_, size, l, err := thrift.Binary.ReadListBegin(buf[offset:])
@@ -691,7 +691,7 @@ func (p *UserProfile) FastReadField23(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *UserProfile) FastReadField24(buf []byte) (int, error) {
+func (p *UserProfile) FastReadField22(buf []byte) (int, error) {
 	offset := 0
 
 	var _field *core.UUID
@@ -705,7 +705,7 @@ func (p *UserProfile) FastReadField24(buf []byte) (int, error) {
 	return offset, nil
 }
 
-func (p *UserProfile) FastReadField25(buf []byte) (int, error) {
+func (p *UserProfile) FastReadField23(buf []byte) (int, error) {
 	offset := 0
 
 	var _field *core.UUID
@@ -726,13 +726,13 @@ func (p *UserProfile) FastWrite(buf []byte) int {
 func (p *UserProfile) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p != nil {
+		offset += p.fastWriteField12(buf[offset:], w)
 		offset += p.fastWriteField13(buf[offset:], w)
 		offset += p.fastWriteField14(buf[offset:], w)
 		offset += p.fastWriteField15(buf[offset:], w)
-		offset += p.fastWriteField20(buf[offset:], w)
 		offset += p.fastWriteField16(buf[offset:], w)
 		offset += p.fastWriteField17(buf[offset:], w)
-		offset += p.fastWriteField22(buf[offset:], w)
+		offset += p.fastWriteField20(buf[offset:], w)
 		offset += p.fastWriteField1(buf[offset:], w)
 		offset += p.fastWriteField2(buf[offset:], w)
 		offset += p.fastWriteField3(buf[offset:], w)
@@ -740,15 +740,15 @@ func (p *UserProfile) FastWriteNocopy(buf []byte, w thrift.NocopyWriter) int {
 		offset += p.fastWriteField5(buf[offset:], w)
 		offset += p.fastWriteField6(buf[offset:], w)
 		offset += p.fastWriteField7(buf[offset:], w)
-		offset += p.fastWriteField26(buf[offset:], w)
 		offset += p.fastWriteField8(buf[offset:], w)
+		offset += p.fastWriteField9(buf[offset:], w)
+		offset += p.fastWriteField10(buf[offset:], w)
 		offset += p.fastWriteField11(buf[offset:], w)
-		offset += p.fastWriteField12(buf[offset:], w)
 		offset += p.fastWriteField18(buf[offset:], w)
 		offset += p.fastWriteField19(buf[offset:], w)
+		offset += p.fastWriteField21(buf[offset:], w)
+		offset += p.fastWriteField22(buf[offset:], w)
 		offset += p.fastWriteField23(buf[offset:], w)
-		offset += p.fastWriteField24(buf[offset:], w)
-		offset += p.fastWriteField25(buf[offset:], w)
 	}
 	offset += thrift.Binary.WriteFieldStop(buf[offset:])
 	return offset
@@ -764,22 +764,22 @@ func (p *UserProfile) BLength() int {
 		l += p.field5Length()
 		l += p.field6Length()
 		l += p.field7Length()
-		l += p.field26Length()
 		l += p.field8Length()
+		l += p.field9Length()
+		l += p.field10Length()
 		l += p.field11Length()
 		l += p.field12Length()
 		l += p.field13Length()
 		l += p.field14Length()
 		l += p.field15Length()
-		l += p.field20Length()
 		l += p.field16Length()
 		l += p.field17Length()
 		l += p.field18Length()
 		l += p.field19Length()
+		l += p.field20Length()
+		l += p.field21Length()
 		l += p.field22Length()
 		l += p.field23Length()
-		l += p.field24Length()
-		l += p.field25Length()
 	}
 	l += thrift.Binary.FieldStopLength()
 	return l
@@ -848,73 +848,73 @@ func (p *UserProfile) fastWriteField7(buf []byte, w thrift.NocopyWriter) int {
 	return offset
 }
 
-func (p *UserProfile) fastWriteField26(buf []byte, w thrift.NocopyWriter) int {
+func (p *UserProfile) fastWriteField8(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetGender() {
-		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I32, 26)
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I32, 8)
 		offset += thrift.Binary.WriteI32(buf[offset:], int32(*p.Gender))
 	}
 	return offset
 }
 
-func (p *UserProfile) fastWriteField8(buf []byte, w thrift.NocopyWriter) int {
+func (p *UserProfile) fastWriteField9(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetProfessionalTitle() {
-		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 8)
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 9)
 		offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, *p.ProfessionalTitle)
+	}
+	return offset
+}
+
+func (p *UserProfile) fastWriteField10(buf []byte, w thrift.NocopyWriter) int {
+	offset := 0
+	if p.IsSetEmployeeID() {
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 10)
+		offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, *p.EmployeeID)
 	}
 	return offset
 }
 
 func (p *UserProfile) fastWriteField11(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	if p.IsSetEmployeeID() {
-		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 11)
-		offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, *p.EmployeeID)
+	if p.IsSetStatus() {
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I32, 11)
+		offset += thrift.Binary.WriteI32(buf[offset:], int32(*p.Status))
 	}
 	return offset
 }
 
 func (p *UserProfile) fastWriteField12(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	if p.IsSetStatus() {
+	if p.IsSetLoginAttempts() {
 		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I32, 12)
-		offset += thrift.Binary.WriteI32(buf[offset:], int32(*p.Status))
+		offset += thrift.Binary.WriteI32(buf[offset:], p.LoginAttempts)
 	}
 	return offset
 }
 
 func (p *UserProfile) fastWriteField13(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	if p.IsSetLoginAttempts() {
-		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I32, 13)
-		offset += thrift.Binary.WriteI32(buf[offset:], p.LoginAttempts)
+	if p.IsSetMustChangePassword() {
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.BOOL, 13)
+		offset += thrift.Binary.WriteBool(buf[offset:], p.MustChangePassword)
 	}
 	return offset
 }
 
 func (p *UserProfile) fastWriteField14(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	if p.IsSetMustChangePassword() {
-		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.BOOL, 14)
-		offset += thrift.Binary.WriteBool(buf[offset:], p.MustChangePassword)
+	if p.IsSetAccountExpiry() {
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 14)
+		offset += thrift.Binary.WriteI64(buf[offset:], *p.AccountExpiry)
 	}
 	return offset
 }
 
 func (p *UserProfile) fastWriteField15(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
-	if p.IsSetAccountExpiry() {
-		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 15)
-		offset += thrift.Binary.WriteI64(buf[offset:], *p.AccountExpiry)
-	}
-	return offset
-}
-
-func (p *UserProfile) fastWriteField20(buf []byte, w thrift.NocopyWriter) int {
-	offset := 0
 	if p.IsSetLastLoginTime() {
-		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 20)
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I64, 15)
 		offset += thrift.Binary.WriteI64(buf[offset:], *p.LastLoginTime)
 	}
 	return offset
@@ -956,19 +956,19 @@ func (p *UserProfile) fastWriteField19(buf []byte, w thrift.NocopyWriter) int {
 	return offset
 }
 
-func (p *UserProfile) fastWriteField22(buf []byte, w thrift.NocopyWriter) int {
+func (p *UserProfile) fastWriteField20(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetDeleted() {
-		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.BOOL, 22)
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.BOOL, 20)
 		offset += thrift.Binary.WriteBool(buf[offset:], p.Deleted)
 	}
 	return offset
 }
 
-func (p *UserProfile) fastWriteField23(buf []byte, w thrift.NocopyWriter) int {
+func (p *UserProfile) fastWriteField21(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetRoleIDs() {
-		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.LIST, 23)
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.LIST, 21)
 		listBeginOffset := offset
 		offset += thrift.Binary.ListBeginLength()
 		var length int
@@ -981,19 +981,19 @@ func (p *UserProfile) fastWriteField23(buf []byte, w thrift.NocopyWriter) int {
 	return offset
 }
 
-func (p *UserProfile) fastWriteField24(buf []byte, w thrift.NocopyWriter) int {
+func (p *UserProfile) fastWriteField22(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetPrimaryOrganizationID() {
-		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 24)
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 22)
 		offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, *p.PrimaryOrganizationID)
 	}
 	return offset
 }
 
-func (p *UserProfile) fastWriteField25(buf []byte, w thrift.NocopyWriter) int {
+func (p *UserProfile) fastWriteField23(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetPrimaryDepartmentID() {
-		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 25)
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 23)
 		offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, *p.PrimaryDepartmentID)
 	}
 	return offset
@@ -1062,7 +1062,7 @@ func (p *UserProfile) field7Length() int {
 	return l
 }
 
-func (p *UserProfile) field26Length() int {
+func (p *UserProfile) field8Length() int {
 	l := 0
 	if p.IsSetGender() {
 		l += thrift.Binary.FieldBeginLength()
@@ -1071,7 +1071,7 @@ func (p *UserProfile) field26Length() int {
 	return l
 }
 
-func (p *UserProfile) field8Length() int {
+func (p *UserProfile) field9Length() int {
 	l := 0
 	if p.IsSetProfessionalTitle() {
 		l += thrift.Binary.FieldBeginLength()
@@ -1080,7 +1080,7 @@ func (p *UserProfile) field8Length() int {
 	return l
 }
 
-func (p *UserProfile) field11Length() int {
+func (p *UserProfile) field10Length() int {
 	l := 0
 	if p.IsSetEmployeeID() {
 		l += thrift.Binary.FieldBeginLength()
@@ -1089,7 +1089,7 @@ func (p *UserProfile) field11Length() int {
 	return l
 }
 
-func (p *UserProfile) field12Length() int {
+func (p *UserProfile) field11Length() int {
 	l := 0
 	if p.IsSetStatus() {
 		l += thrift.Binary.FieldBeginLength()
@@ -1098,7 +1098,7 @@ func (p *UserProfile) field12Length() int {
 	return l
 }
 
-func (p *UserProfile) field13Length() int {
+func (p *UserProfile) field12Length() int {
 	l := 0
 	if p.IsSetLoginAttempts() {
 		l += thrift.Binary.FieldBeginLength()
@@ -1107,7 +1107,7 @@ func (p *UserProfile) field13Length() int {
 	return l
 }
 
-func (p *UserProfile) field14Length() int {
+func (p *UserProfile) field13Length() int {
 	l := 0
 	if p.IsSetMustChangePassword() {
 		l += thrift.Binary.FieldBeginLength()
@@ -1116,7 +1116,7 @@ func (p *UserProfile) field14Length() int {
 	return l
 }
 
-func (p *UserProfile) field15Length() int {
+func (p *UserProfile) field14Length() int {
 	l := 0
 	if p.IsSetAccountExpiry() {
 		l += thrift.Binary.FieldBeginLength()
@@ -1125,7 +1125,7 @@ func (p *UserProfile) field15Length() int {
 	return l
 }
 
-func (p *UserProfile) field20Length() int {
+func (p *UserProfile) field15Length() int {
 	l := 0
 	if p.IsSetLastLoginTime() {
 		l += thrift.Binary.FieldBeginLength()
@@ -1170,7 +1170,7 @@ func (p *UserProfile) field19Length() int {
 	return l
 }
 
-func (p *UserProfile) field22Length() int {
+func (p *UserProfile) field20Length() int {
 	l := 0
 	if p.IsSetDeleted() {
 		l += thrift.Binary.FieldBeginLength()
@@ -1179,7 +1179,7 @@ func (p *UserProfile) field22Length() int {
 	return l
 }
 
-func (p *UserProfile) field23Length() int {
+func (p *UserProfile) field21Length() int {
 	l := 0
 	if p.IsSetRoleIDs() {
 		l += thrift.Binary.FieldBeginLength()
@@ -1192,7 +1192,7 @@ func (p *UserProfile) field23Length() int {
 	return l
 }
 
-func (p *UserProfile) field24Length() int {
+func (p *UserProfile) field22Length() int {
 	l := 0
 	if p.IsSetPrimaryOrganizationID() {
 		l += thrift.Binary.FieldBeginLength()
@@ -1201,7 +1201,7 @@ func (p *UserProfile) field24Length() int {
 	return l
 }
 
-func (p *UserProfile) field25Length() int {
+func (p *UserProfile) field23Length() int {
 	l := 0
 	if p.IsSetPrimaryDepartmentID() {
 		l += thrift.Binary.FieldBeginLength()

@@ -2459,33 +2459,33 @@ type UserProfileDTO struct {
 	/** 职业头衔 */
 	ProfessionalTitle *string `thrift:"professionalTitle,8,optional" json:"professional_title,omitempty" form:"professionalTitle" query:"professionalTitle"`
 	/** 员工工号 */
-	EmployeeID *string `thrift:"employeeID,11,optional" json:"employee_id,omitempty" form:"employeeID" query:"employeeID"`
+	EmployeeID *string `thrift:"employeeID,9,optional" json:"employee_id,omitempty" form:"employeeID" query:"employeeID"`
 	/** 用户状态 */
-	Status *int32 `thrift:"status,12,optional" json:"status" form:"status" query:"status"`
+	Status *int32 `thrift:"status,10,optional" json:"status" form:"status" query:"status"`
 	/** 是否必须修改密码 */
-	MustChangePassword *bool `thrift:"mustChangePassword,13,optional" json:"must_change_password,omitempty" form:"mustChangePassword" query:"mustChangePassword"`
+	MustChangePassword *bool `thrift:"mustChangePassword,11,optional" json:"must_change_password,omitempty" form:"mustChangePassword" query:"mustChangePassword"`
 	/** 账户过期时间 */
-	AccountExpiry *core.TimestampMS `thrift:"accountExpiry,14,optional" json:"account_expiry,omitempty" form:"accountExpiry" query:"accountExpiry"`
+	AccountExpiry *core.TimestampMS `thrift:"accountExpiry,12,optional" json:"account_expiry,omitempty" form:"accountExpiry" query:"accountExpiry"`
 	/** 性别 */
-	Gender *int32 `thrift:"gender,15,optional" json:"gender,omitempty" form:"gender" query:"gender"`
+	Gender *int32 `thrift:"gender,13,optional" json:"gender,omitempty" form:"gender" query:"gender"`
 	/** 创建时间 */
-	CreatedAt *core.TimestampMS `thrift:"createdAt,16,optional" json:"created_at" form:"createdAt" query:"createdAt"`
+	CreatedAt *core.TimestampMS `thrift:"createdAt,14,optional" json:"created_at" form:"createdAt" query:"createdAt"`
 	/** 更新时间 */
-	UpdatedAt *core.TimestampMS `thrift:"updatedAt,17,optional" json:"updated_at" form:"updatedAt" query:"updatedAt"`
+	UpdatedAt *core.TimestampMS `thrift:"updatedAt,15,optional" json:"updated_at" form:"updatedAt" query:"updatedAt"`
 	/** 最后登录时间 */
-	LastLoginTime *core.TimestampMS `thrift:"lastLoginTime,18,optional" json:"last_login_time,omitempty" form:"lastLoginTime" query:"lastLoginTime"`
+	LastLoginTime *core.TimestampMS `thrift:"lastLoginTime,16,optional" json:"last_login_time,omitempty" form:"lastLoginTime" query:"lastLoginTime"`
 	/** 连续登录失败次数 */
-	LoginAttempts *int32 `thrift:"loginAttempts,20,optional" json:"login_attempts,omitempty" form:"loginAttempts" query:"loginAttempts"`
+	LoginAttempts *int32 `thrift:"loginAttempts,17,optional" json:"login_attempts,omitempty" form:"loginAttempts" query:"loginAttempts"`
 	/** 创建者用户ID */
-	CreatedBy *string `thrift:"createdBy,21,optional" json:"created_by,omitempty" form:"createdBy" query:"createdBy"`
+	CreatedBy *string `thrift:"createdBy,18,optional" json:"created_by,omitempty" form:"createdBy" query:"createdBy"`
 	/** 最后更新者用户ID */
-	UpdatedBy *string `thrift:"updatedBy,22,optional" json:"updated_by,omitempty" form:"updatedBy" query:"updatedBy"`
+	UpdatedBy *string `thrift:"updatedBy,19,optional" json:"updated_by,omitempty" form:"updatedBy" query:"updatedBy"`
 	/** 用户角色ID列表 */
-	RoleIDs []string `thrift:"roleIDs,23,optional,list<string>" json:"role_ids,omitempty" form:"roleIDs" query:"roleIDs"`
+	RoleIDs []string `thrift:"roleIDs,20,optional,list<string>" json:"role_ids,omitempty" form:"roleIDs" query:"roleIDs"`
 	/** 主组织ID */
-	PrimaryOrganizationID *string `thrift:"primaryOrganizationID,24,optional" json:"primary_organization_id,omitempty" form:"primaryOrganizationID" query:"primaryOrganizationID"`
+	PrimaryOrganizationID *string `thrift:"primaryOrganizationID,21,optional" json:"primary_organization_id,omitempty" form:"primaryOrganizationID" query:"primaryOrganizationID"`
 	/** 主部门ID */
-	PrimaryDepartmentID *string `thrift:"primaryDepartmentID,25,optional" json:"primary_department_id,omitempty" form:"primaryDepartmentID" query:"primaryDepartmentID"`
+	PrimaryDepartmentID *string `thrift:"primaryDepartmentID,22,optional" json:"primary_department_id,omitempty" form:"primaryDepartmentID" query:"primaryDepartmentID"`
 }
 
 func NewUserProfileDTO() *UserProfileDTO {
@@ -2702,20 +2702,20 @@ var fieldIDToName_UserProfileDTO = map[int16]string{
 	6:  "lastName",
 	7:  "realName",
 	8:  "professionalTitle",
-	11: "employeeID",
-	12: "status",
-	13: "mustChangePassword",
-	14: "accountExpiry",
-	15: "gender",
-	16: "createdAt",
-	17: "updatedAt",
-	18: "lastLoginTime",
-	20: "loginAttempts",
-	21: "createdBy",
-	22: "updatedBy",
-	23: "roleIDs",
-	24: "primaryOrganizationID",
-	25: "primaryDepartmentID",
+	9:  "employeeID",
+	10: "status",
+	11: "mustChangePassword",
+	12: "accountExpiry",
+	13: "gender",
+	14: "createdAt",
+	15: "updatedAt",
+	16: "lastLoginTime",
+	17: "loginAttempts",
+	18: "createdBy",
+	19: "updatedBy",
+	20: "roleIDs",
+	21: "primaryOrganizationID",
+	22: "primaryDepartmentID",
 }
 
 func (p *UserProfileDTO) IsSetID() bool {
@@ -2889,8 +2889,24 @@ func (p *UserProfileDTO) Read(iprot thrift.TProtocol) (err error) {
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
-		case 11:
+		case 9:
 			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField9(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 10:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField10(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 11:
+			if fieldTypeId == thrift.BOOL {
 				if err = p.ReadField11(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -2898,7 +2914,7 @@ func (p *UserProfileDTO) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 12:
-			if fieldTypeId == thrift.I32 {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField12(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -2906,7 +2922,7 @@ func (p *UserProfileDTO) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 13:
-			if fieldTypeId == thrift.BOOL {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField13(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -2922,7 +2938,7 @@ func (p *UserProfileDTO) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 15:
-			if fieldTypeId == thrift.I32 {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField15(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -2938,7 +2954,7 @@ func (p *UserProfileDTO) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 17:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField17(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -2946,15 +2962,23 @@ func (p *UserProfileDTO) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 18:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField18(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
+		case 19:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField19(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
 		case 20:
-			if fieldTypeId == thrift.I32 {
+			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField20(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -2972,30 +2996,6 @@ func (p *UserProfileDTO) Read(iprot thrift.TProtocol) (err error) {
 		case 22:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField22(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 23:
-			if fieldTypeId == thrift.LIST {
-				if err = p.ReadField23(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 24:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField24(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 25:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField25(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -3118,7 +3118,7 @@ func (p *UserProfileDTO) ReadField8(iprot thrift.TProtocol) error {
 	p.ProfessionalTitle = _field
 	return nil
 }
-func (p *UserProfileDTO) ReadField11(iprot thrift.TProtocol) error {
+func (p *UserProfileDTO) ReadField9(iprot thrift.TProtocol) error {
 
 	var _field *string
 	if v, err := iprot.ReadString(); err != nil {
@@ -3129,7 +3129,7 @@ func (p *UserProfileDTO) ReadField11(iprot thrift.TProtocol) error {
 	p.EmployeeID = _field
 	return nil
 }
-func (p *UserProfileDTO) ReadField12(iprot thrift.TProtocol) error {
+func (p *UserProfileDTO) ReadField10(iprot thrift.TProtocol) error {
 
 	var _field *int32
 	if v, err := iprot.ReadI32(); err != nil {
@@ -3140,7 +3140,7 @@ func (p *UserProfileDTO) ReadField12(iprot thrift.TProtocol) error {
 	p.Status = _field
 	return nil
 }
-func (p *UserProfileDTO) ReadField13(iprot thrift.TProtocol) error {
+func (p *UserProfileDTO) ReadField11(iprot thrift.TProtocol) error {
 
 	var _field *bool
 	if v, err := iprot.ReadBool(); err != nil {
@@ -3151,7 +3151,7 @@ func (p *UserProfileDTO) ReadField13(iprot thrift.TProtocol) error {
 	p.MustChangePassword = _field
 	return nil
 }
-func (p *UserProfileDTO) ReadField14(iprot thrift.TProtocol) error {
+func (p *UserProfileDTO) ReadField12(iprot thrift.TProtocol) error {
 
 	var _field *core.TimestampMS
 	if v, err := iprot.ReadI64(); err != nil {
@@ -3162,7 +3162,7 @@ func (p *UserProfileDTO) ReadField14(iprot thrift.TProtocol) error {
 	p.AccountExpiry = _field
 	return nil
 }
-func (p *UserProfileDTO) ReadField15(iprot thrift.TProtocol) error {
+func (p *UserProfileDTO) ReadField13(iprot thrift.TProtocol) error {
 
 	var _field *int32
 	if v, err := iprot.ReadI32(); err != nil {
@@ -3173,7 +3173,7 @@ func (p *UserProfileDTO) ReadField15(iprot thrift.TProtocol) error {
 	p.Gender = _field
 	return nil
 }
-func (p *UserProfileDTO) ReadField16(iprot thrift.TProtocol) error {
+func (p *UserProfileDTO) ReadField14(iprot thrift.TProtocol) error {
 
 	var _field *core.TimestampMS
 	if v, err := iprot.ReadI64(); err != nil {
@@ -3184,7 +3184,7 @@ func (p *UserProfileDTO) ReadField16(iprot thrift.TProtocol) error {
 	p.CreatedAt = _field
 	return nil
 }
-func (p *UserProfileDTO) ReadField17(iprot thrift.TProtocol) error {
+func (p *UserProfileDTO) ReadField15(iprot thrift.TProtocol) error {
 
 	var _field *core.TimestampMS
 	if v, err := iprot.ReadI64(); err != nil {
@@ -3195,7 +3195,7 @@ func (p *UserProfileDTO) ReadField17(iprot thrift.TProtocol) error {
 	p.UpdatedAt = _field
 	return nil
 }
-func (p *UserProfileDTO) ReadField18(iprot thrift.TProtocol) error {
+func (p *UserProfileDTO) ReadField16(iprot thrift.TProtocol) error {
 
 	var _field *core.TimestampMS
 	if v, err := iprot.ReadI64(); err != nil {
@@ -3206,7 +3206,7 @@ func (p *UserProfileDTO) ReadField18(iprot thrift.TProtocol) error {
 	p.LastLoginTime = _field
 	return nil
 }
-func (p *UserProfileDTO) ReadField20(iprot thrift.TProtocol) error {
+func (p *UserProfileDTO) ReadField17(iprot thrift.TProtocol) error {
 
 	var _field *int32
 	if v, err := iprot.ReadI32(); err != nil {
@@ -3217,7 +3217,7 @@ func (p *UserProfileDTO) ReadField20(iprot thrift.TProtocol) error {
 	p.LoginAttempts = _field
 	return nil
 }
-func (p *UserProfileDTO) ReadField21(iprot thrift.TProtocol) error {
+func (p *UserProfileDTO) ReadField18(iprot thrift.TProtocol) error {
 
 	var _field *string
 	if v, err := iprot.ReadString(); err != nil {
@@ -3228,7 +3228,7 @@ func (p *UserProfileDTO) ReadField21(iprot thrift.TProtocol) error {
 	p.CreatedBy = _field
 	return nil
 }
-func (p *UserProfileDTO) ReadField22(iprot thrift.TProtocol) error {
+func (p *UserProfileDTO) ReadField19(iprot thrift.TProtocol) error {
 
 	var _field *string
 	if v, err := iprot.ReadString(); err != nil {
@@ -3239,7 +3239,7 @@ func (p *UserProfileDTO) ReadField22(iprot thrift.TProtocol) error {
 	p.UpdatedBy = _field
 	return nil
 }
-func (p *UserProfileDTO) ReadField23(iprot thrift.TProtocol) error {
+func (p *UserProfileDTO) ReadField20(iprot thrift.TProtocol) error {
 	_, size, err := iprot.ReadListBegin()
 	if err != nil {
 		return err
@@ -3262,7 +3262,7 @@ func (p *UserProfileDTO) ReadField23(iprot thrift.TProtocol) error {
 	p.RoleIDs = _field
 	return nil
 }
-func (p *UserProfileDTO) ReadField24(iprot thrift.TProtocol) error {
+func (p *UserProfileDTO) ReadField21(iprot thrift.TProtocol) error {
 
 	var _field *string
 	if v, err := iprot.ReadString(); err != nil {
@@ -3273,7 +3273,7 @@ func (p *UserProfileDTO) ReadField24(iprot thrift.TProtocol) error {
 	p.PrimaryOrganizationID = _field
 	return nil
 }
-func (p *UserProfileDTO) ReadField25(iprot thrift.TProtocol) error {
+func (p *UserProfileDTO) ReadField22(iprot thrift.TProtocol) error {
 
 	var _field *string
 	if v, err := iprot.ReadString(); err != nil {
@@ -3323,6 +3323,14 @@ func (p *UserProfileDTO) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 8
 			goto WriteFieldError
 		}
+		if err = p.writeField9(oprot); err != nil {
+			fieldId = 9
+			goto WriteFieldError
+		}
+		if err = p.writeField10(oprot); err != nil {
+			fieldId = 10
+			goto WriteFieldError
+		}
 		if err = p.writeField11(oprot); err != nil {
 			fieldId = 11
 			goto WriteFieldError
@@ -3355,6 +3363,10 @@ func (p *UserProfileDTO) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 18
 			goto WriteFieldError
 		}
+		if err = p.writeField19(oprot); err != nil {
+			fieldId = 19
+			goto WriteFieldError
+		}
 		if err = p.writeField20(oprot); err != nil {
 			fieldId = 20
 			goto WriteFieldError
@@ -3365,18 +3377,6 @@ func (p *UserProfileDTO) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField22(oprot); err != nil {
 			fieldId = 22
-			goto WriteFieldError
-		}
-		if err = p.writeField23(oprot); err != nil {
-			fieldId = 23
-			goto WriteFieldError
-		}
-		if err = p.writeField24(oprot); err != nil {
-			fieldId = 24
-			goto WriteFieldError
-		}
-		if err = p.writeField25(oprot); err != nil {
-			fieldId = 25
 			goto WriteFieldError
 		}
 	}
@@ -3549,12 +3549,50 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
 }
 
-func (p *UserProfileDTO) writeField11(oprot thrift.TProtocol) (err error) {
+func (p *UserProfileDTO) writeField9(oprot thrift.TProtocol) (err error) {
 	if p.IsSetEmployeeID() {
-		if err = oprot.WriteFieldBegin("employeeID", thrift.STRING, 11); err != nil {
+		if err = oprot.WriteFieldBegin("employeeID", thrift.STRING, 9); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := oprot.WriteString(*p.EmployeeID); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 end error: ", p), err)
+}
+
+func (p *UserProfileDTO) writeField10(oprot thrift.TProtocol) (err error) {
+	if p.IsSetStatus() {
+		if err = oprot.WriteFieldBegin("status", thrift.I32, 10); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI32(*p.Status); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 end error: ", p), err)
+}
+
+func (p *UserProfileDTO) writeField11(oprot thrift.TProtocol) (err error) {
+	if p.IsSetMustChangePassword() {
+		if err = oprot.WriteFieldBegin("mustChangePassword", thrift.BOOL, 11); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteBool(*p.MustChangePassword); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -3569,11 +3607,11 @@ WriteFieldEndError:
 }
 
 func (p *UserProfileDTO) writeField12(oprot thrift.TProtocol) (err error) {
-	if p.IsSetStatus() {
-		if err = oprot.WriteFieldBegin("status", thrift.I32, 12); err != nil {
+	if p.IsSetAccountExpiry() {
+		if err = oprot.WriteFieldBegin("accountExpiry", thrift.I64, 12); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI32(*p.Status); err != nil {
+		if err := oprot.WriteI64(*p.AccountExpiry); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -3588,11 +3626,11 @@ WriteFieldEndError:
 }
 
 func (p *UserProfileDTO) writeField13(oprot thrift.TProtocol) (err error) {
-	if p.IsSetMustChangePassword() {
-		if err = oprot.WriteFieldBegin("mustChangePassword", thrift.BOOL, 13); err != nil {
+	if p.IsSetGender() {
+		if err = oprot.WriteFieldBegin("gender", thrift.I32, 13); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteBool(*p.MustChangePassword); err != nil {
+		if err := oprot.WriteI32(*p.Gender); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -3607,11 +3645,11 @@ WriteFieldEndError:
 }
 
 func (p *UserProfileDTO) writeField14(oprot thrift.TProtocol) (err error) {
-	if p.IsSetAccountExpiry() {
-		if err = oprot.WriteFieldBegin("accountExpiry", thrift.I64, 14); err != nil {
+	if p.IsSetCreatedAt() {
+		if err = oprot.WriteFieldBegin("createdAt", thrift.I64, 14); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI64(*p.AccountExpiry); err != nil {
+		if err := oprot.WriteI64(*p.CreatedAt); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -3626,11 +3664,11 @@ WriteFieldEndError:
 }
 
 func (p *UserProfileDTO) writeField15(oprot thrift.TProtocol) (err error) {
-	if p.IsSetGender() {
-		if err = oprot.WriteFieldBegin("gender", thrift.I32, 15); err != nil {
+	if p.IsSetUpdatedAt() {
+		if err = oprot.WriteFieldBegin("updatedAt", thrift.I64, 15); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI32(*p.Gender); err != nil {
+		if err := oprot.WriteI64(*p.UpdatedAt); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -3645,11 +3683,11 @@ WriteFieldEndError:
 }
 
 func (p *UserProfileDTO) writeField16(oprot thrift.TProtocol) (err error) {
-	if p.IsSetCreatedAt() {
-		if err = oprot.WriteFieldBegin("createdAt", thrift.I64, 16); err != nil {
+	if p.IsSetLastLoginTime() {
+		if err = oprot.WriteFieldBegin("lastLoginTime", thrift.I64, 16); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI64(*p.CreatedAt); err != nil {
+		if err := oprot.WriteI64(*p.LastLoginTime); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -3664,11 +3702,11 @@ WriteFieldEndError:
 }
 
 func (p *UserProfileDTO) writeField17(oprot thrift.TProtocol) (err error) {
-	if p.IsSetUpdatedAt() {
-		if err = oprot.WriteFieldBegin("updatedAt", thrift.I64, 17); err != nil {
+	if p.IsSetLoginAttempts() {
+		if err = oprot.WriteFieldBegin("loginAttempts", thrift.I32, 17); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI64(*p.UpdatedAt); err != nil {
+		if err := oprot.WriteI32(*p.LoginAttempts); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -3683,11 +3721,11 @@ WriteFieldEndError:
 }
 
 func (p *UserProfileDTO) writeField18(oprot thrift.TProtocol) (err error) {
-	if p.IsSetLastLoginTime() {
-		if err = oprot.WriteFieldBegin("lastLoginTime", thrift.I64, 18); err != nil {
+	if p.IsSetCreatedBy() {
+		if err = oprot.WriteFieldBegin("createdBy", thrift.STRING, 18); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI64(*p.LastLoginTime); err != nil {
+		if err := oprot.WriteString(*p.CreatedBy); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -3701,47 +3739,9 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 18 end error: ", p), err)
 }
 
-func (p *UserProfileDTO) writeField20(oprot thrift.TProtocol) (err error) {
-	if p.IsSetLoginAttempts() {
-		if err = oprot.WriteFieldBegin("loginAttempts", thrift.I32, 20); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteI32(*p.LoginAttempts); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 20 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 20 end error: ", p), err)
-}
-
-func (p *UserProfileDTO) writeField21(oprot thrift.TProtocol) (err error) {
-	if p.IsSetCreatedBy() {
-		if err = oprot.WriteFieldBegin("createdBy", thrift.STRING, 21); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteString(*p.CreatedBy); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 21 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 21 end error: ", p), err)
-}
-
-func (p *UserProfileDTO) writeField22(oprot thrift.TProtocol) (err error) {
+func (p *UserProfileDTO) writeField19(oprot thrift.TProtocol) (err error) {
 	if p.IsSetUpdatedBy() {
-		if err = oprot.WriteFieldBegin("updatedBy", thrift.STRING, 22); err != nil {
+		if err = oprot.WriteFieldBegin("updatedBy", thrift.STRING, 19); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := oprot.WriteString(*p.UpdatedBy); err != nil {
@@ -3753,14 +3753,14 @@ func (p *UserProfileDTO) writeField22(oprot thrift.TProtocol) (err error) {
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 22 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 19 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 22 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 19 end error: ", p), err)
 }
 
-func (p *UserProfileDTO) writeField23(oprot thrift.TProtocol) (err error) {
+func (p *UserProfileDTO) writeField20(oprot thrift.TProtocol) (err error) {
 	if p.IsSetRoleIDs() {
-		if err = oprot.WriteFieldBegin("roleIDs", thrift.LIST, 23); err != nil {
+		if err = oprot.WriteFieldBegin("roleIDs", thrift.LIST, 20); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := oprot.WriteListBegin(thrift.STRING, len(p.RoleIDs)); err != nil {
@@ -3780,14 +3780,14 @@ func (p *UserProfileDTO) writeField23(oprot thrift.TProtocol) (err error) {
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 23 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 20 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 23 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 20 end error: ", p), err)
 }
 
-func (p *UserProfileDTO) writeField24(oprot thrift.TProtocol) (err error) {
+func (p *UserProfileDTO) writeField21(oprot thrift.TProtocol) (err error) {
 	if p.IsSetPrimaryOrganizationID() {
-		if err = oprot.WriteFieldBegin("primaryOrganizationID", thrift.STRING, 24); err != nil {
+		if err = oprot.WriteFieldBegin("primaryOrganizationID", thrift.STRING, 21); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := oprot.WriteString(*p.PrimaryOrganizationID); err != nil {
@@ -3799,14 +3799,14 @@ func (p *UserProfileDTO) writeField24(oprot thrift.TProtocol) (err error) {
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 24 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 21 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 24 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 21 end error: ", p), err)
 }
 
-func (p *UserProfileDTO) writeField25(oprot thrift.TProtocol) (err error) {
+func (p *UserProfileDTO) writeField22(oprot thrift.TProtocol) (err error) {
 	if p.IsSetPrimaryDepartmentID() {
-		if err = oprot.WriteFieldBegin("primaryDepartmentID", thrift.STRING, 25); err != nil {
+		if err = oprot.WriteFieldBegin("primaryDepartmentID", thrift.STRING, 22); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := oprot.WriteString(*p.PrimaryDepartmentID); err != nil {
@@ -3818,9 +3818,9 @@ func (p *UserProfileDTO) writeField25(oprot thrift.TProtocol) (err error) {
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 25 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 22 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 25 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 22 end error: ", p), err)
 }
 
 func (p *UserProfileDTO) String() string {
@@ -4062,17 +4062,17 @@ type CreateUserRequestDTO struct {
 	/** 职业头衔 */
 	ProfessionalTitle *string `thrift:"professionalTitle,8,optional" json:"professional_title,omitempty" form:"professional_title" vd:"@:len($)<=100; msg:'职业头衔长度不能超过100个字符'"`
 	/** 员工工号 */
-	EmployeeID *string `thrift:"employeeID,11,optional" json:"employee_id,omitempty" form:"employee_id" vd:"@:len($)<=50; msg:'员工工号长度不能超过50个字符'"`
+	EmployeeID *string `thrift:"employeeID,9,optional" json:"employee_id,omitempty" form:"employee_id" vd:"@:len($)<=50; msg:'员工工号长度不能超过50个字符'"`
 	/** 是否必须在下次登录时修改密码 */
-	MustChangePassword *bool `thrift:"mustChangePassword,12,optional" json:"must_change_password,omitempty" form:"must_change_password" `
+	MustChangePassword *bool `thrift:"mustChangePassword,10,optional" json:"must_change_password,omitempty" form:"must_change_password" `
 	/** 账户过期时间 */
-	AccountExpiry *core.TimestampMS `thrift:"accountExpiry,13,optional" json:"account_expiry,omitempty" form:"account_expiry" `
+	AccountExpiry *core.TimestampMS `thrift:"accountExpiry,11,optional" json:"account_expiry,omitempty" form:"account_expiry" `
 	/** 性别（非必填，0:未知, 1:男, 2:女） */
-	Gender *int32 `thrift:"gender,14,optional" json:"gender,omitempty" form:"gender" vd:"@:$ == null || ($ >= 0 && $ <= 2); msg:'性别值必须为null或在0-2之间'"`
+	Gender *int32 `thrift:"gender,12,optional" json:"gender,omitempty" form:"gender" vd:"@:$ == null || ($ >= 0 && $ <= 2); msg:'性别值必须为null或在0-2之间'"`
 	/** 角色ID列表 */
-	RoleIDs []string `thrift:"roleIDs,15,optional,list<string>" json:"role_ids,omitempty" form:"role_ids" `
+	RoleIDs []string `thrift:"roleIDs,13,optional,list<string>" json:"role_ids,omitempty" form:"role_ids" `
 	/** 组织ID */
-	OrganizationID *string `thrift:"organizationID,16,optional" json:"organization_id,omitempty" form:"organization_id" vd:"@:len($)==0 || len($)==36; msg:'组织ID格式不正确'"`
+	OrganizationID *string `thrift:"organizationID,14,optional" json:"organization_id,omitempty" form:"organization_id" vd:"@:len($)==0 || len($)==36; msg:'组织ID格式不正确'"`
 }
 
 func NewCreateUserRequestDTO() *CreateUserRequestDTO {
@@ -4217,12 +4217,12 @@ var fieldIDToName_CreateUserRequestDTO = map[int16]string{
 	6:  "lastName",
 	7:  "realName",
 	8:  "professionalTitle",
-	11: "employeeID",
-	12: "mustChangePassword",
-	13: "accountExpiry",
-	14: "gender",
-	15: "roleIDs",
-	16: "organizationID",
+	9:  "employeeID",
+	10: "mustChangePassword",
+	11: "accountExpiry",
+	12: "gender",
+	13: "roleIDs",
+	14: "organizationID",
 }
 
 func (p *CreateUserRequestDTO) IsSetUsername() bool {
@@ -4364,8 +4364,24 @@ func (p *CreateUserRequestDTO) Read(iprot thrift.TProtocol) (err error) {
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
-		case 11:
+		case 9:
 			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField9(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 10:
+			if fieldTypeId == thrift.BOOL {
+				if err = p.ReadField10(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 11:
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField11(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -4373,7 +4389,7 @@ func (p *CreateUserRequestDTO) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 12:
-			if fieldTypeId == thrift.BOOL {
+			if fieldTypeId == thrift.I32 {
 				if err = p.ReadField12(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -4381,7 +4397,7 @@ func (p *CreateUserRequestDTO) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 13:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField13(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -4389,24 +4405,8 @@ func (p *CreateUserRequestDTO) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 14:
-			if fieldTypeId == thrift.I32 {
-				if err = p.ReadField14(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 15:
-			if fieldTypeId == thrift.LIST {
-				if err = p.ReadField15(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 16:
 			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField16(iprot); err != nil {
+				if err = p.ReadField14(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -4529,7 +4529,7 @@ func (p *CreateUserRequestDTO) ReadField8(iprot thrift.TProtocol) error {
 	p.ProfessionalTitle = _field
 	return nil
 }
-func (p *CreateUserRequestDTO) ReadField11(iprot thrift.TProtocol) error {
+func (p *CreateUserRequestDTO) ReadField9(iprot thrift.TProtocol) error {
 
 	var _field *string
 	if v, err := iprot.ReadString(); err != nil {
@@ -4540,7 +4540,7 @@ func (p *CreateUserRequestDTO) ReadField11(iprot thrift.TProtocol) error {
 	p.EmployeeID = _field
 	return nil
 }
-func (p *CreateUserRequestDTO) ReadField12(iprot thrift.TProtocol) error {
+func (p *CreateUserRequestDTO) ReadField10(iprot thrift.TProtocol) error {
 
 	var _field *bool
 	if v, err := iprot.ReadBool(); err != nil {
@@ -4551,7 +4551,7 @@ func (p *CreateUserRequestDTO) ReadField12(iprot thrift.TProtocol) error {
 	p.MustChangePassword = _field
 	return nil
 }
-func (p *CreateUserRequestDTO) ReadField13(iprot thrift.TProtocol) error {
+func (p *CreateUserRequestDTO) ReadField11(iprot thrift.TProtocol) error {
 
 	var _field *core.TimestampMS
 	if v, err := iprot.ReadI64(); err != nil {
@@ -4562,7 +4562,7 @@ func (p *CreateUserRequestDTO) ReadField13(iprot thrift.TProtocol) error {
 	p.AccountExpiry = _field
 	return nil
 }
-func (p *CreateUserRequestDTO) ReadField14(iprot thrift.TProtocol) error {
+func (p *CreateUserRequestDTO) ReadField12(iprot thrift.TProtocol) error {
 
 	var _field *int32
 	if v, err := iprot.ReadI32(); err != nil {
@@ -4573,7 +4573,7 @@ func (p *CreateUserRequestDTO) ReadField14(iprot thrift.TProtocol) error {
 	p.Gender = _field
 	return nil
 }
-func (p *CreateUserRequestDTO) ReadField15(iprot thrift.TProtocol) error {
+func (p *CreateUserRequestDTO) ReadField13(iprot thrift.TProtocol) error {
 	_, size, err := iprot.ReadListBegin()
 	if err != nil {
 		return err
@@ -4596,7 +4596,7 @@ func (p *CreateUserRequestDTO) ReadField15(iprot thrift.TProtocol) error {
 	p.RoleIDs = _field
 	return nil
 }
-func (p *CreateUserRequestDTO) ReadField16(iprot thrift.TProtocol) error {
+func (p *CreateUserRequestDTO) ReadField14(iprot thrift.TProtocol) error {
 
 	var _field *string
 	if v, err := iprot.ReadString(); err != nil {
@@ -4646,6 +4646,14 @@ func (p *CreateUserRequestDTO) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 8
 			goto WriteFieldError
 		}
+		if err = p.writeField9(oprot); err != nil {
+			fieldId = 9
+			goto WriteFieldError
+		}
+		if err = p.writeField10(oprot); err != nil {
+			fieldId = 10
+			goto WriteFieldError
+		}
 		if err = p.writeField11(oprot); err != nil {
 			fieldId = 11
 			goto WriteFieldError
@@ -4660,14 +4668,6 @@ func (p *CreateUserRequestDTO) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField14(oprot); err != nil {
 			fieldId = 14
-			goto WriteFieldError
-		}
-		if err = p.writeField15(oprot); err != nil {
-			fieldId = 15
-			goto WriteFieldError
-		}
-		if err = p.writeField16(oprot); err != nil {
-			fieldId = 16
 			goto WriteFieldError
 		}
 	}
@@ -4840,12 +4840,50 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
 }
 
-func (p *CreateUserRequestDTO) writeField11(oprot thrift.TProtocol) (err error) {
+func (p *CreateUserRequestDTO) writeField9(oprot thrift.TProtocol) (err error) {
 	if p.IsSetEmployeeID() {
-		if err = oprot.WriteFieldBegin("employeeID", thrift.STRING, 11); err != nil {
+		if err = oprot.WriteFieldBegin("employeeID", thrift.STRING, 9); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := oprot.WriteString(*p.EmployeeID); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 end error: ", p), err)
+}
+
+func (p *CreateUserRequestDTO) writeField10(oprot thrift.TProtocol) (err error) {
+	if p.IsSetMustChangePassword() {
+		if err = oprot.WriteFieldBegin("mustChangePassword", thrift.BOOL, 10); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteBool(*p.MustChangePassword); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 end error: ", p), err)
+}
+
+func (p *CreateUserRequestDTO) writeField11(oprot thrift.TProtocol) (err error) {
+	if p.IsSetAccountExpiry() {
+		if err = oprot.WriteFieldBegin("accountExpiry", thrift.I64, 11); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(*p.AccountExpiry); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4860,11 +4898,11 @@ WriteFieldEndError:
 }
 
 func (p *CreateUserRequestDTO) writeField12(oprot thrift.TProtocol) (err error) {
-	if p.IsSetMustChangePassword() {
-		if err = oprot.WriteFieldBegin("mustChangePassword", thrift.BOOL, 12); err != nil {
+	if p.IsSetGender() {
+		if err = oprot.WriteFieldBegin("gender", thrift.I32, 12); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteBool(*p.MustChangePassword); err != nil {
+		if err := oprot.WriteI32(*p.Gender); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -4879,46 +4917,8 @@ WriteFieldEndError:
 }
 
 func (p *CreateUserRequestDTO) writeField13(oprot thrift.TProtocol) (err error) {
-	if p.IsSetAccountExpiry() {
-		if err = oprot.WriteFieldBegin("accountExpiry", thrift.I64, 13); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteI64(*p.AccountExpiry); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 13 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 13 end error: ", p), err)
-}
-
-func (p *CreateUserRequestDTO) writeField14(oprot thrift.TProtocol) (err error) {
-	if p.IsSetGender() {
-		if err = oprot.WriteFieldBegin("gender", thrift.I32, 14); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteI32(*p.Gender); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 14 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 14 end error: ", p), err)
-}
-
-func (p *CreateUserRequestDTO) writeField15(oprot thrift.TProtocol) (err error) {
 	if p.IsSetRoleIDs() {
-		if err = oprot.WriteFieldBegin("roleIDs", thrift.LIST, 15); err != nil {
+		if err = oprot.WriteFieldBegin("roleIDs", thrift.LIST, 13); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := oprot.WriteListBegin(thrift.STRING, len(p.RoleIDs)); err != nil {
@@ -4938,14 +4938,14 @@ func (p *CreateUserRequestDTO) writeField15(oprot thrift.TProtocol) (err error) 
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 15 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 13 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 15 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 13 end error: ", p), err)
 }
 
-func (p *CreateUserRequestDTO) writeField16(oprot thrift.TProtocol) (err error) {
+func (p *CreateUserRequestDTO) writeField14(oprot thrift.TProtocol) (err error) {
 	if p.IsSetOrganizationID() {
-		if err = oprot.WriteFieldBegin("organizationID", thrift.STRING, 16); err != nil {
+		if err = oprot.WriteFieldBegin("organizationID", thrift.STRING, 14); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := oprot.WriteString(*p.OrganizationID); err != nil {
@@ -4957,9 +4957,9 @@ func (p *CreateUserRequestDTO) writeField16(oprot thrift.TProtocol) (err error) 
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 16 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 14 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 16 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 14 end error: ", p), err)
 }
 
 func (p *CreateUserRequestDTO) String() string {
@@ -5144,17 +5144,17 @@ type UpdateUserRequestDTO struct {
 	/** 真实姓名 */
 	RealName *string `thrift:"realName,6,optional" json:"real_name,omitempty" form:"real_name" vd:"@:len($)<=100; msg:'真实姓名长度不能超过100个字符'"`
 	/** 职业头衔 */
-	ProfessionalTitle *string `thrift:"professionalTitle,8,optional" json:"professional_title,omitempty" form:"professional_title" vd:"@:len($)<=100; msg:'职业头衔长度不能超过100个字符'"`
+	ProfessionalTitle *string `thrift:"professionalTitle,7,optional" json:"professional_title,omitempty" form:"professional_title" vd:"@:len($)<=100; msg:'职业头衔长度不能超过100个字符'"`
 	/** 员工工号 */
-	EmployeeID *string `thrift:"employeeID,11,optional" json:"employee_id,omitempty" form:"employee_id" vd:"@:len($)<=50; msg:'员工工号长度不能超过50个字符'"`
+	EmployeeID *string `thrift:"employeeID,8,optional" json:"employee_id,omitempty" form:"employee_id" vd:"@:len($)<=50; msg:'员工工号长度不能超过50个字符'"`
 	/** 账户过期时间 */
-	AccountExpiry *core.TimestampMS `thrift:"accountExpiry,12,optional" json:"account_expiry,omitempty" form:"account_expiry" `
+	AccountExpiry *core.TimestampMS `thrift:"accountExpiry,9,optional" json:"account_expiry,omitempty" form:"account_expiry" `
 	/** 性别 */
-	Gender *int32 `thrift:"gender,13,optional" json:"gender,omitempty" form:"gender" vd:"@:len($)==0 || ($ >= 0 && $ <= 2); msg:'性别值必须在0-2之间'"`
+	Gender *int32 `thrift:"gender,10,optional" json:"gender,omitempty" form:"gender" vd:"@:len($)==0 || ($ >= 0 && $ <= 2); msg:'性别值必须在0-2之间'"`
 	/** 角色ID列表 */
-	RoleIDs []string `thrift:"roleIDs,14,optional,list<string>" json:"role_ids,omitempty" form:"role_ids" `
+	RoleIDs []string `thrift:"roleIDs,11,optional,list<string>" json:"role_ids,omitempty" form:"role_ids" `
 	/** 组织ID */
-	OrganizationID *string `thrift:"organizationID,15,optional" json:"organization_id,omitempty" form:"organization_id" vd:"@:len($)==0 || len($)==36; msg:'组织ID格式不正确'"`
+	OrganizationID *string `thrift:"organizationID,12,optional" json:"organization_id,omitempty" form:"organization_id" vd:"@:len($)==0 || len($)==36; msg:'组织ID格式不正确'"`
 }
 
 func NewUpdateUserRequestDTO() *UpdateUserRequestDTO {
@@ -5279,12 +5279,12 @@ var fieldIDToName_UpdateUserRequestDTO = map[int16]string{
 	4:  "firstName",
 	5:  "lastName",
 	6:  "realName",
-	8:  "professionalTitle",
-	11: "employeeID",
-	12: "accountExpiry",
-	13: "gender",
-	14: "roleIDs",
-	15: "organizationID",
+	7:  "professionalTitle",
+	8:  "employeeID",
+	9:  "accountExpiry",
+	10: "gender",
+	11: "roleIDs",
+	12: "organizationID",
 }
 
 func (p *UpdateUserRequestDTO) IsSetUserID() bool {
@@ -5402,6 +5402,14 @@ func (p *UpdateUserRequestDTO) Read(iprot thrift.TProtocol) (err error) {
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
+		case 7:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField7(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
 		case 8:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField8(iprot); err != nil {
@@ -5410,8 +5418,24 @@ func (p *UpdateUserRequestDTO) Read(iprot thrift.TProtocol) (err error) {
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
+		case 9:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField9(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 10:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField10(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
 		case 11:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField11(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -5419,32 +5443,8 @@ func (p *UpdateUserRequestDTO) Read(iprot thrift.TProtocol) (err error) {
 				goto SkipFieldError
 			}
 		case 12:
-			if fieldTypeId == thrift.I64 {
-				if err = p.ReadField12(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 13:
-			if fieldTypeId == thrift.I32 {
-				if err = p.ReadField13(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 14:
-			if fieldTypeId == thrift.LIST {
-				if err = p.ReadField14(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 15:
 			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField15(iprot); err != nil {
+				if err = p.ReadField12(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -5545,7 +5545,7 @@ func (p *UpdateUserRequestDTO) ReadField6(iprot thrift.TProtocol) error {
 	p.RealName = _field
 	return nil
 }
-func (p *UpdateUserRequestDTO) ReadField8(iprot thrift.TProtocol) error {
+func (p *UpdateUserRequestDTO) ReadField7(iprot thrift.TProtocol) error {
 
 	var _field *string
 	if v, err := iprot.ReadString(); err != nil {
@@ -5556,7 +5556,7 @@ func (p *UpdateUserRequestDTO) ReadField8(iprot thrift.TProtocol) error {
 	p.ProfessionalTitle = _field
 	return nil
 }
-func (p *UpdateUserRequestDTO) ReadField11(iprot thrift.TProtocol) error {
+func (p *UpdateUserRequestDTO) ReadField8(iprot thrift.TProtocol) error {
 
 	var _field *string
 	if v, err := iprot.ReadString(); err != nil {
@@ -5567,7 +5567,7 @@ func (p *UpdateUserRequestDTO) ReadField11(iprot thrift.TProtocol) error {
 	p.EmployeeID = _field
 	return nil
 }
-func (p *UpdateUserRequestDTO) ReadField12(iprot thrift.TProtocol) error {
+func (p *UpdateUserRequestDTO) ReadField9(iprot thrift.TProtocol) error {
 
 	var _field *core.TimestampMS
 	if v, err := iprot.ReadI64(); err != nil {
@@ -5578,7 +5578,7 @@ func (p *UpdateUserRequestDTO) ReadField12(iprot thrift.TProtocol) error {
 	p.AccountExpiry = _field
 	return nil
 }
-func (p *UpdateUserRequestDTO) ReadField13(iprot thrift.TProtocol) error {
+func (p *UpdateUserRequestDTO) ReadField10(iprot thrift.TProtocol) error {
 
 	var _field *int32
 	if v, err := iprot.ReadI32(); err != nil {
@@ -5589,7 +5589,7 @@ func (p *UpdateUserRequestDTO) ReadField13(iprot thrift.TProtocol) error {
 	p.Gender = _field
 	return nil
 }
-func (p *UpdateUserRequestDTO) ReadField14(iprot thrift.TProtocol) error {
+func (p *UpdateUserRequestDTO) ReadField11(iprot thrift.TProtocol) error {
 	_, size, err := iprot.ReadListBegin()
 	if err != nil {
 		return err
@@ -5612,7 +5612,7 @@ func (p *UpdateUserRequestDTO) ReadField14(iprot thrift.TProtocol) error {
 	p.RoleIDs = _field
 	return nil
 }
-func (p *UpdateUserRequestDTO) ReadField15(iprot thrift.TProtocol) error {
+func (p *UpdateUserRequestDTO) ReadField12(iprot thrift.TProtocol) error {
 
 	var _field *string
 	if v, err := iprot.ReadString(); err != nil {
@@ -5654,8 +5654,20 @@ func (p *UpdateUserRequestDTO) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 6
 			goto WriteFieldError
 		}
+		if err = p.writeField7(oprot); err != nil {
+			fieldId = 7
+			goto WriteFieldError
+		}
 		if err = p.writeField8(oprot); err != nil {
 			fieldId = 8
+			goto WriteFieldError
+		}
+		if err = p.writeField9(oprot); err != nil {
+			fieldId = 9
+			goto WriteFieldError
+		}
+		if err = p.writeField10(oprot); err != nil {
+			fieldId = 10
 			goto WriteFieldError
 		}
 		if err = p.writeField11(oprot); err != nil {
@@ -5664,18 +5676,6 @@ func (p *UpdateUserRequestDTO) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField12(oprot); err != nil {
 			fieldId = 12
-			goto WriteFieldError
-		}
-		if err = p.writeField13(oprot); err != nil {
-			fieldId = 13
-			goto WriteFieldError
-		}
-		if err = p.writeField14(oprot); err != nil {
-			fieldId = 14
-			goto WriteFieldError
-		}
-		if err = p.writeField15(oprot); err != nil {
-			fieldId = 15
 			goto WriteFieldError
 		}
 	}
@@ -5810,12 +5810,31 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 6 end error: ", p), err)
 }
 
-func (p *UpdateUserRequestDTO) writeField8(oprot thrift.TProtocol) (err error) {
+func (p *UpdateUserRequestDTO) writeField7(oprot thrift.TProtocol) (err error) {
 	if p.IsSetProfessionalTitle() {
-		if err = oprot.WriteFieldBegin("professionalTitle", thrift.STRING, 8); err != nil {
+		if err = oprot.WriteFieldBegin("professionalTitle", thrift.STRING, 7); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := oprot.WriteString(*p.ProfessionalTitle); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
+}
+
+func (p *UpdateUserRequestDTO) writeField8(oprot thrift.TProtocol) (err error) {
+	if p.IsSetEmployeeID() {
+		if err = oprot.WriteFieldBegin("employeeID", thrift.STRING, 8); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.EmployeeID); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -5829,28 +5848,9 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
 }
 
-func (p *UpdateUserRequestDTO) writeField11(oprot thrift.TProtocol) (err error) {
-	if p.IsSetEmployeeID() {
-		if err = oprot.WriteFieldBegin("employeeID", thrift.STRING, 11); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteString(*p.EmployeeID); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 11 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 11 end error: ", p), err)
-}
-
-func (p *UpdateUserRequestDTO) writeField12(oprot thrift.TProtocol) (err error) {
+func (p *UpdateUserRequestDTO) writeField9(oprot thrift.TProtocol) (err error) {
 	if p.IsSetAccountExpiry() {
-		if err = oprot.WriteFieldBegin("accountExpiry", thrift.I64, 12); err != nil {
+		if err = oprot.WriteFieldBegin("accountExpiry", thrift.I64, 9); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := oprot.WriteI64(*p.AccountExpiry); err != nil {
@@ -5862,14 +5862,14 @@ func (p *UpdateUserRequestDTO) writeField12(oprot thrift.TProtocol) (err error) 
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 12 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 12 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 end error: ", p), err)
 }
 
-func (p *UpdateUserRequestDTO) writeField13(oprot thrift.TProtocol) (err error) {
+func (p *UpdateUserRequestDTO) writeField10(oprot thrift.TProtocol) (err error) {
 	if p.IsSetGender() {
-		if err = oprot.WriteFieldBegin("gender", thrift.I32, 13); err != nil {
+		if err = oprot.WriteFieldBegin("gender", thrift.I32, 10); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := oprot.WriteI32(*p.Gender); err != nil {
@@ -5881,14 +5881,14 @@ func (p *UpdateUserRequestDTO) writeField13(oprot thrift.TProtocol) (err error) 
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 13 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 13 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 10 end error: ", p), err)
 }
 
-func (p *UpdateUserRequestDTO) writeField14(oprot thrift.TProtocol) (err error) {
+func (p *UpdateUserRequestDTO) writeField11(oprot thrift.TProtocol) (err error) {
 	if p.IsSetRoleIDs() {
-		if err = oprot.WriteFieldBegin("roleIDs", thrift.LIST, 14); err != nil {
+		if err = oprot.WriteFieldBegin("roleIDs", thrift.LIST, 11); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := oprot.WriteListBegin(thrift.STRING, len(p.RoleIDs)); err != nil {
@@ -5908,14 +5908,14 @@ func (p *UpdateUserRequestDTO) writeField14(oprot thrift.TProtocol) (err error) 
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 14 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 11 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 14 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 11 end error: ", p), err)
 }
 
-func (p *UpdateUserRequestDTO) writeField15(oprot thrift.TProtocol) (err error) {
+func (p *UpdateUserRequestDTO) writeField12(oprot thrift.TProtocol) (err error) {
 	if p.IsSetOrganizationID() {
-		if err = oprot.WriteFieldBegin("organizationID", thrift.STRING, 15); err != nil {
+		if err = oprot.WriteFieldBegin("organizationID", thrift.STRING, 12); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := oprot.WriteString(*p.OrganizationID); err != nil {
@@ -5927,9 +5927,9 @@ func (p *UpdateUserRequestDTO) writeField15(oprot thrift.TProtocol) (err error) 
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 15 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 12 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 15 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 12 end error: ", p), err)
 }
 
 func (p *UpdateUserRequestDTO) String() string {
@@ -5956,13 +5956,13 @@ type UpdateMeRequestDTO struct {
 	/** 真实姓名 */
 	RealName *string `thrift:"realName,5,optional" json:"real_name,omitempty" form:"real_name" vd:"@:len($)<=100; msg:'真实姓名长度不能超过100个字符'"`
 	/** 职业头衔 */
-	ProfessionalTitle *string `thrift:"professionalTitle,7,optional" json:"professional_title,omitempty" form:"professional_title" vd:"@:len($)<=100; msg:'职业头衔长度不能超过100个字符'"`
+	ProfessionalTitle *string `thrift:"professionalTitle,6,optional" json:"professional_title,omitempty" form:"professional_title" vd:"@:len($)<=100; msg:'职业头衔长度不能超过100个字符'"`
 	/** 员工工号 */
-	EmployeeID *string `thrift:"employeeID,10,optional" json:"employee_id,omitempty" form:"employee_id" vd:"@:len($)<=50; msg:'员工工号长度不能超过50个字符'"`
+	EmployeeID *string `thrift:"employeeID,7,optional" json:"employee_id,omitempty" form:"employee_id" vd:"@:len($)<=50; msg:'员工工号长度不能超过50个字符'"`
 	/** 账户过期时间 */
-	AccountExpiry *core.TimestampMS `thrift:"accountExpiry,11,optional" json:"account_expiry,omitempty" form:"account_expiry" `
+	AccountExpiry *core.TimestampMS `thrift:"accountExpiry,8,optional" json:"account_expiry,omitempty" form:"account_expiry" `
 	/** 性别 */
-	Gender *int32 `thrift:"gender,12,optional" json:"gender,omitempty" form:"gender" vd:"@:$ == null || ($ >= 0 && $ <= 2); msg:'性别值必须为null或在0-2之间'"`
+	Gender *int32 `thrift:"gender,9,optional" json:"gender,omitempty" form:"gender" vd:"@:$ == null || ($ >= 0 && $ <= 2); msg:'性别值必须为null或在0-2之间'"`
 }
 
 func NewUpdateMeRequestDTO() *UpdateMeRequestDTO {
@@ -6054,15 +6054,15 @@ func (p *UpdateMeRequestDTO) GetGender() (v int32) {
 }
 
 var fieldIDToName_UpdateMeRequestDTO = map[int16]string{
-	1:  "email",
-	2:  "phone",
-	3:  "firstName",
-	4:  "lastName",
-	5:  "realName",
-	7:  "professionalTitle",
-	10: "employeeID",
-	11: "accountExpiry",
-	12: "gender",
+	1: "email",
+	2: "phone",
+	3: "firstName",
+	4: "lastName",
+	5: "realName",
+	6: "professionalTitle",
+	7: "employeeID",
+	8: "accountExpiry",
+	9: "gender",
 }
 
 func (p *UpdateMeRequestDTO) IsSetEmail() bool {
@@ -6160,6 +6160,14 @@ func (p *UpdateMeRequestDTO) Read(iprot thrift.TProtocol) (err error) {
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
+		case 6:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField6(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
 		case 7:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField7(iprot); err != nil {
@@ -6168,25 +6176,17 @@ func (p *UpdateMeRequestDTO) Read(iprot thrift.TProtocol) (err error) {
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
-		case 10:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField10(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		case 11:
+		case 8:
 			if fieldTypeId == thrift.I64 {
-				if err = p.ReadField11(iprot); err != nil {
+				if err = p.ReadField8(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
-		case 12:
+		case 9:
 			if fieldTypeId == thrift.I32 {
-				if err = p.ReadField12(iprot); err != nil {
+				if err = p.ReadField9(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -6276,7 +6276,7 @@ func (p *UpdateMeRequestDTO) ReadField5(iprot thrift.TProtocol) error {
 	p.RealName = _field
 	return nil
 }
-func (p *UpdateMeRequestDTO) ReadField7(iprot thrift.TProtocol) error {
+func (p *UpdateMeRequestDTO) ReadField6(iprot thrift.TProtocol) error {
 
 	var _field *string
 	if v, err := iprot.ReadString(); err != nil {
@@ -6287,7 +6287,7 @@ func (p *UpdateMeRequestDTO) ReadField7(iprot thrift.TProtocol) error {
 	p.ProfessionalTitle = _field
 	return nil
 }
-func (p *UpdateMeRequestDTO) ReadField10(iprot thrift.TProtocol) error {
+func (p *UpdateMeRequestDTO) ReadField7(iprot thrift.TProtocol) error {
 
 	var _field *string
 	if v, err := iprot.ReadString(); err != nil {
@@ -6298,7 +6298,7 @@ func (p *UpdateMeRequestDTO) ReadField10(iprot thrift.TProtocol) error {
 	p.EmployeeID = _field
 	return nil
 }
-func (p *UpdateMeRequestDTO) ReadField11(iprot thrift.TProtocol) error {
+func (p *UpdateMeRequestDTO) ReadField8(iprot thrift.TProtocol) error {
 
 	var _field *core.TimestampMS
 	if v, err := iprot.ReadI64(); err != nil {
@@ -6309,7 +6309,7 @@ func (p *UpdateMeRequestDTO) ReadField11(iprot thrift.TProtocol) error {
 	p.AccountExpiry = _field
 	return nil
 }
-func (p *UpdateMeRequestDTO) ReadField12(iprot thrift.TProtocol) error {
+func (p *UpdateMeRequestDTO) ReadField9(iprot thrift.TProtocol) error {
 
 	var _field *int32
 	if v, err := iprot.ReadI32(); err != nil {
@@ -6347,20 +6347,20 @@ func (p *UpdateMeRequestDTO) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 5
 			goto WriteFieldError
 		}
+		if err = p.writeField6(oprot); err != nil {
+			fieldId = 6
+			goto WriteFieldError
+		}
 		if err = p.writeField7(oprot); err != nil {
 			fieldId = 7
 			goto WriteFieldError
 		}
-		if err = p.writeField10(oprot); err != nil {
-			fieldId = 10
+		if err = p.writeField8(oprot); err != nil {
+			fieldId = 8
 			goto WriteFieldError
 		}
-		if err = p.writeField11(oprot); err != nil {
-			fieldId = 11
-			goto WriteFieldError
-		}
-		if err = p.writeField12(oprot); err != nil {
-			fieldId = 12
+		if err = p.writeField9(oprot); err != nil {
+			fieldId = 9
 			goto WriteFieldError
 		}
 	}
@@ -6476,12 +6476,31 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
 }
 
-func (p *UpdateMeRequestDTO) writeField7(oprot thrift.TProtocol) (err error) {
+func (p *UpdateMeRequestDTO) writeField6(oprot thrift.TProtocol) (err error) {
 	if p.IsSetProfessionalTitle() {
-		if err = oprot.WriteFieldBegin("professionalTitle", thrift.STRING, 7); err != nil {
+		if err = oprot.WriteFieldBegin("professionalTitle", thrift.STRING, 6); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := oprot.WriteString(*p.ProfessionalTitle); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 6 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 6 end error: ", p), err)
+}
+
+func (p *UpdateMeRequestDTO) writeField7(oprot thrift.TProtocol) (err error) {
+	if p.IsSetEmployeeID() {
+		if err = oprot.WriteFieldBegin("employeeID", thrift.STRING, 7); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.EmployeeID); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -6495,28 +6514,9 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 7 end error: ", p), err)
 }
 
-func (p *UpdateMeRequestDTO) writeField10(oprot thrift.TProtocol) (err error) {
-	if p.IsSetEmployeeID() {
-		if err = oprot.WriteFieldBegin("employeeID", thrift.STRING, 10); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteString(*p.EmployeeID); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 10 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 10 end error: ", p), err)
-}
-
-func (p *UpdateMeRequestDTO) writeField11(oprot thrift.TProtocol) (err error) {
+func (p *UpdateMeRequestDTO) writeField8(oprot thrift.TProtocol) (err error) {
 	if p.IsSetAccountExpiry() {
-		if err = oprot.WriteFieldBegin("accountExpiry", thrift.I64, 11); err != nil {
+		if err = oprot.WriteFieldBegin("accountExpiry", thrift.I64, 8); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := oprot.WriteI64(*p.AccountExpiry); err != nil {
@@ -6528,14 +6528,14 @@ func (p *UpdateMeRequestDTO) writeField11(oprot thrift.TProtocol) (err error) {
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 11 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 11 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 8 end error: ", p), err)
 }
 
-func (p *UpdateMeRequestDTO) writeField12(oprot thrift.TProtocol) (err error) {
+func (p *UpdateMeRequestDTO) writeField9(oprot thrift.TProtocol) (err error) {
 	if p.IsSetGender() {
-		if err = oprot.WriteFieldBegin("gender", thrift.I32, 12); err != nil {
+		if err = oprot.WriteFieldBegin("gender", thrift.I32, 9); err != nil {
 			goto WriteFieldBeginError
 		}
 		if err := oprot.WriteI32(*p.Gender); err != nil {
@@ -6547,9 +6547,9 @@ func (p *UpdateMeRequestDTO) writeField12(oprot thrift.TProtocol) (err error) {
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 12 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 12 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 9 end error: ", p), err)
 }
 
 func (p *UpdateMeRequestDTO) String() string {

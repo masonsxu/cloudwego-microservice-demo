@@ -193,46 +193,46 @@ struct UserProfileDTO {
     8: optional string professionalTitle (go.tag = "json:\"professional_title,omitempty\""),
 
     /** 员工工号 */
-    11: optional string employeeID (go.tag = "json:\"employee_id,omitempty\""),
+    9: optional string employeeID (go.tag = "json:\"employee_id,omitempty\""),
 
     /** 用户状态 */
-    12: optional i32 status (go.tag = "json:\"status\""),
+    10: optional i32 status (go.tag = "json:\"status\""),
 
     /** 是否必须修改密码 */
-    13: optional bool mustChangePassword (go.tag = "json:\"must_change_password,omitempty\""),
+    11: optional bool mustChangePassword (go.tag = "json:\"must_change_password,omitempty\""),
 
     /** 账户过期时间 */
-    14: optional core.TimestampMS accountExpiry (go.tag = "json:\"account_expiry,omitempty\""),
+    12: optional core.TimestampMS accountExpiry (go.tag = "json:\"account_expiry,omitempty\""),
 
     /** 性别 */
-    15: optional i32 gender (go.tag = "json:\"gender,omitempty\""),
+    13: optional i32 gender (go.tag = "json:\"gender,omitempty\""),
 
     /** 创建时间 */
-    16: optional core.TimestampMS createdAt (go.tag = "json:\"created_at\""),
+    14: optional core.TimestampMS createdAt (go.tag = "json:\"created_at\""),
 
     /** 更新时间 */
-    17: optional core.TimestampMS updatedAt (go.tag = "json:\"updated_at\""),
+    15: optional core.TimestampMS updatedAt (go.tag = "json:\"updated_at\""),
 
     /** 最后登录时间 */
-    18: optional core.TimestampMS lastLoginTime (go.tag = "json:\"last_login_time,omitempty\""),
+    16: optional core.TimestampMS lastLoginTime (go.tag = "json:\"last_login_time,omitempty\""),
 
     /** 连续登录失败次数 */
-    20: optional i32 loginAttempts (go.tag = "json:\"login_attempts,omitempty\""),
+    17: optional i32 loginAttempts (go.tag = "json:\"login_attempts,omitempty\""),
 
     /** 创建者用户ID */
-    21: optional string createdBy (go.tag = "json:\"created_by,omitempty\""),
+    18: optional string createdBy (go.tag = "json:\"created_by,omitempty\""),
 
     /** 最后更新者用户ID */
-    22: optional string updatedBy (go.tag = "json:\"updated_by,omitempty\""),
+    19: optional string updatedBy (go.tag = "json:\"updated_by,omitempty\""),
 
     /** 用户角色ID列表 */
-    23: optional list<string> roleIDs (go.tag = "json:\"role_ids,omitempty\""),
+    20: optional list<string> roleIDs (go.tag = "json:\"role_ids,omitempty\""),
 
     /** 主组织ID */
-    24: optional string primaryOrganizationID (go.tag = "json:\"primary_organization_id,omitempty\""),
+    21: optional string primaryOrganizationID (go.tag = "json:\"primary_organization_id,omitempty\""),
 
     /** 主部门ID */
-    25: optional string primaryDepartmentID (go.tag = "json:\"primary_department_id,omitempty\""),
+    22: optional string primaryDepartmentID (go.tag = "json:\"primary_department_id,omitempty\""),
 }
 
 /**
@@ -281,22 +281,22 @@ struct CreateUserRequestDTO {
     8: optional string professionalTitle (api.body = "professional_title", api.vd = "@:len($)<=100; msg:'职业头衔长度不能超过100个字符'", go.tag = "json:\"professional_title,omitempty\""),
 
     /** 员工工号 */
-    11: optional string employeeID (api.body = "employee_id", api.vd = "@:len($)<=50; msg:'员工工号长度不能超过50个字符'", go.tag = "json:\"employee_id,omitempty\""),
+    9: optional string employeeID (api.body = "employee_id", api.vd = "@:len($)<=50; msg:'员工工号长度不能超过50个字符'", go.tag = "json:\"employee_id,omitempty\""),
 
     /** 是否必须在下次登录时修改密码 */
-    12: optional bool mustChangePassword (api.body = "must_change_password", go.tag = "json:\"must_change_password,omitempty\""),
+    10: optional bool mustChangePassword (api.body = "must_change_password", go.tag = "json:\"must_change_password,omitempty\""),
 
     /** 账户过期时间 */
-    13: optional core.TimestampMS accountExpiry (api.body = "account_expiry", go.tag = "json:\"account_expiry,omitempty\""),
+    11: optional core.TimestampMS accountExpiry (api.body = "account_expiry", go.tag = "json:\"account_expiry,omitempty\""),
 
     /** 性别（非必填，0:未知, 1:男, 2:女） */
-    14: optional i32 gender (api.body = "gender", api.vd = "@:$ == null || ($ >= 0 && $ <= 2); msg:'性别值必须为null或在0-2之间'", go.tag = "json:\"gender,omitempty\""),
+    12: optional i32 gender (api.body = "gender", api.vd = "@:$ == null || ($ >= 0 && $ <= 2); msg:'性别值必须为null或在0-2之间'", go.tag = "json:\"gender,omitempty\""),
 
     /** 角色ID列表 */
-    15: optional list<string> roleIDs (api.body = "role_ids", go.tag = "json:\"role_ids,omitempty\""),
+    13: optional list<string> roleIDs (api.body = "role_ids", go.tag = "json:\"role_ids,omitempty\""),
 
     /** 组织ID */
-    16: optional string organizationID (api.body = "organization_id", api.vd = "@:len($)==0 || len($)==36; msg:'组织ID格式不正确'", go.tag = "json:\"organization_id,omitempty\""),
+    14: optional string organizationID (api.body = "organization_id", api.vd = "@:len($)==0 || len($)==36; msg:'组织ID格式不正确'", go.tag = "json:\"organization_id,omitempty\""),
 }
 
 /**
@@ -334,22 +334,22 @@ struct UpdateUserRequestDTO {
     6: optional string realName (api.body = "real_name", api.vd = "@:len($)<=100; msg:'真实姓名长度不能超过100个字符'", go.tag = "json:\"real_name,omitempty\""),
 
     /** 职业头衔 */
-    8: optional string professionalTitle (api.body = "professional_title", api.vd = "@:len($)<=100; msg:'职业头衔长度不能超过100个字符'", go.tag = "json:\"professional_title,omitempty\""),
+    7: optional string professionalTitle (api.body = "professional_title", api.vd = "@:len($)<=100; msg:'职业头衔长度不能超过100个字符'", go.tag = "json:\"professional_title,omitempty\""),
 
     /** 员工工号 */
-    11: optional string employeeID (api.body = "employee_id", api.vd = "@:len($)<=50; msg:'员工工号长度不能超过50个字符'", go.tag = "json:\"employee_id,omitempty\""),
+    8: optional string employeeID (api.body = "employee_id", api.vd = "@:len($)<=50; msg:'员工工号长度不能超过50个字符'", go.tag = "json:\"employee_id,omitempty\""),
 
     /** 账户过期时间 */
-    12: optional core.TimestampMS accountExpiry (api.body = "account_expiry", go.tag = "json:\"account_expiry,omitempty\""),
+    9: optional core.TimestampMS accountExpiry (api.body = "account_expiry", go.tag = "json:\"account_expiry,omitempty\""),
 
     /** 性别 */
-    13: optional i32 gender (api.body = "gender", api.vd = "@:len($)==0 || ($ >= 0 && $ <= 2); msg:'性别值必须在0-2之间'", go.tag = "json:\"gender,omitempty\""),
+    10: optional i32 gender (api.body = "gender", api.vd = "@:len($)==0 || ($ >= 0 && $ <= 2); msg:'性别值必须在0-2之间'", go.tag = "json:\"gender,omitempty\""),
 
     /** 角色ID列表 */
-    14: optional list<string> roleIDs (api.body = "role_ids", go.tag = "json:\"role_ids,omitempty\""),
+    11: optional list<string> roleIDs (api.body = "role_ids", go.tag = "json:\"role_ids,omitempty\""),
 
     /** 组织ID */
-    15: optional string organizationID (api.body = "organization_id", api.vd = "@:len($)==0 || len($)==36; msg:'组织ID格式不正确'", go.tag = "json:\"organization_id,omitempty\""),
+    12: optional string organizationID (api.body = "organization_id", api.vd = "@:len($)==0 || len($)==36; msg:'组织ID格式不正确'", go.tag = "json:\"organization_id,omitempty\""),
 }
 
 /**
@@ -374,16 +374,16 @@ struct UpdateMeRequestDTO {
     5: optional string realName (api.body = "real_name", api.vd = "@:len($)<=100; msg:'真实姓名长度不能超过100个字符'", go.tag = "json:\"real_name,omitempty\""),
 
     /** 职业头衔 */
-    7: optional string professionalTitle (api.body = "professional_title", api.vd = "@:len($)<=100; msg:'职业头衔长度不能超过100个字符'", go.tag = "json:\"professional_title,omitempty\""),
+    6: optional string professionalTitle (api.body = "professional_title", api.vd = "@:len($)<=100; msg:'职业头衔长度不能超过100个字符'", go.tag = "json:\"professional_title,omitempty\""),
 
     /** 员工工号 */
-    10: optional string employeeID (api.body = "employee_id", api.vd = "@:len($)<=50; msg:'员工工号长度不能超过50个字符'", go.tag = "json:\"employee_id,omitempty\""),
+    7: optional string employeeID (api.body = "employee_id", api.vd = "@:len($)<=50; msg:'员工工号长度不能超过50个字符'", go.tag = "json:\"employee_id,omitempty\""),
 
     /** 账户过期时间 */
-    11: optional core.TimestampMS accountExpiry (api.body = "account_expiry", go.tag = "json:\"account_expiry,omitempty\""),
+    8: optional core.TimestampMS accountExpiry (api.body = "account_expiry", go.tag = "json:\"account_expiry,omitempty\""),
 
     /** 性别 */
-    12: optional i32 gender (api.body = "gender", api.vd = "@:$ == null || ($ >= 0 && $ <= 2); msg:'性别值必须为null或在0-2之间'", go.tag = "json:\"gender,omitempty\""),
+    9: optional i32 gender (api.body = "gender", api.vd = "@:$ == null || ($ >= 0 && $ <= 2); msg:'性别值必须为null或在0-2之间'", go.tag = "json:\"gender,omitempty\""),
 }
 
 /**

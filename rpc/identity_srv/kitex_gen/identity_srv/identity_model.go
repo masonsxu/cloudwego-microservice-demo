@@ -163,22 +163,22 @@ type UserProfile struct {
 	FirstName             *string           `thrift:"firstName,5,optional" frugal:"5,optional,string" json:"firstName,omitempty"`
 	LastName              *string           `thrift:"lastName,6,optional" frugal:"6,optional,string" json:"lastName,omitempty"`
 	RealName              *string           `thrift:"realName,7,optional" frugal:"7,optional,string" json:"realName,omitempty"`
-	Gender                *core.Gender      `thrift:"gender,26,optional" frugal:"26,optional,Gender" json:"gender,omitempty"`
-	ProfessionalTitle     *string           `thrift:"professionalTitle,8,optional" frugal:"8,optional,string" json:"professionalTitle,omitempty"`
-	EmployeeID            *string           `thrift:"employeeID,11,optional" frugal:"11,optional,string" json:"employeeID,omitempty"`
-	Status                *core.UserStatus  `thrift:"status,12,optional" frugal:"12,optional,UserStatus" json:"status,omitempty"`
-	LoginAttempts         int32             `thrift:"loginAttempts,13,optional" frugal:"13,optional,i32" json:"loginAttempts,omitempty"`
-	MustChangePassword    bool              `thrift:"mustChangePassword,14,optional" frugal:"14,optional,bool" json:"mustChangePassword,omitempty"`
-	AccountExpiry         *core.TimestampMS `thrift:"accountExpiry,15,optional" frugal:"15,optional,i64" json:"accountExpiry,omitempty"`
-	LastLoginTime         *core.TimestampMS `thrift:"lastLoginTime,20,optional" frugal:"20,optional,i64" json:"lastLoginTime,omitempty"`
+	Gender                *core.Gender      `thrift:"gender,8,optional" frugal:"8,optional,Gender" json:"gender,omitempty"`
+	ProfessionalTitle     *string           `thrift:"professionalTitle,9,optional" frugal:"9,optional,string" json:"professionalTitle,omitempty"`
+	EmployeeID            *string           `thrift:"employeeID,10,optional" frugal:"10,optional,string" json:"employeeID,omitempty"`
+	Status                *core.UserStatus  `thrift:"status,11,optional" frugal:"11,optional,UserStatus" json:"status,omitempty"`
+	LoginAttempts         int32             `thrift:"loginAttempts,12,optional" frugal:"12,optional,i32" json:"loginAttempts,omitempty"`
+	MustChangePassword    bool              `thrift:"mustChangePassword,13,optional" frugal:"13,optional,bool" json:"mustChangePassword,omitempty"`
+	AccountExpiry         *core.TimestampMS `thrift:"accountExpiry,14,optional" frugal:"14,optional,i64" json:"accountExpiry,omitempty"`
+	LastLoginTime         *core.TimestampMS `thrift:"lastLoginTime,15,optional" frugal:"15,optional,i64" json:"lastLoginTime,omitempty"`
 	CreatedAt             *core.TimestampMS `thrift:"createdAt,16,optional" frugal:"16,optional,i64" json:"createdAt,omitempty"`
 	UpdatedAt             *core.TimestampMS `thrift:"updatedAt,17,optional" frugal:"17,optional,i64" json:"updatedAt,omitempty"`
 	CreatedBy             *core.UUID        `thrift:"createdBy,18,optional" frugal:"18,optional,string" json:"createdBy,omitempty"`
 	UpdatedBy             *core.UUID        `thrift:"updatedBy,19,optional" frugal:"19,optional,string" json:"updatedBy,omitempty"`
-	Deleted               bool              `thrift:"deleted,22,optional" frugal:"22,optional,bool" json:"deleted,omitempty"`
-	RoleIDs               []core.UUID       `thrift:"roleIDs,23,optional" frugal:"23,optional,list<string>" json:"roleIDs,omitempty"`
-	PrimaryOrganizationID *core.UUID        `thrift:"primaryOrganizationID,24,optional" frugal:"24,optional,string" json:"primaryOrganizationID,omitempty"`
-	PrimaryDepartmentID   *core.UUID        `thrift:"primaryDepartmentID,25,optional" frugal:"25,optional,string" json:"primaryDepartmentID,omitempty"`
+	Deleted               bool              `thrift:"deleted,20,optional" frugal:"20,optional,bool" json:"deleted,omitempty"`
+	RoleIDs               []core.UUID       `thrift:"roleIDs,21,optional" frugal:"21,optional,list<string>" json:"roleIDs,omitempty"`
+	PrimaryOrganizationID *core.UUID        `thrift:"primaryOrganizationID,22,optional" frugal:"22,optional,string" json:"primaryOrganizationID,omitempty"`
+	PrimaryDepartmentID   *core.UUID        `thrift:"primaryDepartmentID,23,optional" frugal:"23,optional,string" json:"primaryDepartmentID,omitempty"`
 }
 
 func NewUserProfile() *UserProfile {
@@ -578,22 +578,22 @@ var fieldIDToName_UserProfile = map[int16]string{
 	5:  "firstName",
 	6:  "lastName",
 	7:  "realName",
-	26: "gender",
-	8:  "professionalTitle",
-	11: "employeeID",
-	12: "status",
-	13: "loginAttempts",
-	14: "mustChangePassword",
-	15: "accountExpiry",
-	20: "lastLoginTime",
+	8:  "gender",
+	9:  "professionalTitle",
+	10: "employeeID",
+	11: "status",
+	12: "loginAttempts",
+	13: "mustChangePassword",
+	14: "accountExpiry",
+	15: "lastLoginTime",
 	16: "createdAt",
 	17: "updatedAt",
 	18: "createdBy",
 	19: "updatedBy",
-	22: "deleted",
-	23: "roleIDs",
-	24: "primaryOrganizationID",
-	25: "primaryDepartmentID",
+	20: "deleted",
+	21: "roleIDs",
+	22: "primaryOrganizationID",
+	23: "primaryDepartmentID",
 }
 
 type UserMembership struct {

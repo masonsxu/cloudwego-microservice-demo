@@ -511,11 +511,11 @@ struct CreateUserRequest {
     5: optional string firstName,
     6: optional string lastName,
     7: optional string realName,
-    14: optional enums.Gender gender,
-    8: optional string professionalTitle,
-    11: optional string employeeID,
-    12: optional bool mustChangePassword,
-    13: optional core.TimestampMS accountExpiry,
+    8: optional enums.Gender gender,
+    9: optional string professionalTitle,
+    10: optional string employeeID,
+    11: optional bool mustChangePassword,
+    12: optional core.TimestampMS accountExpiry,
 }
 
 /** 获取用户请求 */
@@ -531,10 +531,10 @@ struct UpdateUserRequest {
     4: optional string firstName,
     5: optional string lastName,
     6: optional string realName,
-    13: optional enums.Gender gender,
+    7: optional enums.Gender gender,
     8: optional string professionalTitle,
-    11: optional string employeeID,
-    12: optional core.TimestampMS accountExpiry,
+    9: optional string employeeID,
+    10: optional core.TimestampMS accountExpiry,
 }
 
 /** 删除用户请求 */

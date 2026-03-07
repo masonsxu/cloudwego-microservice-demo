@@ -70,30 +70,30 @@ struct UserProfile {
     7: optional string realName,
 
     /** 性别 */
-    26: optional enums.Gender gender,
+    8: optional enums.Gender gender,
     // --- 专业信息 (仅用于展示) ---
 
     /** 专业职称 */
-    8: optional string professionalTitle,
+    9: optional string professionalTitle,
     // --- 状态与安全 ---
 
     /** 员工工号 */
-    11: optional string employeeID,
+    10: optional string employeeID,
 
     /** 用户账户状态 */
-    12: optional enums.UserStatus status,
+    11: optional enums.UserStatus status,
 
     /** 连续登录失败次数 */
-    13: optional i32 loginAttempts = 0,
+    12: optional i32 loginAttempts = 0,
 
     /** 是否必须在下次登录时修改密码 */
-    14: optional bool mustChangePassword = false,
+    13: optional bool mustChangePassword = false,
 
     /** 账户过期时间 */
-    15: optional core.TimestampMS accountExpiry,
+    14: optional core.TimestampMS accountExpiry,
 
     /** 上次登录时间 */
-    20: optional core.TimestampMS lastLoginTime,
+    15: optional core.TimestampMS lastLoginTime,
     // --- 审计与版本控制 ---
 
     /** 创建时间 */
@@ -109,16 +109,16 @@ struct UserProfile {
     19: optional core.UUID updatedBy,
 
     /** 逻辑删除标记 */
-    22: optional bool deleted = false,
+    20: optional bool deleted = false,
 
     /** 用户角色ID列表 */
-    23: optional list<core.UUID> roleIDs,
+    21: optional list<core.UUID> roleIDs,
 
     /** 主组织ID */
-    24: optional core.UUID primaryOrganizationID,
+    22: optional core.UUID primaryOrganizationID,
 
     /** 主部门ID */
-    25: optional core.UUID primaryDepartmentID,
+    23: optional core.UUID primaryDepartmentID,
 }
 
 /**
