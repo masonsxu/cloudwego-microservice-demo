@@ -224,13 +224,18 @@ go tool cover -html=coverage.out
 | 模块 | 覆盖率 | 状态 |
 |------|--------|------|
 | pkg/errno | 100.0% | ✅ |
-| pkg/password | 83.3% | ✅ |
-| pkg/log | 41.4% | ⚠️ |
-| internal/middleware | 89.1% | ✅ |
-| biz/converter | 84.0% | ✅ |
+| biz/logic/assignment | 100.0% | ✅ |
+| biz/logic/definition | 99.1% | ✅ |
+| biz/logic/department | 97.3% | ✅ |
+| biz/logic/membership | 93.1% | ✅ |
 | biz/parser | 92.1% | ✅ |
+| internal/middleware | 89.1% | ✅ |
+| biz/logic/user | 86.3% | ✅ |
+| biz/converter | 84.0% | ✅ |
+| pkg/password | 83.3% | ✅ |
+| biz/logic/organization | 71.0% | ✅ |
+| pkg/log | 41.4% | ⚠️ |
 | biz/dal | 0.0% | ❌ |
-| biz/logic | 0.0% | ❌ |
 
 **Gateway 服务**
 

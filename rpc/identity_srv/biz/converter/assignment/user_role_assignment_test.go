@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/require"
 
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 )
@@ -53,10 +54,7 @@ func TestModelToThrift_FullModel(t *testing.T) {
 
 	result := converter.ModelToThrift(model)
 
-	// 验证结果不为 nil
-	if result == nil {
-		t.Fatal("ModelToThrift() should not return nil for valid input")
-	}
+	require.NotNil(t, result, "ModelToThrift() should not return nil for valid input")
 
 	// 验证 ID 转换
 	if result.Id == nil || *result.Id != id.String() {
@@ -121,10 +119,7 @@ func TestModelToThrift_OptionalFieldsNil(t *testing.T) {
 
 	result := converter.ModelToThrift(model)
 
-	// 验证结果不为 nil
-	if result == nil {
-		t.Fatal("ModelToThrift() should not return nil for valid input")
-	}
+	require.NotNil(t, result, "ModelToThrift() should not return nil for valid input")
 
 	// 验证必填字段仍然正确转换
 	if result.Id == nil || *result.Id != id.String() {
@@ -165,9 +160,7 @@ func TestModelToThrift_ZeroTimestamps(t *testing.T) {
 
 	result := converter.ModelToThrift(model)
 
-	if result == nil {
-		t.Fatal("ModelToThrift() should not return nil for valid input")
-	}
+	require.NotNil(t, result, "ModelToThrift() should not return nil for valid input")
 
 	// 验证零值时间戳正确转换
 	if result.CreatedAt == nil || *result.CreatedAt != 0 {
@@ -197,9 +190,7 @@ func TestModelToThrift_UUIDFormat(t *testing.T) {
 
 	result := converter.ModelToThrift(model)
 
-	if result == nil {
-		t.Fatal("ModelToThrift() should not return nil")
-	}
+	require.NotNil(t, result, "ModelToThrift() should not return nil")
 
 	// 验证 UUID 字符串格式正确
 	expectedID := "550e8400-e29b-41d4-a716-446655440000"
