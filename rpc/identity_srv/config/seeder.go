@@ -44,6 +44,12 @@ func SeedDatabase(db *gorm.DB, logger *zerolog.Logger, cfg *DatabaseConfig) erro
 		return fmt.Errorf("分配超级管理员角色失败: %w", err)
 	}
 
+	// 3. 初始化默认菜单数据
+	if err := seedDefaultMenus(db); err != nil {
+		log.Printf("初始化默认菜单数据失败: %v", err)
+		// 不阻止服务启动
+	}
+
 	logger.Info().
 		Str("default_org_id", orgID.String()).
 		Str("superadmin_user_id", userID.String()).
