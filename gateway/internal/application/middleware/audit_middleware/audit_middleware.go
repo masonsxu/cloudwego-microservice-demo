@@ -2,6 +2,7 @@ package audit_middleware
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"strings"
 	"time"
@@ -11,6 +12,7 @@ import (
 	"github.com/rs/zerolog"
 
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/context/auth_context"
+	middleware "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/jwt_middleware"
 	identitycli "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/client/identity_cli"
 	tracelog "github.com/masonsxu/cloudwego-microservice-demo/gateway/pkg/log"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
@@ -154,6 +156,18 @@ func (am *AuditMiddlewareImpl) buildAuditEntry(
 		req.OrganizationID = &orgID
 	}
 
+	// 回退逻辑：JWT 跳过路径（login/refresh）没有 AuthContext，从请求中提取用户信息
+	if req.UserID == nil {
+		switch {
+		case strings.Contains(path, "/auth/login"):
+			if username := extractUsernameFromBody(requestBody); username != "" {
+				req.Username = &username
+			}
+		case strings.Contains(path, "/auth/refresh"):
+			fillUserInfoFromJWT(c, req)
+		}
+	}
+
 	return req
 }
 
@@ -176,6 +190,8 @@ func resolveAction(method, path string) identity_srv.AuditAction {
 	// 特殊路径处理
 	switch {
 	case strings.Contains(path, "/auth/login"):
+		return identity_srv.AuditAction_LOGIN
+	case strings.Contains(path, "/auth/refresh"):
 		return identity_srv.AuditAction_LOGIN
 	case strings.Contains(path, "/auth/logout"):
 		return identity_srv.AuditAction_LOGOUT
@@ -257,4 +273,77 @@ func sanitizeMap(data map[string]interface{}) {
 			sanitizeMap(nested)
 		}
 	}
+}
+
+// extractUsernameFromBody 从已脱敏的请求体 JSON 中提取 username 字段
+// login 请求体结构为 {"username":"xxx","password":"***"}
+func extractUsernameFromBody(requestBody string) string {
+	if requestBody == "" {
+		return ""
+	}
+
+	var data map[string]interface{}
+	if err := json.Unmarshal([]byte(requestBody), &data); err != nil {
+		return ""
+	}
+
+	if username, ok := data["username"].(string); ok {
+		return username
+	}
+
+	return ""
+}
+
+// fillUserInfoFromJWT 从 JWT token 提取用户信息并填充到审计日志请求
+func fillUserInfoFromJWT(c *app.RequestContext, req *identity_srv.CreateAuditLogRequest) {
+	claims := extractUserInfoFromJWT(c)
+	if claims == nil {
+		return
+	}
+
+	if v, ok := claims[middleware.IdentityKey].(string); ok {
+		req.UserID = &v
+	}
+
+	if v, ok := claims[middleware.Username].(string); ok {
+		req.Username = &v
+	}
+
+	if v, ok := claims[middleware.OrganizationID].(string); ok {
+		req.OrganizationID = &v
+	}
+}
+
+// extractUserInfoFromJWT 从 Authorization header 中的 JWT token 解码用户信息
+// 只做 base64 解码（不验证签名和过期），用于审计日志回退
+func extractUserInfoFromJWT(c *app.RequestContext) map[string]interface{} {
+	authHeader := string(c.GetHeader("Authorization"))
+	if authHeader == "" {
+		return nil
+	}
+
+	// 移除 "Bearer " 前缀
+	token := strings.TrimPrefix(authHeader, "Bearer ")
+	if token == authHeader {
+		return nil
+	}
+
+	// JWT 格式: header.payload.signature，提取 payload 部分
+	parts := strings.Split(token, ".")
+	if len(parts) != 3 {
+		return nil
+	}
+
+	// base64url 解码 payload
+	payload, err := base64.RawURLEncoding.DecodeString(parts[1])
+	if err != nil {
+		return nil
+	}
+
+	var claims map[string]interface{}
+	if err := json.Unmarshal(payload, &claims); err != nil {
+		return nil
+	}
+
+	return claims
 }

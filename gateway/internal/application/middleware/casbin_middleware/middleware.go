@@ -33,15 +33,10 @@ func NewCasbinMiddleware(enforcer *CasbinEnforcer, logger *zerolog.Logger) *Casb
 // defaultSkipPaths 默认跳过权限检查的路径
 func defaultSkipPaths() []string {
 	return []string{
-		"/login",
-		"/logout",
-		"/refresh",
 		"/health",
 		"/metrics",
 		"/swagger",
-		"/api/v1/auth/login",
-		"/api/v1/auth/logout",
-		"/api/v1/auth/refresh",
+		"/api/v1/identity/auth/login",
 	}
 }
 

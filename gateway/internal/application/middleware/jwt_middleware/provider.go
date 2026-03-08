@@ -133,10 +133,11 @@ func JWTMiddlewareProvider(
 		CookieName:   jwtConfig.Cookie.CookieName,
 		CookieDomain: jwtConfig.Cookie.CookieDomain,
 		// 注意：CookiePath 在当前版本的 hertz-contrib/jwt (v1.0.4) 中不支持，默认为 "/"
-		SecureCookie:   jwtConfig.Cookie.SecureCookie,
-		CookieHTTPOnly: jwtConfig.Cookie.CookieHTTPOnly,
-		CookieSameSite: protocol.CookieSameSite(parseSameSite(jwtConfig.Cookie.CookieSameSite)),
-		CookieMaxAge:   jwtConfig.Cookie.CookieMaxAge,
+		SecureCookie:             jwtConfig.Cookie.SecureCookie,
+		CookieHTTPOnly:           jwtConfig.Cookie.CookieHTTPOnly,
+		CookieSameSite:           protocol.CookieSameSite(parseSameSite(jwtConfig.Cookie.CookieSameSite)),
+		CookieMaxAge:             jwtConfig.Cookie.CookieMaxAge,
+		EnableTransparentRefresh: true,
 
 		// 时间函数：方便单测 mock
 		TimeFunc: time.Now,
