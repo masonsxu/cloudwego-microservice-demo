@@ -90,10 +90,10 @@ func TestDefaultSkipPaths(t *testing.T) {
 	}
 
 	expectedPaths := []string{
-		"/login",
-		"/logout",
 		"/health",
-		"/api/v1/auth/login",
+		"/metrics",
+		"/swagger",
+		"/api/v1/identity/auth/login",
 	}
 
 	for _, expected := range expectedPaths {
@@ -118,13 +118,14 @@ func TestCasbinMiddleware_ShouldSkip(t *testing.T) {
 		path     string
 		expected bool
 	}{
-		{"/login", true},
-		{"/login/test", true},
-		{"/api/v1/auth/login", true},
+		{"/health", true},
+		{"/health/check", true},
+		{"/metrics", true},
+		{"/swagger/index.html", true},
+		{"/api/v1/identity/auth/login", true},
 		{"/api/v1/users", false},
 		{"/api/v1/roles", false},
-		{"/health", true},
-		{"/metrics", true},
+		{"/login", false},
 	}
 
 	for _, tt := range tests {
