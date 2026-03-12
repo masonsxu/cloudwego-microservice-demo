@@ -515,8 +515,8 @@ github.com/kr/pretty v0.3.0/go.mod h1:640gp4NfQd8pI5XOwp5fnNeVWj67G7CFk/SaSQn7NB
 github.com/kr/pty v1.1.1 h1:VkoXIwSboBpnk99O/KFauAEILuNHv5DVFKZMBN/gUgw=
 github.com/lyft/protoc-gen-star/v2 v2.0.4-0.20230330145011-496ad1ac90a4/go.mod h1:amey7yeodaJhXSbf/TlLvWiqQfLOSpEk//mLlc+axEk=
 github.com/mailru/easyjson v0.7.7/go.mod h1:xzfreul335JAWq5oZzymOObrkdz5UnU4kGfJJLY9Nlc=
-github.com/masonsxu/jwt v1.0.5 h1:bJLdyYAjLfL38BD3nNRJT3q4huhhElK4TK6nMfwVPMI=
-github.com/masonsxu/jwt v1.0.5/go.mod h1:YntlFg4tdWw1CM5mELU00HbO8Gsa92xPd7EyrSYxAcg=
+github.com/masonsxu/jwt v0.2.0 h1:j4q4Vdsmdx683w+AqBikF0Fg2iezoZN54VCFYz+0d9o=
+github.com/masonsxu/jwt v0.2.0/go.mod h1:YntlFg4tdWw1CM5mELU00HbO8Gsa92xPd7EyrSYxAcg=
 github.com/mattn/go-sqlite3 v1.14.22 h1:2gZY6PC6kBnID23Tichd1K+Z0oS6nE/XwU+Vz/5o4kU=
 github.com/mattn/go-sqlite3 v1.14.22/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxUwlHK0RXw+Y=
 github.com/matttproud/golang_protobuf_extensions v1.0.4/go.mod h1:BSXmuO+STAnVfrANrmjBb36TMTDstsz7MSK+HVaYKv4=

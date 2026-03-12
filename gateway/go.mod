@@ -131,7 +131,7 @@ require (
 
 replace (
 	github.com/apache/thrift => github.com/apache/thrift v0.13.0
-	github.com/hertz-contrib/jwt => github.com/masonsxu/jwt v1.0.5
+	github.com/hertz-contrib/jwt => github.com/masonsxu/jwt v0.2.0
 	github.com/hertz-contrib/obs-opentelemetry/tracing => github.com/masonsxu/obs-opentelemetry/tracing v0.3.1-fix-datarace
 	github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv => ../rpc/identity_srv
 )
