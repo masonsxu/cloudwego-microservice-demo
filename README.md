@@ -201,7 +201,7 @@ cloudwego-microservice-demo/
 
 ## 致谢
 
-本项目的前端视觉与组件化实践借鉴了 `careercompass` 项目的开发思想与 UI 设计风格，在此表示感谢。
+本项目的前端视觉与组件化实践借鉴了 [careercompass](https://github.com/arsh342/careercompass) 项目的开发思想与 UI 设计风格，在此表示感谢。
 - [奢华摩羯座配色规范](docs/05-UI设计/配色规范.md)
 - [测试指南](docs/02-开发规范/测试指南.md)
 
