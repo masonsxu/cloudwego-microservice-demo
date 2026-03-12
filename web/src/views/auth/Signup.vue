@@ -10,7 +10,7 @@
         <AnimatedCharacters
           :is-typing="isTyping"
           :show-password="showPassword"
-          :password-length="loginForm.password.length"
+          :password-length="form.password.length"
         />
       </div>
 
@@ -32,22 +32,22 @@
         </div>
 
         <div class="panel-header">
-          <h1>Welcome back!</h1>
-          <p>请使用你的账号登录</p>
+          <h1>Create account</h1>
+          <p>快速创建你的管理账号</p>
         </div>
 
         <el-form
-          ref="loginFormRef"
-          :model="loginForm"
-          :rules="loginRules"
+          ref="formRef"
+          :model="form"
+          :rules="rules"
           class="login-form"
-          @keyup.enter="handleLogin"
+          @keyup.enter="handleSubmit"
         >
           <el-form-item prop="username">
-            <label class="field-label">{{ t('auth.username') }}</label>
+            <label class="field-label">用户名</label>
             <el-input
-              v-model="loginForm.username"
-              :placeholder="t('auth.username')"
+              v-model="form.username"
+              placeholder="请输入用户名"
               size="large"
               @focus="isTyping = true"
               @blur="isTyping = false"
@@ -58,12 +58,27 @@
             </el-input>
           </el-form-item>
 
-          <el-form-item prop="password">
-            <label class="field-label">{{ t('auth.password') }}</label>
+          <el-form-item prop="email">
+            <label class="field-label">邮箱</label>
             <el-input
-              v-model="loginForm.password"
+              v-model="form.email"
+              placeholder="you@example.com"
+              size="large"
+              @focus="isTyping = true"
+              @blur="isTyping = false"
+            >
+              <template #prefix>
+                <el-icon><Message /></el-icon>
+              </template>
+            </el-input>
+          </el-form-item>
+
+          <el-form-item prop="password">
+            <label class="field-label">密码</label>
+            <el-input
+              v-model="form.password"
               :type="showPassword ? 'text' : 'password'"
-              :placeholder="t('auth.password')"
+              placeholder="••••••••"
               size="large"
               @focus="isTyping = true"
               @blur="isTyping = false"
@@ -79,33 +94,36 @@
             </el-input>
           </el-form-item>
 
-          <div class="form-row">
-            <el-checkbox v-model="rememberMe">Remember for 30 days</el-checkbox>
-            <router-link class="link-text" to="/forgot-password">Forgot password?</router-link>
-          </div>
+          <el-form-item prop="confirmPassword">
+            <label class="field-label">确认密码</label>
+            <el-input
+              v-model="form.confirmPassword"
+              :type="showPassword ? 'text' : 'password'"
+              placeholder="••••••••"
+              size="large"
+              @focus="isTyping = true"
+              @blur="isTyping = false"
+            >
+              <template #prefix>
+                <el-icon><Lock /></el-icon>
+              </template>
+            </el-input>
+          </el-form-item>
 
           <el-button
             type="primary"
             size="large"
             class="login-button"
             :loading="loading"
-            @click="handleLogin"
+            @click="handleSubmit"
           >
-            {{ loading ? 'Signing in...' : t('auth.login') }}
+            {{ loading ? 'Creating...' : 'Create account' }}
           </el-button>
         </el-form>
 
-        <div class="divider">
-          <span>or</span>
-        </div>
-
-        <el-button class="outline-button" size="large">
-          Log in with Google
-        </el-button>
-
         <div class="signup-hint">
-          还没有账号？
-          <router-link class="link-text" to="/signup">Sign Up</router-link>
+          已有账号？
+          <router-link class="link-text" to="/login">Log in</router-link>
         </div>
       </div>
     </section>
@@ -114,57 +132,55 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
-import { User, Lock, View, Hide } from '@element-plus/icons-vue'
+import { User, Lock, View, Hide, Message } from '@element-plus/icons-vue'
 import AnimatedCharacters from '@/components/AnimatedCharacters.vue'
 
 const router = useRouter()
-const route = useRoute()
-const authStore = useAuthStore()
-const { t } = useI18n()
 
-const loginFormRef = ref<FormInstance>()
+const formRef = ref<FormInstance>()
 const loading = ref(false)
 const showPassword = ref(false)
 const isTyping = ref(false)
-const rememberMe = ref(false)
 
-const loginForm = reactive({
+const form = reactive({
   username: '',
-  password: ''
+  email: '',
+  password: '',
+  confirmPassword: ''
 })
 
-const loginRules: FormRules = {
+const rules: FormRules = {
   username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  email: [
+    { required: true, message: '请输入邮箱', trigger: 'blur' },
+    { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
+  ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
     { min: 6, message: '密码至少6位', trigger: 'blur' }
+  ],
+  confirmPassword: [
+    { required: true, message: '请确认密码', trigger: 'blur' },
+    {
+      validator: (_rule, value, callback) => {
+        if (!value || value !== form.password) callback(new Error('两次输入的密码不一致'))
+        callback()
+      },
+      trigger: 'blur'
+    }
   ]
 }
 
-async function handleLogin() {
-  if (!loginFormRef.value) return
-
+async function handleSubmit() {
+  if (!formRef.value) return
   try {
-    await loginFormRef.value.validate()
+    await formRef.value.validate()
     loading.value = true
-
-    await authStore.login({
-      username: loginForm.username,
-      password: loginForm.password
-    })
-
-    ElMessage.success(t('auth.loginSuccess'))
-
-    const redirect = (route.query.redirect as string) || '/dashboard'
-    router.push(redirect)
-  } catch (error: any) {
-    console.error('Login failed:', error)
-    ElMessage.error(error.message || t('auth.loginFailed'))
+    ElMessage.info('功能开发中...')
+    router.push('/login')
   } finally {
     loading.value = false
   }

@@ -2,44 +2,38 @@
 @import './element-theme.scss';
 
 @theme {
-  /* 奢华摩羯座配色方案 */
-  --color-bg-base: #141416;
-  --color-gold: #D4AF37;
-  --color-gold-light: #E8C56B;
-  --color-gold-dark: #C4A033;
-  --color-vellum: #F2F0E4;
-  --color-mineral: #8B9bb4;
-  --color-bronze: #2C2E33;
-  --color-bronze-light: #3D4047;
-  --color-bronze-dark: #1E1F22;
-  --color-highlight: #FFF8E7;
+  /* CareerCompass-inspired palette */
+  --color-primary: var(--c-primary);
+  --color-accent: var(--c-accent);
+  --color-bg-base: var(--bg-base);
+  --color-bg-card: var(--bg-card);
 
-  /* 字体 */
-  --font-family-cinzel: 'Cinzel', serif;
-  --font-family-noto-serif-sc: '"Noto Serif SC"', serif;
-  --font-family-lato: 'Lato', sans-serif;
+  /* Fonts */
+  --font-family-body: 'Inter', sans-serif;
+  --font-family-code: 'Source Code Pro', monospace;
 }
 
-/* ===== 全局样式 ===== */
+/* ===== Global ===== */
 body {
   background-color: var(--bg-base);
   color: var(--c-text-main);
   min-height: 100vh;
-  font-family: var(--font-family-lato);
+  font-family: var(--font-family-body);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* 深色模式下的径向渐变背景 */
 [data-theme="dark"] body {
-  background-image: radial-gradient(circle at 50% 10%, #2a2d35 0%, #000000 100%);
+  background-image: radial-gradient(circle at 20% 10%, rgba(63, 81, 181, 0.25), transparent 55%),
+    radial-gradient(circle at 80% 0%, rgba(255, 152, 0, 0.18), transparent 45%),
+    linear-gradient(180deg, rgba(8, 12, 24, 0.95), rgba(10, 13, 18, 1));
 }
 
-/* 浅色模式无渐变 */
 [data-theme="light"] body {
-  background-image: none;
+  background-image: radial-gradient(circle at 20% 0%, rgba(63, 81, 181, 0.08), transparent 45%),
+    radial-gradient(circle at 80% 10%, rgba(255, 152, 0, 0.08), transparent 40%);
 }
 
-/* ===== 滚动条 ===== */
+/* ===== Scrollbars ===== */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -50,23 +44,23 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(212, 175, 55, 0.4);
+  background-color: rgba(63, 81, 181, 0.35);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(212, 175, 55, 0.7);
+  background-color: rgba(63, 81, 181, 0.6);
 }
 
-/* ===== 通用工具类 ===== */
+/* ===== Utilities ===== */
 .gold-gradient-text {
-  background: linear-gradient(to right, #D4AF37, #F2D288, #D4AF37);
+  background: linear-gradient(to right, var(--c-primary), var(--c-accent), var(--c-primary));
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* 科技网格背景 */
+/* Tech grid background */
 .tech-grid-bg {
   position: relative;
 }
@@ -81,7 +75,7 @@ body {
   z-index: 0;
 }
 
-/* Spotlight 卡片效果 */
+/* Spotlight card */
 .spotlight-card {
   position: relative;
   overflow: hidden;
@@ -92,8 +86,8 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(500px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(212, 175, 55, 0.06), transparent 50%);
+  background: radial-gradient(520px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(63, 81, 181, 0.12), transparent 55%);
   opacity: 0;
   transition: opacity 0.3s;
   pointer-events: none;
@@ -104,7 +98,7 @@ body {
   opacity: 1;
 }
 
-/* Shimmer 按钮效果 */
+/* Shimmer button */
 .shimmer-btn {
   position: relative;
   overflow: hidden;
@@ -117,9 +111,9 @@ body {
   left: -100%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.15), transparent);
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
   transform: skewX(-25deg);
-  animation: shimmer-anim 3s infinite;
+  animation: shimmer-anim 3.2s infinite;
 }
 
 @keyframes shimmer-anim {

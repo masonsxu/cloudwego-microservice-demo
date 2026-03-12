@@ -334,38 +334,38 @@ function getStatusType(status: number) { return ({ 1: 'success', 2: 'info', 3: '
     align-items: flex-end;
     margin-bottom: 28px;
 
-    .header-left {
-      .page-title {
-        font-size: 26px;
-        font-weight: 700;
-        font-family: 'Cinzel', serif;
-        background: linear-gradient(to right, #D4AF37, #F2D288, #D4AF37);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin: 0 0 6px;
-        line-height: 1.2;
+      .header-left {
+        .page-title {
+          font-size: 26px;
+          font-weight: 700;
+          font-family: 'Inter', sans-serif;
+          background: linear-gradient(120deg, var(--c-primary), var(--c-accent));
+          background-clip: text;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          margin: 0 0 6px;
+          line-height: 1.2;
+        }
+        .page-subtitle { color: var(--c-text-sub); font-size: 13px; margin: 0; }
       }
-      .page-subtitle { color: var(--c-text-sub); font-size: 13px; margin: 0; }
-    }
 
-    .create-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 20px;
-      background: linear-gradient(135deg, #D4AF37 0%, #C4A033 100%);
-      color: #000;
-      font-weight: 600;
-      font-size: 14px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.3s ease;
+      .create-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: linear-gradient(135deg, var(--c-primary) 0%, var(--c-accent) 100%);
+        color: #fff;
+        font-weight: 600;
+        font-size: 14px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
 
-      &:hover { box-shadow: 0 0 24px rgba(212, 175, 55, 0.4); transform: translateY(-1px); }
+        &:hover { box-shadow: 0 0 24px rgba(63, 81, 181, 0.35); transform: translateY(-1px); }
+      }
     }
-  }
 
   .stats-row {
     display: grid;
@@ -379,7 +379,7 @@ function getStatusType(status: number) { return ({ 1: 'success', 2: 'info', 3: '
       gap: 16px;
       padding: 20px 24px;
       background: var(--bg-card);
-      border: 1px solid var(--c-border-accent);
+      border: 1px solid hsl(var(--border) / 0.6);
       border-radius: 14px;
       box-shadow: var(--shadow-card);
 
@@ -387,23 +387,23 @@ function getStatusType(status: number) { return ({ 1: 'success', 2: 'info', 3: '
         width: 44px;
         height: 44px;
         border-radius: 10px;
-        background: rgba(212, 175, 55, 0.12);
-        border: 1px solid var(--c-border-accent);
+        background: rgba(63, 81, 181, 0.12);
+        border: 1px solid rgba(63, 81, 181, 0.2);
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--c-accent);
+        color: var(--c-primary);
         flex-shrink: 0;
 
-        &.active-icon { background: rgba(103, 194, 58, 0.1); border-color: rgba(103, 194, 58, 0.25); color: #67C23A; }
-        &.locked-icon { background: rgba(245, 108, 108, 0.1); border-color: rgba(245, 108, 108, 0.25); color: #F56C6C; }
+        &.active-icon { background: rgba(67, 160, 71, 0.12); border-color: rgba(67, 160, 71, 0.25); color: #43a047; }
+        &.locked-icon { background: rgba(239, 83, 80, 0.12); border-color: rgba(239, 83, 80, 0.25); color: #ef5350; }
       }
 
       .stat-info {
         display: flex;
         flex-direction: column;
         gap: 2px;
-        .stat-value { font-size: 24px; font-weight: 700; color: var(--c-text-main); font-family: 'JetBrains Mono', monospace; line-height: 1; }
+        .stat-value { font-size: 24px; font-weight: 700; color: var(--c-text-main); font-family: 'Source Code Pro', monospace; line-height: 1; }
         .stat-label { font-size: 12px; color: var(--c-text-sub); }
       }
     }
@@ -411,7 +411,7 @@ function getStatusType(status: number) { return ({ 1: 'success', 2: 'info', 3: '
 
   .search-section {
     background: var(--bg-card);
-    border: 1px solid var(--c-border-accent);
+    border: 1px solid hsl(var(--border) / 0.6);
     border-radius: 14px;
     padding: 16px 20px;
     margin-bottom: 20px;
@@ -430,7 +430,7 @@ function getStatusType(status: number) { return ({ 1: 'success', 2: 'info', 3: '
     display: flex;
     flex-direction: column;
     background: var(--bg-card);
-    border: 1px solid var(--c-border-accent);
+    border: 1px solid hsl(var(--border) / 0.6);
     border-radius: 14px;
     overflow: hidden;
     box-shadow: var(--shadow-card);
@@ -454,13 +454,13 @@ function getStatusType(status: number) { return ({ 1: 'success', 2: 'info', 3: '
         width: 30px;
         height: 30px;
         border-radius: 8px;
-        background: linear-gradient(135deg, #D4AF37 0%, #C4A963 100%);
+        background: linear-gradient(135deg, var(--c-primary) 0%, var(--c-accent) 100%);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 13px;
         font-weight: 700;
-        color: #000;
+        color: #fff;
         flex-shrink: 0;
       }
 
@@ -511,9 +511,9 @@ function getStatusType(status: number) { return ({ 1: 'success', 2: 'info', 3: '
         font-size: 14px;
 
         &:hover { transform: translateY(-1px); }
-        &.view-btn:hover { color: var(--c-accent); border-color: var(--c-border-accent); background: rgba(212, 175, 55, 0.08); }
-        &.edit-btn:hover { color: #E6A23C; border-color: rgba(230, 162, 60, 0.4); background: rgba(230, 162, 60, 0.08); }
-        &.more-btn:hover { color: var(--c-text-main); border-color: var(--c-border-accent); background: var(--bg-input); }
+        &.view-btn:hover { color: var(--c-primary); border-color: rgba(63, 81, 181, 0.3); background: rgba(63, 81, 181, 0.08); }
+        &.edit-btn:hover { color: var(--c-accent-dark); border-color: rgba(255, 152, 0, 0.4); background: rgba(255, 152, 0, 0.12); }
+        &.more-btn:hover { color: var(--c-text-main); border-color: rgba(63, 81, 181, 0.3); background: var(--bg-input); }
       }
     }
 
@@ -534,8 +534,8 @@ function getStatusType(status: number) { return ({ 1: 'success', 2: 'info', 3: '
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(500px circle at var(--mouse-x, -100%) var(--mouse-y, -100%),
-      rgba(212, 175, 55, 0.05), transparent 50%);
+    background: radial-gradient(520px circle at var(--mouse-x, -100%) var(--mouse-y, -100%),
+      rgba(63, 81, 181, 0.12), transparent 55%);
     pointer-events: none;
     z-index: 1;
   }

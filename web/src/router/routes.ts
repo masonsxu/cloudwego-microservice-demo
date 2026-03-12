@@ -8,6 +8,18 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: false, title: 'auth.login' }
   },
   {
+    path: '/signup',
+    name: 'Signup',
+    component: () => import('@/views/auth/Signup.vue'),
+    meta: { requiresAuth: false, title: 'auth.signup' }
+  },
+  {
+    path: '/forgot-password',
+    name: 'ForgotPassword',
+    component: () => import('@/views/auth/ForgotPassword.vue'),
+    meta: { requiresAuth: false, title: 'auth.forgotPassword' }
+  },
+  {
     path: '/',
     component: () => import('@/components/layout/Layout.vue'),
     meta: { requiresAuth: true },

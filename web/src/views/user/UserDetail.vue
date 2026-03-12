@@ -355,11 +355,13 @@ function formatDateTime(timestamp?: number): string {
 
 <style scoped lang="scss">
 .user-detail {
+  padding: 20px;
+
   .page-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #D4AF37;
-    font-family: 'Cinzel', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--c-primary);
+    font-family: 'Inter', sans-serif;
   }
 
   .detail-content {
@@ -368,24 +370,25 @@ function formatDateTime(timestamp?: number): string {
     .info-card,
     .detail-card,
     .membership-card {
-      background: linear-gradient(145deg, rgba(30, 32, 36, 0.9), rgba(20, 20, 22, 0.95));
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      background: var(--bg-card);
+      border: 1px solid hsl(var(--border) / 0.6);
+      border-radius: 18px;
+      box-shadow: var(--shadow-card);
       margin-bottom: 20px;
 
       .card-header {
         display: flex;
         align-items: center;
         gap: 10px;
-        color: #D4AF37;
-        font-family: 'Cinzel', serif;
+        color: var(--c-primary);
+        font-family: 'Inter', sans-serif;
         font-size: 16px;
         font-weight: 600;
       }
 
       :deep(.el-card__header) {
-        border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        border-bottom: 1px solid hsl(var(--border) / 0.6);
+        padding: 14px 20px;
       }
     }
 
@@ -399,7 +402,8 @@ function formatDateTime(timestamp?: number): string {
       .el-avatar {
         font-size: 40px;
         font-weight: 600;
-        background: linear-gradient(135deg, #D4AF37 0%, #C4A963 100%);
+        background: linear-gradient(135deg, var(--c-primary) 0%, var(--c-accent) 100%);
+        color: #fff;
       }
 
       .status-tag {
@@ -411,11 +415,11 @@ function formatDateTime(timestamp?: number): string {
       width: 100%;
 
       :deep(.el-descriptions__label) {
-        color: #8B9bb4;
+        color: var(--c-text-sub);
       }
 
       :deep(.el-descriptions__content) {
-        color: #F2F0E4;
+        color: var(--c-text-main);
       }
     }
 

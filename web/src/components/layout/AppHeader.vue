@@ -128,7 +128,7 @@ function handleUserCommand(command: string) {
 
     .collapse-icon {
       font-size: 20px;
-      color: #D4AF37;
+      color: var(--c-accent);
       cursor: pointer;
       transition: transform 0.3s ease;
 

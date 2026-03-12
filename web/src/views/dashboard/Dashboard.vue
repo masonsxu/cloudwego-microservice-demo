@@ -61,6 +61,7 @@
           <template #header>
             <div class="card-header">
               <span class="title">{{ t('dashboard.welcome') }}</span>
+              <span class="meta">Overview</span>
             </div>
           </template>
           <div class="welcome-content">
@@ -77,6 +78,7 @@
           <template #header>
             <div class="card-header">
               <span class="title">系统信息</span>
+              <span class="meta">System</span>
             </div>
           </template>
           <div class="info-content">
@@ -94,7 +96,7 @@
             </div>
             <div class="info-item">
               <span class="label">主题</span>
-              <span class="value">奢华摩羯座</span>
+              <span class="value">CareerCompass Inspired</span>
             </div>
           </div>
         </el-card>
@@ -148,14 +150,23 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .dashboard {
+  .stats-row,
+  .content-row {
+    position: relative;
+    z-index: 1;
+  }
+
   .stats-row {
     margin-bottom: 20px;
 
     .stat-card {
-      background: linear-gradient(145deg, rgba(30, 32, 36, 0.9), rgba(20, 20, 22, 0.95));
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      background: var(--bg-card);
+      border: 1px solid hsl(var(--border) / 0.6);
+      border-radius: 18px;
+      box-shadow: var(--shadow-card);
+      backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
 
       :deep(.el-card__body) {
         padding: 30px;
@@ -174,22 +185,23 @@ onMounted(() => {
           align-items: center;
           justify-content: center;
           font-size: 28px;
-          color: #F2F0E4;
+          color: #ffffff;
+          box-shadow: inset 0 0 0 1px hsl(var(--border) / 0.4);
 
           &.user-icon {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--c-primary) 0%, #6f7fe0 100%);
           }
 
           &.org-icon {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #ffb74d 0%, var(--c-accent) 100%);
           }
 
           &.role-icon {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(135deg, #5c6bc0 0%, var(--c-primary) 100%);
           }
 
           &.activity-icon {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            background: linear-gradient(135deg, #26a69a 0%, #4dd0e1 100%);
           }
         }
 
@@ -197,14 +209,14 @@ onMounted(() => {
           .stat-value {
             font-size: 32px;
             font-weight: 700;
-            color: #D4AF37;
+            color: var(--c-text-main);
             margin-bottom: 5px;
-            font-family: 'Cinzel', serif;
+            font-family: 'Inter', sans-serif;
           }
 
           .stat-label {
             font-size: 14px;
-            color: #8B9bb4;
+            color: var(--c-text-sub);
             margin: 0;
           }
         }
@@ -215,22 +227,34 @@ onMounted(() => {
   .content-row {
     .welcome-card,
     .info-card {
-      background: linear-gradient(145deg, rgba(30, 32, 36, 0.9), rgba(20, 20, 22, 0.95));
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      background: var(--bg-card);
+      border: 1px solid hsl(var(--border) / 0.6);
+      border-radius: 18px;
+      box-shadow: var(--shadow-card);
+      backdrop-filter: blur(12px);
 
       .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
         .title {
-          color: #D4AF37;
-          font-family: 'Cinzel', serif;
+          color: var(--c-primary);
+          font-family: 'Inter', sans-serif;
           font-size: 18px;
           font-weight: 600;
+        }
+
+        .meta {
+          font-size: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          color: var(--c-text-sub);
         }
       }
 
       :deep(.el-card__header) {
-        border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        border-bottom: 1px solid hsl(var(--border) / 0.6);
       }
     }
 
@@ -238,21 +262,21 @@ onMounted(() => {
       .welcome-content {
         .greeting {
           font-size: 24px;
-          color: #D4AF37;
+          color: var(--c-primary);
           margin-bottom: 10px;
-          font-family: 'Cinzel', serif;
+          font-family: 'Inter', sans-serif;
         }
 
         .username {
           font-size: 32px;
-          color: #F2F0E4;
+          color: var(--c-text-main);
           margin-bottom: 20px;
           font-weight: 600;
         }
 
         .description {
           font-size: 14px;
-          color: #8B9bb4;
+          color: var(--c-text-sub);
           line-height: 1.6;
         }
       }
@@ -264,19 +288,19 @@ onMounted(() => {
           display: flex;
           justify-content: space-between;
           padding: 15px 0;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+          border-bottom: 1px solid hsl(var(--border) / 0.6);
 
           &:last-child {
             border-bottom: none;
           }
 
           .label {
-            color: #8B9bb4;
+            color: var(--c-text-sub);
             font-size: 14px;
           }
 
           .value {
-            color: #D4AF37;
+            color: var(--c-primary);
             font-size: 14px;
             font-weight: 600;
           }

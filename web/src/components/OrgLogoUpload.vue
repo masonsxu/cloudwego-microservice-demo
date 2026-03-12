@@ -160,7 +160,7 @@ function handleRemove() {
       transition: all 0.3s;
 
       &:hover {
-        border-color: #D4AF37;
+        border-color: var(--c-accent);
       }
     }
   }
@@ -207,23 +207,23 @@ function handleRemove() {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #8B9bb4;
+    color: var(--c-text-sub);
 
     .upload-icon {
       font-size: 40px;
-      color: #D4AF37;
+      color: var(--c-accent);
       margin-bottom: 10px;
     }
 
     .upload-text {
       font-size: 14px;
-      color: #D4AF37;
+      color: var(--c-accent);
       margin-bottom: 5px;
     }
 
     .upload-hint {
       font-size: 12px;
-      color: #8B9bb4;
+      color: var(--c-text-sub);
     }
   }
 

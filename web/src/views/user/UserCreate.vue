@@ -22,7 +22,7 @@
             </div>
           </template>
 
-          <el-row :gutter="20">
+          <el-row :gutter="20" class="form-grid">
             <el-col :xs="24" :md="12">
               <el-form-item :label="t('user.username')" prop="username">
                 <el-input
@@ -46,7 +46,7 @@
             </el-col>
           </el-row>
 
-          <el-row :gutter="20">
+          <el-row :gutter="20" class="form-grid">
             <el-col :xs="24" :md="12">
               <el-form-item :label="t('user.firstName')" prop="first_name">
                 <el-input
@@ -67,7 +67,7 @@
             </el-col>
           </el-row>
 
-          <el-row :gutter="20">
+          <el-row :gutter="20" class="form-grid">
             <el-col :xs="24" :md="12">
               <el-form-item :label="t('user.realName')" prop="real_name">
                 <el-input
@@ -88,7 +88,7 @@
             </el-col>
           </el-row>
 
-          <el-row :gutter="20">
+          <el-row :gutter="20" class="form-grid">
             <el-col :xs="24" :md="12">
               <el-form-item :label="t('user.phone')" prop="phone">
                 <el-input
@@ -315,48 +315,61 @@ async function handleSubmit() {
 
 <style scoped lang="scss">
 .user-create {
+  padding: 20px;
+
   .page-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #D4AF37;
-    font-family: 'Cinzel', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--c-primary);
+    font-family: 'Inter', sans-serif;
   }
 
   .form-content {
     margin-top: 20px;
 
     .form-section {
-      background: linear-gradient(145deg, rgba(30, 32, 36, 0.9), rgba(20, 20, 22, 0.95));
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      background: var(--bg-card);
+      border: 1px solid hsl(var(--border) / 0.6);
+      border-radius: 18px;
+      box-shadow: var(--shadow-card);
       margin-bottom: 20px;
 
       .card-header {
         display: flex;
         align-items: center;
         gap: 10px;
-        color: #D4AF37;
-        font-family: 'Cinzel', serif;
+        color: var(--c-primary);
+        font-family: 'Inter', sans-serif;
         font-size: 16px;
         font-weight: 600;
       }
 
       :deep(.el-card__header) {
-        border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        border-bottom: 1px solid hsl(var(--border) / 0.6);
+        padding: 14px 20px;
       }
 
       :deep(.el-form-item__label) {
-        color: #8B9bb4;
+        color: var(--c-text-sub);
+      }
+
+      .form-grid {
+        margin-bottom: 8px;
       }
     }
 
     .form-actions {
-      margin-top: 30px;
-      text-align: center;
+      margin-top: 24px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 16px;
+      background: var(--bg-card);
+      border: 1px solid hsl(var(--border) / 0.6);
+      border-radius: 16px;
+      box-shadow: var(--shadow-card);
 
       button {
-        margin: 0 10px;
         min-width: 120px;
       }
     }

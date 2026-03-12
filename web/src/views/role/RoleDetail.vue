@@ -637,8 +637,8 @@ onMounted(async () => {
   .page-title {
     font-size: 20px;
     font-weight: 700;
-    font-family: 'Cinzel', serif;
-    color: #D4AF37;
+    font-family: 'Inter', sans-serif;
+    color: var(--c-primary);
   }
 
   .content-row {
@@ -647,9 +647,14 @@ onMounted(async () => {
   }
 
   .detail-card {
+    background: var(--bg-card);
+    border: 1px solid hsl(var(--border) / 0.6);
+    border-radius: 18px;
+    box-shadow: var(--shadow-card);
     margin-bottom: 20px;
 
     :deep(.el-card__header) {
+      border-bottom: 1px solid hsl(var(--border) / 0.6);
       padding: 14px 20px;
     }
 
@@ -657,7 +662,7 @@ onMounted(async () => {
       display: flex;
       align-items: center;
       gap: 8px;
-      color: #D4AF37;
+      color: var(--c-primary);
       font-weight: 600;
 
       > span:first-of-type {
@@ -702,7 +707,7 @@ onMounted(async () => {
 
     .user-tag {
       font-size: 12px;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'Source Code Pro', monospace;
     }
   }
 }
@@ -714,8 +719,8 @@ onMounted(async () => {
   gap: 8px;
   padding: 10px 14px;
   margin-bottom: 16px;
-  background: rgba(212, 175, 55, 0.08);
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  background: rgba(63, 81, 181, 0.08);
+  border: 1px solid rgba(63, 81, 181, 0.2);
   border-radius: 8px;
   font-size: 13px;
   color: var(--c-text-sub, #8b9bb4);
@@ -764,7 +769,7 @@ onMounted(async () => {
       width: 140px;
       font-size: 11px;
       color: var(--c-text-sub, #8b9bb4);
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'Source Code Pro', monospace;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -776,7 +781,7 @@ onMounted(async () => {
       flex-shrink: 0;
 
       &.has-perm :deep(.el-input__inner) {
-        color: #D4AF37;
+        color: var(--c-primary);
         font-weight: 500;
       }
     }
@@ -795,7 +800,7 @@ onMounted(async () => {
     color: var(--c-text-sub, #8b9bb4);
 
     strong {
-      color: #D4AF37;
+      color: var(--c-primary);
       font-size: 16px;
     }
   }

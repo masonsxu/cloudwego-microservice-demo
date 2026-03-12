@@ -372,18 +372,18 @@ function handlePageChange(page: number) { pagination.page = page; fetchData() }
     align-items: flex-end;
     margin-bottom: 28px;
 
-    .header-left {
-      .page-title {
-        font-size: 26px;
-        font-weight: 700;
-        font-family: 'Cinzel', serif;
-        background: linear-gradient(to right, #D4AF37, #F2D288, #D4AF37);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin: 0 0 6px;
-        line-height: 1.2;
-      }
+      .header-left {
+        .page-title {
+          font-size: 26px;
+          font-weight: 700;
+          font-family: 'Inter', sans-serif;
+          background: linear-gradient(120deg, var(--c-primary), var(--c-accent));
+          background-clip: text;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          margin: 0 0 6px;
+          line-height: 1.2;
+        }
 
       .page-subtitle {
         color: var(--c-text-sub);
@@ -397,8 +397,8 @@ function handlePageChange(page: number) { pagination.page = page; fetchData() }
       align-items: center;
       gap: 8px;
       padding: 10px 20px;
-      background: linear-gradient(135deg, #D4AF37 0%, #C4A033 100%);
-      color: #000;
+      background: linear-gradient(135deg, var(--c-primary) 0%, var(--c-accent) 100%);
+      color: #fff;
       font-weight: 600;
       font-size: 14px;
       border: none;
@@ -407,7 +407,7 @@ function handlePageChange(page: number) { pagination.page = page; fetchData() }
       transition: all 0.3s ease;
 
       &:hover {
-        box-shadow: 0 0 24px rgba(212, 175, 55, 0.4);
+        box-shadow: 0 0 24px rgba(63, 81, 181, 0.35);
         transform: translateY(-1px);
       }
     }
@@ -425,7 +425,7 @@ function handlePageChange(page: number) { pagination.page = page; fetchData() }
       gap: 16px;
       padding: 20px 24px;
       background: var(--bg-card);
-      border: 1px solid var(--c-border-accent);
+      border: 1px solid hsl(var(--border) / 0.6);
       border-radius: 14px;
       box-shadow: var(--shadow-card);
       cursor: default;
@@ -434,12 +434,12 @@ function handlePageChange(page: number) { pagination.page = page; fetchData() }
         width: 44px;
         height: 44px;
         border-radius: 10px;
-        background: rgba(212, 175, 55, 0.12);
-        border: 1px solid var(--c-border-accent);
+        background: rgba(63, 81, 181, 0.12);
+        border: 1px solid rgba(63, 81, 181, 0.2);
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--c-accent);
+        color: var(--c-primary);
         flex-shrink: 0;
       }
 
@@ -452,7 +452,7 @@ function handlePageChange(page: number) { pagination.page = page; fetchData() }
           font-size: 24px;
           font-weight: 700;
           color: var(--c-text-main);
-          font-family: 'JetBrains Mono', monospace;
+          font-family: 'Source Code Pro', monospace;
           line-height: 1;
         }
 
@@ -466,7 +466,7 @@ function handlePageChange(page: number) { pagination.page = page; fetchData() }
 
   .search-section {
     background: var(--bg-card);
-    border: 1px solid var(--c-border-accent);
+    border: 1px solid hsl(var(--border) / 0.6);
     border-radius: 14px;
     padding: 16px 20px;
     margin-bottom: 20px;
@@ -491,7 +491,7 @@ function handlePageChange(page: number) { pagination.page = page; fetchData() }
     display: flex;
     flex-direction: column;
     background: var(--bg-card);
-    border: 1px solid var(--c-border-accent);
+    border: 1px solid hsl(var(--border) / 0.6);
     border-radius: 14px;
     overflow: hidden;
     box-shadow: var(--shadow-card);
@@ -527,11 +527,11 @@ function handlePageChange(page: number) { pagination.page = page; fetchData() }
         width: 28px;
         height: 28px;
         border-radius: 6px;
-        background: rgba(212, 175, 55, 0.1);
+        background: rgba(63, 81, 181, 0.1);
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--c-accent);
+        color: var(--c-primary);
         flex-shrink: 0;
       }
 
@@ -544,12 +544,12 @@ function handlePageChange(page: number) { pagination.page = page; fetchData() }
     .code-badge {
       display: inline-block;
       padding: 2px 8px;
-      background: rgba(212, 175, 55, 0.08);
-      border: 1px solid var(--c-border-accent);
+      background: rgba(63, 81, 181, 0.08);
+      border: 1px solid rgba(63, 81, 181, 0.2);
       border-radius: 6px;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'Source Code Pro', monospace;
       font-size: 12px;
-      color: var(--c-accent);
+      color: var(--c-primary);
     }
 
     .root-tag {
@@ -566,7 +566,7 @@ function handlePageChange(page: number) { pagination.page = page; fetchData() }
     .count-badge {
       display: inline-block;
       padding: 2px 10px;
-      background: rgba(212, 175, 55, 0.08);
+      background: rgba(63, 81, 181, 0.08);
       border-radius: 9999px;
       font-size: 13px;
       font-weight: 600;
@@ -598,21 +598,21 @@ function handlePageChange(page: number) { pagination.page = page; fetchData() }
         }
 
         &.view-btn:hover {
-          color: var(--c-accent);
-          border-color: var(--c-border-accent);
-          background: rgba(212, 175, 55, 0.08);
+          color: var(--c-primary);
+          border-color: rgba(63, 81, 181, 0.3);
+          background: rgba(63, 81, 181, 0.08);
         }
 
         &.edit-btn:hover {
-          color: #E6A23C;
-          border-color: rgba(230, 162, 60, 0.4);
-          background: rgba(230, 162, 60, 0.08);
+          color: var(--c-accent-dark);
+          border-color: rgba(255, 152, 0, 0.4);
+          background: rgba(255, 152, 0, 0.12);
         }
 
         &.delete-btn:hover {
-          color: #F56C6C;
-          border-color: rgba(245, 108, 108, 0.4);
-          background: rgba(245, 108, 108, 0.08);
+          color: #ef5350;
+          border-color: rgba(239, 83, 80, 0.4);
+          background: rgba(239, 83, 80, 0.12);
         }
       }
     }
@@ -635,8 +635,8 @@ function handlePageChange(page: number) { pagination.page = page; fetchData() }
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(500px circle at var(--mouse-x, -100%) var(--mouse-y, -100%),
-      rgba(212, 175, 55, 0.05), transparent 50%);
+    background: radial-gradient(520px circle at var(--mouse-x, -100%) var(--mouse-y, -100%),
+      rgba(63, 81, 181, 0.12), transparent 55%);
     pointer-events: none;
     z-index: 1;
     transition: opacity 0.3s;

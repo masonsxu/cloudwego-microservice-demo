@@ -61,17 +61,17 @@ watch(
   margin-left: 8px;
 
   .no-redirect {
-    color: #D4AF37;
+    color: var(--c-accent);
     cursor: text;
   }
 
   a {
-    color: #8B9bb4;
+    color: var(--c-text-sub);
     cursor: pointer;
     transition: color 0.3s ease;
 
     &:hover {
-      color: #D4AF37;
+      color: var(--c-accent);
     }
   }
 }

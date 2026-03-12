@@ -126,7 +126,7 @@ function getIconComponent(iconName: string) {
     border-bottom: 1px solid rgba(212, 175, 55, 0.2);
 
     .title {
-      font-family: 'Cinzel', serif;
+      font-family: 'Inter', sans-serif;
       font-size: 24px;
       display: flex;
       align-items: center;
@@ -134,7 +134,7 @@ function getIconComponent(iconName: string) {
 
       .gold-text {
         font-size: 32px;
-        background: linear-gradient(to right, #D4AF37, #F2F0E4, #D4AF37);
+        background: linear-gradient(to right, var(--c-accent), var(--c-text-main), var(--c-accent));
         background-size: 200% auto;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -142,7 +142,7 @@ function getIconComponent(iconName: string) {
       }
 
       .text {
-        background: linear-gradient(to right, #D4AF37, #F2F0E4, #D4AF37);
+        background: linear-gradient(to right, var(--c-accent), var(--c-text-main), var(--c-accent));
         background-size: 200% auto;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;

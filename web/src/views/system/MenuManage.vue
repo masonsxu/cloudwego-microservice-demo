@@ -1,10 +1,15 @@
 <template>
   <div class="menu-manage">
-    <el-card>
+    <el-card class="menu-card">
       <template #header>
-        <span class="title">{{ t('system.menuManage') }}</span>
+        <div class="card-header">
+          <span class="title">{{ t('system.menuManage') }}</span>
+          <span class="meta">System</span>
+        </div>
       </template>
-      <p>菜单管理页面 - 待开发</p>
+      <div class="card-body">
+        <p>菜单管理页面 - 待开发</p>
+      </div>
     </el-card>
   </div>
 </template>
@@ -16,8 +21,37 @@ const { t } = useI18n()
 </script>
 
 <style scoped lang="scss">
-.title {
-  color: #D4AF37;
-  font-family: 'Cinzel', serif;
+.menu-manage {
+  .menu-card {
+    background: var(--bg-card);
+    border: 1px solid hsl(var(--border) / 0.6);
+    border-radius: 18px;
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(12px);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .title {
+    color: var(--c-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .meta {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--c-text-sub);
+  }
+
+  .card-body {
+    color: var(--c-text-sub);
+  }
 }
 </style>

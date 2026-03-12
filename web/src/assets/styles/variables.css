@@ -1,47 +1,92 @@
-/* 深色主题（默认） */
+/* CareerCompass-inspired base tokens */
 :root,
 [data-theme="dark"] {
-  --bg-base: #141416;
-  --bg-surface: #1E1F22;
-  --bg-card: rgba(30, 32, 36, 0.9);
-  --bg-input: rgba(20, 20, 22, 1);
-  --c-accent: #D4AF37;
-  --c-accent-hover: #E8C56B;
-  --c-accent-dark: #C4A033;
-  --c-text-main: #F2F0E4;
-  --c-text-sub: #8B9bb4;
-  --c-text-muted: #6E8A9F;
-  --c-btn-bg: #2C2E33;
-  --c-highlight: #FFF8E7;
-  --c-border: rgba(255, 255, 255, 0.05);
-  --c-border-accent: rgba(212, 175, 55, 0.2);
-  --c-danger: #F56C6C;
-  --c-success: #67C23A;
-  --c-warning: #E6A23C;
-  --shadow-card: 0 20px 50px rgba(0, 0, 0, 0.5);
-  --tech-grid-color: rgba(212, 175, 55, 0.08);
+  --background: 222 22% 8%;
+  --foreground: 210 40% 98%;
+  --card: 222 18% 12%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222 22% 10%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 231 48% 48%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 220 14% 18%;
+  --secondary-foreground: 210 40% 96%;
+  --muted: 220 14% 16%;
+  --muted-foreground: 215 16% 70%;
+  --accent: 30 100% 60%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 84.2% 60.2%;
+  --border: 220 14% 18%;
+  --input: 220 14% 16%;
+  --ring: 231 48% 48%;
+  --radius: 0.5rem;
+
+  --bg-base: hsl(var(--background));
+  --bg-surface: hsl(var(--card));
+  --bg-card: hsl(var(--card) / 0.9);
+  --bg-input: hsl(var(--input));
+  --c-primary: hsl(var(--primary));
+  --c-primary-light: #5c6bc0;
+  --c-primary-dark: #3949ab;
+  --c-accent: #ff9800;
+  --c-accent-light: #ffb74d;
+  --c-accent-dark: #ef6c00;
+  --c-accent-soft: #ffd8a6;
+  --c-text-main: hsl(var(--foreground));
+  --c-text-sub: hsl(var(--muted-foreground));
+  --c-text-muted: hsl(var(--muted-foreground) / 0.7);
+  --c-btn-bg: hsl(var(--secondary));
+  --c-highlight: #ffe9c7;
+  --c-border: hsl(var(--border) / 0.7);
+  --c-border-accent: rgba(255, 152, 0, 0.25);
+  --c-danger: #ef5350;
+  --c-success: #43a047;
+  --c-warning: #fb8c00;
+  --shadow-card: 0 24px 40px rgba(15, 23, 42, 0.35);
+  --tech-grid-color: rgba(63, 81, 181, 0.16);
 }
 
-/* 浅色主题 */
 [data-theme="light"] {
-  --bg-base: #F4F5F7;
-  --bg-surface: #FFFFFF;
-  --bg-card: rgba(255, 255, 255, 0.95);
-  --bg-input: #f5f6f7;
-  --c-accent: #B8960C;
-  --c-accent-hover: #D4AF37;
-  --c-accent-dark: #9A7A00;
-  --c-text-main: #1A1C20;
-  --c-text-sub: #5A6478;
-  --c-text-muted: #8492A6;
-  --c-btn-bg: #E8EAED;
-  --c-highlight: #FFFBF0;
-  --c-border: rgba(0, 0, 0, 0.08);
-  --c-border-accent: rgba(184, 150, 12, 0.25);
-  --c-danger: #E53935;
-  --c-success: #43A047;
-  --c-warning: #FB8C00;
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
-  --tech-grid-color: rgba(184, 150, 12, 0.06);
-}
+  --background: 210 33% 96%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 231 48% 48%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 215.4 16.3% 46.9%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 30 100% 50%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 84.2% 60.2%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 231 48% 48%;
 
+  --bg-base: hsl(var(--background));
+  --bg-surface: hsl(var(--card));
+  --bg-card: hsl(var(--card) / 0.96);
+  --bg-input: hsl(var(--input));
+  --c-primary: hsl(var(--primary));
+  --c-primary-light: #5c6bc0;
+  --c-primary-dark: #3949ab;
+  --c-accent: #ff9800;
+  --c-accent-light: #ffb74d;
+  --c-accent-dark: #ef6c00;
+  --c-accent-soft: #ffe0b2;
+  --c-text-main: hsl(var(--foreground));
+  --c-text-sub: hsl(var(--muted-foreground));
+  --c-text-muted: hsl(var(--muted-foreground) / 0.7);
+  --c-btn-bg: #ffffff;
+  --c-highlight: #fff4e5;
+  --c-border: hsl(var(--border));
+  --c-border-accent: rgba(63, 81, 181, 0.18);
+  --c-danger: #e53935;
+  --c-success: #43a047;
+  --c-warning: #fb8c00;
+  --shadow-card: 0 12px 32px rgba(15, 23, 42, 0.1);
+  --tech-grid-color: rgba(63, 81, 181, 0.08);
+}

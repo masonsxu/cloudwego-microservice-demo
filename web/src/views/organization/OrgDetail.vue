@@ -502,11 +502,13 @@ function handleLogoRemove() {
 
 <style scoped lang="scss">
 .org-detail {
+  padding: 20px;
+
   .page-title {
-    color: #D4AF37;
-    font-family: 'Cinzel', serif;
+    color: var(--c-primary);
+    font-family: 'Inter', sans-serif;
     font-size: 20px;
-    font-weight: 600;
+    font-weight: 700;
   }
 
   .detail-content {
@@ -516,18 +518,38 @@ function handleLogoRemove() {
       display: flex;
       align-items: center;
       gap: 8px;
-      color: #D4AF37;
+      color: var(--c-primary);
       font-weight: 600;
     }
 
-    .info-card {
+    .info-card,
+    .stat-card,
+    .detail-card,
+    .children-card,
+    .logo-card {
+      background: var(--bg-card);
+      border: 1px solid hsl(var(--border) / 0.6);
+      border-radius: 18px;
+      box-shadow: var(--shadow-card);
       margin-bottom: 20px;
 
+      :deep(.el-card__header) {
+        border-bottom: 1px solid hsl(var(--border) / 0.6);
+        padding: 14px 20px;
+      }
+    }
+
+    .info-card {
       .org-avatar {
         display: flex;
         flex-direction: column;
         align-items: center;
         margin-bottom: 20px;
+
+        :deep(.el-avatar) {
+          background: linear-gradient(135deg, var(--c-primary) 0%, var(--c-accent) 100%);
+          color: #fff;
+        }
       }
 
       .org-info {
@@ -536,45 +558,40 @@ function handleLogoRemove() {
     }
 
     .stat-card {
-      margin-bottom: 20px;
-
       .stat-item {
         text-align: center;
         padding: 15px;
-        background-color: rgba(44, 46, 51, 0.3);
+        background-color: var(--bg-input);
         border-radius: 8px;
-        border: 1px solid rgba(212, 175, 55, 0.2);
+        border: 1px solid rgba(63, 81, 181, 0.2);
 
         .stat-value {
           font-size: 28px;
           font-weight: 600;
-          color: #D4AF37;
+          color: var(--c-primary);
           margin-bottom: 5px;
         }
 
         .stat-label {
           font-size: 12px;
-          color: #8B9bb4;
+          color: var(--c-text-sub);
         }
       }
     }
 
     .detail-card {
-      margin-bottom: 20px;
     }
 
     .children-card {
-      margin-bottom: 20px;
-
       .children-list {
         .child-item {
           display: flex;
           justify-content: space-between;
           align-items: center;
           padding: 15px;
-          background-color: rgba(44, 46, 51, 0.3);
+          background-color: var(--bg-input);
           border-radius: 8px;
-          border: 1px solid rgba(212, 175, 55, 0.1);
+          border: 1px solid hsl(var(--border) / 0.6);
           margin-bottom: 10px;
 
           &:last-child {
@@ -588,7 +605,7 @@ function handleLogoRemove() {
 
             .child-icon {
               font-size: 32px;
-              color: #D4AF37;
+              color: var(--c-primary);
             }
 
             .child-details {
@@ -602,7 +619,7 @@ function handleLogoRemove() {
                 display: flex;
                 gap: 15px;
                 font-size: 12px;
-                color: #8B9bb4;
+                color: var(--c-text-sub);
               }
             }
           }
@@ -630,7 +647,7 @@ function handleLogoRemove() {
     }
 
     .link {
-      color: #D4AF37;
+      color: var(--c-primary);
       text-decoration: none;
 
       &:hover {
