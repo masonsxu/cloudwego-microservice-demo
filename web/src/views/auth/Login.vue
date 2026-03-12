@@ -175,6 +175,4 @@ function togglePassword() {
 }
 </script>
 
-<style scoped lang="scss">
-@import './login-shared.scss';
-</style>
+<style scoped lang="scss" src="./login-shared.scss"></style>
