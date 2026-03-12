@@ -72,7 +72,8 @@ const pathMapping: Record<string, string> = {
   // 相对路径映射（二级菜单）
   'organization-management': '/system-settings/organization',
   'role-permissions': '/system-settings/roles',
-  'account-management': '/system-settings/accounts'
+  'account-management': '/system-settings/accounts',
+  'audit-logs': '/system-settings/audit-logs'
 }
 
 // 获取菜单索引（使用映射后的路径）
@@ -101,11 +102,13 @@ function getIconComponent(iconName: string) {
     'IconOrganizationManagement': 'OfficeBuilding',
     'IconRolePermissions': 'Key',
     'IconAccountManagement': 'User',
+    'IconAuditLogs': 'Document',
     'Odometer': 'Odometer',
     'User': 'User',
     'OfficeBuilding': 'OfficeBuilding',
     'Key': 'Key',
     'Setting': 'Setting',
+    'Document': 'Document',
     'Menu': 'Menu'
   }
   return iconMap[iconName] || 'Menu'
