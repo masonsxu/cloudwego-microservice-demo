@@ -65,7 +65,7 @@ func InitializeApp() (*AppContainer, func(), error) {
 	responseHeaderMiddlewareService := ProvideResponseHeaderMiddleware()
 	config := ProvideCasbinConfig()
 	casbinMiddleware := ProvideCasbinMiddleware(config, logger)
-	auditMiddlewareService := ProvideAuditMiddleware(identityClient, logger)
+	auditMiddlewareService := ProvideAuditMiddleware(identityClient, jwtConfig, logger)
 	middlewareContainer := NewMiddlewareContainer(traceMiddlewareService, corsMiddlewareService, errorHandlerMiddlewareService, jwtMiddlewareService, responseHeaderMiddlewareService, casbinMiddleware, auditMiddlewareService)
 	tracer := ProvideTracer(configuration)
 	serverFactory := ProvideServerFactory(configuration, tracer, provider)

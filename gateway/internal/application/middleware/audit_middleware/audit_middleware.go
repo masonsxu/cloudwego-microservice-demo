@@ -39,16 +39,19 @@ var sensitiveFields = map[string]bool{
 type AuditMiddlewareImpl struct {
 	identityClient identitycli.IdentityClient
 	logger         *zerolog.Logger
+	cookieName     string // JWT token 的 Cookie 名称（HTTPOnly 模式下从 Cookie 提取）
 }
 
 // NewAuditMiddleware 创建审计中间件实例
 func NewAuditMiddleware(
 	identityClient identitycli.IdentityClient,
 	logger *zerolog.Logger,
+	cookieName string,
 ) AuditMiddlewareService {
 	return &AuditMiddlewareImpl{
 		identityClient: identityClient,
 		logger:         logger,
+		cookieName:     cookieName,
 	}
 }
 
@@ -164,7 +167,7 @@ func (am *AuditMiddlewareImpl) buildAuditEntry(
 				req.Username = &username
 			}
 		case strings.Contains(path, "/auth/refresh"):
-			fillUserInfoFromJWT(c, req)
+			am.fillUserInfoFromJWT(c, req)
 		}
 	}
 
@@ -295,8 +298,8 @@ func extractUsernameFromBody(requestBody string) string {
 }
 
 // fillUserInfoFromJWT 从 JWT token 提取用户信息并填充到审计日志请求
-func fillUserInfoFromJWT(c *app.RequestContext, req *identity_srv.CreateAuditLogRequest) {
-	claims := extractUserInfoFromJWT(c)
+func (am *AuditMiddlewareImpl) fillUserInfoFromJWT(c *app.RequestContext, req *identity_srv.CreateAuditLogRequest) {
+	claims := am.extractUserInfoFromJWT(c)
 	if claims == nil {
 		return
 	}
@@ -314,17 +317,12 @@ func fillUserInfoFromJWT(c *app.RequestContext, req *identity_srv.CreateAuditLog
 	}
 }
 
-// extractUserInfoFromJWT 从 Authorization header 中的 JWT token 解码用户信息
+// extractUserInfoFromJWT 从请求中提取 JWT token 并解码用户信息
+// 优先从 Authorization header 提取，若为空则尝试从 Cookie 提取（HTTPOnly 模式）
 // 只做 base64 解码（不验证签名和过期），用于审计日志回退
-func extractUserInfoFromJWT(c *app.RequestContext) map[string]interface{} {
-	authHeader := string(c.GetHeader("Authorization"))
-	if authHeader == "" {
-		return nil
-	}
-
-	// 移除 "Bearer " 前缀
-	token := strings.TrimPrefix(authHeader, "Bearer ")
-	if token == authHeader {
+func (am *AuditMiddlewareImpl) extractUserInfoFromJWT(c *app.RequestContext) map[string]interface{} {
+	token := extractTokenFromRequest(c, am.cookieName)
+	if token == "" {
 		return nil
 	}
 
@@ -346,4 +344,26 @@ func extractUserInfoFromJWT(c *app.RequestContext) map[string]interface{} {
 	}
 
 	return claims
+}
+
+// extractTokenFromRequest 从请求中提取 JWT token
+// 优先级：Authorization header > Cookie
+func extractTokenFromRequest(c *app.RequestContext, cookieName string) string {
+	// 1. 优先从 Authorization header 提取
+	authHeader := string(c.GetHeader("Authorization"))
+	if authHeader != "" {
+		token := strings.TrimPrefix(authHeader, "Bearer ")
+		if token != authHeader {
+			return token
+		}
+	}
+
+	// 2. 从 Cookie 提取（HTTPOnly 模式下 token 在 Cookie 中）
+	if cookieName != "" {
+		if cookieToken := string(c.Cookie(cookieName)); cookieToken != "" {
+			return cookieToken
+		}
+	}
+
+	return ""
 }

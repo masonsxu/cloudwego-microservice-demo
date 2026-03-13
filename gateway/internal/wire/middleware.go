@@ -154,10 +154,11 @@ func ProvideCasbinMiddleware(
 // 自动记录写操作和认证事件的审计日志
 func ProvideAuditMiddleware(
 	identityClient identitycli.IdentityClient,
+	jwtConfig *config.JWTConfig,
 	logger *hertzZerolog.Logger,
 ) auditmdw.AuditMiddlewareService {
 	zl := logger.Unwrap()
-	middleware := auditmdw.NewAuditMiddleware(identityClient, &zl)
+	middleware := auditmdw.NewAuditMiddleware(identityClient, &zl, jwtConfig.Cookie.CookieName)
 
 	zl.Info().Msg("Audit middleware created successfully")
 
