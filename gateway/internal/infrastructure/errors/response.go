@@ -42,7 +42,6 @@ var httpStatusMap = map[int32]int{
 	// RPC 业务层认证相关错误 (201xxx - identity_srv)
 	// 这些错误来自下游 RPC 服务，需要在网关层映射为正确的 HTTP 状态码
 	CodeRPCUserInactive:         http.StatusForbidden,    // 用户未激活
-	CodeRPCUserNotFound:         http.StatusUnauthorized, // 用户不存在
 	CodeRPCInvalidCredentials:   http.StatusUnauthorized, // 用户名或密码错误
 	CodeRPCUserSuspended:        http.StatusForbidden,    // 用户已停用
 	CodeRPCMustChangePassword:   http.StatusForbidden,    // 需要修改密码
@@ -106,7 +105,7 @@ func GetHTTPStatus(code int32) int {
 	switch {
 	case code == 0:
 		return http.StatusOK
-	case code >= 20000 && code < 30000: // RPC 业务错误，统一返回 200
+	case code >= 200000 && code < 300000: // RPC 业务错误，统一返回 200
 		return http.StatusOK
 	default:
 		// 系统级错误默认返回 500
