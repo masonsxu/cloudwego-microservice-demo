@@ -5666,6 +5666,1718 @@ var fieldIDToName_ListAuditLogsResponse = map[int16]string{
 	3: "stats",
 }
 
+type CreateOAuth2ClientRequest struct {
+	ClientName           *string           `thrift:"clientName,1,optional" frugal:"1,optional,string" json:"clientName,omitempty"`
+	Description          *string           `thrift:"description,2,optional" frugal:"2,optional,string" json:"description,omitempty"`
+	ClientType           *OAuth2ClientType `thrift:"clientType,3,optional" frugal:"3,optional,OAuth2ClientType" json:"clientType,omitempty"`
+	GrantTypes           []OAuth2GrantType `thrift:"grantTypes,4,optional" frugal:"4,optional,list<OAuth2GrantType>" json:"grantTypes,omitempty"`
+	RedirectURIs         []string          `thrift:"redirectURIs,5,optional" frugal:"5,optional,list<string>" json:"redirectURIs,omitempty"`
+	Scopes               []string          `thrift:"scopes,6,optional" frugal:"6,optional,list<string>" json:"scopes,omitempty"`
+	LogoURI              *string           `thrift:"logoURI,7,optional" frugal:"7,optional,string" json:"logoURI,omitempty"`
+	ClientURI            *string           `thrift:"clientURI,8,optional" frugal:"8,optional,string" json:"clientURI,omitempty"`
+	AccessTokenLifespan  *int32            `thrift:"accessTokenLifespan,9,optional" frugal:"9,optional,i32" json:"accessTokenLifespan,omitempty"`
+	RefreshTokenLifespan *int32            `thrift:"refreshTokenLifespan,10,optional" frugal:"10,optional,i32" json:"refreshTokenLifespan,omitempty"`
+	OwnerID              *core.UUID        `thrift:"ownerID,11,optional" frugal:"11,optional,string" json:"ownerID,omitempty"`
+}
+
+func NewCreateOAuth2ClientRequest() *CreateOAuth2ClientRequest {
+	return &CreateOAuth2ClientRequest{}
+}
+
+func (p *CreateOAuth2ClientRequest) InitDefault() {
+}
+
+var CreateOAuth2ClientRequest_ClientName_DEFAULT string
+
+func (p *CreateOAuth2ClientRequest) GetClientName() (v string) {
+	if !p.IsSetClientName() {
+		return CreateOAuth2ClientRequest_ClientName_DEFAULT
+	}
+	return *p.ClientName
+}
+
+var CreateOAuth2ClientRequest_Description_DEFAULT string
+
+func (p *CreateOAuth2ClientRequest) GetDescription() (v string) {
+	if !p.IsSetDescription() {
+		return CreateOAuth2ClientRequest_Description_DEFAULT
+	}
+	return *p.Description
+}
+
+var CreateOAuth2ClientRequest_ClientType_DEFAULT OAuth2ClientType
+
+func (p *CreateOAuth2ClientRequest) GetClientType() (v OAuth2ClientType) {
+	if !p.IsSetClientType() {
+		return CreateOAuth2ClientRequest_ClientType_DEFAULT
+	}
+	return *p.ClientType
+}
+
+var CreateOAuth2ClientRequest_GrantTypes_DEFAULT []OAuth2GrantType
+
+func (p *CreateOAuth2ClientRequest) GetGrantTypes() (v []OAuth2GrantType) {
+	if !p.IsSetGrantTypes() {
+		return CreateOAuth2ClientRequest_GrantTypes_DEFAULT
+	}
+	return p.GrantTypes
+}
+
+var CreateOAuth2ClientRequest_RedirectURIs_DEFAULT []string
+
+func (p *CreateOAuth2ClientRequest) GetRedirectURIs() (v []string) {
+	if !p.IsSetRedirectURIs() {
+		return CreateOAuth2ClientRequest_RedirectURIs_DEFAULT
+	}
+	return p.RedirectURIs
+}
+
+var CreateOAuth2ClientRequest_Scopes_DEFAULT []string
+
+func (p *CreateOAuth2ClientRequest) GetScopes() (v []string) {
+	if !p.IsSetScopes() {
+		return CreateOAuth2ClientRequest_Scopes_DEFAULT
+	}
+	return p.Scopes
+}
+
+var CreateOAuth2ClientRequest_LogoURI_DEFAULT string
+
+func (p *CreateOAuth2ClientRequest) GetLogoURI() (v string) {
+	if !p.IsSetLogoURI() {
+		return CreateOAuth2ClientRequest_LogoURI_DEFAULT
+	}
+	return *p.LogoURI
+}
+
+var CreateOAuth2ClientRequest_ClientURI_DEFAULT string
+
+func (p *CreateOAuth2ClientRequest) GetClientURI() (v string) {
+	if !p.IsSetClientURI() {
+		return CreateOAuth2ClientRequest_ClientURI_DEFAULT
+	}
+	return *p.ClientURI
+}
+
+var CreateOAuth2ClientRequest_AccessTokenLifespan_DEFAULT int32
+
+func (p *CreateOAuth2ClientRequest) GetAccessTokenLifespan() (v int32) {
+	if !p.IsSetAccessTokenLifespan() {
+		return CreateOAuth2ClientRequest_AccessTokenLifespan_DEFAULT
+	}
+	return *p.AccessTokenLifespan
+}
+
+var CreateOAuth2ClientRequest_RefreshTokenLifespan_DEFAULT int32
+
+func (p *CreateOAuth2ClientRequest) GetRefreshTokenLifespan() (v int32) {
+	if !p.IsSetRefreshTokenLifespan() {
+		return CreateOAuth2ClientRequest_RefreshTokenLifespan_DEFAULT
+	}
+	return *p.RefreshTokenLifespan
+}
+
+var CreateOAuth2ClientRequest_OwnerID_DEFAULT core.UUID
+
+func (p *CreateOAuth2ClientRequest) GetOwnerID() (v core.UUID) {
+	if !p.IsSetOwnerID() {
+		return CreateOAuth2ClientRequest_OwnerID_DEFAULT
+	}
+	return *p.OwnerID
+}
+func (p *CreateOAuth2ClientRequest) SetClientName(val *string) {
+	p.ClientName = val
+}
+func (p *CreateOAuth2ClientRequest) SetDescription(val *string) {
+	p.Description = val
+}
+func (p *CreateOAuth2ClientRequest) SetClientType(val *OAuth2ClientType) {
+	p.ClientType = val
+}
+func (p *CreateOAuth2ClientRequest) SetGrantTypes(val []OAuth2GrantType) {
+	p.GrantTypes = val
+}
+func (p *CreateOAuth2ClientRequest) SetRedirectURIs(val []string) {
+	p.RedirectURIs = val
+}
+func (p *CreateOAuth2ClientRequest) SetScopes(val []string) {
+	p.Scopes = val
+}
+func (p *CreateOAuth2ClientRequest) SetLogoURI(val *string) {
+	p.LogoURI = val
+}
+func (p *CreateOAuth2ClientRequest) SetClientURI(val *string) {
+	p.ClientURI = val
+}
+func (p *CreateOAuth2ClientRequest) SetAccessTokenLifespan(val *int32) {
+	p.AccessTokenLifespan = val
+}
+func (p *CreateOAuth2ClientRequest) SetRefreshTokenLifespan(val *int32) {
+	p.RefreshTokenLifespan = val
+}
+func (p *CreateOAuth2ClientRequest) SetOwnerID(val *core.UUID) {
+	p.OwnerID = val
+}
+
+func (p *CreateOAuth2ClientRequest) IsSetClientName() bool {
+	return p.ClientName != nil
+}
+
+func (p *CreateOAuth2ClientRequest) IsSetDescription() bool {
+	return p.Description != nil
+}
+
+func (p *CreateOAuth2ClientRequest) IsSetClientType() bool {
+	return p.ClientType != nil
+}
+
+func (p *CreateOAuth2ClientRequest) IsSetGrantTypes() bool {
+	return p.GrantTypes != nil
+}
+
+func (p *CreateOAuth2ClientRequest) IsSetRedirectURIs() bool {
+	return p.RedirectURIs != nil
+}
+
+func (p *CreateOAuth2ClientRequest) IsSetScopes() bool {
+	return p.Scopes != nil
+}
+
+func (p *CreateOAuth2ClientRequest) IsSetLogoURI() bool {
+	return p.LogoURI != nil
+}
+
+func (p *CreateOAuth2ClientRequest) IsSetClientURI() bool {
+	return p.ClientURI != nil
+}
+
+func (p *CreateOAuth2ClientRequest) IsSetAccessTokenLifespan() bool {
+	return p.AccessTokenLifespan != nil
+}
+
+func (p *CreateOAuth2ClientRequest) IsSetRefreshTokenLifespan() bool {
+	return p.RefreshTokenLifespan != nil
+}
+
+func (p *CreateOAuth2ClientRequest) IsSetOwnerID() bool {
+	return p.OwnerID != nil
+}
+
+func (p *CreateOAuth2ClientRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("CreateOAuth2ClientRequest(%+v)", *p)
+}
+
+var fieldIDToName_CreateOAuth2ClientRequest = map[int16]string{
+	1:  "clientName",
+	2:  "description",
+	3:  "clientType",
+	4:  "grantTypes",
+	5:  "redirectURIs",
+	6:  "scopes",
+	7:  "logoURI",
+	8:  "clientURI",
+	9:  "accessTokenLifespan",
+	10: "refreshTokenLifespan",
+	11: "ownerID",
+}
+
+type CreateOAuth2ClientResponse struct {
+	Client       *OAuth2Client `thrift:"client,1,optional" frugal:"1,optional,OAuth2Client" json:"client,omitempty"`
+	ClientSecret *string       `thrift:"clientSecret,2,optional" frugal:"2,optional,string" json:"clientSecret,omitempty"`
+}
+
+func NewCreateOAuth2ClientResponse() *CreateOAuth2ClientResponse {
+	return &CreateOAuth2ClientResponse{}
+}
+
+func (p *CreateOAuth2ClientResponse) InitDefault() {
+}
+
+var CreateOAuth2ClientResponse_Client_DEFAULT *OAuth2Client
+
+func (p *CreateOAuth2ClientResponse) GetClient() (v *OAuth2Client) {
+	if !p.IsSetClient() {
+		return CreateOAuth2ClientResponse_Client_DEFAULT
+	}
+	return p.Client
+}
+
+var CreateOAuth2ClientResponse_ClientSecret_DEFAULT string
+
+func (p *CreateOAuth2ClientResponse) GetClientSecret() (v string) {
+	if !p.IsSetClientSecret() {
+		return CreateOAuth2ClientResponse_ClientSecret_DEFAULT
+	}
+	return *p.ClientSecret
+}
+func (p *CreateOAuth2ClientResponse) SetClient(val *OAuth2Client) {
+	p.Client = val
+}
+func (p *CreateOAuth2ClientResponse) SetClientSecret(val *string) {
+	p.ClientSecret = val
+}
+
+func (p *CreateOAuth2ClientResponse) IsSetClient() bool {
+	return p.Client != nil
+}
+
+func (p *CreateOAuth2ClientResponse) IsSetClientSecret() bool {
+	return p.ClientSecret != nil
+}
+
+func (p *CreateOAuth2ClientResponse) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("CreateOAuth2ClientResponse(%+v)", *p)
+}
+
+var fieldIDToName_CreateOAuth2ClientResponse = map[int16]string{
+	1: "client",
+	2: "clientSecret",
+}
+
+type GetOAuth2ClientRequest struct {
+	Id *core.UUID `thrift:"id,1,optional" frugal:"1,optional,string" json:"id,omitempty"`
+}
+
+func NewGetOAuth2ClientRequest() *GetOAuth2ClientRequest {
+	return &GetOAuth2ClientRequest{}
+}
+
+func (p *GetOAuth2ClientRequest) InitDefault() {
+}
+
+var GetOAuth2ClientRequest_Id_DEFAULT core.UUID
+
+func (p *GetOAuth2ClientRequest) GetId() (v core.UUID) {
+	if !p.IsSetId() {
+		return GetOAuth2ClientRequest_Id_DEFAULT
+	}
+	return *p.Id
+}
+func (p *GetOAuth2ClientRequest) SetId(val *core.UUID) {
+	p.Id = val
+}
+
+func (p *GetOAuth2ClientRequest) IsSetId() bool {
+	return p.Id != nil
+}
+
+func (p *GetOAuth2ClientRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("GetOAuth2ClientRequest(%+v)", *p)
+}
+
+var fieldIDToName_GetOAuth2ClientRequest = map[int16]string{
+	1: "id",
+}
+
+type UpdateOAuth2ClientRequest struct {
+	Id                   *core.UUID        `thrift:"id,1,optional" frugal:"1,optional,string" json:"id,omitempty"`
+	ClientName           *string           `thrift:"clientName,2,optional" frugal:"2,optional,string" json:"clientName,omitempty"`
+	Description          *string           `thrift:"description,3,optional" frugal:"3,optional,string" json:"description,omitempty"`
+	GrantTypes           []OAuth2GrantType `thrift:"grantTypes,4,optional" frugal:"4,optional,list<OAuth2GrantType>" json:"grantTypes,omitempty"`
+	RedirectURIs         []string          `thrift:"redirectURIs,5,optional" frugal:"5,optional,list<string>" json:"redirectURIs,omitempty"`
+	Scopes               []string          `thrift:"scopes,6,optional" frugal:"6,optional,list<string>" json:"scopes,omitempty"`
+	LogoURI              *string           `thrift:"logoURI,7,optional" frugal:"7,optional,string" json:"logoURI,omitempty"`
+	ClientURI            *string           `thrift:"clientURI,8,optional" frugal:"8,optional,string" json:"clientURI,omitempty"`
+	AccessTokenLifespan  *int32            `thrift:"accessTokenLifespan,9,optional" frugal:"9,optional,i32" json:"accessTokenLifespan,omitempty"`
+	RefreshTokenLifespan *int32            `thrift:"refreshTokenLifespan,10,optional" frugal:"10,optional,i32" json:"refreshTokenLifespan,omitempty"`
+	IsActive             *bool             `thrift:"isActive,11,optional" frugal:"11,optional,bool" json:"isActive,omitempty"`
+}
+
+func NewUpdateOAuth2ClientRequest() *UpdateOAuth2ClientRequest {
+	return &UpdateOAuth2ClientRequest{}
+}
+
+func (p *UpdateOAuth2ClientRequest) InitDefault() {
+}
+
+var UpdateOAuth2ClientRequest_Id_DEFAULT core.UUID
+
+func (p *UpdateOAuth2ClientRequest) GetId() (v core.UUID) {
+	if !p.IsSetId() {
+		return UpdateOAuth2ClientRequest_Id_DEFAULT
+	}
+	return *p.Id
+}
+
+var UpdateOAuth2ClientRequest_ClientName_DEFAULT string
+
+func (p *UpdateOAuth2ClientRequest) GetClientName() (v string) {
+	if !p.IsSetClientName() {
+		return UpdateOAuth2ClientRequest_ClientName_DEFAULT
+	}
+	return *p.ClientName
+}
+
+var UpdateOAuth2ClientRequest_Description_DEFAULT string
+
+func (p *UpdateOAuth2ClientRequest) GetDescription() (v string) {
+	if !p.IsSetDescription() {
+		return UpdateOAuth2ClientRequest_Description_DEFAULT
+	}
+	return *p.Description
+}
+
+var UpdateOAuth2ClientRequest_GrantTypes_DEFAULT []OAuth2GrantType
+
+func (p *UpdateOAuth2ClientRequest) GetGrantTypes() (v []OAuth2GrantType) {
+	if !p.IsSetGrantTypes() {
+		return UpdateOAuth2ClientRequest_GrantTypes_DEFAULT
+	}
+	return p.GrantTypes
+}
+
+var UpdateOAuth2ClientRequest_RedirectURIs_DEFAULT []string
+
+func (p *UpdateOAuth2ClientRequest) GetRedirectURIs() (v []string) {
+	if !p.IsSetRedirectURIs() {
+		return UpdateOAuth2ClientRequest_RedirectURIs_DEFAULT
+	}
+	return p.RedirectURIs
+}
+
+var UpdateOAuth2ClientRequest_Scopes_DEFAULT []string
+
+func (p *UpdateOAuth2ClientRequest) GetScopes() (v []string) {
+	if !p.IsSetScopes() {
+		return UpdateOAuth2ClientRequest_Scopes_DEFAULT
+	}
+	return p.Scopes
+}
+
+var UpdateOAuth2ClientRequest_LogoURI_DEFAULT string
+
+func (p *UpdateOAuth2ClientRequest) GetLogoURI() (v string) {
+	if !p.IsSetLogoURI() {
+		return UpdateOAuth2ClientRequest_LogoURI_DEFAULT
+	}
+	return *p.LogoURI
+}
+
+var UpdateOAuth2ClientRequest_ClientURI_DEFAULT string
+
+func (p *UpdateOAuth2ClientRequest) GetClientURI() (v string) {
+	if !p.IsSetClientURI() {
+		return UpdateOAuth2ClientRequest_ClientURI_DEFAULT
+	}
+	return *p.ClientURI
+}
+
+var UpdateOAuth2ClientRequest_AccessTokenLifespan_DEFAULT int32
+
+func (p *UpdateOAuth2ClientRequest) GetAccessTokenLifespan() (v int32) {
+	if !p.IsSetAccessTokenLifespan() {
+		return UpdateOAuth2ClientRequest_AccessTokenLifespan_DEFAULT
+	}
+	return *p.AccessTokenLifespan
+}
+
+var UpdateOAuth2ClientRequest_RefreshTokenLifespan_DEFAULT int32
+
+func (p *UpdateOAuth2ClientRequest) GetRefreshTokenLifespan() (v int32) {
+	if !p.IsSetRefreshTokenLifespan() {
+		return UpdateOAuth2ClientRequest_RefreshTokenLifespan_DEFAULT
+	}
+	return *p.RefreshTokenLifespan
+}
+
+var UpdateOAuth2ClientRequest_IsActive_DEFAULT bool
+
+func (p *UpdateOAuth2ClientRequest) GetIsActive() (v bool) {
+	if !p.IsSetIsActive() {
+		return UpdateOAuth2ClientRequest_IsActive_DEFAULT
+	}
+	return *p.IsActive
+}
+func (p *UpdateOAuth2ClientRequest) SetId(val *core.UUID) {
+	p.Id = val
+}
+func (p *UpdateOAuth2ClientRequest) SetClientName(val *string) {
+	p.ClientName = val
+}
+func (p *UpdateOAuth2ClientRequest) SetDescription(val *string) {
+	p.Description = val
+}
+func (p *UpdateOAuth2ClientRequest) SetGrantTypes(val []OAuth2GrantType) {
+	p.GrantTypes = val
+}
+func (p *UpdateOAuth2ClientRequest) SetRedirectURIs(val []string) {
+	p.RedirectURIs = val
+}
+func (p *UpdateOAuth2ClientRequest) SetScopes(val []string) {
+	p.Scopes = val
+}
+func (p *UpdateOAuth2ClientRequest) SetLogoURI(val *string) {
+	p.LogoURI = val
+}
+func (p *UpdateOAuth2ClientRequest) SetClientURI(val *string) {
+	p.ClientURI = val
+}
+func (p *UpdateOAuth2ClientRequest) SetAccessTokenLifespan(val *int32) {
+	p.AccessTokenLifespan = val
+}
+func (p *UpdateOAuth2ClientRequest) SetRefreshTokenLifespan(val *int32) {
+	p.RefreshTokenLifespan = val
+}
+func (p *UpdateOAuth2ClientRequest) SetIsActive(val *bool) {
+	p.IsActive = val
+}
+
+func (p *UpdateOAuth2ClientRequest) IsSetId() bool {
+	return p.Id != nil
+}
+
+func (p *UpdateOAuth2ClientRequest) IsSetClientName() bool {
+	return p.ClientName != nil
+}
+
+func (p *UpdateOAuth2ClientRequest) IsSetDescription() bool {
+	return p.Description != nil
+}
+
+func (p *UpdateOAuth2ClientRequest) IsSetGrantTypes() bool {
+	return p.GrantTypes != nil
+}
+
+func (p *UpdateOAuth2ClientRequest) IsSetRedirectURIs() bool {
+	return p.RedirectURIs != nil
+}
+
+func (p *UpdateOAuth2ClientRequest) IsSetScopes() bool {
+	return p.Scopes != nil
+}
+
+func (p *UpdateOAuth2ClientRequest) IsSetLogoURI() bool {
+	return p.LogoURI != nil
+}
+
+func (p *UpdateOAuth2ClientRequest) IsSetClientURI() bool {
+	return p.ClientURI != nil
+}
+
+func (p *UpdateOAuth2ClientRequest) IsSetAccessTokenLifespan() bool {
+	return p.AccessTokenLifespan != nil
+}
+
+func (p *UpdateOAuth2ClientRequest) IsSetRefreshTokenLifespan() bool {
+	return p.RefreshTokenLifespan != nil
+}
+
+func (p *UpdateOAuth2ClientRequest) IsSetIsActive() bool {
+	return p.IsActive != nil
+}
+
+func (p *UpdateOAuth2ClientRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("UpdateOAuth2ClientRequest(%+v)", *p)
+}
+
+var fieldIDToName_UpdateOAuth2ClientRequest = map[int16]string{
+	1:  "id",
+	2:  "clientName",
+	3:  "description",
+	4:  "grantTypes",
+	5:  "redirectURIs",
+	6:  "scopes",
+	7:  "logoURI",
+	8:  "clientURI",
+	9:  "accessTokenLifespan",
+	10: "refreshTokenLifespan",
+	11: "isActive",
+}
+
+type DeleteOAuth2ClientRequest struct {
+	Id *core.UUID `thrift:"id,1,optional" frugal:"1,optional,string" json:"id,omitempty"`
+}
+
+func NewDeleteOAuth2ClientRequest() *DeleteOAuth2ClientRequest {
+	return &DeleteOAuth2ClientRequest{}
+}
+
+func (p *DeleteOAuth2ClientRequest) InitDefault() {
+}
+
+var DeleteOAuth2ClientRequest_Id_DEFAULT core.UUID
+
+func (p *DeleteOAuth2ClientRequest) GetId() (v core.UUID) {
+	if !p.IsSetId() {
+		return DeleteOAuth2ClientRequest_Id_DEFAULT
+	}
+	return *p.Id
+}
+func (p *DeleteOAuth2ClientRequest) SetId(val *core.UUID) {
+	p.Id = val
+}
+
+func (p *DeleteOAuth2ClientRequest) IsSetId() bool {
+	return p.Id != nil
+}
+
+func (p *DeleteOAuth2ClientRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("DeleteOAuth2ClientRequest(%+v)", *p)
+}
+
+var fieldIDToName_DeleteOAuth2ClientRequest = map[int16]string{
+	1: "id",
+}
+
+type ListOAuth2ClientsRequest struct {
+	Page     *rpc_base.PageRequest `thrift:"page,1,optional" frugal:"1,optional,rpc_base.PageRequest" json:"page,omitempty"`
+	OwnerID  *core.UUID            `thrift:"ownerID,2,optional" frugal:"2,optional,string" json:"ownerID,omitempty"`
+	IsActive *bool                 `thrift:"isActive,3,optional" frugal:"3,optional,bool" json:"isActive,omitempty"`
+}
+
+func NewListOAuth2ClientsRequest() *ListOAuth2ClientsRequest {
+	return &ListOAuth2ClientsRequest{}
+}
+
+func (p *ListOAuth2ClientsRequest) InitDefault() {
+}
+
+var ListOAuth2ClientsRequest_Page_DEFAULT *rpc_base.PageRequest
+
+func (p *ListOAuth2ClientsRequest) GetPage() (v *rpc_base.PageRequest) {
+	if !p.IsSetPage() {
+		return ListOAuth2ClientsRequest_Page_DEFAULT
+	}
+	return p.Page
+}
+
+var ListOAuth2ClientsRequest_OwnerID_DEFAULT core.UUID
+
+func (p *ListOAuth2ClientsRequest) GetOwnerID() (v core.UUID) {
+	if !p.IsSetOwnerID() {
+		return ListOAuth2ClientsRequest_OwnerID_DEFAULT
+	}
+	return *p.OwnerID
+}
+
+var ListOAuth2ClientsRequest_IsActive_DEFAULT bool
+
+func (p *ListOAuth2ClientsRequest) GetIsActive() (v bool) {
+	if !p.IsSetIsActive() {
+		return ListOAuth2ClientsRequest_IsActive_DEFAULT
+	}
+	return *p.IsActive
+}
+func (p *ListOAuth2ClientsRequest) SetPage(val *rpc_base.PageRequest) {
+	p.Page = val
+}
+func (p *ListOAuth2ClientsRequest) SetOwnerID(val *core.UUID) {
+	p.OwnerID = val
+}
+func (p *ListOAuth2ClientsRequest) SetIsActive(val *bool) {
+	p.IsActive = val
+}
+
+func (p *ListOAuth2ClientsRequest) IsSetPage() bool {
+	return p.Page != nil
+}
+
+func (p *ListOAuth2ClientsRequest) IsSetOwnerID() bool {
+	return p.OwnerID != nil
+}
+
+func (p *ListOAuth2ClientsRequest) IsSetIsActive() bool {
+	return p.IsActive != nil
+}
+
+func (p *ListOAuth2ClientsRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("ListOAuth2ClientsRequest(%+v)", *p)
+}
+
+var fieldIDToName_ListOAuth2ClientsRequest = map[int16]string{
+	1: "page",
+	2: "ownerID",
+	3: "isActive",
+}
+
+type ListOAuth2ClientsResponse struct {
+	Clients []*OAuth2Client        `thrift:"clients,1,optional" frugal:"1,optional,list<OAuth2Client>" json:"clients,omitempty"`
+	Page    *rpc_base.PageResponse `thrift:"page,2,optional" frugal:"2,optional,rpc_base.PageResponse" json:"page,omitempty"`
+}
+
+func NewListOAuth2ClientsResponse() *ListOAuth2ClientsResponse {
+	return &ListOAuth2ClientsResponse{}
+}
+
+func (p *ListOAuth2ClientsResponse) InitDefault() {
+}
+
+var ListOAuth2ClientsResponse_Clients_DEFAULT []*OAuth2Client
+
+func (p *ListOAuth2ClientsResponse) GetClients() (v []*OAuth2Client) {
+	if !p.IsSetClients() {
+		return ListOAuth2ClientsResponse_Clients_DEFAULT
+	}
+	return p.Clients
+}
+
+var ListOAuth2ClientsResponse_Page_DEFAULT *rpc_base.PageResponse
+
+func (p *ListOAuth2ClientsResponse) GetPage() (v *rpc_base.PageResponse) {
+	if !p.IsSetPage() {
+		return ListOAuth2ClientsResponse_Page_DEFAULT
+	}
+	return p.Page
+}
+func (p *ListOAuth2ClientsResponse) SetClients(val []*OAuth2Client) {
+	p.Clients = val
+}
+func (p *ListOAuth2ClientsResponse) SetPage(val *rpc_base.PageResponse) {
+	p.Page = val
+}
+
+func (p *ListOAuth2ClientsResponse) IsSetClients() bool {
+	return p.Clients != nil
+}
+
+func (p *ListOAuth2ClientsResponse) IsSetPage() bool {
+	return p.Page != nil
+}
+
+func (p *ListOAuth2ClientsResponse) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("ListOAuth2ClientsResponse(%+v)", *p)
+}
+
+var fieldIDToName_ListOAuth2ClientsResponse = map[int16]string{
+	1: "clients",
+	2: "page",
+}
+
+type RotateOAuth2ClientSecretRequest struct {
+	Id *core.UUID `thrift:"id,1,optional" frugal:"1,optional,string" json:"id,omitempty"`
+}
+
+func NewRotateOAuth2ClientSecretRequest() *RotateOAuth2ClientSecretRequest {
+	return &RotateOAuth2ClientSecretRequest{}
+}
+
+func (p *RotateOAuth2ClientSecretRequest) InitDefault() {
+}
+
+var RotateOAuth2ClientSecretRequest_Id_DEFAULT core.UUID
+
+func (p *RotateOAuth2ClientSecretRequest) GetId() (v core.UUID) {
+	if !p.IsSetId() {
+		return RotateOAuth2ClientSecretRequest_Id_DEFAULT
+	}
+	return *p.Id
+}
+func (p *RotateOAuth2ClientSecretRequest) SetId(val *core.UUID) {
+	p.Id = val
+}
+
+func (p *RotateOAuth2ClientSecretRequest) IsSetId() bool {
+	return p.Id != nil
+}
+
+func (p *RotateOAuth2ClientSecretRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("RotateOAuth2ClientSecretRequest(%+v)", *p)
+}
+
+var fieldIDToName_RotateOAuth2ClientSecretRequest = map[int16]string{
+	1: "id",
+}
+
+type RotateOAuth2ClientSecretResponse struct {
+	ClientSecret *string `thrift:"clientSecret,1,optional" frugal:"1,optional,string" json:"clientSecret,omitempty"`
+}
+
+func NewRotateOAuth2ClientSecretResponse() *RotateOAuth2ClientSecretResponse {
+	return &RotateOAuth2ClientSecretResponse{}
+}
+
+func (p *RotateOAuth2ClientSecretResponse) InitDefault() {
+}
+
+var RotateOAuth2ClientSecretResponse_ClientSecret_DEFAULT string
+
+func (p *RotateOAuth2ClientSecretResponse) GetClientSecret() (v string) {
+	if !p.IsSetClientSecret() {
+		return RotateOAuth2ClientSecretResponse_ClientSecret_DEFAULT
+	}
+	return *p.ClientSecret
+}
+func (p *RotateOAuth2ClientSecretResponse) SetClientSecret(val *string) {
+	p.ClientSecret = val
+}
+
+func (p *RotateOAuth2ClientSecretResponse) IsSetClientSecret() bool {
+	return p.ClientSecret != nil
+}
+
+func (p *RotateOAuth2ClientSecretResponse) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("RotateOAuth2ClientSecretResponse(%+v)", *p)
+}
+
+var fieldIDToName_RotateOAuth2ClientSecretResponse = map[int16]string{
+	1: "clientSecret",
+}
+
+type GetOAuth2ClientForAuthResponse struct {
+	Id                   *core.UUID        `thrift:"id,1,optional" frugal:"1,optional,string" json:"id,omitempty"`
+	ClientID             *string           `thrift:"clientID,2,optional" frugal:"2,optional,string" json:"clientID,omitempty"`
+	ClientSecretHash     *string           `thrift:"clientSecretHash,3,optional" frugal:"3,optional,string" json:"clientSecretHash,omitempty"`
+	ClientName           *string           `thrift:"clientName,4,optional" frugal:"4,optional,string" json:"clientName,omitempty"`
+	ClientType           *OAuth2ClientType `thrift:"clientType,5,optional" frugal:"5,optional,OAuth2ClientType" json:"clientType,omitempty"`
+	GrantTypes           []string          `thrift:"grantTypes,6,optional" frugal:"6,optional,list<string>" json:"grantTypes,omitempty"`
+	RedirectURIs         []string          `thrift:"redirectURIs,7,optional" frugal:"7,optional,list<string>" json:"redirectURIs,omitempty"`
+	Scopes               []string          `thrift:"scopes,8,optional" frugal:"8,optional,list<string>" json:"scopes,omitempty"`
+	AccessTokenLifespan  *int32            `thrift:"accessTokenLifespan,9,optional" frugal:"9,optional,i32" json:"accessTokenLifespan,omitempty"`
+	RefreshTokenLifespan *int32            `thrift:"refreshTokenLifespan,10,optional" frugal:"10,optional,i32" json:"refreshTokenLifespan,omitempty"`
+	IsActive             *bool             `thrift:"isActive,11,optional" frugal:"11,optional,bool" json:"isActive,omitempty"`
+}
+
+func NewGetOAuth2ClientForAuthResponse() *GetOAuth2ClientForAuthResponse {
+	return &GetOAuth2ClientForAuthResponse{}
+}
+
+func (p *GetOAuth2ClientForAuthResponse) InitDefault() {
+}
+
+var GetOAuth2ClientForAuthResponse_Id_DEFAULT core.UUID
+
+func (p *GetOAuth2ClientForAuthResponse) GetId() (v core.UUID) {
+	if !p.IsSetId() {
+		return GetOAuth2ClientForAuthResponse_Id_DEFAULT
+	}
+	return *p.Id
+}
+
+var GetOAuth2ClientForAuthResponse_ClientID_DEFAULT string
+
+func (p *GetOAuth2ClientForAuthResponse) GetClientID() (v string) {
+	if !p.IsSetClientID() {
+		return GetOAuth2ClientForAuthResponse_ClientID_DEFAULT
+	}
+	return *p.ClientID
+}
+
+var GetOAuth2ClientForAuthResponse_ClientSecretHash_DEFAULT string
+
+func (p *GetOAuth2ClientForAuthResponse) GetClientSecretHash() (v string) {
+	if !p.IsSetClientSecretHash() {
+		return GetOAuth2ClientForAuthResponse_ClientSecretHash_DEFAULT
+	}
+	return *p.ClientSecretHash
+}
+
+var GetOAuth2ClientForAuthResponse_ClientName_DEFAULT string
+
+func (p *GetOAuth2ClientForAuthResponse) GetClientName() (v string) {
+	if !p.IsSetClientName() {
+		return GetOAuth2ClientForAuthResponse_ClientName_DEFAULT
+	}
+	return *p.ClientName
+}
+
+var GetOAuth2ClientForAuthResponse_ClientType_DEFAULT OAuth2ClientType
+
+func (p *GetOAuth2ClientForAuthResponse) GetClientType() (v OAuth2ClientType) {
+	if !p.IsSetClientType() {
+		return GetOAuth2ClientForAuthResponse_ClientType_DEFAULT
+	}
+	return *p.ClientType
+}
+
+var GetOAuth2ClientForAuthResponse_GrantTypes_DEFAULT []string
+
+func (p *GetOAuth2ClientForAuthResponse) GetGrantTypes() (v []string) {
+	if !p.IsSetGrantTypes() {
+		return GetOAuth2ClientForAuthResponse_GrantTypes_DEFAULT
+	}
+	return p.GrantTypes
+}
+
+var GetOAuth2ClientForAuthResponse_RedirectURIs_DEFAULT []string
+
+func (p *GetOAuth2ClientForAuthResponse) GetRedirectURIs() (v []string) {
+	if !p.IsSetRedirectURIs() {
+		return GetOAuth2ClientForAuthResponse_RedirectURIs_DEFAULT
+	}
+	return p.RedirectURIs
+}
+
+var GetOAuth2ClientForAuthResponse_Scopes_DEFAULT []string
+
+func (p *GetOAuth2ClientForAuthResponse) GetScopes() (v []string) {
+	if !p.IsSetScopes() {
+		return GetOAuth2ClientForAuthResponse_Scopes_DEFAULT
+	}
+	return p.Scopes
+}
+
+var GetOAuth2ClientForAuthResponse_AccessTokenLifespan_DEFAULT int32
+
+func (p *GetOAuth2ClientForAuthResponse) GetAccessTokenLifespan() (v int32) {
+	if !p.IsSetAccessTokenLifespan() {
+		return GetOAuth2ClientForAuthResponse_AccessTokenLifespan_DEFAULT
+	}
+	return *p.AccessTokenLifespan
+}
+
+var GetOAuth2ClientForAuthResponse_RefreshTokenLifespan_DEFAULT int32
+
+func (p *GetOAuth2ClientForAuthResponse) GetRefreshTokenLifespan() (v int32) {
+	if !p.IsSetRefreshTokenLifespan() {
+		return GetOAuth2ClientForAuthResponse_RefreshTokenLifespan_DEFAULT
+	}
+	return *p.RefreshTokenLifespan
+}
+
+var GetOAuth2ClientForAuthResponse_IsActive_DEFAULT bool
+
+func (p *GetOAuth2ClientForAuthResponse) GetIsActive() (v bool) {
+	if !p.IsSetIsActive() {
+		return GetOAuth2ClientForAuthResponse_IsActive_DEFAULT
+	}
+	return *p.IsActive
+}
+func (p *GetOAuth2ClientForAuthResponse) SetId(val *core.UUID) {
+	p.Id = val
+}
+func (p *GetOAuth2ClientForAuthResponse) SetClientID(val *string) {
+	p.ClientID = val
+}
+func (p *GetOAuth2ClientForAuthResponse) SetClientSecretHash(val *string) {
+	p.ClientSecretHash = val
+}
+func (p *GetOAuth2ClientForAuthResponse) SetClientName(val *string) {
+	p.ClientName = val
+}
+func (p *GetOAuth2ClientForAuthResponse) SetClientType(val *OAuth2ClientType) {
+	p.ClientType = val
+}
+func (p *GetOAuth2ClientForAuthResponse) SetGrantTypes(val []string) {
+	p.GrantTypes = val
+}
+func (p *GetOAuth2ClientForAuthResponse) SetRedirectURIs(val []string) {
+	p.RedirectURIs = val
+}
+func (p *GetOAuth2ClientForAuthResponse) SetScopes(val []string) {
+	p.Scopes = val
+}
+func (p *GetOAuth2ClientForAuthResponse) SetAccessTokenLifespan(val *int32) {
+	p.AccessTokenLifespan = val
+}
+func (p *GetOAuth2ClientForAuthResponse) SetRefreshTokenLifespan(val *int32) {
+	p.RefreshTokenLifespan = val
+}
+func (p *GetOAuth2ClientForAuthResponse) SetIsActive(val *bool) {
+	p.IsActive = val
+}
+
+func (p *GetOAuth2ClientForAuthResponse) IsSetId() bool {
+	return p.Id != nil
+}
+
+func (p *GetOAuth2ClientForAuthResponse) IsSetClientID() bool {
+	return p.ClientID != nil
+}
+
+func (p *GetOAuth2ClientForAuthResponse) IsSetClientSecretHash() bool {
+	return p.ClientSecretHash != nil
+}
+
+func (p *GetOAuth2ClientForAuthResponse) IsSetClientName() bool {
+	return p.ClientName != nil
+}
+
+func (p *GetOAuth2ClientForAuthResponse) IsSetClientType() bool {
+	return p.ClientType != nil
+}
+
+func (p *GetOAuth2ClientForAuthResponse) IsSetGrantTypes() bool {
+	return p.GrantTypes != nil
+}
+
+func (p *GetOAuth2ClientForAuthResponse) IsSetRedirectURIs() bool {
+	return p.RedirectURIs != nil
+}
+
+func (p *GetOAuth2ClientForAuthResponse) IsSetScopes() bool {
+	return p.Scopes != nil
+}
+
+func (p *GetOAuth2ClientForAuthResponse) IsSetAccessTokenLifespan() bool {
+	return p.AccessTokenLifespan != nil
+}
+
+func (p *GetOAuth2ClientForAuthResponse) IsSetRefreshTokenLifespan() bool {
+	return p.RefreshTokenLifespan != nil
+}
+
+func (p *GetOAuth2ClientForAuthResponse) IsSetIsActive() bool {
+	return p.IsActive != nil
+}
+
+func (p *GetOAuth2ClientForAuthResponse) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("GetOAuth2ClientForAuthResponse(%+v)", *p)
+}
+
+var fieldIDToName_GetOAuth2ClientForAuthResponse = map[int16]string{
+	1:  "id",
+	2:  "clientID",
+	3:  "clientSecretHash",
+	4:  "clientName",
+	5:  "clientType",
+	6:  "grantTypes",
+	7:  "redirectURIs",
+	8:  "scopes",
+	9:  "accessTokenLifespan",
+	10: "refreshTokenLifespan",
+	11: "isActive",
+}
+
+type ListOAuth2ScopesRequest struct {
+	DefaultOnly *bool `thrift:"defaultOnly,1,optional" frugal:"1,optional,bool" json:"defaultOnly,omitempty"`
+}
+
+func NewListOAuth2ScopesRequest() *ListOAuth2ScopesRequest {
+	return &ListOAuth2ScopesRequest{}
+}
+
+func (p *ListOAuth2ScopesRequest) InitDefault() {
+}
+
+var ListOAuth2ScopesRequest_DefaultOnly_DEFAULT bool
+
+func (p *ListOAuth2ScopesRequest) GetDefaultOnly() (v bool) {
+	if !p.IsSetDefaultOnly() {
+		return ListOAuth2ScopesRequest_DefaultOnly_DEFAULT
+	}
+	return *p.DefaultOnly
+}
+func (p *ListOAuth2ScopesRequest) SetDefaultOnly(val *bool) {
+	p.DefaultOnly = val
+}
+
+func (p *ListOAuth2ScopesRequest) IsSetDefaultOnly() bool {
+	return p.DefaultOnly != nil
+}
+
+func (p *ListOAuth2ScopesRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("ListOAuth2ScopesRequest(%+v)", *p)
+}
+
+var fieldIDToName_ListOAuth2ScopesRequest = map[int16]string{
+	1: "defaultOnly",
+}
+
+type ListOAuth2ScopesResponse struct {
+	Scopes []*OAuth2Scope `thrift:"scopes,1,optional" frugal:"1,optional,list<OAuth2Scope>" json:"scopes,omitempty"`
+}
+
+func NewListOAuth2ScopesResponse() *ListOAuth2ScopesResponse {
+	return &ListOAuth2ScopesResponse{}
+}
+
+func (p *ListOAuth2ScopesResponse) InitDefault() {
+}
+
+var ListOAuth2ScopesResponse_Scopes_DEFAULT []*OAuth2Scope
+
+func (p *ListOAuth2ScopesResponse) GetScopes() (v []*OAuth2Scope) {
+	if !p.IsSetScopes() {
+		return ListOAuth2ScopesResponse_Scopes_DEFAULT
+	}
+	return p.Scopes
+}
+func (p *ListOAuth2ScopesResponse) SetScopes(val []*OAuth2Scope) {
+	p.Scopes = val
+}
+
+func (p *ListOAuth2ScopesResponse) IsSetScopes() bool {
+	return p.Scopes != nil
+}
+
+func (p *ListOAuth2ScopesResponse) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("ListOAuth2ScopesResponse(%+v)", *p)
+}
+
+var fieldIDToName_ListOAuth2ScopesResponse = map[int16]string{
+	1: "scopes",
+}
+
+type SaveOAuth2ConsentRequest struct {
+	UserID   *core.UUID `thrift:"userID,1,optional" frugal:"1,optional,string" json:"userID,omitempty"`
+	ClientID *string    `thrift:"clientID,2,optional" frugal:"2,optional,string" json:"clientID,omitempty"`
+	Scopes   []string   `thrift:"scopes,3,optional" frugal:"3,optional,list<string>" json:"scopes,omitempty"`
+}
+
+func NewSaveOAuth2ConsentRequest() *SaveOAuth2ConsentRequest {
+	return &SaveOAuth2ConsentRequest{}
+}
+
+func (p *SaveOAuth2ConsentRequest) InitDefault() {
+}
+
+var SaveOAuth2ConsentRequest_UserID_DEFAULT core.UUID
+
+func (p *SaveOAuth2ConsentRequest) GetUserID() (v core.UUID) {
+	if !p.IsSetUserID() {
+		return SaveOAuth2ConsentRequest_UserID_DEFAULT
+	}
+	return *p.UserID
+}
+
+var SaveOAuth2ConsentRequest_ClientID_DEFAULT string
+
+func (p *SaveOAuth2ConsentRequest) GetClientID() (v string) {
+	if !p.IsSetClientID() {
+		return SaveOAuth2ConsentRequest_ClientID_DEFAULT
+	}
+	return *p.ClientID
+}
+
+var SaveOAuth2ConsentRequest_Scopes_DEFAULT []string
+
+func (p *SaveOAuth2ConsentRequest) GetScopes() (v []string) {
+	if !p.IsSetScopes() {
+		return SaveOAuth2ConsentRequest_Scopes_DEFAULT
+	}
+	return p.Scopes
+}
+func (p *SaveOAuth2ConsentRequest) SetUserID(val *core.UUID) {
+	p.UserID = val
+}
+func (p *SaveOAuth2ConsentRequest) SetClientID(val *string) {
+	p.ClientID = val
+}
+func (p *SaveOAuth2ConsentRequest) SetScopes(val []string) {
+	p.Scopes = val
+}
+
+func (p *SaveOAuth2ConsentRequest) IsSetUserID() bool {
+	return p.UserID != nil
+}
+
+func (p *SaveOAuth2ConsentRequest) IsSetClientID() bool {
+	return p.ClientID != nil
+}
+
+func (p *SaveOAuth2ConsentRequest) IsSetScopes() bool {
+	return p.Scopes != nil
+}
+
+func (p *SaveOAuth2ConsentRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("SaveOAuth2ConsentRequest(%+v)", *p)
+}
+
+var fieldIDToName_SaveOAuth2ConsentRequest = map[int16]string{
+	1: "userID",
+	2: "clientID",
+	3: "scopes",
+}
+
+type GetOAuth2ConsentRequest struct {
+	UserID   *core.UUID `thrift:"userID,1,optional" frugal:"1,optional,string" json:"userID,omitempty"`
+	ClientID *string    `thrift:"clientID,2,optional" frugal:"2,optional,string" json:"clientID,omitempty"`
+}
+
+func NewGetOAuth2ConsentRequest() *GetOAuth2ConsentRequest {
+	return &GetOAuth2ConsentRequest{}
+}
+
+func (p *GetOAuth2ConsentRequest) InitDefault() {
+}
+
+var GetOAuth2ConsentRequest_UserID_DEFAULT core.UUID
+
+func (p *GetOAuth2ConsentRequest) GetUserID() (v core.UUID) {
+	if !p.IsSetUserID() {
+		return GetOAuth2ConsentRequest_UserID_DEFAULT
+	}
+	return *p.UserID
+}
+
+var GetOAuth2ConsentRequest_ClientID_DEFAULT string
+
+func (p *GetOAuth2ConsentRequest) GetClientID() (v string) {
+	if !p.IsSetClientID() {
+		return GetOAuth2ConsentRequest_ClientID_DEFAULT
+	}
+	return *p.ClientID
+}
+func (p *GetOAuth2ConsentRequest) SetUserID(val *core.UUID) {
+	p.UserID = val
+}
+func (p *GetOAuth2ConsentRequest) SetClientID(val *string) {
+	p.ClientID = val
+}
+
+func (p *GetOAuth2ConsentRequest) IsSetUserID() bool {
+	return p.UserID != nil
+}
+
+func (p *GetOAuth2ConsentRequest) IsSetClientID() bool {
+	return p.ClientID != nil
+}
+
+func (p *GetOAuth2ConsentRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("GetOAuth2ConsentRequest(%+v)", *p)
+}
+
+var fieldIDToName_GetOAuth2ConsentRequest = map[int16]string{
+	1: "userID",
+	2: "clientID",
+}
+
+type GetOAuth2ConsentResponse struct {
+	Consent *OAuth2Consent `thrift:"consent,1,optional" frugal:"1,optional,OAuth2Consent" json:"consent,omitempty"`
+	Found   *bool          `thrift:"found,2,optional" frugal:"2,optional,bool" json:"found,omitempty"`
+}
+
+func NewGetOAuth2ConsentResponse() *GetOAuth2ConsentResponse {
+	return &GetOAuth2ConsentResponse{}
+}
+
+func (p *GetOAuth2ConsentResponse) InitDefault() {
+}
+
+var GetOAuth2ConsentResponse_Consent_DEFAULT *OAuth2Consent
+
+func (p *GetOAuth2ConsentResponse) GetConsent() (v *OAuth2Consent) {
+	if !p.IsSetConsent() {
+		return GetOAuth2ConsentResponse_Consent_DEFAULT
+	}
+	return p.Consent
+}
+
+var GetOAuth2ConsentResponse_Found_DEFAULT bool
+
+func (p *GetOAuth2ConsentResponse) GetFound() (v bool) {
+	if !p.IsSetFound() {
+		return GetOAuth2ConsentResponse_Found_DEFAULT
+	}
+	return *p.Found
+}
+func (p *GetOAuth2ConsentResponse) SetConsent(val *OAuth2Consent) {
+	p.Consent = val
+}
+func (p *GetOAuth2ConsentResponse) SetFound(val *bool) {
+	p.Found = val
+}
+
+func (p *GetOAuth2ConsentResponse) IsSetConsent() bool {
+	return p.Consent != nil
+}
+
+func (p *GetOAuth2ConsentResponse) IsSetFound() bool {
+	return p.Found != nil
+}
+
+func (p *GetOAuth2ConsentResponse) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("GetOAuth2ConsentResponse(%+v)", *p)
+}
+
+var fieldIDToName_GetOAuth2ConsentResponse = map[int16]string{
+	1: "consent",
+	2: "found",
+}
+
+type ListOAuth2ConsentsRequest struct {
+	UserID *core.UUID            `thrift:"userID,1,optional" frugal:"1,optional,string" json:"userID,omitempty"`
+	Page   *rpc_base.PageRequest `thrift:"page,2,optional" frugal:"2,optional,rpc_base.PageRequest" json:"page,omitempty"`
+}
+
+func NewListOAuth2ConsentsRequest() *ListOAuth2ConsentsRequest {
+	return &ListOAuth2ConsentsRequest{}
+}
+
+func (p *ListOAuth2ConsentsRequest) InitDefault() {
+}
+
+var ListOAuth2ConsentsRequest_UserID_DEFAULT core.UUID
+
+func (p *ListOAuth2ConsentsRequest) GetUserID() (v core.UUID) {
+	if !p.IsSetUserID() {
+		return ListOAuth2ConsentsRequest_UserID_DEFAULT
+	}
+	return *p.UserID
+}
+
+var ListOAuth2ConsentsRequest_Page_DEFAULT *rpc_base.PageRequest
+
+func (p *ListOAuth2ConsentsRequest) GetPage() (v *rpc_base.PageRequest) {
+	if !p.IsSetPage() {
+		return ListOAuth2ConsentsRequest_Page_DEFAULT
+	}
+	return p.Page
+}
+func (p *ListOAuth2ConsentsRequest) SetUserID(val *core.UUID) {
+	p.UserID = val
+}
+func (p *ListOAuth2ConsentsRequest) SetPage(val *rpc_base.PageRequest) {
+	p.Page = val
+}
+
+func (p *ListOAuth2ConsentsRequest) IsSetUserID() bool {
+	return p.UserID != nil
+}
+
+func (p *ListOAuth2ConsentsRequest) IsSetPage() bool {
+	return p.Page != nil
+}
+
+func (p *ListOAuth2ConsentsRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("ListOAuth2ConsentsRequest(%+v)", *p)
+}
+
+var fieldIDToName_ListOAuth2ConsentsRequest = map[int16]string{
+	1: "userID",
+	2: "page",
+}
+
+type ListOAuth2ConsentsResponse struct {
+	Consents []*OAuth2Consent       `thrift:"consents,1,optional" frugal:"1,optional,list<OAuth2Consent>" json:"consents,omitempty"`
+	Page     *rpc_base.PageResponse `thrift:"page,2,optional" frugal:"2,optional,rpc_base.PageResponse" json:"page,omitempty"`
+}
+
+func NewListOAuth2ConsentsResponse() *ListOAuth2ConsentsResponse {
+	return &ListOAuth2ConsentsResponse{}
+}
+
+func (p *ListOAuth2ConsentsResponse) InitDefault() {
+}
+
+var ListOAuth2ConsentsResponse_Consents_DEFAULT []*OAuth2Consent
+
+func (p *ListOAuth2ConsentsResponse) GetConsents() (v []*OAuth2Consent) {
+	if !p.IsSetConsents() {
+		return ListOAuth2ConsentsResponse_Consents_DEFAULT
+	}
+	return p.Consents
+}
+
+var ListOAuth2ConsentsResponse_Page_DEFAULT *rpc_base.PageResponse
+
+func (p *ListOAuth2ConsentsResponse) GetPage() (v *rpc_base.PageResponse) {
+	if !p.IsSetPage() {
+		return ListOAuth2ConsentsResponse_Page_DEFAULT
+	}
+	return p.Page
+}
+func (p *ListOAuth2ConsentsResponse) SetConsents(val []*OAuth2Consent) {
+	p.Consents = val
+}
+func (p *ListOAuth2ConsentsResponse) SetPage(val *rpc_base.PageResponse) {
+	p.Page = val
+}
+
+func (p *ListOAuth2ConsentsResponse) IsSetConsents() bool {
+	return p.Consents != nil
+}
+
+func (p *ListOAuth2ConsentsResponse) IsSetPage() bool {
+	return p.Page != nil
+}
+
+func (p *ListOAuth2ConsentsResponse) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("ListOAuth2ConsentsResponse(%+v)", *p)
+}
+
+var fieldIDToName_ListOAuth2ConsentsResponse = map[int16]string{
+	1: "consents",
+	2: "page",
+}
+
+type RevokeOAuth2ConsentRequest struct {
+	UserID   *core.UUID `thrift:"userID,1,optional" frugal:"1,optional,string" json:"userID,omitempty"`
+	ClientID *string    `thrift:"clientID,2,optional" frugal:"2,optional,string" json:"clientID,omitempty"`
+}
+
+func NewRevokeOAuth2ConsentRequest() *RevokeOAuth2ConsentRequest {
+	return &RevokeOAuth2ConsentRequest{}
+}
+
+func (p *RevokeOAuth2ConsentRequest) InitDefault() {
+}
+
+var RevokeOAuth2ConsentRequest_UserID_DEFAULT core.UUID
+
+func (p *RevokeOAuth2ConsentRequest) GetUserID() (v core.UUID) {
+	if !p.IsSetUserID() {
+		return RevokeOAuth2ConsentRequest_UserID_DEFAULT
+	}
+	return *p.UserID
+}
+
+var RevokeOAuth2ConsentRequest_ClientID_DEFAULT string
+
+func (p *RevokeOAuth2ConsentRequest) GetClientID() (v string) {
+	if !p.IsSetClientID() {
+		return RevokeOAuth2ConsentRequest_ClientID_DEFAULT
+	}
+	return *p.ClientID
+}
+func (p *RevokeOAuth2ConsentRequest) SetUserID(val *core.UUID) {
+	p.UserID = val
+}
+func (p *RevokeOAuth2ConsentRequest) SetClientID(val *string) {
+	p.ClientID = val
+}
+
+func (p *RevokeOAuth2ConsentRequest) IsSetUserID() bool {
+	return p.UserID != nil
+}
+
+func (p *RevokeOAuth2ConsentRequest) IsSetClientID() bool {
+	return p.ClientID != nil
+}
+
+func (p *RevokeOAuth2ConsentRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("RevokeOAuth2ConsentRequest(%+v)", *p)
+}
+
+var fieldIDToName_RevokeOAuth2ConsentRequest = map[int16]string{
+	1: "userID",
+	2: "clientID",
+}
+
+type OAuth2TokenSession struct {
+	Signature           *string           `thrift:"signature,1,optional" frugal:"1,optional,string" json:"signature,omitempty"`
+	RequestID           *string           `thrift:"requestID,2,optional" frugal:"2,optional,string" json:"requestID,omitempty"`
+	ClientID            *string           `thrift:"clientID,3,optional" frugal:"3,optional,string" json:"clientID,omitempty"`
+	UserID              *core.UUID        `thrift:"userID,4,optional" frugal:"4,optional,string" json:"userID,omitempty"`
+	Scopes              *string           `thrift:"scopes,5,optional" frugal:"5,optional,string" json:"scopes,omitempty"`
+	GrantedAudience     *string           `thrift:"grantedAudience,6,optional" frugal:"6,optional,string" json:"grantedAudience,omitempty"`
+	SessionData         []byte            `thrift:"sessionData,7,optional" frugal:"7,optional,binary" json:"sessionData,omitempty"`
+	FormData            []byte            `thrift:"formData,8,optional" frugal:"8,optional,binary" json:"formData,omitempty"`
+	RedirectURI         *string           `thrift:"redirectURI,9,optional" frugal:"9,optional,string" json:"redirectURI,omitempty"`
+	CodeChallenge       *string           `thrift:"codeChallenge,10,optional" frugal:"10,optional,string" json:"codeChallenge,omitempty"`
+	CodeChallengeMethod *string           `thrift:"codeChallengeMethod,11,optional" frugal:"11,optional,string" json:"codeChallengeMethod,omitempty"`
+	RequestedAt         *core.TimestampMS `thrift:"requestedAt,12,optional" frugal:"12,optional,i64" json:"requestedAt,omitempty"`
+	ExpiresAt           *core.TimestampMS `thrift:"expiresAt,13,optional" frugal:"13,optional,i64" json:"expiresAt,omitempty"`
+	Used                *bool             `thrift:"used,14,optional" frugal:"14,optional,bool" json:"used,omitempty"`
+	Revoked             *bool             `thrift:"revoked,15,optional" frugal:"15,optional,bool" json:"revoked,omitempty"`
+}
+
+func NewOAuth2TokenSession() *OAuth2TokenSession {
+	return &OAuth2TokenSession{}
+}
+
+func (p *OAuth2TokenSession) InitDefault() {
+}
+
+var OAuth2TokenSession_Signature_DEFAULT string
+
+func (p *OAuth2TokenSession) GetSignature() (v string) {
+	if !p.IsSetSignature() {
+		return OAuth2TokenSession_Signature_DEFAULT
+	}
+	return *p.Signature
+}
+
+var OAuth2TokenSession_RequestID_DEFAULT string
+
+func (p *OAuth2TokenSession) GetRequestID() (v string) {
+	if !p.IsSetRequestID() {
+		return OAuth2TokenSession_RequestID_DEFAULT
+	}
+	return *p.RequestID
+}
+
+var OAuth2TokenSession_ClientID_DEFAULT string
+
+func (p *OAuth2TokenSession) GetClientID() (v string) {
+	if !p.IsSetClientID() {
+		return OAuth2TokenSession_ClientID_DEFAULT
+	}
+	return *p.ClientID
+}
+
+var OAuth2TokenSession_UserID_DEFAULT core.UUID
+
+func (p *OAuth2TokenSession) GetUserID() (v core.UUID) {
+	if !p.IsSetUserID() {
+		return OAuth2TokenSession_UserID_DEFAULT
+	}
+	return *p.UserID
+}
+
+var OAuth2TokenSession_Scopes_DEFAULT string
+
+func (p *OAuth2TokenSession) GetScopes() (v string) {
+	if !p.IsSetScopes() {
+		return OAuth2TokenSession_Scopes_DEFAULT
+	}
+	return *p.Scopes
+}
+
+var OAuth2TokenSession_GrantedAudience_DEFAULT string
+
+func (p *OAuth2TokenSession) GetGrantedAudience() (v string) {
+	if !p.IsSetGrantedAudience() {
+		return OAuth2TokenSession_GrantedAudience_DEFAULT
+	}
+	return *p.GrantedAudience
+}
+
+var OAuth2TokenSession_SessionData_DEFAULT []byte
+
+func (p *OAuth2TokenSession) GetSessionData() (v []byte) {
+	if !p.IsSetSessionData() {
+		return OAuth2TokenSession_SessionData_DEFAULT
+	}
+	return p.SessionData
+}
+
+var OAuth2TokenSession_FormData_DEFAULT []byte
+
+func (p *OAuth2TokenSession) GetFormData() (v []byte) {
+	if !p.IsSetFormData() {
+		return OAuth2TokenSession_FormData_DEFAULT
+	}
+	return p.FormData
+}
+
+var OAuth2TokenSession_RedirectURI_DEFAULT string
+
+func (p *OAuth2TokenSession) GetRedirectURI() (v string) {
+	if !p.IsSetRedirectURI() {
+		return OAuth2TokenSession_RedirectURI_DEFAULT
+	}
+	return *p.RedirectURI
+}
+
+var OAuth2TokenSession_CodeChallenge_DEFAULT string
+
+func (p *OAuth2TokenSession) GetCodeChallenge() (v string) {
+	if !p.IsSetCodeChallenge() {
+		return OAuth2TokenSession_CodeChallenge_DEFAULT
+	}
+	return *p.CodeChallenge
+}
+
+var OAuth2TokenSession_CodeChallengeMethod_DEFAULT string
+
+func (p *OAuth2TokenSession) GetCodeChallengeMethod() (v string) {
+	if !p.IsSetCodeChallengeMethod() {
+		return OAuth2TokenSession_CodeChallengeMethod_DEFAULT
+	}
+	return *p.CodeChallengeMethod
+}
+
+var OAuth2TokenSession_RequestedAt_DEFAULT core.TimestampMS
+
+func (p *OAuth2TokenSession) GetRequestedAt() (v core.TimestampMS) {
+	if !p.IsSetRequestedAt() {
+		return OAuth2TokenSession_RequestedAt_DEFAULT
+	}
+	return *p.RequestedAt
+}
+
+var OAuth2TokenSession_ExpiresAt_DEFAULT core.TimestampMS
+
+func (p *OAuth2TokenSession) GetExpiresAt() (v core.TimestampMS) {
+	if !p.IsSetExpiresAt() {
+		return OAuth2TokenSession_ExpiresAt_DEFAULT
+	}
+	return *p.ExpiresAt
+}
+
+var OAuth2TokenSession_Used_DEFAULT bool
+
+func (p *OAuth2TokenSession) GetUsed() (v bool) {
+	if !p.IsSetUsed() {
+		return OAuth2TokenSession_Used_DEFAULT
+	}
+	return *p.Used
+}
+
+var OAuth2TokenSession_Revoked_DEFAULT bool
+
+func (p *OAuth2TokenSession) GetRevoked() (v bool) {
+	if !p.IsSetRevoked() {
+		return OAuth2TokenSession_Revoked_DEFAULT
+	}
+	return *p.Revoked
+}
+func (p *OAuth2TokenSession) SetSignature(val *string) {
+	p.Signature = val
+}
+func (p *OAuth2TokenSession) SetRequestID(val *string) {
+	p.RequestID = val
+}
+func (p *OAuth2TokenSession) SetClientID(val *string) {
+	p.ClientID = val
+}
+func (p *OAuth2TokenSession) SetUserID(val *core.UUID) {
+	p.UserID = val
+}
+func (p *OAuth2TokenSession) SetScopes(val *string) {
+	p.Scopes = val
+}
+func (p *OAuth2TokenSession) SetGrantedAudience(val *string) {
+	p.GrantedAudience = val
+}
+func (p *OAuth2TokenSession) SetSessionData(val []byte) {
+	p.SessionData = val
+}
+func (p *OAuth2TokenSession) SetFormData(val []byte) {
+	p.FormData = val
+}
+func (p *OAuth2TokenSession) SetRedirectURI(val *string) {
+	p.RedirectURI = val
+}
+func (p *OAuth2TokenSession) SetCodeChallenge(val *string) {
+	p.CodeChallenge = val
+}
+func (p *OAuth2TokenSession) SetCodeChallengeMethod(val *string) {
+	p.CodeChallengeMethod = val
+}
+func (p *OAuth2TokenSession) SetRequestedAt(val *core.TimestampMS) {
+	p.RequestedAt = val
+}
+func (p *OAuth2TokenSession) SetExpiresAt(val *core.TimestampMS) {
+	p.ExpiresAt = val
+}
+func (p *OAuth2TokenSession) SetUsed(val *bool) {
+	p.Used = val
+}
+func (p *OAuth2TokenSession) SetRevoked(val *bool) {
+	p.Revoked = val
+}
+
+func (p *OAuth2TokenSession) IsSetSignature() bool {
+	return p.Signature != nil
+}
+
+func (p *OAuth2TokenSession) IsSetRequestID() bool {
+	return p.RequestID != nil
+}
+
+func (p *OAuth2TokenSession) IsSetClientID() bool {
+	return p.ClientID != nil
+}
+
+func (p *OAuth2TokenSession) IsSetUserID() bool {
+	return p.UserID != nil
+}
+
+func (p *OAuth2TokenSession) IsSetScopes() bool {
+	return p.Scopes != nil
+}
+
+func (p *OAuth2TokenSession) IsSetGrantedAudience() bool {
+	return p.GrantedAudience != nil
+}
+
+func (p *OAuth2TokenSession) IsSetSessionData() bool {
+	return p.SessionData != nil
+}
+
+func (p *OAuth2TokenSession) IsSetFormData() bool {
+	return p.FormData != nil
+}
+
+func (p *OAuth2TokenSession) IsSetRedirectURI() bool {
+	return p.RedirectURI != nil
+}
+
+func (p *OAuth2TokenSession) IsSetCodeChallenge() bool {
+	return p.CodeChallenge != nil
+}
+
+func (p *OAuth2TokenSession) IsSetCodeChallengeMethod() bool {
+	return p.CodeChallengeMethod != nil
+}
+
+func (p *OAuth2TokenSession) IsSetRequestedAt() bool {
+	return p.RequestedAt != nil
+}
+
+func (p *OAuth2TokenSession) IsSetExpiresAt() bool {
+	return p.ExpiresAt != nil
+}
+
+func (p *OAuth2TokenSession) IsSetUsed() bool {
+	return p.Used != nil
+}
+
+func (p *OAuth2TokenSession) IsSetRevoked() bool {
+	return p.Revoked != nil
+}
+
+func (p *OAuth2TokenSession) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("OAuth2TokenSession(%+v)", *p)
+}
+
+var fieldIDToName_OAuth2TokenSession = map[int16]string{
+	1:  "signature",
+	2:  "requestID",
+	3:  "clientID",
+	4:  "userID",
+	5:  "scopes",
+	6:  "grantedAudience",
+	7:  "sessionData",
+	8:  "formData",
+	9:  "redirectURI",
+	10: "codeChallenge",
+	11: "codeChallengeMethod",
+	12: "requestedAt",
+	13: "expiresAt",
+	14: "used",
+	15: "revoked",
+}
+
 type IdentityService interface {
 	Login(ctx context.Context, req *LoginRequest) (r *LoginResponse, err error)
 
@@ -5784,6 +7496,58 @@ type IdentityService interface {
 	CreateAuditLog(ctx context.Context, req *CreateAuditLogRequest) (err error)
 
 	ListAuditLogs(ctx context.Context, req *ListAuditLogsRequest) (r *ListAuditLogsResponse, err error)
+
+	CreateOAuth2Client(ctx context.Context, req *CreateOAuth2ClientRequest) (r *CreateOAuth2ClientResponse, err error)
+
+	GetOAuth2Client(ctx context.Context, req *GetOAuth2ClientRequest) (r *OAuth2Client, err error)
+
+	UpdateOAuth2Client(ctx context.Context, req *UpdateOAuth2ClientRequest) (r *OAuth2Client, err error)
+
+	DeleteOAuth2Client(ctx context.Context, req *DeleteOAuth2ClientRequest) (err error)
+
+	ListOAuth2Clients(ctx context.Context, req *ListOAuth2ClientsRequest) (r *ListOAuth2ClientsResponse, err error)
+
+	RotateOAuth2ClientSecret(ctx context.Context, req *RotateOAuth2ClientSecretRequest) (r *RotateOAuth2ClientSecretResponse, err error)
+
+	GetOAuth2ClientForAuth(ctx context.Context, clientID string) (r *GetOAuth2ClientForAuthResponse, err error)
+
+	ListOAuth2Scopes(ctx context.Context, req *ListOAuth2ScopesRequest) (r *ListOAuth2ScopesResponse, err error)
+
+	SaveOAuth2Consent(ctx context.Context, req *SaveOAuth2ConsentRequest) (err error)
+
+	GetOAuth2Consent(ctx context.Context, req *GetOAuth2ConsentRequest) (r *GetOAuth2ConsentResponse, err error)
+
+	ListOAuth2Consents(ctx context.Context, req *ListOAuth2ConsentsRequest) (r *ListOAuth2ConsentsResponse, err error)
+
+	RevokeOAuth2Consent(ctx context.Context, req *RevokeOAuth2ConsentRequest) (err error)
+
+	CreateOAuth2AuthorizeCodeSession(ctx context.Context, req *OAuth2TokenSession) (err error)
+
+	GetOAuth2AuthorizeCodeSession(ctx context.Context, signature string) (r *OAuth2TokenSession, err error)
+
+	InvalidateOAuth2AuthorizeCodeSession(ctx context.Context, signature string) (err error)
+
+	CreateOAuth2AccessTokenSession(ctx context.Context, req *OAuth2TokenSession) (err error)
+
+	GetOAuth2AccessTokenSession(ctx context.Context, signature string) (r *OAuth2TokenSession, err error)
+
+	DeleteOAuth2AccessTokenSession(ctx context.Context, signature string) (err error)
+
+	RevokeOAuth2AccessToken(ctx context.Context, requestID string) (err error)
+
+	CreateOAuth2RefreshTokenSession(ctx context.Context, req *OAuth2TokenSession) (err error)
+
+	GetOAuth2RefreshTokenSession(ctx context.Context, signature string) (r *OAuth2TokenSession, err error)
+
+	DeleteOAuth2RefreshTokenSession(ctx context.Context, signature string) (err error)
+
+	RevokeOAuth2RefreshToken(ctx context.Context, requestID string) (err error)
+
+	CreateOAuth2PKCESession(ctx context.Context, req *OAuth2TokenSession) (err error)
+
+	GetOAuth2PKCESession(ctx context.Context, signature string) (r *OAuth2TokenSession, err error)
+
+	DeleteOAuth2PKCESession(ctx context.Context, signature string) (err error)
 }
 
 type IdentityServiceLoginArgs struct {
@@ -9874,3 +11638,1633 @@ func (p *IdentityServiceListAuditLogsResult) String() string {
 var fieldIDToName_IdentityServiceListAuditLogsResult = map[int16]string{
 	0: "success",
 }
+
+type IdentityServiceCreateOAuth2ClientArgs struct {
+	Req *CreateOAuth2ClientRequest `thrift:"req,1" frugal:"1,default,CreateOAuth2ClientRequest" json:"req"`
+}
+
+func NewIdentityServiceCreateOAuth2ClientArgs() *IdentityServiceCreateOAuth2ClientArgs {
+	return &IdentityServiceCreateOAuth2ClientArgs{}
+}
+
+func (p *IdentityServiceCreateOAuth2ClientArgs) InitDefault() {
+}
+
+var IdentityServiceCreateOAuth2ClientArgs_Req_DEFAULT *CreateOAuth2ClientRequest
+
+func (p *IdentityServiceCreateOAuth2ClientArgs) GetReq() (v *CreateOAuth2ClientRequest) {
+	if !p.IsSetReq() {
+		return IdentityServiceCreateOAuth2ClientArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *IdentityServiceCreateOAuth2ClientArgs) SetReq(val *CreateOAuth2ClientRequest) {
+	p.Req = val
+}
+
+func (p *IdentityServiceCreateOAuth2ClientArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *IdentityServiceCreateOAuth2ClientArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceCreateOAuth2ClientArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceCreateOAuth2ClientArgs = map[int16]string{
+	1: "req",
+}
+
+type IdentityServiceCreateOAuth2ClientResult struct {
+	Success *CreateOAuth2ClientResponse `thrift:"success,0,optional" frugal:"0,optional,CreateOAuth2ClientResponse" json:"success,omitempty"`
+}
+
+func NewIdentityServiceCreateOAuth2ClientResult() *IdentityServiceCreateOAuth2ClientResult {
+	return &IdentityServiceCreateOAuth2ClientResult{}
+}
+
+func (p *IdentityServiceCreateOAuth2ClientResult) InitDefault() {
+}
+
+var IdentityServiceCreateOAuth2ClientResult_Success_DEFAULT *CreateOAuth2ClientResponse
+
+func (p *IdentityServiceCreateOAuth2ClientResult) GetSuccess() (v *CreateOAuth2ClientResponse) {
+	if !p.IsSetSuccess() {
+		return IdentityServiceCreateOAuth2ClientResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *IdentityServiceCreateOAuth2ClientResult) SetSuccess(x interface{}) {
+	p.Success = x.(*CreateOAuth2ClientResponse)
+}
+
+func (p *IdentityServiceCreateOAuth2ClientResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *IdentityServiceCreateOAuth2ClientResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceCreateOAuth2ClientResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceCreateOAuth2ClientResult = map[int16]string{
+	0: "success",
+}
+
+type IdentityServiceGetOAuth2ClientArgs struct {
+	Req *GetOAuth2ClientRequest `thrift:"req,1" frugal:"1,default,GetOAuth2ClientRequest" json:"req"`
+}
+
+func NewIdentityServiceGetOAuth2ClientArgs() *IdentityServiceGetOAuth2ClientArgs {
+	return &IdentityServiceGetOAuth2ClientArgs{}
+}
+
+func (p *IdentityServiceGetOAuth2ClientArgs) InitDefault() {
+}
+
+var IdentityServiceGetOAuth2ClientArgs_Req_DEFAULT *GetOAuth2ClientRequest
+
+func (p *IdentityServiceGetOAuth2ClientArgs) GetReq() (v *GetOAuth2ClientRequest) {
+	if !p.IsSetReq() {
+		return IdentityServiceGetOAuth2ClientArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *IdentityServiceGetOAuth2ClientArgs) SetReq(val *GetOAuth2ClientRequest) {
+	p.Req = val
+}
+
+func (p *IdentityServiceGetOAuth2ClientArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *IdentityServiceGetOAuth2ClientArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceGetOAuth2ClientArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceGetOAuth2ClientArgs = map[int16]string{
+	1: "req",
+}
+
+type IdentityServiceGetOAuth2ClientResult struct {
+	Success *OAuth2Client `thrift:"success,0,optional" frugal:"0,optional,OAuth2Client" json:"success,omitempty"`
+}
+
+func NewIdentityServiceGetOAuth2ClientResult() *IdentityServiceGetOAuth2ClientResult {
+	return &IdentityServiceGetOAuth2ClientResult{}
+}
+
+func (p *IdentityServiceGetOAuth2ClientResult) InitDefault() {
+}
+
+var IdentityServiceGetOAuth2ClientResult_Success_DEFAULT *OAuth2Client
+
+func (p *IdentityServiceGetOAuth2ClientResult) GetSuccess() (v *OAuth2Client) {
+	if !p.IsSetSuccess() {
+		return IdentityServiceGetOAuth2ClientResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *IdentityServiceGetOAuth2ClientResult) SetSuccess(x interface{}) {
+	p.Success = x.(*OAuth2Client)
+}
+
+func (p *IdentityServiceGetOAuth2ClientResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *IdentityServiceGetOAuth2ClientResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceGetOAuth2ClientResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceGetOAuth2ClientResult = map[int16]string{
+	0: "success",
+}
+
+type IdentityServiceUpdateOAuth2ClientArgs struct {
+	Req *UpdateOAuth2ClientRequest `thrift:"req,1" frugal:"1,default,UpdateOAuth2ClientRequest" json:"req"`
+}
+
+func NewIdentityServiceUpdateOAuth2ClientArgs() *IdentityServiceUpdateOAuth2ClientArgs {
+	return &IdentityServiceUpdateOAuth2ClientArgs{}
+}
+
+func (p *IdentityServiceUpdateOAuth2ClientArgs) InitDefault() {
+}
+
+var IdentityServiceUpdateOAuth2ClientArgs_Req_DEFAULT *UpdateOAuth2ClientRequest
+
+func (p *IdentityServiceUpdateOAuth2ClientArgs) GetReq() (v *UpdateOAuth2ClientRequest) {
+	if !p.IsSetReq() {
+		return IdentityServiceUpdateOAuth2ClientArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *IdentityServiceUpdateOAuth2ClientArgs) SetReq(val *UpdateOAuth2ClientRequest) {
+	p.Req = val
+}
+
+func (p *IdentityServiceUpdateOAuth2ClientArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *IdentityServiceUpdateOAuth2ClientArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceUpdateOAuth2ClientArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceUpdateOAuth2ClientArgs = map[int16]string{
+	1: "req",
+}
+
+type IdentityServiceUpdateOAuth2ClientResult struct {
+	Success *OAuth2Client `thrift:"success,0,optional" frugal:"0,optional,OAuth2Client" json:"success,omitempty"`
+}
+
+func NewIdentityServiceUpdateOAuth2ClientResult() *IdentityServiceUpdateOAuth2ClientResult {
+	return &IdentityServiceUpdateOAuth2ClientResult{}
+}
+
+func (p *IdentityServiceUpdateOAuth2ClientResult) InitDefault() {
+}
+
+var IdentityServiceUpdateOAuth2ClientResult_Success_DEFAULT *OAuth2Client
+
+func (p *IdentityServiceUpdateOAuth2ClientResult) GetSuccess() (v *OAuth2Client) {
+	if !p.IsSetSuccess() {
+		return IdentityServiceUpdateOAuth2ClientResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *IdentityServiceUpdateOAuth2ClientResult) SetSuccess(x interface{}) {
+	p.Success = x.(*OAuth2Client)
+}
+
+func (p *IdentityServiceUpdateOAuth2ClientResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *IdentityServiceUpdateOAuth2ClientResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceUpdateOAuth2ClientResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceUpdateOAuth2ClientResult = map[int16]string{
+	0: "success",
+}
+
+type IdentityServiceDeleteOAuth2ClientArgs struct {
+	Req *DeleteOAuth2ClientRequest `thrift:"req,1" frugal:"1,default,DeleteOAuth2ClientRequest" json:"req"`
+}
+
+func NewIdentityServiceDeleteOAuth2ClientArgs() *IdentityServiceDeleteOAuth2ClientArgs {
+	return &IdentityServiceDeleteOAuth2ClientArgs{}
+}
+
+func (p *IdentityServiceDeleteOAuth2ClientArgs) InitDefault() {
+}
+
+var IdentityServiceDeleteOAuth2ClientArgs_Req_DEFAULT *DeleteOAuth2ClientRequest
+
+func (p *IdentityServiceDeleteOAuth2ClientArgs) GetReq() (v *DeleteOAuth2ClientRequest) {
+	if !p.IsSetReq() {
+		return IdentityServiceDeleteOAuth2ClientArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *IdentityServiceDeleteOAuth2ClientArgs) SetReq(val *DeleteOAuth2ClientRequest) {
+	p.Req = val
+}
+
+func (p *IdentityServiceDeleteOAuth2ClientArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *IdentityServiceDeleteOAuth2ClientArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceDeleteOAuth2ClientArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceDeleteOAuth2ClientArgs = map[int16]string{
+	1: "req",
+}
+
+type IdentityServiceDeleteOAuth2ClientResult struct {
+}
+
+func NewIdentityServiceDeleteOAuth2ClientResult() *IdentityServiceDeleteOAuth2ClientResult {
+	return &IdentityServiceDeleteOAuth2ClientResult{}
+}
+
+func (p *IdentityServiceDeleteOAuth2ClientResult) InitDefault() {
+}
+
+func (p *IdentityServiceDeleteOAuth2ClientResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceDeleteOAuth2ClientResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceDeleteOAuth2ClientResult = map[int16]string{}
+
+type IdentityServiceListOAuth2ClientsArgs struct {
+	Req *ListOAuth2ClientsRequest `thrift:"req,1" frugal:"1,default,ListOAuth2ClientsRequest" json:"req"`
+}
+
+func NewIdentityServiceListOAuth2ClientsArgs() *IdentityServiceListOAuth2ClientsArgs {
+	return &IdentityServiceListOAuth2ClientsArgs{}
+}
+
+func (p *IdentityServiceListOAuth2ClientsArgs) InitDefault() {
+}
+
+var IdentityServiceListOAuth2ClientsArgs_Req_DEFAULT *ListOAuth2ClientsRequest
+
+func (p *IdentityServiceListOAuth2ClientsArgs) GetReq() (v *ListOAuth2ClientsRequest) {
+	if !p.IsSetReq() {
+		return IdentityServiceListOAuth2ClientsArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *IdentityServiceListOAuth2ClientsArgs) SetReq(val *ListOAuth2ClientsRequest) {
+	p.Req = val
+}
+
+func (p *IdentityServiceListOAuth2ClientsArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *IdentityServiceListOAuth2ClientsArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceListOAuth2ClientsArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceListOAuth2ClientsArgs = map[int16]string{
+	1: "req",
+}
+
+type IdentityServiceListOAuth2ClientsResult struct {
+	Success *ListOAuth2ClientsResponse `thrift:"success,0,optional" frugal:"0,optional,ListOAuth2ClientsResponse" json:"success,omitempty"`
+}
+
+func NewIdentityServiceListOAuth2ClientsResult() *IdentityServiceListOAuth2ClientsResult {
+	return &IdentityServiceListOAuth2ClientsResult{}
+}
+
+func (p *IdentityServiceListOAuth2ClientsResult) InitDefault() {
+}
+
+var IdentityServiceListOAuth2ClientsResult_Success_DEFAULT *ListOAuth2ClientsResponse
+
+func (p *IdentityServiceListOAuth2ClientsResult) GetSuccess() (v *ListOAuth2ClientsResponse) {
+	if !p.IsSetSuccess() {
+		return IdentityServiceListOAuth2ClientsResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *IdentityServiceListOAuth2ClientsResult) SetSuccess(x interface{}) {
+	p.Success = x.(*ListOAuth2ClientsResponse)
+}
+
+func (p *IdentityServiceListOAuth2ClientsResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *IdentityServiceListOAuth2ClientsResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceListOAuth2ClientsResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceListOAuth2ClientsResult = map[int16]string{
+	0: "success",
+}
+
+type IdentityServiceRotateOAuth2ClientSecretArgs struct {
+	Req *RotateOAuth2ClientSecretRequest `thrift:"req,1" frugal:"1,default,RotateOAuth2ClientSecretRequest" json:"req"`
+}
+
+func NewIdentityServiceRotateOAuth2ClientSecretArgs() *IdentityServiceRotateOAuth2ClientSecretArgs {
+	return &IdentityServiceRotateOAuth2ClientSecretArgs{}
+}
+
+func (p *IdentityServiceRotateOAuth2ClientSecretArgs) InitDefault() {
+}
+
+var IdentityServiceRotateOAuth2ClientSecretArgs_Req_DEFAULT *RotateOAuth2ClientSecretRequest
+
+func (p *IdentityServiceRotateOAuth2ClientSecretArgs) GetReq() (v *RotateOAuth2ClientSecretRequest) {
+	if !p.IsSetReq() {
+		return IdentityServiceRotateOAuth2ClientSecretArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *IdentityServiceRotateOAuth2ClientSecretArgs) SetReq(val *RotateOAuth2ClientSecretRequest) {
+	p.Req = val
+}
+
+func (p *IdentityServiceRotateOAuth2ClientSecretArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *IdentityServiceRotateOAuth2ClientSecretArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceRotateOAuth2ClientSecretArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceRotateOAuth2ClientSecretArgs = map[int16]string{
+	1: "req",
+}
+
+type IdentityServiceRotateOAuth2ClientSecretResult struct {
+	Success *RotateOAuth2ClientSecretResponse `thrift:"success,0,optional" frugal:"0,optional,RotateOAuth2ClientSecretResponse" json:"success,omitempty"`
+}
+
+func NewIdentityServiceRotateOAuth2ClientSecretResult() *IdentityServiceRotateOAuth2ClientSecretResult {
+	return &IdentityServiceRotateOAuth2ClientSecretResult{}
+}
+
+func (p *IdentityServiceRotateOAuth2ClientSecretResult) InitDefault() {
+}
+
+var IdentityServiceRotateOAuth2ClientSecretResult_Success_DEFAULT *RotateOAuth2ClientSecretResponse
+
+func (p *IdentityServiceRotateOAuth2ClientSecretResult) GetSuccess() (v *RotateOAuth2ClientSecretResponse) {
+	if !p.IsSetSuccess() {
+		return IdentityServiceRotateOAuth2ClientSecretResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *IdentityServiceRotateOAuth2ClientSecretResult) SetSuccess(x interface{}) {
+	p.Success = x.(*RotateOAuth2ClientSecretResponse)
+}
+
+func (p *IdentityServiceRotateOAuth2ClientSecretResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *IdentityServiceRotateOAuth2ClientSecretResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceRotateOAuth2ClientSecretResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceRotateOAuth2ClientSecretResult = map[int16]string{
+	0: "success",
+}
+
+type IdentityServiceGetOAuth2ClientForAuthArgs struct {
+	ClientID string `thrift:"clientID,1" frugal:"1,default,string" json:"clientID"`
+}
+
+func NewIdentityServiceGetOAuth2ClientForAuthArgs() *IdentityServiceGetOAuth2ClientForAuthArgs {
+	return &IdentityServiceGetOAuth2ClientForAuthArgs{}
+}
+
+func (p *IdentityServiceGetOAuth2ClientForAuthArgs) InitDefault() {
+}
+
+func (p *IdentityServiceGetOAuth2ClientForAuthArgs) GetClientID() (v string) {
+	return p.ClientID
+}
+func (p *IdentityServiceGetOAuth2ClientForAuthArgs) SetClientID(val string) {
+	p.ClientID = val
+}
+
+func (p *IdentityServiceGetOAuth2ClientForAuthArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceGetOAuth2ClientForAuthArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceGetOAuth2ClientForAuthArgs = map[int16]string{
+	1: "clientID",
+}
+
+type IdentityServiceGetOAuth2ClientForAuthResult struct {
+	Success *GetOAuth2ClientForAuthResponse `thrift:"success,0,optional" frugal:"0,optional,GetOAuth2ClientForAuthResponse" json:"success,omitempty"`
+}
+
+func NewIdentityServiceGetOAuth2ClientForAuthResult() *IdentityServiceGetOAuth2ClientForAuthResult {
+	return &IdentityServiceGetOAuth2ClientForAuthResult{}
+}
+
+func (p *IdentityServiceGetOAuth2ClientForAuthResult) InitDefault() {
+}
+
+var IdentityServiceGetOAuth2ClientForAuthResult_Success_DEFAULT *GetOAuth2ClientForAuthResponse
+
+func (p *IdentityServiceGetOAuth2ClientForAuthResult) GetSuccess() (v *GetOAuth2ClientForAuthResponse) {
+	if !p.IsSetSuccess() {
+		return IdentityServiceGetOAuth2ClientForAuthResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *IdentityServiceGetOAuth2ClientForAuthResult) SetSuccess(x interface{}) {
+	p.Success = x.(*GetOAuth2ClientForAuthResponse)
+}
+
+func (p *IdentityServiceGetOAuth2ClientForAuthResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *IdentityServiceGetOAuth2ClientForAuthResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceGetOAuth2ClientForAuthResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceGetOAuth2ClientForAuthResult = map[int16]string{
+	0: "success",
+}
+
+type IdentityServiceListOAuth2ScopesArgs struct {
+	Req *ListOAuth2ScopesRequest `thrift:"req,1" frugal:"1,default,ListOAuth2ScopesRequest" json:"req"`
+}
+
+func NewIdentityServiceListOAuth2ScopesArgs() *IdentityServiceListOAuth2ScopesArgs {
+	return &IdentityServiceListOAuth2ScopesArgs{}
+}
+
+func (p *IdentityServiceListOAuth2ScopesArgs) InitDefault() {
+}
+
+var IdentityServiceListOAuth2ScopesArgs_Req_DEFAULT *ListOAuth2ScopesRequest
+
+func (p *IdentityServiceListOAuth2ScopesArgs) GetReq() (v *ListOAuth2ScopesRequest) {
+	if !p.IsSetReq() {
+		return IdentityServiceListOAuth2ScopesArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *IdentityServiceListOAuth2ScopesArgs) SetReq(val *ListOAuth2ScopesRequest) {
+	p.Req = val
+}
+
+func (p *IdentityServiceListOAuth2ScopesArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *IdentityServiceListOAuth2ScopesArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceListOAuth2ScopesArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceListOAuth2ScopesArgs = map[int16]string{
+	1: "req",
+}
+
+type IdentityServiceListOAuth2ScopesResult struct {
+	Success *ListOAuth2ScopesResponse `thrift:"success,0,optional" frugal:"0,optional,ListOAuth2ScopesResponse" json:"success,omitempty"`
+}
+
+func NewIdentityServiceListOAuth2ScopesResult() *IdentityServiceListOAuth2ScopesResult {
+	return &IdentityServiceListOAuth2ScopesResult{}
+}
+
+func (p *IdentityServiceListOAuth2ScopesResult) InitDefault() {
+}
+
+var IdentityServiceListOAuth2ScopesResult_Success_DEFAULT *ListOAuth2ScopesResponse
+
+func (p *IdentityServiceListOAuth2ScopesResult) GetSuccess() (v *ListOAuth2ScopesResponse) {
+	if !p.IsSetSuccess() {
+		return IdentityServiceListOAuth2ScopesResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *IdentityServiceListOAuth2ScopesResult) SetSuccess(x interface{}) {
+	p.Success = x.(*ListOAuth2ScopesResponse)
+}
+
+func (p *IdentityServiceListOAuth2ScopesResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *IdentityServiceListOAuth2ScopesResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceListOAuth2ScopesResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceListOAuth2ScopesResult = map[int16]string{
+	0: "success",
+}
+
+type IdentityServiceSaveOAuth2ConsentArgs struct {
+	Req *SaveOAuth2ConsentRequest `thrift:"req,1" frugal:"1,default,SaveOAuth2ConsentRequest" json:"req"`
+}
+
+func NewIdentityServiceSaveOAuth2ConsentArgs() *IdentityServiceSaveOAuth2ConsentArgs {
+	return &IdentityServiceSaveOAuth2ConsentArgs{}
+}
+
+func (p *IdentityServiceSaveOAuth2ConsentArgs) InitDefault() {
+}
+
+var IdentityServiceSaveOAuth2ConsentArgs_Req_DEFAULT *SaveOAuth2ConsentRequest
+
+func (p *IdentityServiceSaveOAuth2ConsentArgs) GetReq() (v *SaveOAuth2ConsentRequest) {
+	if !p.IsSetReq() {
+		return IdentityServiceSaveOAuth2ConsentArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *IdentityServiceSaveOAuth2ConsentArgs) SetReq(val *SaveOAuth2ConsentRequest) {
+	p.Req = val
+}
+
+func (p *IdentityServiceSaveOAuth2ConsentArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *IdentityServiceSaveOAuth2ConsentArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceSaveOAuth2ConsentArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceSaveOAuth2ConsentArgs = map[int16]string{
+	1: "req",
+}
+
+type IdentityServiceSaveOAuth2ConsentResult struct {
+}
+
+func NewIdentityServiceSaveOAuth2ConsentResult() *IdentityServiceSaveOAuth2ConsentResult {
+	return &IdentityServiceSaveOAuth2ConsentResult{}
+}
+
+func (p *IdentityServiceSaveOAuth2ConsentResult) InitDefault() {
+}
+
+func (p *IdentityServiceSaveOAuth2ConsentResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceSaveOAuth2ConsentResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceSaveOAuth2ConsentResult = map[int16]string{}
+
+type IdentityServiceGetOAuth2ConsentArgs struct {
+	Req *GetOAuth2ConsentRequest `thrift:"req,1" frugal:"1,default,GetOAuth2ConsentRequest" json:"req"`
+}
+
+func NewIdentityServiceGetOAuth2ConsentArgs() *IdentityServiceGetOAuth2ConsentArgs {
+	return &IdentityServiceGetOAuth2ConsentArgs{}
+}
+
+func (p *IdentityServiceGetOAuth2ConsentArgs) InitDefault() {
+}
+
+var IdentityServiceGetOAuth2ConsentArgs_Req_DEFAULT *GetOAuth2ConsentRequest
+
+func (p *IdentityServiceGetOAuth2ConsentArgs) GetReq() (v *GetOAuth2ConsentRequest) {
+	if !p.IsSetReq() {
+		return IdentityServiceGetOAuth2ConsentArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *IdentityServiceGetOAuth2ConsentArgs) SetReq(val *GetOAuth2ConsentRequest) {
+	p.Req = val
+}
+
+func (p *IdentityServiceGetOAuth2ConsentArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *IdentityServiceGetOAuth2ConsentArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceGetOAuth2ConsentArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceGetOAuth2ConsentArgs = map[int16]string{
+	1: "req",
+}
+
+type IdentityServiceGetOAuth2ConsentResult struct {
+	Success *GetOAuth2ConsentResponse `thrift:"success,0,optional" frugal:"0,optional,GetOAuth2ConsentResponse" json:"success,omitempty"`
+}
+
+func NewIdentityServiceGetOAuth2ConsentResult() *IdentityServiceGetOAuth2ConsentResult {
+	return &IdentityServiceGetOAuth2ConsentResult{}
+}
+
+func (p *IdentityServiceGetOAuth2ConsentResult) InitDefault() {
+}
+
+var IdentityServiceGetOAuth2ConsentResult_Success_DEFAULT *GetOAuth2ConsentResponse
+
+func (p *IdentityServiceGetOAuth2ConsentResult) GetSuccess() (v *GetOAuth2ConsentResponse) {
+	if !p.IsSetSuccess() {
+		return IdentityServiceGetOAuth2ConsentResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *IdentityServiceGetOAuth2ConsentResult) SetSuccess(x interface{}) {
+	p.Success = x.(*GetOAuth2ConsentResponse)
+}
+
+func (p *IdentityServiceGetOAuth2ConsentResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *IdentityServiceGetOAuth2ConsentResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceGetOAuth2ConsentResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceGetOAuth2ConsentResult = map[int16]string{
+	0: "success",
+}
+
+type IdentityServiceListOAuth2ConsentsArgs struct {
+	Req *ListOAuth2ConsentsRequest `thrift:"req,1" frugal:"1,default,ListOAuth2ConsentsRequest" json:"req"`
+}
+
+func NewIdentityServiceListOAuth2ConsentsArgs() *IdentityServiceListOAuth2ConsentsArgs {
+	return &IdentityServiceListOAuth2ConsentsArgs{}
+}
+
+func (p *IdentityServiceListOAuth2ConsentsArgs) InitDefault() {
+}
+
+var IdentityServiceListOAuth2ConsentsArgs_Req_DEFAULT *ListOAuth2ConsentsRequest
+
+func (p *IdentityServiceListOAuth2ConsentsArgs) GetReq() (v *ListOAuth2ConsentsRequest) {
+	if !p.IsSetReq() {
+		return IdentityServiceListOAuth2ConsentsArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *IdentityServiceListOAuth2ConsentsArgs) SetReq(val *ListOAuth2ConsentsRequest) {
+	p.Req = val
+}
+
+func (p *IdentityServiceListOAuth2ConsentsArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *IdentityServiceListOAuth2ConsentsArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceListOAuth2ConsentsArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceListOAuth2ConsentsArgs = map[int16]string{
+	1: "req",
+}
+
+type IdentityServiceListOAuth2ConsentsResult struct {
+	Success *ListOAuth2ConsentsResponse `thrift:"success,0,optional" frugal:"0,optional,ListOAuth2ConsentsResponse" json:"success,omitempty"`
+}
+
+func NewIdentityServiceListOAuth2ConsentsResult() *IdentityServiceListOAuth2ConsentsResult {
+	return &IdentityServiceListOAuth2ConsentsResult{}
+}
+
+func (p *IdentityServiceListOAuth2ConsentsResult) InitDefault() {
+}
+
+var IdentityServiceListOAuth2ConsentsResult_Success_DEFAULT *ListOAuth2ConsentsResponse
+
+func (p *IdentityServiceListOAuth2ConsentsResult) GetSuccess() (v *ListOAuth2ConsentsResponse) {
+	if !p.IsSetSuccess() {
+		return IdentityServiceListOAuth2ConsentsResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *IdentityServiceListOAuth2ConsentsResult) SetSuccess(x interface{}) {
+	p.Success = x.(*ListOAuth2ConsentsResponse)
+}
+
+func (p *IdentityServiceListOAuth2ConsentsResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *IdentityServiceListOAuth2ConsentsResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceListOAuth2ConsentsResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceListOAuth2ConsentsResult = map[int16]string{
+	0: "success",
+}
+
+type IdentityServiceRevokeOAuth2ConsentArgs struct {
+	Req *RevokeOAuth2ConsentRequest `thrift:"req,1" frugal:"1,default,RevokeOAuth2ConsentRequest" json:"req"`
+}
+
+func NewIdentityServiceRevokeOAuth2ConsentArgs() *IdentityServiceRevokeOAuth2ConsentArgs {
+	return &IdentityServiceRevokeOAuth2ConsentArgs{}
+}
+
+func (p *IdentityServiceRevokeOAuth2ConsentArgs) InitDefault() {
+}
+
+var IdentityServiceRevokeOAuth2ConsentArgs_Req_DEFAULT *RevokeOAuth2ConsentRequest
+
+func (p *IdentityServiceRevokeOAuth2ConsentArgs) GetReq() (v *RevokeOAuth2ConsentRequest) {
+	if !p.IsSetReq() {
+		return IdentityServiceRevokeOAuth2ConsentArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *IdentityServiceRevokeOAuth2ConsentArgs) SetReq(val *RevokeOAuth2ConsentRequest) {
+	p.Req = val
+}
+
+func (p *IdentityServiceRevokeOAuth2ConsentArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *IdentityServiceRevokeOAuth2ConsentArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceRevokeOAuth2ConsentArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceRevokeOAuth2ConsentArgs = map[int16]string{
+	1: "req",
+}
+
+type IdentityServiceRevokeOAuth2ConsentResult struct {
+}
+
+func NewIdentityServiceRevokeOAuth2ConsentResult() *IdentityServiceRevokeOAuth2ConsentResult {
+	return &IdentityServiceRevokeOAuth2ConsentResult{}
+}
+
+func (p *IdentityServiceRevokeOAuth2ConsentResult) InitDefault() {
+}
+
+func (p *IdentityServiceRevokeOAuth2ConsentResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceRevokeOAuth2ConsentResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceRevokeOAuth2ConsentResult = map[int16]string{}
+
+type IdentityServiceCreateOAuth2AuthorizeCodeSessionArgs struct {
+	Req *OAuth2TokenSession `thrift:"req,1" frugal:"1,default,OAuth2TokenSession" json:"req"`
+}
+
+func NewIdentityServiceCreateOAuth2AuthorizeCodeSessionArgs() *IdentityServiceCreateOAuth2AuthorizeCodeSessionArgs {
+	return &IdentityServiceCreateOAuth2AuthorizeCodeSessionArgs{}
+}
+
+func (p *IdentityServiceCreateOAuth2AuthorizeCodeSessionArgs) InitDefault() {
+}
+
+var IdentityServiceCreateOAuth2AuthorizeCodeSessionArgs_Req_DEFAULT *OAuth2TokenSession
+
+func (p *IdentityServiceCreateOAuth2AuthorizeCodeSessionArgs) GetReq() (v *OAuth2TokenSession) {
+	if !p.IsSetReq() {
+		return IdentityServiceCreateOAuth2AuthorizeCodeSessionArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *IdentityServiceCreateOAuth2AuthorizeCodeSessionArgs) SetReq(val *OAuth2TokenSession) {
+	p.Req = val
+}
+
+func (p *IdentityServiceCreateOAuth2AuthorizeCodeSessionArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *IdentityServiceCreateOAuth2AuthorizeCodeSessionArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceCreateOAuth2AuthorizeCodeSessionArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceCreateOAuth2AuthorizeCodeSessionArgs = map[int16]string{
+	1: "req",
+}
+
+type IdentityServiceCreateOAuth2AuthorizeCodeSessionResult struct {
+}
+
+func NewIdentityServiceCreateOAuth2AuthorizeCodeSessionResult() *IdentityServiceCreateOAuth2AuthorizeCodeSessionResult {
+	return &IdentityServiceCreateOAuth2AuthorizeCodeSessionResult{}
+}
+
+func (p *IdentityServiceCreateOAuth2AuthorizeCodeSessionResult) InitDefault() {
+}
+
+func (p *IdentityServiceCreateOAuth2AuthorizeCodeSessionResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceCreateOAuth2AuthorizeCodeSessionResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceCreateOAuth2AuthorizeCodeSessionResult = map[int16]string{}
+
+type IdentityServiceGetOAuth2AuthorizeCodeSessionArgs struct {
+	Signature string `thrift:"signature,1" frugal:"1,default,string" json:"signature"`
+}
+
+func NewIdentityServiceGetOAuth2AuthorizeCodeSessionArgs() *IdentityServiceGetOAuth2AuthorizeCodeSessionArgs {
+	return &IdentityServiceGetOAuth2AuthorizeCodeSessionArgs{}
+}
+
+func (p *IdentityServiceGetOAuth2AuthorizeCodeSessionArgs) InitDefault() {
+}
+
+func (p *IdentityServiceGetOAuth2AuthorizeCodeSessionArgs) GetSignature() (v string) {
+	return p.Signature
+}
+func (p *IdentityServiceGetOAuth2AuthorizeCodeSessionArgs) SetSignature(val string) {
+	p.Signature = val
+}
+
+func (p *IdentityServiceGetOAuth2AuthorizeCodeSessionArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceGetOAuth2AuthorizeCodeSessionArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceGetOAuth2AuthorizeCodeSessionArgs = map[int16]string{
+	1: "signature",
+}
+
+type IdentityServiceGetOAuth2AuthorizeCodeSessionResult struct {
+	Success *OAuth2TokenSession `thrift:"success,0,optional" frugal:"0,optional,OAuth2TokenSession" json:"success,omitempty"`
+}
+
+func NewIdentityServiceGetOAuth2AuthorizeCodeSessionResult() *IdentityServiceGetOAuth2AuthorizeCodeSessionResult {
+	return &IdentityServiceGetOAuth2AuthorizeCodeSessionResult{}
+}
+
+func (p *IdentityServiceGetOAuth2AuthorizeCodeSessionResult) InitDefault() {
+}
+
+var IdentityServiceGetOAuth2AuthorizeCodeSessionResult_Success_DEFAULT *OAuth2TokenSession
+
+func (p *IdentityServiceGetOAuth2AuthorizeCodeSessionResult) GetSuccess() (v *OAuth2TokenSession) {
+	if !p.IsSetSuccess() {
+		return IdentityServiceGetOAuth2AuthorizeCodeSessionResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *IdentityServiceGetOAuth2AuthorizeCodeSessionResult) SetSuccess(x interface{}) {
+	p.Success = x.(*OAuth2TokenSession)
+}
+
+func (p *IdentityServiceGetOAuth2AuthorizeCodeSessionResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *IdentityServiceGetOAuth2AuthorizeCodeSessionResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceGetOAuth2AuthorizeCodeSessionResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceGetOAuth2AuthorizeCodeSessionResult = map[int16]string{
+	0: "success",
+}
+
+type IdentityServiceInvalidateOAuth2AuthorizeCodeSessionArgs struct {
+	Signature string `thrift:"signature,1" frugal:"1,default,string" json:"signature"`
+}
+
+func NewIdentityServiceInvalidateOAuth2AuthorizeCodeSessionArgs() *IdentityServiceInvalidateOAuth2AuthorizeCodeSessionArgs {
+	return &IdentityServiceInvalidateOAuth2AuthorizeCodeSessionArgs{}
+}
+
+func (p *IdentityServiceInvalidateOAuth2AuthorizeCodeSessionArgs) InitDefault() {
+}
+
+func (p *IdentityServiceInvalidateOAuth2AuthorizeCodeSessionArgs) GetSignature() (v string) {
+	return p.Signature
+}
+func (p *IdentityServiceInvalidateOAuth2AuthorizeCodeSessionArgs) SetSignature(val string) {
+	p.Signature = val
+}
+
+func (p *IdentityServiceInvalidateOAuth2AuthorizeCodeSessionArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceInvalidateOAuth2AuthorizeCodeSessionArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceInvalidateOAuth2AuthorizeCodeSessionArgs = map[int16]string{
+	1: "signature",
+}
+
+type IdentityServiceInvalidateOAuth2AuthorizeCodeSessionResult struct {
+}
+
+func NewIdentityServiceInvalidateOAuth2AuthorizeCodeSessionResult() *IdentityServiceInvalidateOAuth2AuthorizeCodeSessionResult {
+	return &IdentityServiceInvalidateOAuth2AuthorizeCodeSessionResult{}
+}
+
+func (p *IdentityServiceInvalidateOAuth2AuthorizeCodeSessionResult) InitDefault() {
+}
+
+func (p *IdentityServiceInvalidateOAuth2AuthorizeCodeSessionResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceInvalidateOAuth2AuthorizeCodeSessionResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceInvalidateOAuth2AuthorizeCodeSessionResult = map[int16]string{}
+
+type IdentityServiceCreateOAuth2AccessTokenSessionArgs struct {
+	Req *OAuth2TokenSession `thrift:"req,1" frugal:"1,default,OAuth2TokenSession" json:"req"`
+}
+
+func NewIdentityServiceCreateOAuth2AccessTokenSessionArgs() *IdentityServiceCreateOAuth2AccessTokenSessionArgs {
+	return &IdentityServiceCreateOAuth2AccessTokenSessionArgs{}
+}
+
+func (p *IdentityServiceCreateOAuth2AccessTokenSessionArgs) InitDefault() {
+}
+
+var IdentityServiceCreateOAuth2AccessTokenSessionArgs_Req_DEFAULT *OAuth2TokenSession
+
+func (p *IdentityServiceCreateOAuth2AccessTokenSessionArgs) GetReq() (v *OAuth2TokenSession) {
+	if !p.IsSetReq() {
+		return IdentityServiceCreateOAuth2AccessTokenSessionArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *IdentityServiceCreateOAuth2AccessTokenSessionArgs) SetReq(val *OAuth2TokenSession) {
+	p.Req = val
+}
+
+func (p *IdentityServiceCreateOAuth2AccessTokenSessionArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *IdentityServiceCreateOAuth2AccessTokenSessionArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceCreateOAuth2AccessTokenSessionArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceCreateOAuth2AccessTokenSessionArgs = map[int16]string{
+	1: "req",
+}
+
+type IdentityServiceCreateOAuth2AccessTokenSessionResult struct {
+}
+
+func NewIdentityServiceCreateOAuth2AccessTokenSessionResult() *IdentityServiceCreateOAuth2AccessTokenSessionResult {
+	return &IdentityServiceCreateOAuth2AccessTokenSessionResult{}
+}
+
+func (p *IdentityServiceCreateOAuth2AccessTokenSessionResult) InitDefault() {
+}
+
+func (p *IdentityServiceCreateOAuth2AccessTokenSessionResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceCreateOAuth2AccessTokenSessionResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceCreateOAuth2AccessTokenSessionResult = map[int16]string{}
+
+type IdentityServiceGetOAuth2AccessTokenSessionArgs struct {
+	Signature string `thrift:"signature,1" frugal:"1,default,string" json:"signature"`
+}
+
+func NewIdentityServiceGetOAuth2AccessTokenSessionArgs() *IdentityServiceGetOAuth2AccessTokenSessionArgs {
+	return &IdentityServiceGetOAuth2AccessTokenSessionArgs{}
+}
+
+func (p *IdentityServiceGetOAuth2AccessTokenSessionArgs) InitDefault() {
+}
+
+func (p *IdentityServiceGetOAuth2AccessTokenSessionArgs) GetSignature() (v string) {
+	return p.Signature
+}
+func (p *IdentityServiceGetOAuth2AccessTokenSessionArgs) SetSignature(val string) {
+	p.Signature = val
+}
+
+func (p *IdentityServiceGetOAuth2AccessTokenSessionArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceGetOAuth2AccessTokenSessionArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceGetOAuth2AccessTokenSessionArgs = map[int16]string{
+	1: "signature",
+}
+
+type IdentityServiceGetOAuth2AccessTokenSessionResult struct {
+	Success *OAuth2TokenSession `thrift:"success,0,optional" frugal:"0,optional,OAuth2TokenSession" json:"success,omitempty"`
+}
+
+func NewIdentityServiceGetOAuth2AccessTokenSessionResult() *IdentityServiceGetOAuth2AccessTokenSessionResult {
+	return &IdentityServiceGetOAuth2AccessTokenSessionResult{}
+}
+
+func (p *IdentityServiceGetOAuth2AccessTokenSessionResult) InitDefault() {
+}
+
+var IdentityServiceGetOAuth2AccessTokenSessionResult_Success_DEFAULT *OAuth2TokenSession
+
+func (p *IdentityServiceGetOAuth2AccessTokenSessionResult) GetSuccess() (v *OAuth2TokenSession) {
+	if !p.IsSetSuccess() {
+		return IdentityServiceGetOAuth2AccessTokenSessionResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *IdentityServiceGetOAuth2AccessTokenSessionResult) SetSuccess(x interface{}) {
+	p.Success = x.(*OAuth2TokenSession)
+}
+
+func (p *IdentityServiceGetOAuth2AccessTokenSessionResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *IdentityServiceGetOAuth2AccessTokenSessionResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceGetOAuth2AccessTokenSessionResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceGetOAuth2AccessTokenSessionResult = map[int16]string{
+	0: "success",
+}
+
+type IdentityServiceDeleteOAuth2AccessTokenSessionArgs struct {
+	Signature string `thrift:"signature,1" frugal:"1,default,string" json:"signature"`
+}
+
+func NewIdentityServiceDeleteOAuth2AccessTokenSessionArgs() *IdentityServiceDeleteOAuth2AccessTokenSessionArgs {
+	return &IdentityServiceDeleteOAuth2AccessTokenSessionArgs{}
+}
+
+func (p *IdentityServiceDeleteOAuth2AccessTokenSessionArgs) InitDefault() {
+}
+
+func (p *IdentityServiceDeleteOAuth2AccessTokenSessionArgs) GetSignature() (v string) {
+	return p.Signature
+}
+func (p *IdentityServiceDeleteOAuth2AccessTokenSessionArgs) SetSignature(val string) {
+	p.Signature = val
+}
+
+func (p *IdentityServiceDeleteOAuth2AccessTokenSessionArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceDeleteOAuth2AccessTokenSessionArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceDeleteOAuth2AccessTokenSessionArgs = map[int16]string{
+	1: "signature",
+}
+
+type IdentityServiceDeleteOAuth2AccessTokenSessionResult struct {
+}
+
+func NewIdentityServiceDeleteOAuth2AccessTokenSessionResult() *IdentityServiceDeleteOAuth2AccessTokenSessionResult {
+	return &IdentityServiceDeleteOAuth2AccessTokenSessionResult{}
+}
+
+func (p *IdentityServiceDeleteOAuth2AccessTokenSessionResult) InitDefault() {
+}
+
+func (p *IdentityServiceDeleteOAuth2AccessTokenSessionResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceDeleteOAuth2AccessTokenSessionResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceDeleteOAuth2AccessTokenSessionResult = map[int16]string{}
+
+type IdentityServiceRevokeOAuth2AccessTokenArgs struct {
+	RequestID string `thrift:"requestID,1" frugal:"1,default,string" json:"requestID"`
+}
+
+func NewIdentityServiceRevokeOAuth2AccessTokenArgs() *IdentityServiceRevokeOAuth2AccessTokenArgs {
+	return &IdentityServiceRevokeOAuth2AccessTokenArgs{}
+}
+
+func (p *IdentityServiceRevokeOAuth2AccessTokenArgs) InitDefault() {
+}
+
+func (p *IdentityServiceRevokeOAuth2AccessTokenArgs) GetRequestID() (v string) {
+	return p.RequestID
+}
+func (p *IdentityServiceRevokeOAuth2AccessTokenArgs) SetRequestID(val string) {
+	p.RequestID = val
+}
+
+func (p *IdentityServiceRevokeOAuth2AccessTokenArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceRevokeOAuth2AccessTokenArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceRevokeOAuth2AccessTokenArgs = map[int16]string{
+	1: "requestID",
+}
+
+type IdentityServiceRevokeOAuth2AccessTokenResult struct {
+}
+
+func NewIdentityServiceRevokeOAuth2AccessTokenResult() *IdentityServiceRevokeOAuth2AccessTokenResult {
+	return &IdentityServiceRevokeOAuth2AccessTokenResult{}
+}
+
+func (p *IdentityServiceRevokeOAuth2AccessTokenResult) InitDefault() {
+}
+
+func (p *IdentityServiceRevokeOAuth2AccessTokenResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceRevokeOAuth2AccessTokenResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceRevokeOAuth2AccessTokenResult = map[int16]string{}
+
+type IdentityServiceCreateOAuth2RefreshTokenSessionArgs struct {
+	Req *OAuth2TokenSession `thrift:"req,1" frugal:"1,default,OAuth2TokenSession" json:"req"`
+}
+
+func NewIdentityServiceCreateOAuth2RefreshTokenSessionArgs() *IdentityServiceCreateOAuth2RefreshTokenSessionArgs {
+	return &IdentityServiceCreateOAuth2RefreshTokenSessionArgs{}
+}
+
+func (p *IdentityServiceCreateOAuth2RefreshTokenSessionArgs) InitDefault() {
+}
+
+var IdentityServiceCreateOAuth2RefreshTokenSessionArgs_Req_DEFAULT *OAuth2TokenSession
+
+func (p *IdentityServiceCreateOAuth2RefreshTokenSessionArgs) GetReq() (v *OAuth2TokenSession) {
+	if !p.IsSetReq() {
+		return IdentityServiceCreateOAuth2RefreshTokenSessionArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *IdentityServiceCreateOAuth2RefreshTokenSessionArgs) SetReq(val *OAuth2TokenSession) {
+	p.Req = val
+}
+
+func (p *IdentityServiceCreateOAuth2RefreshTokenSessionArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *IdentityServiceCreateOAuth2RefreshTokenSessionArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceCreateOAuth2RefreshTokenSessionArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceCreateOAuth2RefreshTokenSessionArgs = map[int16]string{
+	1: "req",
+}
+
+type IdentityServiceCreateOAuth2RefreshTokenSessionResult struct {
+}
+
+func NewIdentityServiceCreateOAuth2RefreshTokenSessionResult() *IdentityServiceCreateOAuth2RefreshTokenSessionResult {
+	return &IdentityServiceCreateOAuth2RefreshTokenSessionResult{}
+}
+
+func (p *IdentityServiceCreateOAuth2RefreshTokenSessionResult) InitDefault() {
+}
+
+func (p *IdentityServiceCreateOAuth2RefreshTokenSessionResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceCreateOAuth2RefreshTokenSessionResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceCreateOAuth2RefreshTokenSessionResult = map[int16]string{}
+
+type IdentityServiceGetOAuth2RefreshTokenSessionArgs struct {
+	Signature string `thrift:"signature,1" frugal:"1,default,string" json:"signature"`
+}
+
+func NewIdentityServiceGetOAuth2RefreshTokenSessionArgs() *IdentityServiceGetOAuth2RefreshTokenSessionArgs {
+	return &IdentityServiceGetOAuth2RefreshTokenSessionArgs{}
+}
+
+func (p *IdentityServiceGetOAuth2RefreshTokenSessionArgs) InitDefault() {
+}
+
+func (p *IdentityServiceGetOAuth2RefreshTokenSessionArgs) GetSignature() (v string) {
+	return p.Signature
+}
+func (p *IdentityServiceGetOAuth2RefreshTokenSessionArgs) SetSignature(val string) {
+	p.Signature = val
+}
+
+func (p *IdentityServiceGetOAuth2RefreshTokenSessionArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceGetOAuth2RefreshTokenSessionArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceGetOAuth2RefreshTokenSessionArgs = map[int16]string{
+	1: "signature",
+}
+
+type IdentityServiceGetOAuth2RefreshTokenSessionResult struct {
+	Success *OAuth2TokenSession `thrift:"success,0,optional" frugal:"0,optional,OAuth2TokenSession" json:"success,omitempty"`
+}
+
+func NewIdentityServiceGetOAuth2RefreshTokenSessionResult() *IdentityServiceGetOAuth2RefreshTokenSessionResult {
+	return &IdentityServiceGetOAuth2RefreshTokenSessionResult{}
+}
+
+func (p *IdentityServiceGetOAuth2RefreshTokenSessionResult) InitDefault() {
+}
+
+var IdentityServiceGetOAuth2RefreshTokenSessionResult_Success_DEFAULT *OAuth2TokenSession
+
+func (p *IdentityServiceGetOAuth2RefreshTokenSessionResult) GetSuccess() (v *OAuth2TokenSession) {
+	if !p.IsSetSuccess() {
+		return IdentityServiceGetOAuth2RefreshTokenSessionResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *IdentityServiceGetOAuth2RefreshTokenSessionResult) SetSuccess(x interface{}) {
+	p.Success = x.(*OAuth2TokenSession)
+}
+
+func (p *IdentityServiceGetOAuth2RefreshTokenSessionResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *IdentityServiceGetOAuth2RefreshTokenSessionResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceGetOAuth2RefreshTokenSessionResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceGetOAuth2RefreshTokenSessionResult = map[int16]string{
+	0: "success",
+}
+
+type IdentityServiceDeleteOAuth2RefreshTokenSessionArgs struct {
+	Signature string `thrift:"signature,1" frugal:"1,default,string" json:"signature"`
+}
+
+func NewIdentityServiceDeleteOAuth2RefreshTokenSessionArgs() *IdentityServiceDeleteOAuth2RefreshTokenSessionArgs {
+	return &IdentityServiceDeleteOAuth2RefreshTokenSessionArgs{}
+}
+
+func (p *IdentityServiceDeleteOAuth2RefreshTokenSessionArgs) InitDefault() {
+}
+
+func (p *IdentityServiceDeleteOAuth2RefreshTokenSessionArgs) GetSignature() (v string) {
+	return p.Signature
+}
+func (p *IdentityServiceDeleteOAuth2RefreshTokenSessionArgs) SetSignature(val string) {
+	p.Signature = val
+}
+
+func (p *IdentityServiceDeleteOAuth2RefreshTokenSessionArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceDeleteOAuth2RefreshTokenSessionArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceDeleteOAuth2RefreshTokenSessionArgs = map[int16]string{
+	1: "signature",
+}
+
+type IdentityServiceDeleteOAuth2RefreshTokenSessionResult struct {
+}
+
+func NewIdentityServiceDeleteOAuth2RefreshTokenSessionResult() *IdentityServiceDeleteOAuth2RefreshTokenSessionResult {
+	return &IdentityServiceDeleteOAuth2RefreshTokenSessionResult{}
+}
+
+func (p *IdentityServiceDeleteOAuth2RefreshTokenSessionResult) InitDefault() {
+}
+
+func (p *IdentityServiceDeleteOAuth2RefreshTokenSessionResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceDeleteOAuth2RefreshTokenSessionResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceDeleteOAuth2RefreshTokenSessionResult = map[int16]string{}
+
+type IdentityServiceRevokeOAuth2RefreshTokenArgs struct {
+	RequestID string `thrift:"requestID,1" frugal:"1,default,string" json:"requestID"`
+}
+
+func NewIdentityServiceRevokeOAuth2RefreshTokenArgs() *IdentityServiceRevokeOAuth2RefreshTokenArgs {
+	return &IdentityServiceRevokeOAuth2RefreshTokenArgs{}
+}
+
+func (p *IdentityServiceRevokeOAuth2RefreshTokenArgs) InitDefault() {
+}
+
+func (p *IdentityServiceRevokeOAuth2RefreshTokenArgs) GetRequestID() (v string) {
+	return p.RequestID
+}
+func (p *IdentityServiceRevokeOAuth2RefreshTokenArgs) SetRequestID(val string) {
+	p.RequestID = val
+}
+
+func (p *IdentityServiceRevokeOAuth2RefreshTokenArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceRevokeOAuth2RefreshTokenArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceRevokeOAuth2RefreshTokenArgs = map[int16]string{
+	1: "requestID",
+}
+
+type IdentityServiceRevokeOAuth2RefreshTokenResult struct {
+}
+
+func NewIdentityServiceRevokeOAuth2RefreshTokenResult() *IdentityServiceRevokeOAuth2RefreshTokenResult {
+	return &IdentityServiceRevokeOAuth2RefreshTokenResult{}
+}
+
+func (p *IdentityServiceRevokeOAuth2RefreshTokenResult) InitDefault() {
+}
+
+func (p *IdentityServiceRevokeOAuth2RefreshTokenResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceRevokeOAuth2RefreshTokenResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceRevokeOAuth2RefreshTokenResult = map[int16]string{}
+
+type IdentityServiceCreateOAuth2PKCESessionArgs struct {
+	Req *OAuth2TokenSession `thrift:"req,1" frugal:"1,default,OAuth2TokenSession" json:"req"`
+}
+
+func NewIdentityServiceCreateOAuth2PKCESessionArgs() *IdentityServiceCreateOAuth2PKCESessionArgs {
+	return &IdentityServiceCreateOAuth2PKCESessionArgs{}
+}
+
+func (p *IdentityServiceCreateOAuth2PKCESessionArgs) InitDefault() {
+}
+
+var IdentityServiceCreateOAuth2PKCESessionArgs_Req_DEFAULT *OAuth2TokenSession
+
+func (p *IdentityServiceCreateOAuth2PKCESessionArgs) GetReq() (v *OAuth2TokenSession) {
+	if !p.IsSetReq() {
+		return IdentityServiceCreateOAuth2PKCESessionArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *IdentityServiceCreateOAuth2PKCESessionArgs) SetReq(val *OAuth2TokenSession) {
+	p.Req = val
+}
+
+func (p *IdentityServiceCreateOAuth2PKCESessionArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *IdentityServiceCreateOAuth2PKCESessionArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceCreateOAuth2PKCESessionArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceCreateOAuth2PKCESessionArgs = map[int16]string{
+	1: "req",
+}
+
+type IdentityServiceCreateOAuth2PKCESessionResult struct {
+}
+
+func NewIdentityServiceCreateOAuth2PKCESessionResult() *IdentityServiceCreateOAuth2PKCESessionResult {
+	return &IdentityServiceCreateOAuth2PKCESessionResult{}
+}
+
+func (p *IdentityServiceCreateOAuth2PKCESessionResult) InitDefault() {
+}
+
+func (p *IdentityServiceCreateOAuth2PKCESessionResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceCreateOAuth2PKCESessionResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceCreateOAuth2PKCESessionResult = map[int16]string{}
+
+type IdentityServiceGetOAuth2PKCESessionArgs struct {
+	Signature string `thrift:"signature,1" frugal:"1,default,string" json:"signature"`
+}
+
+func NewIdentityServiceGetOAuth2PKCESessionArgs() *IdentityServiceGetOAuth2PKCESessionArgs {
+	return &IdentityServiceGetOAuth2PKCESessionArgs{}
+}
+
+func (p *IdentityServiceGetOAuth2PKCESessionArgs) InitDefault() {
+}
+
+func (p *IdentityServiceGetOAuth2PKCESessionArgs) GetSignature() (v string) {
+	return p.Signature
+}
+func (p *IdentityServiceGetOAuth2PKCESessionArgs) SetSignature(val string) {
+	p.Signature = val
+}
+
+func (p *IdentityServiceGetOAuth2PKCESessionArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceGetOAuth2PKCESessionArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceGetOAuth2PKCESessionArgs = map[int16]string{
+	1: "signature",
+}
+
+type IdentityServiceGetOAuth2PKCESessionResult struct {
+	Success *OAuth2TokenSession `thrift:"success,0,optional" frugal:"0,optional,OAuth2TokenSession" json:"success,omitempty"`
+}
+
+func NewIdentityServiceGetOAuth2PKCESessionResult() *IdentityServiceGetOAuth2PKCESessionResult {
+	return &IdentityServiceGetOAuth2PKCESessionResult{}
+}
+
+func (p *IdentityServiceGetOAuth2PKCESessionResult) InitDefault() {
+}
+
+var IdentityServiceGetOAuth2PKCESessionResult_Success_DEFAULT *OAuth2TokenSession
+
+func (p *IdentityServiceGetOAuth2PKCESessionResult) GetSuccess() (v *OAuth2TokenSession) {
+	if !p.IsSetSuccess() {
+		return IdentityServiceGetOAuth2PKCESessionResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *IdentityServiceGetOAuth2PKCESessionResult) SetSuccess(x interface{}) {
+	p.Success = x.(*OAuth2TokenSession)
+}
+
+func (p *IdentityServiceGetOAuth2PKCESessionResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *IdentityServiceGetOAuth2PKCESessionResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceGetOAuth2PKCESessionResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceGetOAuth2PKCESessionResult = map[int16]string{
+	0: "success",
+}
+
+type IdentityServiceDeleteOAuth2PKCESessionArgs struct {
+	Signature string `thrift:"signature,1" frugal:"1,default,string" json:"signature"`
+}
+
+func NewIdentityServiceDeleteOAuth2PKCESessionArgs() *IdentityServiceDeleteOAuth2PKCESessionArgs {
+	return &IdentityServiceDeleteOAuth2PKCESessionArgs{}
+}
+
+func (p *IdentityServiceDeleteOAuth2PKCESessionArgs) InitDefault() {
+}
+
+func (p *IdentityServiceDeleteOAuth2PKCESessionArgs) GetSignature() (v string) {
+	return p.Signature
+}
+func (p *IdentityServiceDeleteOAuth2PKCESessionArgs) SetSignature(val string) {
+	p.Signature = val
+}
+
+func (p *IdentityServiceDeleteOAuth2PKCESessionArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceDeleteOAuth2PKCESessionArgs(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceDeleteOAuth2PKCESessionArgs = map[int16]string{
+	1: "signature",
+}
+
+type IdentityServiceDeleteOAuth2PKCESessionResult struct {
+}
+
+func NewIdentityServiceDeleteOAuth2PKCESessionResult() *IdentityServiceDeleteOAuth2PKCESessionResult {
+	return &IdentityServiceDeleteOAuth2PKCESessionResult{}
+}
+
+func (p *IdentityServiceDeleteOAuth2PKCESessionResult) InitDefault() {
+}
+
+func (p *IdentityServiceDeleteOAuth2PKCESessionResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("IdentityServiceDeleteOAuth2PKCESessionResult(%+v)", *p)
+}
+
+var fieldIDToName_IdentityServiceDeleteOAuth2PKCESessionResult = map[int16]string{}

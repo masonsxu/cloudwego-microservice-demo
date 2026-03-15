@@ -71,6 +71,32 @@ type Client interface {
 	GetUserDataScope(ctx context.Context, req *identity_srv.GetUserDataScopeRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserDataScopeResponse, err error)
 	CreateAuditLog(ctx context.Context, req *identity_srv.CreateAuditLogRequest, callOptions ...callopt.Option) (err error)
 	ListAuditLogs(ctx context.Context, req *identity_srv.ListAuditLogsRequest, callOptions ...callopt.Option) (r *identity_srv.ListAuditLogsResponse, err error)
+	CreateOAuth2Client(ctx context.Context, req *identity_srv.CreateOAuth2ClientRequest, callOptions ...callopt.Option) (r *identity_srv.CreateOAuth2ClientResponse, err error)
+	GetOAuth2Client(ctx context.Context, req *identity_srv.GetOAuth2ClientRequest, callOptions ...callopt.Option) (r *identity_srv.OAuth2Client, err error)
+	UpdateOAuth2Client(ctx context.Context, req *identity_srv.UpdateOAuth2ClientRequest, callOptions ...callopt.Option) (r *identity_srv.OAuth2Client, err error)
+	DeleteOAuth2Client(ctx context.Context, req *identity_srv.DeleteOAuth2ClientRequest, callOptions ...callopt.Option) (err error)
+	ListOAuth2Clients(ctx context.Context, req *identity_srv.ListOAuth2ClientsRequest, callOptions ...callopt.Option) (r *identity_srv.ListOAuth2ClientsResponse, err error)
+	RotateOAuth2ClientSecret(ctx context.Context, req *identity_srv.RotateOAuth2ClientSecretRequest, callOptions ...callopt.Option) (r *identity_srv.RotateOAuth2ClientSecretResponse, err error)
+	GetOAuth2ClientForAuth(ctx context.Context, clientID string, callOptions ...callopt.Option) (r *identity_srv.GetOAuth2ClientForAuthResponse, err error)
+	ListOAuth2Scopes(ctx context.Context, req *identity_srv.ListOAuth2ScopesRequest, callOptions ...callopt.Option) (r *identity_srv.ListOAuth2ScopesResponse, err error)
+	SaveOAuth2Consent(ctx context.Context, req *identity_srv.SaveOAuth2ConsentRequest, callOptions ...callopt.Option) (err error)
+	GetOAuth2Consent(ctx context.Context, req *identity_srv.GetOAuth2ConsentRequest, callOptions ...callopt.Option) (r *identity_srv.GetOAuth2ConsentResponse, err error)
+	ListOAuth2Consents(ctx context.Context, req *identity_srv.ListOAuth2ConsentsRequest, callOptions ...callopt.Option) (r *identity_srv.ListOAuth2ConsentsResponse, err error)
+	RevokeOAuth2Consent(ctx context.Context, req *identity_srv.RevokeOAuth2ConsentRequest, callOptions ...callopt.Option) (err error)
+	CreateOAuth2AuthorizeCodeSession(ctx context.Context, req *identity_srv.OAuth2TokenSession, callOptions ...callopt.Option) (err error)
+	GetOAuth2AuthorizeCodeSession(ctx context.Context, signature string, callOptions ...callopt.Option) (r *identity_srv.OAuth2TokenSession, err error)
+	InvalidateOAuth2AuthorizeCodeSession(ctx context.Context, signature string, callOptions ...callopt.Option) (err error)
+	CreateOAuth2AccessTokenSession(ctx context.Context, req *identity_srv.OAuth2TokenSession, callOptions ...callopt.Option) (err error)
+	GetOAuth2AccessTokenSession(ctx context.Context, signature string, callOptions ...callopt.Option) (r *identity_srv.OAuth2TokenSession, err error)
+	DeleteOAuth2AccessTokenSession(ctx context.Context, signature string, callOptions ...callopt.Option) (err error)
+	RevokeOAuth2AccessToken(ctx context.Context, requestID string, callOptions ...callopt.Option) (err error)
+	CreateOAuth2RefreshTokenSession(ctx context.Context, req *identity_srv.OAuth2TokenSession, callOptions ...callopt.Option) (err error)
+	GetOAuth2RefreshTokenSession(ctx context.Context, signature string, callOptions ...callopt.Option) (r *identity_srv.OAuth2TokenSession, err error)
+	DeleteOAuth2RefreshTokenSession(ctx context.Context, signature string, callOptions ...callopt.Option) (err error)
+	RevokeOAuth2RefreshToken(ctx context.Context, requestID string, callOptions ...callopt.Option) (err error)
+	CreateOAuth2PKCESession(ctx context.Context, req *identity_srv.OAuth2TokenSession, callOptions ...callopt.Option) (err error)
+	GetOAuth2PKCESession(ctx context.Context, signature string, callOptions ...callopt.Option) (r *identity_srv.OAuth2TokenSession, err error)
+	DeleteOAuth2PKCESession(ctx context.Context, signature string, callOptions ...callopt.Option) (err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -395,4 +421,134 @@ func (p *kIdentityServiceClient) CreateAuditLog(ctx context.Context, req *identi
 func (p *kIdentityServiceClient) ListAuditLogs(ctx context.Context, req *identity_srv.ListAuditLogsRequest, callOptions ...callopt.Option) (r *identity_srv.ListAuditLogsResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.ListAuditLogs(ctx, req)
+}
+
+func (p *kIdentityServiceClient) CreateOAuth2Client(ctx context.Context, req *identity_srv.CreateOAuth2ClientRequest, callOptions ...callopt.Option) (r *identity_srv.CreateOAuth2ClientResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CreateOAuth2Client(ctx, req)
+}
+
+func (p *kIdentityServiceClient) GetOAuth2Client(ctx context.Context, req *identity_srv.GetOAuth2ClientRequest, callOptions ...callopt.Option) (r *identity_srv.OAuth2Client, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetOAuth2Client(ctx, req)
+}
+
+func (p *kIdentityServiceClient) UpdateOAuth2Client(ctx context.Context, req *identity_srv.UpdateOAuth2ClientRequest, callOptions ...callopt.Option) (r *identity_srv.OAuth2Client, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UpdateOAuth2Client(ctx, req)
+}
+
+func (p *kIdentityServiceClient) DeleteOAuth2Client(ctx context.Context, req *identity_srv.DeleteOAuth2ClientRequest, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DeleteOAuth2Client(ctx, req)
+}
+
+func (p *kIdentityServiceClient) ListOAuth2Clients(ctx context.Context, req *identity_srv.ListOAuth2ClientsRequest, callOptions ...callopt.Option) (r *identity_srv.ListOAuth2ClientsResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ListOAuth2Clients(ctx, req)
+}
+
+func (p *kIdentityServiceClient) RotateOAuth2ClientSecret(ctx context.Context, req *identity_srv.RotateOAuth2ClientSecretRequest, callOptions ...callopt.Option) (r *identity_srv.RotateOAuth2ClientSecretResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.RotateOAuth2ClientSecret(ctx, req)
+}
+
+func (p *kIdentityServiceClient) GetOAuth2ClientForAuth(ctx context.Context, clientID string, callOptions ...callopt.Option) (r *identity_srv.GetOAuth2ClientForAuthResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetOAuth2ClientForAuth(ctx, clientID)
+}
+
+func (p *kIdentityServiceClient) ListOAuth2Scopes(ctx context.Context, req *identity_srv.ListOAuth2ScopesRequest, callOptions ...callopt.Option) (r *identity_srv.ListOAuth2ScopesResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ListOAuth2Scopes(ctx, req)
+}
+
+func (p *kIdentityServiceClient) SaveOAuth2Consent(ctx context.Context, req *identity_srv.SaveOAuth2ConsentRequest, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.SaveOAuth2Consent(ctx, req)
+}
+
+func (p *kIdentityServiceClient) GetOAuth2Consent(ctx context.Context, req *identity_srv.GetOAuth2ConsentRequest, callOptions ...callopt.Option) (r *identity_srv.GetOAuth2ConsentResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetOAuth2Consent(ctx, req)
+}
+
+func (p *kIdentityServiceClient) ListOAuth2Consents(ctx context.Context, req *identity_srv.ListOAuth2ConsentsRequest, callOptions ...callopt.Option) (r *identity_srv.ListOAuth2ConsentsResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ListOAuth2Consents(ctx, req)
+}
+
+func (p *kIdentityServiceClient) RevokeOAuth2Consent(ctx context.Context, req *identity_srv.RevokeOAuth2ConsentRequest, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.RevokeOAuth2Consent(ctx, req)
+}
+
+func (p *kIdentityServiceClient) CreateOAuth2AuthorizeCodeSession(ctx context.Context, req *identity_srv.OAuth2TokenSession, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CreateOAuth2AuthorizeCodeSession(ctx, req)
+}
+
+func (p *kIdentityServiceClient) GetOAuth2AuthorizeCodeSession(ctx context.Context, signature string, callOptions ...callopt.Option) (r *identity_srv.OAuth2TokenSession, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetOAuth2AuthorizeCodeSession(ctx, signature)
+}
+
+func (p *kIdentityServiceClient) InvalidateOAuth2AuthorizeCodeSession(ctx context.Context, signature string, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.InvalidateOAuth2AuthorizeCodeSession(ctx, signature)
+}
+
+func (p *kIdentityServiceClient) CreateOAuth2AccessTokenSession(ctx context.Context, req *identity_srv.OAuth2TokenSession, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CreateOAuth2AccessTokenSession(ctx, req)
+}
+
+func (p *kIdentityServiceClient) GetOAuth2AccessTokenSession(ctx context.Context, signature string, callOptions ...callopt.Option) (r *identity_srv.OAuth2TokenSession, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetOAuth2AccessTokenSession(ctx, signature)
+}
+
+func (p *kIdentityServiceClient) DeleteOAuth2AccessTokenSession(ctx context.Context, signature string, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DeleteOAuth2AccessTokenSession(ctx, signature)
+}
+
+func (p *kIdentityServiceClient) RevokeOAuth2AccessToken(ctx context.Context, requestID string, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.RevokeOAuth2AccessToken(ctx, requestID)
+}
+
+func (p *kIdentityServiceClient) CreateOAuth2RefreshTokenSession(ctx context.Context, req *identity_srv.OAuth2TokenSession, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CreateOAuth2RefreshTokenSession(ctx, req)
+}
+
+func (p *kIdentityServiceClient) GetOAuth2RefreshTokenSession(ctx context.Context, signature string, callOptions ...callopt.Option) (r *identity_srv.OAuth2TokenSession, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetOAuth2RefreshTokenSession(ctx, signature)
+}
+
+func (p *kIdentityServiceClient) DeleteOAuth2RefreshTokenSession(ctx context.Context, signature string, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DeleteOAuth2RefreshTokenSession(ctx, signature)
+}
+
+func (p *kIdentityServiceClient) RevokeOAuth2RefreshToken(ctx context.Context, requestID string, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.RevokeOAuth2RefreshToken(ctx, requestID)
+}
+
+func (p *kIdentityServiceClient) CreateOAuth2PKCESession(ctx context.Context, req *identity_srv.OAuth2TokenSession, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CreateOAuth2PKCESession(ctx, req)
+}
+
+func (p *kIdentityServiceClient) GetOAuth2PKCESession(ctx context.Context, signature string, callOptions ...callopt.Option) (r *identity_srv.OAuth2TokenSession, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetOAuth2PKCESession(ctx, signature)
+}
+
+func (p *kIdentityServiceClient) DeleteOAuth2PKCESession(ctx context.Context, signature string, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DeleteOAuth2PKCESession(ctx, signature)
 }
