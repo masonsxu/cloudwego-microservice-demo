@@ -80,6 +80,11 @@ linters:
                   - lll
               source: "^//go:generate "
 
+            - linters:
+                  - lll
+                  - revive
+              source: "^//\\s*@(Summary|Description|Tags|Accept|Produce|Param|Success|Failure|Router|Security|Header)\\s"
+
 issues:
     max-issues-per-linter: 0
     max-same-issues: 0
