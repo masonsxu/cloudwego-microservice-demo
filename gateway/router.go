@@ -8,7 +8,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/hertz-contrib/swagger"
 	handler "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/handler"
-	oauth2handler "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/handler/oauth2"
+	oauth2handler "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/oauth2"
 	_ "github.com/masonsxu/cloudwego-microservice-demo/gateway/docs"
 	oauth2svc "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/oauth2"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
