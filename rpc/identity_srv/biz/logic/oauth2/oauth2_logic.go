@@ -251,6 +251,7 @@ func (l *logicImpl) GetOAuth2ClientForAuth(
 	id := client.ID.String()
 	accessLifespan := int32(client.AccessTokenLifespan)
 	refreshLifespan := int32(client.RefreshTokenLifespan)
+	clientType := string(client.ClientType)
 
 	grantTypes := make([]string, len(client.GrantTypes))
 	copy(grantTypes, client.GrantTypes)
@@ -260,7 +261,7 @@ func (l *logicImpl) GetOAuth2ClientForAuth(
 		ClientID:             &client.ClientID,
 		ClientSecretHash:     &client.ClientSecret,
 		ClientName:           &client.ClientName,
-		ClientType:           l.conv.OAuth2().ClientModelToThrift(client).ClientType,
+		ClientType:           &clientType,
 		GrantTypes:           grantTypes,
 		RedirectURIs:         []string(client.RedirectURIs),
 		Scopes:               []string(client.Scopes),

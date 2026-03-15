@@ -40,6 +40,8 @@ func (a *assemblerImpl) ToRPCCreateClientRequest(
 	rpcReq := &rpc.CreateOAuth2ClientRequest{
 		ClientName:   req.ClientName,
 		Description:  req.Description,
+		ClientType:   req.ClientType,
+		GrantTypes:   req.GrantTypes,
 		RedirectURIs: req.RedirectURIs,
 		Scopes:       req.Scopes,
 		LogoURI:      req.LogoURI,
@@ -62,11 +64,13 @@ func (a *assemblerImpl) ToHTTPClient(rpcClient *rpc.OAuth2Client) *identity_srv.
 		return nil
 	}
 
-	dto := &identity_srv.OAuth2ClientDTO{
+	return &identity_srv.OAuth2ClientDTO{
 		ID:                   common.CopyStringPtr(rpcClient.Id),
 		ClientID:             common.CopyStringPtr(rpcClient.ClientID),
 		ClientName:           common.CopyStringPtr(rpcClient.ClientName),
 		Description:          common.CopyStringPtr(rpcClient.Description),
+		ClientType:           common.CopyStringPtr(rpcClient.ClientType),
+		GrantTypes:           rpcClient.GrantTypes,
 		RedirectURIs:         rpcClient.RedirectURIs,
 		Scopes:               rpcClient.Scopes,
 		LogoURI:              common.CopyStringPtr(rpcClient.LogoURI),
@@ -78,8 +82,6 @@ func (a *assemblerImpl) ToHTTPClient(rpcClient *rpc.OAuth2Client) *identity_srv.
 		CreatedAt:            common.CopyInt64Ptr(rpcClient.CreatedAt),
 		UpdatedAt:            common.CopyInt64Ptr(rpcClient.UpdatedAt),
 	}
-
-	return dto
 }
 
 func (a *assemblerImpl) ToHTTPClients(rpcClients []*rpc.OAuth2Client) []*identity_srv.OAuth2ClientDTO {

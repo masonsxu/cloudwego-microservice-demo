@@ -3,47 +3,14 @@
  *
  * 定义 OAuth2 授权服务相关的核心数据结构，包括客户端、授权码、令牌、
  * 作用域和用户授权同意等实体。
+ *
+ * 设计决策：OAuth2 的 client_type、grant_type 等使用字符串而非 Thrift 枚举，
+ * 原因：（1）与 RFC 6749 协议字符串值保持一致（2）减少 HTTP→RPC→Model 间的
+ * 枚举转换代码（3）便于扩展新的 grant_type 无需修改 IDL。
  */
 namespace go identity_srv
 
 include "../../base/core.thrift"
-
-// =================================================================
-// 枚举定义 (Enums)
-// =================================================================
-
-/**
- * OAuth2 客户端类型
- */
-enum OAuth2ClientType {
-    /** 机密客户端 - 能安全保存密钥的服务端应用 */
-    CONFIDENTIAL = 1,
-
-    /** 公共客户端 - 无法安全保存密钥的前端/移动应用 */
-    PUBLIC = 2,
-}
-
-/**
- * OAuth2 授权类型
- */
-enum OAuth2GrantType {
-    /** 授权码模式 */
-    AUTHORIZATION_CODE = 1,
-
-    /** 客户端凭证模式（M2M） */
-    CLIENT_CREDENTIALS = 2,
-
-    /** 刷新令牌 */
-    REFRESH_TOKEN = 3,
-}
-
-/**
- * OAuth2 响应类型
- */
-enum OAuth2ResponseType {
-    /** 授权码 */
-    CODE = 1,
-}
 
 // =================================================================
 // 核心数据模型 (Core Data Models)
@@ -52,6 +19,9 @@ enum OAuth2ResponseType {
 /**
  * OAuth2 客户端（应用）
  * 代表一个注册在本系统中的第三方或内部应用。
+ *
+ * clientType 取值: "confidential" | "public"
+ * grantTypes 取值: "authorization_code" | "client_credentials" | "refresh_token"
  */
 struct OAuth2Client {
     /** 内部唯一ID */
@@ -66,11 +36,11 @@ struct OAuth2Client {
     /** 客户端描述 */
     4: optional string description,
 
-    /** 客户端类型 */
-    5: optional OAuth2ClientType clientType,
+    /** 客户端类型: "confidential" | "public" */
+    5: optional string clientType,
 
-    /** 允许的授权类型列表 */
-    6: optional list<OAuth2GrantType> grantTypes,
+    /** 允许的授权类型列表: ["authorization_code", "client_credentials", "refresh_token"] */
+    6: optional list<string> grantTypes,
 
     /** 允许的回调地址列表 */
     7: optional list<string> redirectURIs,

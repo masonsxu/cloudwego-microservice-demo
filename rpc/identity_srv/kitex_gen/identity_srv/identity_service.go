@@ -5667,17 +5667,17 @@ var fieldIDToName_ListAuditLogsResponse = map[int16]string{
 }
 
 type CreateOAuth2ClientRequest struct {
-	ClientName           *string           `thrift:"clientName,1,optional" frugal:"1,optional,string" json:"clientName,omitempty"`
-	Description          *string           `thrift:"description,2,optional" frugal:"2,optional,string" json:"description,omitempty"`
-	ClientType           *OAuth2ClientType `thrift:"clientType,3,optional" frugal:"3,optional,OAuth2ClientType" json:"clientType,omitempty"`
-	GrantTypes           []OAuth2GrantType `thrift:"grantTypes,4,optional" frugal:"4,optional,list<OAuth2GrantType>" json:"grantTypes,omitempty"`
-	RedirectURIs         []string          `thrift:"redirectURIs,5,optional" frugal:"5,optional,list<string>" json:"redirectURIs,omitempty"`
-	Scopes               []string          `thrift:"scopes,6,optional" frugal:"6,optional,list<string>" json:"scopes,omitempty"`
-	LogoURI              *string           `thrift:"logoURI,7,optional" frugal:"7,optional,string" json:"logoURI,omitempty"`
-	ClientURI            *string           `thrift:"clientURI,8,optional" frugal:"8,optional,string" json:"clientURI,omitempty"`
-	AccessTokenLifespan  *int32            `thrift:"accessTokenLifespan,9,optional" frugal:"9,optional,i32" json:"accessTokenLifespan,omitempty"`
-	RefreshTokenLifespan *int32            `thrift:"refreshTokenLifespan,10,optional" frugal:"10,optional,i32" json:"refreshTokenLifespan,omitempty"`
-	OwnerID              *core.UUID        `thrift:"ownerID,11,optional" frugal:"11,optional,string" json:"ownerID,omitempty"`
+	ClientName           *string    `thrift:"clientName,1,optional" frugal:"1,optional,string" json:"clientName,omitempty"`
+	Description          *string    `thrift:"description,2,optional" frugal:"2,optional,string" json:"description,omitempty"`
+	ClientType           *string    `thrift:"clientType,3,optional" frugal:"3,optional,string" json:"clientType,omitempty"`
+	GrantTypes           []string   `thrift:"grantTypes,4,optional" frugal:"4,optional,list<string>" json:"grantTypes,omitempty"`
+	RedirectURIs         []string   `thrift:"redirectURIs,5,optional" frugal:"5,optional,list<string>" json:"redirectURIs,omitempty"`
+	Scopes               []string   `thrift:"scopes,6,optional" frugal:"6,optional,list<string>" json:"scopes,omitempty"`
+	LogoURI              *string    `thrift:"logoURI,7,optional" frugal:"7,optional,string" json:"logoURI,omitempty"`
+	ClientURI            *string    `thrift:"clientURI,8,optional" frugal:"8,optional,string" json:"clientURI,omitempty"`
+	AccessTokenLifespan  *int32     `thrift:"accessTokenLifespan,9,optional" frugal:"9,optional,i32" json:"accessTokenLifespan,omitempty"`
+	RefreshTokenLifespan *int32     `thrift:"refreshTokenLifespan,10,optional" frugal:"10,optional,i32" json:"refreshTokenLifespan,omitempty"`
+	OwnerID              *core.UUID `thrift:"ownerID,11,optional" frugal:"11,optional,string" json:"ownerID,omitempty"`
 }
 
 func NewCreateOAuth2ClientRequest() *CreateOAuth2ClientRequest {
@@ -5705,18 +5705,18 @@ func (p *CreateOAuth2ClientRequest) GetDescription() (v string) {
 	return *p.Description
 }
 
-var CreateOAuth2ClientRequest_ClientType_DEFAULT OAuth2ClientType
+var CreateOAuth2ClientRequest_ClientType_DEFAULT string
 
-func (p *CreateOAuth2ClientRequest) GetClientType() (v OAuth2ClientType) {
+func (p *CreateOAuth2ClientRequest) GetClientType() (v string) {
 	if !p.IsSetClientType() {
 		return CreateOAuth2ClientRequest_ClientType_DEFAULT
 	}
 	return *p.ClientType
 }
 
-var CreateOAuth2ClientRequest_GrantTypes_DEFAULT []OAuth2GrantType
+var CreateOAuth2ClientRequest_GrantTypes_DEFAULT []string
 
-func (p *CreateOAuth2ClientRequest) GetGrantTypes() (v []OAuth2GrantType) {
+func (p *CreateOAuth2ClientRequest) GetGrantTypes() (v []string) {
 	if !p.IsSetGrantTypes() {
 		return CreateOAuth2ClientRequest_GrantTypes_DEFAULT
 	}
@@ -5791,10 +5791,10 @@ func (p *CreateOAuth2ClientRequest) SetClientName(val *string) {
 func (p *CreateOAuth2ClientRequest) SetDescription(val *string) {
 	p.Description = val
 }
-func (p *CreateOAuth2ClientRequest) SetClientType(val *OAuth2ClientType) {
+func (p *CreateOAuth2ClientRequest) SetClientType(val *string) {
 	p.ClientType = val
 }
-func (p *CreateOAuth2ClientRequest) SetGrantTypes(val []OAuth2GrantType) {
+func (p *CreateOAuth2ClientRequest) SetGrantTypes(val []string) {
 	p.GrantTypes = val
 }
 func (p *CreateOAuth2ClientRequest) SetRedirectURIs(val []string) {
@@ -5979,17 +5979,17 @@ var fieldIDToName_GetOAuth2ClientRequest = map[int16]string{
 }
 
 type UpdateOAuth2ClientRequest struct {
-	Id                   *core.UUID        `thrift:"id,1,optional" frugal:"1,optional,string" json:"id,omitempty"`
-	ClientName           *string           `thrift:"clientName,2,optional" frugal:"2,optional,string" json:"clientName,omitempty"`
-	Description          *string           `thrift:"description,3,optional" frugal:"3,optional,string" json:"description,omitempty"`
-	GrantTypes           []OAuth2GrantType `thrift:"grantTypes,4,optional" frugal:"4,optional,list<OAuth2GrantType>" json:"grantTypes,omitempty"`
-	RedirectURIs         []string          `thrift:"redirectURIs,5,optional" frugal:"5,optional,list<string>" json:"redirectURIs,omitempty"`
-	Scopes               []string          `thrift:"scopes,6,optional" frugal:"6,optional,list<string>" json:"scopes,omitempty"`
-	LogoURI              *string           `thrift:"logoURI,7,optional" frugal:"7,optional,string" json:"logoURI,omitempty"`
-	ClientURI            *string           `thrift:"clientURI,8,optional" frugal:"8,optional,string" json:"clientURI,omitempty"`
-	AccessTokenLifespan  *int32            `thrift:"accessTokenLifespan,9,optional" frugal:"9,optional,i32" json:"accessTokenLifespan,omitempty"`
-	RefreshTokenLifespan *int32            `thrift:"refreshTokenLifespan,10,optional" frugal:"10,optional,i32" json:"refreshTokenLifespan,omitempty"`
-	IsActive             *bool             `thrift:"isActive,11,optional" frugal:"11,optional,bool" json:"isActive,omitempty"`
+	Id                   *core.UUID `thrift:"id,1,optional" frugal:"1,optional,string" json:"id,omitempty"`
+	ClientName           *string    `thrift:"clientName,2,optional" frugal:"2,optional,string" json:"clientName,omitempty"`
+	Description          *string    `thrift:"description,3,optional" frugal:"3,optional,string" json:"description,omitempty"`
+	GrantTypes           []string   `thrift:"grantTypes,4,optional" frugal:"4,optional,list<string>" json:"grantTypes,omitempty"`
+	RedirectURIs         []string   `thrift:"redirectURIs,5,optional" frugal:"5,optional,list<string>" json:"redirectURIs,omitempty"`
+	Scopes               []string   `thrift:"scopes,6,optional" frugal:"6,optional,list<string>" json:"scopes,omitempty"`
+	LogoURI              *string    `thrift:"logoURI,7,optional" frugal:"7,optional,string" json:"logoURI,omitempty"`
+	ClientURI            *string    `thrift:"clientURI,8,optional" frugal:"8,optional,string" json:"clientURI,omitempty"`
+	AccessTokenLifespan  *int32     `thrift:"accessTokenLifespan,9,optional" frugal:"9,optional,i32" json:"accessTokenLifespan,omitempty"`
+	RefreshTokenLifespan *int32     `thrift:"refreshTokenLifespan,10,optional" frugal:"10,optional,i32" json:"refreshTokenLifespan,omitempty"`
+	IsActive             *bool      `thrift:"isActive,11,optional" frugal:"11,optional,bool" json:"isActive,omitempty"`
 }
 
 func NewUpdateOAuth2ClientRequest() *UpdateOAuth2ClientRequest {
@@ -6026,9 +6026,9 @@ func (p *UpdateOAuth2ClientRequest) GetDescription() (v string) {
 	return *p.Description
 }
 
-var UpdateOAuth2ClientRequest_GrantTypes_DEFAULT []OAuth2GrantType
+var UpdateOAuth2ClientRequest_GrantTypes_DEFAULT []string
 
-func (p *UpdateOAuth2ClientRequest) GetGrantTypes() (v []OAuth2GrantType) {
+func (p *UpdateOAuth2ClientRequest) GetGrantTypes() (v []string) {
 	if !p.IsSetGrantTypes() {
 		return UpdateOAuth2ClientRequest_GrantTypes_DEFAULT
 	}
@@ -6106,7 +6106,7 @@ func (p *UpdateOAuth2ClientRequest) SetClientName(val *string) {
 func (p *UpdateOAuth2ClientRequest) SetDescription(val *string) {
 	p.Description = val
 }
-func (p *UpdateOAuth2ClientRequest) SetGrantTypes(val []OAuth2GrantType) {
+func (p *UpdateOAuth2ClientRequest) SetGrantTypes(val []string) {
 	p.GrantTypes = val
 }
 func (p *UpdateOAuth2ClientRequest) SetRedirectURIs(val []string) {
@@ -6441,17 +6441,17 @@ var fieldIDToName_RotateOAuth2ClientSecretResponse = map[int16]string{
 }
 
 type GetOAuth2ClientForAuthResponse struct {
-	Id                   *core.UUID        `thrift:"id,1,optional" frugal:"1,optional,string" json:"id,omitempty"`
-	ClientID             *string           `thrift:"clientID,2,optional" frugal:"2,optional,string" json:"clientID,omitempty"`
-	ClientSecretHash     *string           `thrift:"clientSecretHash,3,optional" frugal:"3,optional,string" json:"clientSecretHash,omitempty"`
-	ClientName           *string           `thrift:"clientName,4,optional" frugal:"4,optional,string" json:"clientName,omitempty"`
-	ClientType           *OAuth2ClientType `thrift:"clientType,5,optional" frugal:"5,optional,OAuth2ClientType" json:"clientType,omitempty"`
-	GrantTypes           []string          `thrift:"grantTypes,6,optional" frugal:"6,optional,list<string>" json:"grantTypes,omitempty"`
-	RedirectURIs         []string          `thrift:"redirectURIs,7,optional" frugal:"7,optional,list<string>" json:"redirectURIs,omitempty"`
-	Scopes               []string          `thrift:"scopes,8,optional" frugal:"8,optional,list<string>" json:"scopes,omitempty"`
-	AccessTokenLifespan  *int32            `thrift:"accessTokenLifespan,9,optional" frugal:"9,optional,i32" json:"accessTokenLifespan,omitempty"`
-	RefreshTokenLifespan *int32            `thrift:"refreshTokenLifespan,10,optional" frugal:"10,optional,i32" json:"refreshTokenLifespan,omitempty"`
-	IsActive             *bool             `thrift:"isActive,11,optional" frugal:"11,optional,bool" json:"isActive,omitempty"`
+	Id                   *core.UUID `thrift:"id,1,optional" frugal:"1,optional,string" json:"id,omitempty"`
+	ClientID             *string    `thrift:"clientID,2,optional" frugal:"2,optional,string" json:"clientID,omitempty"`
+	ClientSecretHash     *string    `thrift:"clientSecretHash,3,optional" frugal:"3,optional,string" json:"clientSecretHash,omitempty"`
+	ClientName           *string    `thrift:"clientName,4,optional" frugal:"4,optional,string" json:"clientName,omitempty"`
+	ClientType           *string    `thrift:"clientType,5,optional" frugal:"5,optional,string" json:"clientType,omitempty"`
+	GrantTypes           []string   `thrift:"grantTypes,6,optional" frugal:"6,optional,list<string>" json:"grantTypes,omitempty"`
+	RedirectURIs         []string   `thrift:"redirectURIs,7,optional" frugal:"7,optional,list<string>" json:"redirectURIs,omitempty"`
+	Scopes               []string   `thrift:"scopes,8,optional" frugal:"8,optional,list<string>" json:"scopes,omitempty"`
+	AccessTokenLifespan  *int32     `thrift:"accessTokenLifespan,9,optional" frugal:"9,optional,i32" json:"accessTokenLifespan,omitempty"`
+	RefreshTokenLifespan *int32     `thrift:"refreshTokenLifespan,10,optional" frugal:"10,optional,i32" json:"refreshTokenLifespan,omitempty"`
+	IsActive             *bool      `thrift:"isActive,11,optional" frugal:"11,optional,bool" json:"isActive,omitempty"`
 }
 
 func NewGetOAuth2ClientForAuthResponse() *GetOAuth2ClientForAuthResponse {
@@ -6497,9 +6497,9 @@ func (p *GetOAuth2ClientForAuthResponse) GetClientName() (v string) {
 	return *p.ClientName
 }
 
-var GetOAuth2ClientForAuthResponse_ClientType_DEFAULT OAuth2ClientType
+var GetOAuth2ClientForAuthResponse_ClientType_DEFAULT string
 
-func (p *GetOAuth2ClientForAuthResponse) GetClientType() (v OAuth2ClientType) {
+func (p *GetOAuth2ClientForAuthResponse) GetClientType() (v string) {
 	if !p.IsSetClientType() {
 		return GetOAuth2ClientForAuthResponse_ClientType_DEFAULT
 	}
@@ -6571,7 +6571,7 @@ func (p *GetOAuth2ClientForAuthResponse) SetClientSecretHash(val *string) {
 func (p *GetOAuth2ClientForAuthResponse) SetClientName(val *string) {
 	p.ClientName = val
 }
-func (p *GetOAuth2ClientForAuthResponse) SetClientType(val *OAuth2ClientType) {
+func (p *GetOAuth2ClientForAuthResponse) SetClientType(val *string) {
 	p.ClientType = val
 }
 func (p *GetOAuth2ClientForAuthResponse) SetGrantTypes(val []string) {
