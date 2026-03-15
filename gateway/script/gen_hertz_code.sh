@@ -103,7 +103,7 @@ generate_all() {
     print_info "开始生成所有服务代码..."
 
     # 检查所有IDL文件是否存在
-    local services=("identity" "permission")
+    local services=("identity" "permission" "oauth2")
 
     for service in "${services[@]}"; do
         local idl_file="$HTTP_IDL_ROOT/$service/${service}_service.proto"
@@ -135,7 +135,7 @@ main() {
     # 根据参数决定执行方式
     if [ -n "$SERVICE_NAME" ]; then
         case "$SERVICE_NAME" in
-            identity|permission)
+            identity|permission|oauth2)
                 generate_service "$SERVICE_NAME"
                 ;;
             *)

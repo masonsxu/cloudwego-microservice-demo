@@ -12,8 +12,10 @@ import (
 	"github.com/hertz-contrib/requestid"
 
 	identityHandler "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/handler/identity"
+	oauth2Handler "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/handler/oauth2"
 	permissionHandler "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/handler/permission"
 	identityService "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/identity"
+	oauth2Service "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/oauth2"
 	permissionService "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/permission"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/otel"
@@ -50,6 +52,7 @@ type HandlerRegistry struct {
 	middlewares       *MiddlewareContainer
 	identityService   identityService.Service
 	permissionService permissionService.Service
+	oauth2Service     oauth2Service.OAuth2ManagementService
 	logger            *hertzZerolog.Logger
 }
 
@@ -67,6 +70,7 @@ func ProvideHandlerRegistry(
 		middlewares:       middlewares,
 		identityService:   services.IdentityService,
 		permissionService: services.PermissionService,
+		oauth2Service:     services.OAuth2Service,
 		logger:            logger,
 	}
 }
@@ -102,6 +106,7 @@ func (r *HandlerRegistry) RegisterHandlers() {
 	// 设置 Handler 层的服务依赖
 	identityHandler.SetIdentityService(r.identityService, r.middlewares.JWTMiddleware)
 	permissionHandler.SetPermissionService(r.permissionService)
+	oauth2Handler.SetOAuth2ManagementService(r.oauth2Service)
 
 	zl := r.logger.Unwrap()
 	zl.Info().Msg("Handler dependencies registered successfully")

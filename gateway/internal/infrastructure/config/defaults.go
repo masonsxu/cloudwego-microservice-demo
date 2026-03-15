@@ -74,6 +74,10 @@ func setDefaults(v *viper.Viper) {
 		"/ping",
 		"/api/v1/identity/auth/login",
 		"/api/v1/identity/auth/refresh",
+		"/oauth2/authorize",
+		"/oauth2/token",
+		"/oauth2/revoke",
+		"/oauth2/introspect",
 	})
 
 	// Cookie默认值
@@ -124,6 +128,15 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("redis.pool_timeout", 4*time.Second)
 	v.SetDefault("redis.idle_timeout", 5*time.Minute)
 	v.SetDefault("redis.idle_check_freq", 1*time.Minute)
+
+	// OAuth2 默认值
+	v.SetDefault("oauth2.enabled", false)
+	v.SetDefault("oauth2.issuer", "http://localhost:8080")
+	v.SetDefault("oauth2.access_token_lifespan", 1*time.Hour)
+	v.SetDefault("oauth2.refresh_token_lifespan", 30*24*time.Hour)
+	v.SetDefault("oauth2.auth_code_lifespan", 10*time.Minute)
+	v.SetDefault("oauth2.enforce_pkce", true)
+	v.SetDefault("oauth2.consent_page_url", "/oauth2/consent")
 }
 
 // DefaultErrorHandlerConfig 返回默认的错误处理中间件配置

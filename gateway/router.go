@@ -3,16 +3,68 @@
 package main
 
 import (
+	"time"
+
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/hertz-contrib/swagger"
+	handler "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/handler"
+	oauth2handler "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/handler/oauth2"
 	_ "github.com/masonsxu/cloudwego-microservice-demo/gateway/docs"
+	oauth2svc "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/oauth2"
+	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
+	fositestore "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/fosite_store"
 	swaggerFiles "github.com/swaggo/files"
 )
 
 // customizeRegister registers customize routers.
 func customizedRegister(r *server.Hertz) {
+	r.GET("/ping", handler.Ping)
+
 	// Swagger API 文档
 	// 从配置中获取服务地址，避免使用固定的localhost
 	url := swagger.URL("doc.json")
 	r.GET("/swagger/*any", swagger.WrapHandler(swaggerFiles.Handler, url))
+
+	// OAuth2 核心协议端点（RFC 6749）
+	registerOAuth2Routes(r)
+}
+
+// registerOAuth2Routes 注册 OAuth2 核心协议端点。
+// 这些端点由 fosite 直接处理，不经过 IDL 代码生成。
+func registerOAuth2Routes(r *server.Hertz) {
+	// TODO: 从 Wire 注入配置和存储，当前使用临时配置
+	store := fositestore.NewMemoryStore()
+
+	// 注册一个测试客户端（开发阶段）
+	store.RegisterClient(&fositestore.DefaultClient{
+		ID:            "test-client",
+		Secret:        []byte("$2a$10$IxMdI2q0LGUGb1YV0FaDhOSHE9.KqISl4JC7Hb0hOFSjPs0iN3kyO"), // "test-secret" 的 bcrypt
+		RedirectURIs:  []string{"http://localhost:5173/callback"},
+		GrantTypes:    []string{"authorization_code", "client_credentials", "refresh_token"},
+		ResponseTypes: []string{"code"},
+		Scopes:        []string{"openid", "profile", "user:read", "user:write", "offline"},
+		Public:        false,
+	})
+
+	cfg := getOAuth2Config()
+	provider := oauth2svc.NewOAuth2Provider(cfg, store)
+	h := oauth2handler.NewHandler(provider)
+
+	oauth2Group := r.Group("/oauth2")
+	oauth2Group.GET("/authorize", h.AuthorizeEndpoint)
+	oauth2Group.POST("/token", h.TokenEndpoint)
+	oauth2Group.POST("/revoke", h.RevokeEndpoint)
+	oauth2Group.POST("/introspect", h.IntrospectEndpoint)
+}
+
+// getOAuth2Config 获取 OAuth2 配置（临时实现，后续从 Wire 注入）
+func getOAuth2Config() config.OAuth2Config {
+	return config.OAuth2Config{
+		Enabled:              true,
+		Issuer:               "http://localhost:8080",
+		AccessTokenLifespan:  1 * time.Hour,
+		RefreshTokenLifespan: 30 * 24 * time.Hour,
+		AuthCodeLifespan:     10 * time.Minute,
+		EnforcePKCE:          true,
+	}
 }

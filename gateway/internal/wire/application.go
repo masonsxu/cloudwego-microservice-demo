@@ -5,6 +5,7 @@ import (
 	"github.com/google/wire"
 
 	identityassembler "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/identity"
+	oauth2asm "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/oauth2"
 	permasm "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/permission"
 )
 
@@ -29,4 +30,7 @@ var ApplicationSet = wire.NewSet(
 	// 聚合 assembler
 	identityassembler.NewIdentityAggregateAssembler,
 	permasm.NewPermissionAggregateAssembler,
+
+	// OAuth2 assembler
+	oauth2asm.NewAssembler,
 )

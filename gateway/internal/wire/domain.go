@@ -6,8 +6,10 @@ import (
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
 
 	identityassembler "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/identity"
+	oauth2asm "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/oauth2"
 	permissionConv "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/permission"
 	identityservice "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/identity"
+	oauth2service "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/oauth2"
 	permissionservice "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/permission"
 	identitycli "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/client/identity_cli"
 )
@@ -32,6 +34,9 @@ var DomainServiceSet = wire.NewSet(
 	// 聚合服务
 	ProvideIdentityService,
 	ProvidePermissionService,
+
+	// OAuth2 管理服务
+	ProvideOAuth2ManagementService,
 )
 
 // ============================================================================
@@ -169,4 +174,13 @@ func ProvidePermissionService(
 		userRoleAssignmentService,
 		menuService,
 	)
+}
+
+// ProvideOAuth2ManagementService 提供 OAuth2 管理服务
+func ProvideOAuth2ManagementService(
+	identityClient identitycli.IdentityClient,
+	assembler oauth2asm.Assembler,
+	logger *hertzZerolog.Logger,
+) oauth2service.OAuth2ManagementService {
+	return oauth2service.NewOAuth2ManagementService(identityClient, assembler, logger)
 }

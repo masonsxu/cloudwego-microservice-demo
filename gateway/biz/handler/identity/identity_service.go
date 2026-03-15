@@ -1189,8 +1189,27 @@ func BindLogoToOrganization(ctx context.Context, c *app.RequestContext) {
 	errors.JSON(c, consts.StatusOK, resp)
 }
 
-// ListAuditLogs .
-// @router /api/v1/identity/audit-logs [GET]
+// ListAuditLogs 查询审计日志
+// @Summary 查询审计日志
+// @Description 分页查询系统审计日志，支持按用户、操作类型、资源、时间范围等条件筛选，同时返回全局统计信息
+// @Tags 审计日志
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param page query int false "页码" default(1)
+// @Param limit query int false "每页数量" default(20)
+// @Param user_id query string false "按用户ID筛选"
+// @Param action query int false "按操作类型筛选"
+// @Param resource query string false "按资源路径筛选"
+// @Param success query bool false "按成功/失败筛选"
+// @Param start_time query int false "起始时间（毫秒时间戳）"
+// @Param end_time query int false "结束时间（毫秒时间戳）"
+// @Success 200 {object} identity.ListAuditLogsResponseDTO "成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 403 {object} http_base.OperationStatusResponseDTO "权限不足"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /api/v1/identity/audit-logs [GET]
 func ListAuditLogs(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req identity.ListAuditLogsRequestDTO
