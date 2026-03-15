@@ -9,6 +9,7 @@ package wire
 import (
 	"github.com/google/wire"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/identity"
+	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/oauth2"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/permission"
 )
 
@@ -49,7 +50,9 @@ func InitializeApp() (*AppContainer, func(), error) {
 	userRoleAssignmentService := ProvideUserRoleAssignmentService(identityClient, permissionAssembler, logger)
 	menuService := ProvideMenuService(identityClient, permissionAssembler, logger)
 	permissionService := ProvidePermissionService(roleDefinitionService, userRoleAssignmentService, menuService)
-	serviceContainer := NewServiceContainer(service, permissionService)
+	oauth2Assembler := oauth2.NewAssembler()
+	oAuth2ManagementService := ProvideOAuth2ManagementService(identityClient, oauth2Assembler, logger)
+	serviceContainer := NewServiceContainer(service, permissionService, oAuth2ManagementService)
 	traceMiddlewareService := ProvideTraceMiddleware(logger)
 	corsMiddlewareService := ProvideCORSMiddleware(configuration, logger)
 	errorHandlerMiddlewareService := ProvideErrorHandlerMiddleware(configuration, logger)

@@ -6,6 +6,7 @@ import (
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
 
 	identityService "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/identity"
+	oauth2Service "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/oauth2"
 	permissionService "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/permission"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 )
@@ -45,15 +46,18 @@ func NewAppContainer(
 type ServiceContainer struct {
 	IdentityService   identityService.Service
 	PermissionService permissionService.Service
+	OAuth2Service     oauth2Service.OAuth2ManagementService
 }
 
 // NewServiceContainer 创建服务容器
 func NewServiceContainer(
 	identityService identityService.Service,
 	permissionService permissionService.Service,
+	oauth2Service oauth2Service.OAuth2ManagementService,
 ) *ServiceContainer {
 	return &ServiceContainer{
 		IdentityService:   identityService,
 		PermissionService: permissionService,
+		OAuth2Service:     oauth2Service,
 	}
 }

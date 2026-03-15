@@ -14,6 +14,7 @@ type Configuration struct {
 	Tracing    TracingConfig    `mapstructure:"tracing"`
 	DataLake   DataLakeConfig   `mapstructure:"data_lake"`
 	Redis      RedisConfig      `mapstructure:"redis"`
+	OAuth2     OAuth2Config     `mapstructure:"oauth2"`
 }
 
 // ServerConfig 服务器配置
@@ -191,4 +192,18 @@ type RedisConfig struct {
 	PoolTimeout   time.Duration `mapstructure:"pool_timeout"`
 	IdleTimeout   time.Duration `mapstructure:"idle_timeout"`
 	IdleCheckFreq time.Duration `mapstructure:"idle_check_freq"`
+}
+
+// OAuth2Config OAuth2 授权服务配置
+// 相关环境变量：OAUTH2_ENABLED, OAUTH2_ISSUER, OAUTH2_ACCESS_TOKEN_LIFESPAN,
+// OAUTH2_REFRESH_TOKEN_LIFESPAN, OAUTH2_AUTH_CODE_LIFESPAN, OAUTH2_ENFORCE_PKCE
+// 用于配置 OAuth2 Provider (fosite) 的核心参数
+type OAuth2Config struct {
+	Enabled              bool          `mapstructure:"enabled"`                // 是否启用 OAuth2 功能
+	Issuer               string        `mapstructure:"issuer"`                 // 签发者标识 (如 https://auth.example.com)
+	AccessTokenLifespan  time.Duration `mapstructure:"access_token_lifespan"`  // Access Token 默认有效期
+	RefreshTokenLifespan time.Duration `mapstructure:"refresh_token_lifespan"` // Refresh Token 默认有效期
+	AuthCodeLifespan     time.Duration `mapstructure:"auth_code_lifespan"`     // 授权码有效期
+	EnforcePKCE          bool          `mapstructure:"enforce_pkce"`           // 是否强制 PKCE
+	ConsentPageURL       string        `mapstructure:"consent_page_url"`       // 用户授权同意页面 URL
 }
