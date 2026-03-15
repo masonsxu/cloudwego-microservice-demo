@@ -9,6 +9,7 @@ include "../../base/core.thrift"
 include "../../base/enums.thrift"
 include "../base/base.thrift"
 include "./identity_model.thrift"
+include "./oauth2_model.thrift"
 
 // =================================================================
 // 服务接口定义 (Service Definition)
@@ -446,6 +447,171 @@ service IdentityService {
      * @return 审计日志列表及分页信息。
      */
     ListAuditLogsResponse ListAuditLogs(1: ListAuditLogsRequest req),
+    // -----------------------------------------------------------------
+    // OAuth2 客户端管理模块 (OAuth2 Client Management)
+    // -----------------------------------------------------------------
+
+    /**
+     * 创建 OAuth2 客户端（应用）。
+     * @param req 包含客户端名称、类型、回调地址等信息。
+     * @return 创建成功的客户端信息（含生成的 client_id 和 client_secret）。
+     */
+    CreateOAuth2ClientResponse CreateOAuth2Client(1: CreateOAuth2ClientRequest req),
+
+    /**
+     * 根据 client_id 获取 OAuth2 客户端信息。
+     * @param req 包含 client_id。
+     * @return 客户端详细信息。
+     */
+    oauth2_model.OAuth2Client GetOAuth2Client(1: GetOAuth2ClientRequest req),
+
+    /**
+     * 更新 OAuth2 客户端信息。
+     * @param req 包含客户端ID和需要更新的字段。
+     * @return 更新后的客户端信息。
+     */
+    oauth2_model.OAuth2Client UpdateOAuth2Client(1: UpdateOAuth2ClientRequest req),
+
+    /**
+     * 删除 OAuth2 客户端。
+     * @param req 包含要删除的客户端ID。
+     */
+    void DeleteOAuth2Client(1: DeleteOAuth2ClientRequest req),
+
+    /**
+     * 分页列出 OAuth2 客户端。
+     * @param req 查询条件。
+     * @return 客户端列表及分页信息。
+     */
+    ListOAuth2ClientsResponse ListOAuth2Clients(1: ListOAuth2ClientsRequest req),
+
+    /**
+     * 轮换 OAuth2 客户端密钥。
+     * @param req 包含客户端ID。
+     * @return 新的 client_secret。
+     */
+    RotateOAuth2ClientSecretResponse RotateOAuth2ClientSecret(1: RotateOAuth2ClientSecretRequest req),
+
+    /**
+     * 根据 client_id 获取 OAuth2 客户端（供 fosite 内部存储层调用）。
+     * 与 GetOAuth2Client 的区别：返回完整信息含密钥哈希，用于 fosite 验证。
+     * @param clientID 客户端标识符。
+     * @return 客户端完整信息。
+     */
+    GetOAuth2ClientForAuthResponse GetOAuth2ClientForAuth(1: string clientID),
+    // -----------------------------------------------------------------
+    // OAuth2 作用域管理模块 (OAuth2 Scope Management)
+    // -----------------------------------------------------------------
+
+    /**
+     * 列出所有可用的 OAuth2 作用域。
+     * @param req 查询条件。
+     * @return 作用域列表。
+     */
+    ListOAuth2ScopesResponse ListOAuth2Scopes(1: ListOAuth2ScopesRequest req),
+    // -----------------------------------------------------------------
+    // OAuth2 用户授权同意管理模块 (OAuth2 Consent Management)
+    // -----------------------------------------------------------------
+
+    /**
+     * 保存用户的授权同意记录。
+     * @param req 包含用户ID、客户端ID、授权的 scopes。
+     */
+    void SaveOAuth2Consent(1: SaveOAuth2ConsentRequest req),
+
+    /**
+     * 获取用户对指定客户端的授权同意记录。
+     * @param req 包含用户ID和客户端ID。
+     * @return 授权同意记录（如存在）。
+     */
+    GetOAuth2ConsentResponse GetOAuth2Consent(1: GetOAuth2ConsentRequest req),
+
+    /**
+     * 列出用户的所有授权同意记录。
+     * @param req 包含用户ID。
+     * @return 授权同意记录列表。
+     */
+    ListOAuth2ConsentsResponse ListOAuth2Consents(1: ListOAuth2ConsentsRequest req),
+
+    /**
+     * 撤销用户对指定客户端的授权同意。
+     * @param req 包含用户ID和客户端ID。
+     */
+    void RevokeOAuth2Consent(1: RevokeOAuth2ConsentRequest req),
+    // -----------------------------------------------------------------
+    // OAuth2 令牌存储模块 (OAuth2 Token Storage)
+    // 供 fosite 存储层通过 RPC 调用，实现分布式令牌管理。
+    // -----------------------------------------------------------------
+
+    /**
+     * 创建授权码会话。
+     */
+    void CreateOAuth2AuthorizeCodeSession(1: OAuth2TokenSession req),
+
+    /**
+     * 获取授权码会话。
+     */
+    OAuth2TokenSession GetOAuth2AuthorizeCodeSession(1: string signature),
+
+    /**
+     * 使授权码会话失效（标记已使用）。
+     */
+    void InvalidateOAuth2AuthorizeCodeSession(1: string signature),
+
+    /**
+     * 创建访问令牌会话。
+     */
+    void CreateOAuth2AccessTokenSession(1: OAuth2TokenSession req),
+
+    /**
+     * 获取访问令牌会话。
+     */
+    OAuth2TokenSession GetOAuth2AccessTokenSession(1: string signature),
+
+    /**
+     * 删除访问令牌会话。
+     */
+    void DeleteOAuth2AccessTokenSession(1: string signature),
+
+    /**
+     * 按请求ID吊销访问令牌。
+     */
+    void RevokeOAuth2AccessToken(1: string requestID),
+
+    /**
+     * 创建刷新令牌会话。
+     */
+    void CreateOAuth2RefreshTokenSession(1: OAuth2TokenSession req),
+
+    /**
+     * 获取刷新令牌会话。
+     */
+    OAuth2TokenSession GetOAuth2RefreshTokenSession(1: string signature),
+
+    /**
+     * 删除刷新令牌会话。
+     */
+    void DeleteOAuth2RefreshTokenSession(1: string signature),
+
+    /**
+     * 按请求ID吊销刷新令牌。
+     */
+    void RevokeOAuth2RefreshToken(1: string requestID),
+
+    /**
+     * 创建 PKCE 会话。
+     */
+    void CreateOAuth2PKCESession(1: OAuth2TokenSession req),
+
+    /**
+     * 获取 PKCE 会话。
+     */
+    OAuth2TokenSession GetOAuth2PKCESession(1: string signature),
+
+    /**
+     * 删除 PKCE 会话。
+     */
+    void DeleteOAuth2PKCESession(1: string signature),
 }
 
 // =================================================================
@@ -1295,4 +1461,319 @@ struct ListAuditLogsResponse {
 
     /** 全局统计信息（基于相同筛选条件，不受分页限制） */
     3: optional AuditLogStats stats,
+}
+
+// =================================================================
+// OAuth2 客户端管理 (OAuth2 Client Management)
+// =================================================================
+
+/** 创建 OAuth2 客户端请求 */
+struct CreateOAuth2ClientRequest {
+
+    /** 客户端名称 */
+    1: optional string clientName,
+
+    /** 客户端描述 */
+    2: optional string description,
+
+    /** 客户端类型 */
+    3: optional oauth2_model.OAuth2ClientType clientType,
+
+    /** 允许的授权类型 */
+    4: optional list<oauth2_model.OAuth2GrantType> grantTypes,
+
+    /** 允许的回调地址 */
+    5: optional list<string> redirectURIs,
+
+    /** 允许的作用域 */
+    6: optional list<string> scopes,
+
+    /** 客户端 Logo URL */
+    7: optional string logoURI,
+
+    /** 客户端主页 URL */
+    8: optional string clientURI,
+
+    /** Access Token 有效期（秒） */
+    9: optional i32 accessTokenLifespan,
+
+    /** Refresh Token 有效期（秒） */
+    10: optional i32 refreshTokenLifespan,
+
+    /** 创建者用户ID */
+    11: optional core.UUID ownerID,
+}
+
+/** 创建 OAuth2 客户端响应（含生成的凭证） */
+struct CreateOAuth2ClientResponse {
+
+    /** 客户端信息 */
+    1: optional oauth2_model.OAuth2Client client,
+
+    /** 明文 client_secret（仅在创建时返回一次） */
+    2: optional string clientSecret,
+}
+
+/** 获取 OAuth2 客户端请求 */
+struct GetOAuth2ClientRequest {
+
+    /** 内部ID */
+    1: optional core.UUID id,
+}
+
+/** 更新 OAuth2 客户端请求 */
+struct UpdateOAuth2ClientRequest {
+
+    /** 内部ID */
+    1: optional core.UUID id,
+
+    /** 客户端名称 */
+    2: optional string clientName,
+
+    /** 客户端描述 */
+    3: optional string description,
+
+    /** 允许的授权类型 */
+    4: optional list<oauth2_model.OAuth2GrantType> grantTypes,
+
+    /** 允许的回调地址 */
+    5: optional list<string> redirectURIs,
+
+    /** 允许的作用域 */
+    6: optional list<string> scopes,
+
+    /** 客户端 Logo URL */
+    7: optional string logoURI,
+
+    /** 客户端主页 URL */
+    8: optional string clientURI,
+
+    /** Access Token 有效期（秒） */
+    9: optional i32 accessTokenLifespan,
+
+    /** Refresh Token 有效期（秒） */
+    10: optional i32 refreshTokenLifespan,
+
+    /** 是否启用 */
+    11: optional bool isActive,
+}
+
+/** 删除 OAuth2 客户端请求 */
+struct DeleteOAuth2ClientRequest {
+
+    /** 内部ID */
+    1: optional core.UUID id,
+}
+
+/** 列出 OAuth2 客户端请求 */
+struct ListOAuth2ClientsRequest {
+
+    /** 分页信息 */
+    1: optional base.PageRequest page,
+
+    /** 按创建者筛选 */
+    2: optional core.UUID ownerID,
+
+    /** 按状态筛选 */
+    3: optional bool isActive,
+}
+
+/** 列出 OAuth2 客户端响应 */
+struct ListOAuth2ClientsResponse {
+
+    /** 客户端列表 */
+    1: optional list<oauth2_model.OAuth2Client> clients,
+
+    /** 分页信息 */
+    2: optional base.PageResponse page,
+}
+
+/** 轮换 OAuth2 客户端密钥请求 */
+struct RotateOAuth2ClientSecretRequest {
+
+    /** 内部ID */
+    1: optional core.UUID id,
+}
+
+/** 轮换 OAuth2 客户端密钥响应 */
+struct RotateOAuth2ClientSecretResponse {
+
+    /** 新的明文 client_secret（仅返回一次） */
+    1: optional string clientSecret,
+}
+
+/** 获取 OAuth2 客户端用于认证请求（含密钥哈希） */
+struct GetOAuth2ClientForAuthResponse {
+
+    /** 内部ID */
+    1: optional core.UUID id,
+
+    /** 客户端标识符 */
+    2: optional string clientID,
+
+    /** 密钥哈希（bcrypt） */
+    3: optional string clientSecretHash,
+
+    /** 客户端名称 */
+    4: optional string clientName,
+
+    /** 客户端类型 */
+    5: optional oauth2_model.OAuth2ClientType clientType,
+
+    /** 允许的授权类型（字符串列表） */
+    6: optional list<string> grantTypes,
+
+    /** 允许的回调地址 */
+    7: optional list<string> redirectURIs,
+
+    /** 允许的作用域 */
+    8: optional list<string> scopes,
+
+    /** Access Token 有效期（秒） */
+    9: optional i32 accessTokenLifespan,
+
+    /** Refresh Token 有效期（秒） */
+    10: optional i32 refreshTokenLifespan,
+
+    /** 是否启用 */
+    11: optional bool isActive,
+}
+
+// =================================================================
+// OAuth2 作用域管理 (OAuth2 Scope Management)
+// =================================================================
+
+/** 列出 OAuth2 作用域请求 */
+struct ListOAuth2ScopesRequest {
+
+    /** 是否只返回默认作用域 */
+    1: optional bool defaultOnly,
+}
+
+/** 列出 OAuth2 作用域响应 */
+struct ListOAuth2ScopesResponse {
+
+    /** 作用域列表 */
+    1: optional list<oauth2_model.OAuth2Scope> scopes,
+}
+
+// =================================================================
+// OAuth2 用户授权同意管理 (OAuth2 Consent Management)
+// =================================================================
+
+/** 保存 OAuth2 用户授权同意请求 */
+struct SaveOAuth2ConsentRequest {
+
+    /** 授权用户ID */
+    1: optional core.UUID userID,
+
+    /** 客户端标识符（client_id） */
+    2: optional string clientID,
+
+    /** 授权的作用域列表 */
+    3: optional list<string> scopes,
+}
+
+/** 获取 OAuth2 用户授权同意请求 */
+struct GetOAuth2ConsentRequest {
+
+    /** 用户ID */
+    1: optional core.UUID userID,
+
+    /** 客户端标识符 */
+    2: optional string clientID,
+}
+
+/** 获取 OAuth2 用户授权同意响应 */
+struct GetOAuth2ConsentResponse {
+
+    /** 授权同意记录（如不存在则为空） */
+    1: optional oauth2_model.OAuth2Consent consent,
+
+    /** 是否存在有效的授权同意 */
+    2: optional bool found,
+}
+
+/** 列出 OAuth2 用户授权同意请求 */
+struct ListOAuth2ConsentsRequest {
+
+    /** 用户ID */
+    1: optional core.UUID userID,
+
+    /** 分页信息 */
+    2: optional base.PageRequest page,
+}
+
+/** 列出 OAuth2 用户授权同意响应 */
+struct ListOAuth2ConsentsResponse {
+
+    /** 授权同意记录列表 */
+    1: optional list<oauth2_model.OAuth2Consent> consents,
+
+    /** 分页信息 */
+    2: optional base.PageResponse page,
+}
+
+/** 撤销 OAuth2 用户授权同意请求 */
+struct RevokeOAuth2ConsentRequest {
+
+    /** 用户ID */
+    1: optional core.UUID userID,
+
+    /** 客户端标识符 */
+    2: optional string clientID,
+}
+
+// =================================================================
+// OAuth2 令牌存储 (OAuth2 Token Storage)
+// 供 fosite 存储层使用的通用令牌会话结构
+// =================================================================
+
+/** OAuth2 令牌会话（通用结构，用于授权码/访问令牌/刷新令牌/PKCE） */
+struct OAuth2TokenSession {
+
+    /** 签名/哈希（用作唯一键） */
+    1: optional string signature,
+
+    /** 关联的请求ID */
+    2: optional string requestID,
+
+    /** 客户端标识符 */
+    3: optional string clientID,
+
+    /** 用户ID（Client Credentials 模式可为空） */
+    4: optional core.UUID userID,
+
+    /** 授权的作用域（空格分隔） */
+    5: optional string scopes,
+
+    /** 授权的受众（空格分隔） */
+    6: optional string grantedAudience,
+
+    /** fosite Session 序列化数据（JSON） */
+    7: optional binary sessionData,
+
+    /** 请求表单数据（JSON 序列化） */
+    8: optional binary formData,
+
+    /** 回调地址 */
+    9: optional string redirectURI,
+
+    /** PKCE Code Challenge */
+    10: optional string codeChallenge,
+
+    /** PKCE Code Challenge Method */
+    11: optional string codeChallengeMethod,
+
+    /** 请求时间 */
+    12: optional core.TimestampMS requestedAt,
+
+    /** 过期时间 */
+    13: optional core.TimestampMS expiresAt,
+
+    /** 是否已使用（仅授权码） */
+    14: optional bool used,
+
+    /** 是否已吊销 */
+    15: optional bool revoked,
 }
