@@ -10,6 +10,7 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/logo"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/membership"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/menu"
+	oauth2logic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/oauth2"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/organization"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/user"
 )
@@ -80,4 +81,12 @@ type Logic interface {
 	// AuditLog 审计日志
 	// 负责审计日志的创建和查询
 	auditlog.AuditLogLogic
+
+	// ============================================================================
+	// OAuth2 模块
+	// ============================================================================
+
+	// OAuth2 OAuth2 授权管理
+	// 负责 OAuth2 客户端、作用域、授权同意和令牌存储管理
+	oauth2logic.OAuth2Logic
 }

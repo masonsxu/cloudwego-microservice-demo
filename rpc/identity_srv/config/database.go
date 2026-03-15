@@ -131,6 +131,14 @@ func autoMigrate(db *gorm.DB) error {
 		&models.Menu{},
 		&models.RoleMenuPermission{},
 		&models.AuditLog{},
+		// OAuth2 相关表
+		&models.OAuth2Client{},
+		&models.OAuth2AuthorizationCode{},
+		&models.OAuth2AccessToken{},
+		&models.OAuth2RefreshToken{},
+		&models.OAuth2Consent{},
+		&models.OAuth2Scope{},
+		&models.OAuth2PKCESession{},
 	)
 	if err != nil {
 		return fmt.Errorf("自动迁移失败: %v", err)
