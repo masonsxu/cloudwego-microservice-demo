@@ -1476,11 +1476,11 @@ struct CreateOAuth2ClientRequest {
     /** 客户端描述 */
     2: optional string description,
 
-    /** 客户端类型 */
-    3: optional oauth2_model.OAuth2ClientType clientType,
+    /** 客户端类型: "confidential" | "public" */
+    3: optional string clientType,
 
-    /** 允许的授权类型 */
-    4: optional list<oauth2_model.OAuth2GrantType> grantTypes,
+    /** 允许的授权类型: ["authorization_code", "client_credentials", "refresh_token"] */
+    4: optional list<string> grantTypes,
 
     /** 允许的回调地址 */
     5: optional list<string> redirectURIs,
@@ -1534,7 +1534,7 @@ struct UpdateOAuth2ClientRequest {
     3: optional string description,
 
     /** 允许的授权类型 */
-    4: optional list<oauth2_model.OAuth2GrantType> grantTypes,
+    4: optional list<string> grantTypes,
 
     /** 允许的回调地址 */
     5: optional list<string> redirectURIs,
@@ -1617,8 +1617,8 @@ struct GetOAuth2ClientForAuthResponse {
     /** 客户端名称 */
     4: optional string clientName,
 
-    /** 客户端类型 */
-    5: optional oauth2_model.OAuth2ClientType clientType,
+    /** 客户端类型: "confidential" | "public" */
+    5: optional string clientType,
 
     /** 允许的授权类型（字符串列表） */
     6: optional list<string> grantTypes,

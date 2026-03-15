@@ -100,7 +100,7 @@ func (p *OAuth2Client) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 5:
-			if fieldTypeId == thrift.I32 {
+			if fieldTypeId == thrift.STRING {
 				l, err = p.FastReadField5(buf[offset:])
 				offset += l
 				if err != nil {
@@ -344,14 +344,12 @@ func (p *OAuth2Client) FastReadField4(buf []byte) (int, error) {
 func (p *OAuth2Client) FastReadField5(buf []byte) (int, error) {
 	offset := 0
 
-	var _field *OAuth2ClientType
-	if v, l, err := thrift.Binary.ReadI32(buf[offset:]); err != nil {
+	var _field *string
+	if v, l, err := thrift.Binary.ReadString(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
-
-		tmp := OAuth2ClientType(v)
-		_field = &tmp
+		_field = &v
 	}
 	p.ClientType = _field
 	return offset, nil
@@ -365,15 +363,14 @@ func (p *OAuth2Client) FastReadField6(buf []byte) (int, error) {
 	if err != nil {
 		return offset, err
 	}
-	_field := make([]OAuth2GrantType, 0, size)
+	_field := make([]string, 0, size)
 	for i := 0; i < size; i++ {
-		var _elem OAuth2GrantType
-		if v, l, err := thrift.Binary.ReadI32(buf[offset:]); err != nil {
+		var _elem string
+		if v, l, err := thrift.Binary.ReadString(buf[offset:]); err != nil {
 			return offset, err
 		} else {
 			offset += l
-
-			_elem = OAuth2GrantType(v)
+			_elem = v
 		}
 
 		_field = append(_field, _elem)
@@ -633,8 +630,8 @@ func (p *OAuth2Client) fastWriteField4(buf []byte, w thrift.NocopyWriter) int {
 func (p *OAuth2Client) fastWriteField5(buf []byte, w thrift.NocopyWriter) int {
 	offset := 0
 	if p.IsSetClientType() {
-		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.I32, 5)
-		offset += thrift.Binary.WriteI32(buf[offset:], int32(*p.ClientType))
+		offset += thrift.Binary.WriteFieldBegin(buf[offset:], thrift.STRING, 5)
+		offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, *p.ClientType)
 	}
 	return offset
 }
@@ -648,9 +645,9 @@ func (p *OAuth2Client) fastWriteField6(buf []byte, w thrift.NocopyWriter) int {
 		var length int
 		for _, v := range p.GrantTypes {
 			length++
-			offset += thrift.Binary.WriteI32(buf[offset:], int32(v))
+			offset += thrift.Binary.WriteStringNocopy(buf[offset:], w, v)
 		}
-		thrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.I32, length)
+		thrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.STRING, length)
 	}
 	return offset
 }
@@ -799,7 +796,7 @@ func (p *OAuth2Client) field5Length() int {
 	l := 0
 	if p.IsSetClientType() {
 		l += thrift.Binary.FieldBeginLength()
-		l += thrift.Binary.I32Length()
+		l += thrift.Binary.StringLengthNocopy(*p.ClientType)
 	}
 	return l
 }
@@ -811,7 +808,7 @@ func (p *OAuth2Client) field6Length() int {
 		l += thrift.Binary.ListBeginLength()
 		for _, v := range p.GrantTypes {
 			_ = v
-			l += thrift.Binary.I32Length()
+			l += thrift.Binary.StringLengthNocopy(v)
 		}
 	}
 	return l

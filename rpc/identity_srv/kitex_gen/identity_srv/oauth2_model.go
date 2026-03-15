@@ -3,145 +3,17 @@
 package identity_srv
 
 import (
-	"database/sql"
-	"database/sql/driver"
 	"fmt"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
 )
-
-type OAuth2ClientType int64
-
-const (
-	OAuth2ClientType_CONFIDENTIAL OAuth2ClientType = 1
-	OAuth2ClientType_PUBLIC       OAuth2ClientType = 2
-)
-
-func (p OAuth2ClientType) String() string {
-	switch p {
-	case OAuth2ClientType_CONFIDENTIAL:
-		return "CONFIDENTIAL"
-	case OAuth2ClientType_PUBLIC:
-		return "PUBLIC"
-	}
-	return "<UNSET>"
-}
-
-func OAuth2ClientTypeFromString(s string) (OAuth2ClientType, error) {
-	switch s {
-	case "CONFIDENTIAL":
-		return OAuth2ClientType_CONFIDENTIAL, nil
-	case "PUBLIC":
-		return OAuth2ClientType_PUBLIC, nil
-	}
-	return OAuth2ClientType(0), fmt.Errorf("not a valid OAuth2ClientType string")
-}
-
-func OAuth2ClientTypePtr(v OAuth2ClientType) *OAuth2ClientType { return &v }
-func (p *OAuth2ClientType) Scan(value interface{}) (err error) {
-	var result sql.NullInt64
-	err = result.Scan(value)
-	*p = OAuth2ClientType(result.Int64)
-	return
-}
-
-func (p *OAuth2ClientType) Value() (driver.Value, error) {
-	if p == nil {
-		return nil, nil
-	}
-	return int64(*p), nil
-}
-
-type OAuth2GrantType int64
-
-const (
-	OAuth2GrantType_AUTHORIZATION_CODE OAuth2GrantType = 1
-	OAuth2GrantType_CLIENT_CREDENTIALS OAuth2GrantType = 2
-	OAuth2GrantType_REFRESH_TOKEN      OAuth2GrantType = 3
-)
-
-func (p OAuth2GrantType) String() string {
-	switch p {
-	case OAuth2GrantType_AUTHORIZATION_CODE:
-		return "AUTHORIZATION_CODE"
-	case OAuth2GrantType_CLIENT_CREDENTIALS:
-		return "CLIENT_CREDENTIALS"
-	case OAuth2GrantType_REFRESH_TOKEN:
-		return "REFRESH_TOKEN"
-	}
-	return "<UNSET>"
-}
-
-func OAuth2GrantTypeFromString(s string) (OAuth2GrantType, error) {
-	switch s {
-	case "AUTHORIZATION_CODE":
-		return OAuth2GrantType_AUTHORIZATION_CODE, nil
-	case "CLIENT_CREDENTIALS":
-		return OAuth2GrantType_CLIENT_CREDENTIALS, nil
-	case "REFRESH_TOKEN":
-		return OAuth2GrantType_REFRESH_TOKEN, nil
-	}
-	return OAuth2GrantType(0), fmt.Errorf("not a valid OAuth2GrantType string")
-}
-
-func OAuth2GrantTypePtr(v OAuth2GrantType) *OAuth2GrantType { return &v }
-func (p *OAuth2GrantType) Scan(value interface{}) (err error) {
-	var result sql.NullInt64
-	err = result.Scan(value)
-	*p = OAuth2GrantType(result.Int64)
-	return
-}
-
-func (p *OAuth2GrantType) Value() (driver.Value, error) {
-	if p == nil {
-		return nil, nil
-	}
-	return int64(*p), nil
-}
-
-type OAuth2ResponseType int64
-
-const (
-	OAuth2ResponseType_CODE OAuth2ResponseType = 1
-)
-
-func (p OAuth2ResponseType) String() string {
-	switch p {
-	case OAuth2ResponseType_CODE:
-		return "CODE"
-	}
-	return "<UNSET>"
-}
-
-func OAuth2ResponseTypeFromString(s string) (OAuth2ResponseType, error) {
-	switch s {
-	case "CODE":
-		return OAuth2ResponseType_CODE, nil
-	}
-	return OAuth2ResponseType(0), fmt.Errorf("not a valid OAuth2ResponseType string")
-}
-
-func OAuth2ResponseTypePtr(v OAuth2ResponseType) *OAuth2ResponseType { return &v }
-func (p *OAuth2ResponseType) Scan(value interface{}) (err error) {
-	var result sql.NullInt64
-	err = result.Scan(value)
-	*p = OAuth2ResponseType(result.Int64)
-	return
-}
-
-func (p *OAuth2ResponseType) Value() (driver.Value, error) {
-	if p == nil {
-		return nil, nil
-	}
-	return int64(*p), nil
-}
 
 type OAuth2Client struct {
 	Id                   *core.UUID        `thrift:"id,1,optional" frugal:"1,optional,string" json:"id,omitempty"`
 	ClientID             *string           `thrift:"clientID,2,optional" frugal:"2,optional,string" json:"clientID,omitempty"`
 	ClientName           *string           `thrift:"clientName,3,optional" frugal:"3,optional,string" json:"clientName,omitempty"`
 	Description          *string           `thrift:"description,4,optional" frugal:"4,optional,string" json:"description,omitempty"`
-	ClientType           *OAuth2ClientType `thrift:"clientType,5,optional" frugal:"5,optional,OAuth2ClientType" json:"clientType,omitempty"`
-	GrantTypes           []OAuth2GrantType `thrift:"grantTypes,6,optional" frugal:"6,optional,list<OAuth2GrantType>" json:"grantTypes,omitempty"`
+	ClientType           *string           `thrift:"clientType,5,optional" frugal:"5,optional,string" json:"clientType,omitempty"`
+	GrantTypes           []string          `thrift:"grantTypes,6,optional" frugal:"6,optional,list<string>" json:"grantTypes,omitempty"`
 	RedirectURIs         []string          `thrift:"redirectURIs,7,optional" frugal:"7,optional,list<string>" json:"redirectURIs,omitempty"`
 	Scopes               []string          `thrift:"scopes,8,optional" frugal:"8,optional,list<string>" json:"scopes,omitempty"`
 	LogoURI              *string           `thrift:"logoURI,9,optional" frugal:"9,optional,string" json:"logoURI,omitempty"`
@@ -197,18 +69,18 @@ func (p *OAuth2Client) GetDescription() (v string) {
 	return *p.Description
 }
 
-var OAuth2Client_ClientType_DEFAULT OAuth2ClientType
+var OAuth2Client_ClientType_DEFAULT string
 
-func (p *OAuth2Client) GetClientType() (v OAuth2ClientType) {
+func (p *OAuth2Client) GetClientType() (v string) {
 	if !p.IsSetClientType() {
 		return OAuth2Client_ClientType_DEFAULT
 	}
 	return *p.ClientType
 }
 
-var OAuth2Client_GrantTypes_DEFAULT []OAuth2GrantType
+var OAuth2Client_GrantTypes_DEFAULT []string
 
-func (p *OAuth2Client) GetGrantTypes() (v []OAuth2GrantType) {
+func (p *OAuth2Client) GetGrantTypes() (v []string) {
 	if !p.IsSetGrantTypes() {
 		return OAuth2Client_GrantTypes_DEFAULT
 	}
@@ -316,10 +188,10 @@ func (p *OAuth2Client) SetClientName(val *string) {
 func (p *OAuth2Client) SetDescription(val *string) {
 	p.Description = val
 }
-func (p *OAuth2Client) SetClientType(val *OAuth2ClientType) {
+func (p *OAuth2Client) SetClientType(val *string) {
 	p.ClientType = val
 }
-func (p *OAuth2Client) SetGrantTypes(val []OAuth2GrantType) {
+func (p *OAuth2Client) SetGrantTypes(val []string) {
 	p.GrantTypes = val
 }
 func (p *OAuth2Client) SetRedirectURIs(val []string) {

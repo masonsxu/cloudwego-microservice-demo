@@ -43,14 +43,16 @@ func (c *converterImpl) ClientModelToThrift(client *models.OAuth2Client) *identi
 	isActive := client.IsActive
 	accessLifespan := int32(client.AccessTokenLifespan)
 	refreshLifespan := int32(client.RefreshTokenLifespan)
+	clientType := string(client.ClientType)
+	grantTypes := []string(client.GrantTypes)
 
 	result := &identity_srv.OAuth2Client{
 		Id:                   &id,
 		ClientID:             &client.ClientID,
 		ClientName:           &client.ClientName,
 		Description:          &client.Description,
-		ClientType:           clientTypeToThrift(client.ClientType),
-		GrantTypes:           grantTypesToThrift(client.GrantTypes),
+		ClientType:           &clientType,
+		GrantTypes:           grantTypes,
 		RedirectURIs:         []string(client.RedirectURIs),
 		Scopes:               []string(client.Scopes),
 		LogoURI:              &client.LogoURI,
@@ -87,13 +89,17 @@ func (c *converterImpl) CreateClientRequestToModel(req *identity_srv.CreateOAuth
 	client := &models.OAuth2Client{
 		ClientName:   ptrStr(req.ClientName),
 		Description:  ptrStr(req.Description),
-		ClientType:   clientTypeFromThrift(req.ClientType),
-		GrantTypes:   grantTypesFromThrift(req.GrantTypes),
+		ClientType:   models.OAuth2ClientType(ptrStr(req.ClientType)),
+		GrantTypes:   models.StringSlice(req.GrantTypes),
 		Scopes:       models.StringSlice(req.Scopes),
 		RedirectURIs: models.StringSlice(req.RedirectURIs),
 		LogoURI:      ptrStr(req.LogoURI),
 		ClientURI:    ptrStr(req.ClientURI),
 		IsActive:     true,
+	}
+
+	if client.ClientType == "" {
+		client.ClientType = models.OAuth2ClientTypeConfidential
 	}
 
 	if req.AccessTokenLifespan != nil {
@@ -186,78 +192,4 @@ func ptrStr(s *string) string {
 	}
 
 	return *s
-}
-
-func clientTypeToThrift(t models.OAuth2ClientType) *identity_srv.OAuth2ClientType {
-	var result identity_srv.OAuth2ClientType
-
-	switch t {
-	case models.OAuth2ClientTypeConfidential:
-		result = identity_srv.OAuth2ClientType_CONFIDENTIAL
-	case models.OAuth2ClientTypePublic:
-		result = identity_srv.OAuth2ClientType_PUBLIC
-	default:
-		result = identity_srv.OAuth2ClientType_CONFIDENTIAL
-	}
-
-	return &result
-}
-
-func clientTypeFromThrift(t *identity_srv.OAuth2ClientType) models.OAuth2ClientType {
-	if t == nil {
-		return models.OAuth2ClientTypeConfidential
-	}
-
-	switch *t {
-	case identity_srv.OAuth2ClientType_PUBLIC:
-		return models.OAuth2ClientTypePublic
-	default:
-		return models.OAuth2ClientTypeConfidential
-	}
-}
-
-func grantTypesToThrift(types models.StringSlice) []identity_srv.OAuth2GrantType {
-	result := make([]identity_srv.OAuth2GrantType, 0, len(types))
-
-	for _, t := range types {
-		result = append(result, stringToGrantType(t))
-	}
-
-	return result
-}
-
-func grantTypesFromThrift(types []identity_srv.OAuth2GrantType) models.StringSlice {
-	result := make(models.StringSlice, 0, len(types))
-
-	for _, t := range types {
-		result = append(result, grantTypeToString(t))
-	}
-
-	return result
-}
-
-func stringToGrantType(s string) identity_srv.OAuth2GrantType {
-	switch s {
-	case "authorization_code":
-		return identity_srv.OAuth2GrantType_AUTHORIZATION_CODE
-	case "client_credentials":
-		return identity_srv.OAuth2GrantType_CLIENT_CREDENTIALS
-	case "refresh_token":
-		return identity_srv.OAuth2GrantType_REFRESH_TOKEN
-	default:
-		return identity_srv.OAuth2GrantType_AUTHORIZATION_CODE
-	}
-}
-
-func grantTypeToString(t identity_srv.OAuth2GrantType) string {
-	switch t {
-	case identity_srv.OAuth2GrantType_AUTHORIZATION_CODE:
-		return "authorization_code"
-	case identity_srv.OAuth2GrantType_CLIENT_CREDENTIALS:
-		return "client_credentials"
-	case identity_srv.OAuth2GrantType_REFRESH_TOKEN:
-		return "refresh_token"
-	default:
-		return "authorization_code"
-	}
 }
