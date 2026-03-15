@@ -6,70 +6,97 @@ import (
 	"context"
 	client "github.com/cloudwego/kitex/client"
 	callopt "github.com/cloudwego/kitex/client/callopt"
+	core "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
 	identity_srv "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 )
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
-	Login(ctx context.Context, Req *identity_srv.LoginRequest, callOptions ...callopt.Option) (r *identity_srv.LoginResponse, err error)
-	ChangePassword(ctx context.Context, Req *identity_srv.ChangePasswordRequest, callOptions ...callopt.Option) (r *identity_srv.ChangePasswordResponse, err error)
-	ResetPassword(ctx context.Context, Req *identity_srv.ResetPasswordRequest, callOptions ...callopt.Option) (r *identity_srv.ResetPasswordResponse, err error)
-	ForcePasswordChange(ctx context.Context, Req *identity_srv.ForcePasswordChangeRequest, callOptions ...callopt.Option) (r *identity_srv.ForcePasswordChangeResponse, err error)
-	CreateUser(ctx context.Context, Req *identity_srv.CreateUserRequest, callOptions ...callopt.Option) (r *identity_srv.CreateUserResponse, err error)
-	GetUser(ctx context.Context, Req *identity_srv.GetUserRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserResponse, err error)
-	UpdateUser(ctx context.Context, Req *identity_srv.UpdateUserRequest, callOptions ...callopt.Option) (r *identity_srv.UpdateUserResponse, err error)
-	DeleteUser(ctx context.Context, Req *identity_srv.DeleteUserRequest, callOptions ...callopt.Option) (r *identity_srv.DeleteUserResponse, err error)
-	ListUsers(ctx context.Context, Req *identity_srv.ListUsersRequest, callOptions ...callopt.Option) (r *identity_srv.ListUsersResponse, err error)
-	SearchUsers(ctx context.Context, Req *identity_srv.SearchUsersRequest, callOptions ...callopt.Option) (r *identity_srv.SearchUsersResponse, err error)
-	ChangeUserStatus(ctx context.Context, Req *identity_srv.ChangeUserStatusRequest, callOptions ...callopt.Option) (r *identity_srv.ChangeUserStatusResponse, err error)
-	UnlockUser(ctx context.Context, Req *identity_srv.UnlockUserRequest, callOptions ...callopt.Option) (r *identity_srv.UnlockUserResponse, err error)
-	CreateOrganization(ctx context.Context, Req *identity_srv.CreateOrganizationRequest, callOptions ...callopt.Option) (r *identity_srv.CreateOrganizationResponse, err error)
-	GetOrganization(ctx context.Context, Req *identity_srv.GetOrganizationRequest, callOptions ...callopt.Option) (r *identity_srv.GetOrganizationResponse, err error)
-	UpdateOrganization(ctx context.Context, Req *identity_srv.UpdateOrganizationRequest, callOptions ...callopt.Option) (r *identity_srv.UpdateOrganizationResponse, err error)
-	DeleteOrganization(ctx context.Context, Req *identity_srv.DeleteOrganizationRequest, callOptions ...callopt.Option) (r *identity_srv.DeleteOrganizationResponse, err error)
-	ListOrganizations(ctx context.Context, Req *identity_srv.ListOrganizationsRequest, callOptions ...callopt.Option) (r *identity_srv.ListOrganizationsResponse, err error)
-	AddMembership(ctx context.Context, Req *identity_srv.AddMembershipRequest, callOptions ...callopt.Option) (r *identity_srv.AddMembershipResponse, err error)
-	UpdateMembership(ctx context.Context, Req *identity_srv.UpdateMembershipRequest, callOptions ...callopt.Option) (r *identity_srv.UpdateMembershipResponse, err error)
-	RemoveMembership(ctx context.Context, Req *identity_srv.RemoveMembershipRequest, callOptions ...callopt.Option) (r *identity_srv.RemoveMembershipResponse, err error)
-	GetMembership(ctx context.Context, Req *identity_srv.GetMembershipRequest, callOptions ...callopt.Option) (r *identity_srv.GetMembershipResponse, err error)
-	GetUserMemberships(ctx context.Context, Req *identity_srv.GetUserMembershipsRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserMembershipsResponse, err error)
-	GetPrimaryMembership(ctx context.Context, Req *identity_srv.GetPrimaryMembershipRequest, callOptions ...callopt.Option) (r *identity_srv.GetPrimaryMembershipResponse, err error)
-	CheckMembership(ctx context.Context, Req *identity_srv.CheckMembershipRequest, callOptions ...callopt.Option) (r *identity_srv.CheckMembershipResponse, err error)
-	CreateDepartment(ctx context.Context, Req *identity_srv.CreateDepartmentRequest, callOptions ...callopt.Option) (r *identity_srv.CreateDepartmentResponse, err error)
-	GetDepartment(ctx context.Context, Req *identity_srv.GetDepartmentRequest, callOptions ...callopt.Option) (r *identity_srv.GetDepartmentResponse, err error)
-	UpdateDepartment(ctx context.Context, Req *identity_srv.UpdateDepartmentRequest, callOptions ...callopt.Option) (r *identity_srv.UpdateDepartmentResponse, err error)
-	DeleteDepartment(ctx context.Context, Req *identity_srv.DeleteDepartmentRequest, callOptions ...callopt.Option) (r *identity_srv.DeleteDepartmentResponse, err error)
-	GetOrganizationDepartments(ctx context.Context, Req *identity_srv.GetOrganizationDepartmentsRequest, callOptions ...callopt.Option) (r *identity_srv.GetOrganizationDepartmentsResponse, err error)
-	UploadTemporaryLogo(ctx context.Context, Req *identity_srv.UploadTemporaryLogoRequest, callOptions ...callopt.Option) (r *identity_srv.UploadTemporaryLogoResponse, err error)
-	GetOrganizationLogo(ctx context.Context, Req *identity_srv.GetOrganizationLogoRequest, callOptions ...callopt.Option) (r *identity_srv.GetOrganizationLogoResponse, err error)
-	DeleteOrganizationLogo(ctx context.Context, Req *identity_srv.DeleteOrganizationLogoRequest, callOptions ...callopt.Option) (r *identity_srv.DeleteOrganizationLogoResponse, err error)
-	BindLogoToOrganization(ctx context.Context, Req *identity_srv.BindLogoToOrganizationRequest, callOptions ...callopt.Option) (r *identity_srv.BindLogoToOrganizationResponse, err error)
-	CreateRoleDefinition(ctx context.Context, Req *identity_srv.RoleDefinitionCreateRequest, callOptions ...callopt.Option) (r *identity_srv.CreateRoleDefinitionResponse, err error)
-	UpdateRoleDefinition(ctx context.Context, Req *identity_srv.RoleDefinitionUpdateRequest, callOptions ...callopt.Option) (r *identity_srv.UpdateRoleDefinitionResponse, err error)
-	DeleteRoleDefinition(ctx context.Context, Req *identity_srv.DeleteRoleDefinitionRequest, callOptions ...callopt.Option) (r *identity_srv.DeleteRoleDefinitionResponse, err error)
-	GetRoleDefinition(ctx context.Context, Req *identity_srv.GetRoleDefinitionRequest, callOptions ...callopt.Option) (r *identity_srv.GetRoleDefinitionResponse, err error)
-	ListRoleDefinitions(ctx context.Context, Req *identity_srv.RoleDefinitionQueryRequest, callOptions ...callopt.Option) (r *identity_srv.RoleDefinitionListResponse, err error)
-	AssignRoleToUser(ctx context.Context, Req *identity_srv.AssignRoleToUserRequest, callOptions ...callopt.Option) (r *identity_srv.UserRoleAssignmentResponse, err error)
-	UpdateUserRoleAssignment(ctx context.Context, Req *identity_srv.UpdateUserRoleAssignmentRequest, callOptions ...callopt.Option) (r *identity_srv.UpdateUserRoleAssignmentResponse, err error)
-	RevokeRoleFromUser(ctx context.Context, Req *identity_srv.RevokeRoleFromUserRequest, callOptions ...callopt.Option) (r *identity_srv.RevokeRoleFromUserResponse, err error)
-	GetLastUserRoleAssignment(ctx context.Context, Req *identity_srv.GetLastUserRoleAssignmentRequest, callOptions ...callopt.Option) (r *identity_srv.GetLastUserRoleAssignmentResponse, err error)
-	ListUserRoleAssignments(ctx context.Context, Req *identity_srv.UserRoleQueryRequest, callOptions ...callopt.Option) (r *identity_srv.UserRoleListResponse, err error)
-	GetUsersByRole(ctx context.Context, Req *identity_srv.GetUsersByRoleRequest, callOptions ...callopt.Option) (r *identity_srv.GetUsersByRoleResponse, err error)
-	BatchBindUsersToRole(ctx context.Context, Req *identity_srv.BatchBindUsersToRoleRequest, callOptions ...callopt.Option) (r *identity_srv.BatchBindUsersToRoleResponse, err error)
-	BatchGetUserRoles(ctx context.Context, Req *identity_srv.BatchGetUserRolesRequest, callOptions ...callopt.Option) (r *identity_srv.BatchGetUserRolesResponse, err error)
-	UploadMenu(ctx context.Context, Req *identity_srv.UploadMenuRequest, callOptions ...callopt.Option) (r *identity_srv.UploadMenuResponse, err error)
-	GetMenuTree(ctx context.Context, Req *identity_srv.GetMenuTreeRequest, callOptions ...callopt.Option) (r *identity_srv.GetMenuTreeResponse, err error)
-	ConfigureRoleMenus(ctx context.Context, Req *identity_srv.ConfigureRoleMenusRequest, callOptions ...callopt.Option) (r *identity_srv.ConfigureRoleMenusResponse, err error)
-	GetRoleMenuTree(ctx context.Context, Req *identity_srv.GetRoleMenuTreeRequest, callOptions ...callopt.Option) (r *identity_srv.GetRoleMenuTreeResponse, err error)
-	GetUserMenuTree(ctx context.Context, Req *identity_srv.GetUserMenuTreeRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserMenuTreeResponse, err error)
-	GetRoleMenuPermissions(ctx context.Context, Req *identity_srv.GetRoleMenuPermissionsRequest, callOptions ...callopt.Option) (r *identity_srv.GetRoleMenuPermissionsResponse, err error)
-	HasMenuPermission(ctx context.Context, Req *identity_srv.HasMenuPermissionRequest, callOptions ...callopt.Option) (r *identity_srv.HasMenuPermissionResponse, err error)
-	GetUserMenuPermissions(ctx context.Context, Req *identity_srv.GetUserMenuPermissionsRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserMenuPermissionsResponse, err error)
-	CheckPermission(ctx context.Context, Req *identity_srv.CheckPermissionRequest, callOptions ...callopt.Option) (r *identity_srv.CheckPermissionResponse, err error)
-	SyncPolicies(ctx context.Context, Req *identity_srv.SyncPoliciesRequest, callOptions ...callopt.Option) (r *identity_srv.SyncPoliciesResponse, err error)
-	GetUserDataScope(ctx context.Context, Req *identity_srv.GetUserDataScopeRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserDataScopeResponse, err error)
-	CreateAuditLog(ctx context.Context, Req *identity_srv.CreateAuditLogRequest, callOptions ...callopt.Option) (r *identity_srv.CreateAuditLogResponse, err error)
-	ListAuditLogs(ctx context.Context, Req *identity_srv.ListAuditLogsRequest, callOptions ...callopt.Option) (r *identity_srv.ListAuditLogsResponse, err error)
+	Login(ctx context.Context, req *identity_srv.LoginRequest, callOptions ...callopt.Option) (r *identity_srv.LoginResponse, err error)
+	ChangePassword(ctx context.Context, req *identity_srv.ChangePasswordRequest, callOptions ...callopt.Option) (err error)
+	ResetPassword(ctx context.Context, req *identity_srv.ResetPasswordRequest, callOptions ...callopt.Option) (err error)
+	ForcePasswordChange(ctx context.Context, req *identity_srv.ForcePasswordChangeRequest, callOptions ...callopt.Option) (err error)
+	CreateUser(ctx context.Context, req *identity_srv.CreateUserRequest, callOptions ...callopt.Option) (r *identity_srv.UserProfile, err error)
+	GetUser(ctx context.Context, req *identity_srv.GetUserRequest, callOptions ...callopt.Option) (r *identity_srv.UserProfile, err error)
+	UpdateUser(ctx context.Context, req *identity_srv.UpdateUserRequest, callOptions ...callopt.Option) (r *identity_srv.UserProfile, err error)
+	DeleteUser(ctx context.Context, req *identity_srv.DeleteUserRequest, callOptions ...callopt.Option) (err error)
+	ListUsers(ctx context.Context, req *identity_srv.ListUsersRequest, callOptions ...callopt.Option) (r *identity_srv.ListUsersResponse, err error)
+	SearchUsers(ctx context.Context, req *identity_srv.SearchUsersRequest, callOptions ...callopt.Option) (r *identity_srv.SearchUsersResponse, err error)
+	ChangeUserStatus(ctx context.Context, req *identity_srv.ChangeUserStatusRequest, callOptions ...callopt.Option) (err error)
+	UnlockUser(ctx context.Context, req *identity_srv.UnlockUserRequest, callOptions ...callopt.Option) (err error)
+	CreateOrganization(ctx context.Context, req *identity_srv.CreateOrganizationRequest, callOptions ...callopt.Option) (r *identity_srv.Organization, err error)
+	GetOrganization(ctx context.Context, req *identity_srv.GetOrganizationRequest, callOptions ...callopt.Option) (r *identity_srv.Organization, err error)
+	UpdateOrganization(ctx context.Context, req *identity_srv.UpdateOrganizationRequest, callOptions ...callopt.Option) (r *identity_srv.Organization, err error)
+	DeleteOrganization(ctx context.Context, organizationID core.UUID, callOptions ...callopt.Option) (err error)
+	ListOrganizations(ctx context.Context, req *identity_srv.ListOrganizationsRequest, callOptions ...callopt.Option) (r *identity_srv.ListOrganizationsResponse, err error)
+	AddMembership(ctx context.Context, req *identity_srv.AddMembershipRequest, callOptions ...callopt.Option) (r *identity_srv.UserMembership, err error)
+	UpdateMembership(ctx context.Context, req *identity_srv.UpdateMembershipRequest, callOptions ...callopt.Option) (r *identity_srv.UserMembership, err error)
+	RemoveMembership(ctx context.Context, membershipID core.UUID, callOptions ...callopt.Option) (err error)
+	GetMembership(ctx context.Context, membershipID core.UUID, callOptions ...callopt.Option) (r *identity_srv.UserMembership, err error)
+	GetUserMemberships(ctx context.Context, req *identity_srv.GetUserMembershipsRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserMembershipsResponse, err error)
+	GetPrimaryMembership(ctx context.Context, userID core.UUID, callOptions ...callopt.Option) (r *identity_srv.UserMembership, err error)
+	CheckMembership(ctx context.Context, req *identity_srv.CheckMembershipRequest, callOptions ...callopt.Option) (r bool, err error)
+	CreateDepartment(ctx context.Context, req *identity_srv.CreateDepartmentRequest, callOptions ...callopt.Option) (r *identity_srv.Department, err error)
+	GetDepartment(ctx context.Context, req *identity_srv.GetDepartmentRequest, callOptions ...callopt.Option) (r *identity_srv.Department, err error)
+	UpdateDepartment(ctx context.Context, req *identity_srv.UpdateDepartmentRequest, callOptions ...callopt.Option) (r *identity_srv.Department, err error)
+	DeleteDepartment(ctx context.Context, departmentID core.UUID, callOptions ...callopt.Option) (err error)
+	GetOrganizationDepartments(ctx context.Context, req *identity_srv.GetOrganizationDepartmentsRequest, callOptions ...callopt.Option) (r *identity_srv.GetOrganizationDepartmentsResponse, err error)
+	UploadTemporaryLogo(ctx context.Context, req *identity_srv.UploadTemporaryLogoRequest, callOptions ...callopt.Option) (r *identity_srv.OrganizationLogo, err error)
+	GetOrganizationLogo(ctx context.Context, req *identity_srv.GetOrganizationLogoRequest, callOptions ...callopt.Option) (r *identity_srv.OrganizationLogo, err error)
+	DeleteOrganizationLogo(ctx context.Context, req *identity_srv.DeleteOrganizationLogoRequest, callOptions ...callopt.Option) (err error)
+	BindLogoToOrganization(ctx context.Context, req *identity_srv.BindLogoToOrganizationRequest, callOptions ...callopt.Option) (r *identity_srv.OrganizationLogo, err error)
+	CreateRoleDefinition(ctx context.Context, req *identity_srv.RoleDefinitionCreateRequest, callOptions ...callopt.Option) (r *identity_srv.RoleDefinition, err error)
+	UpdateRoleDefinition(ctx context.Context, req *identity_srv.RoleDefinitionUpdateRequest, callOptions ...callopt.Option) (r *identity_srv.RoleDefinition, err error)
+	DeleteRoleDefinition(ctx context.Context, roleID core.UUID, callOptions ...callopt.Option) (err error)
+	GetRoleDefinition(ctx context.Context, roleID core.UUID, callOptions ...callopt.Option) (r *identity_srv.RoleDefinition, err error)
+	ListRoleDefinitions(ctx context.Context, req *identity_srv.RoleDefinitionQueryRequest, callOptions ...callopt.Option) (r *identity_srv.RoleDefinitionListResponse, err error)
+	AssignRoleToUser(ctx context.Context, req *identity_srv.AssignRoleToUserRequest, callOptions ...callopt.Option) (r *identity_srv.UserRoleAssignmentResponse, err error)
+	UpdateUserRoleAssignment(ctx context.Context, req *identity_srv.UpdateUserRoleAssignmentRequest, callOptions ...callopt.Option) (err error)
+	RevokeRoleFromUser(ctx context.Context, req *identity_srv.RevokeRoleFromUserRequest, callOptions ...callopt.Option) (err error)
+	GetLastUserRoleAssignment(ctx context.Context, userID core.UUID, callOptions ...callopt.Option) (r *identity_srv.UserRoleAssignment, err error)
+	ListUserRoleAssignments(ctx context.Context, req *identity_srv.UserRoleQueryRequest, callOptions ...callopt.Option) (r *identity_srv.UserRoleListResponse, err error)
+	GetUsersByRole(ctx context.Context, req *identity_srv.GetUsersByRoleRequest, callOptions ...callopt.Option) (r *identity_srv.GetUsersByRoleResponse, err error)
+	BatchBindUsersToRole(ctx context.Context, req *identity_srv.BatchBindUsersToRoleRequest, callOptions ...callopt.Option) (r *identity_srv.BatchBindUsersToRoleResponse, err error)
+	BatchGetUserRoles(ctx context.Context, req *identity_srv.BatchGetUserRolesRequest, callOptions ...callopt.Option) (r *identity_srv.BatchGetUserRolesResponse, err error)
+	UploadMenu(ctx context.Context, req *identity_srv.UploadMenuRequest, callOptions ...callopt.Option) (err error)
+	GetMenuTree(ctx context.Context, callOptions ...callopt.Option) (r *identity_srv.GetMenuTreeResponse, err error)
+	ConfigureRoleMenus(ctx context.Context, req *identity_srv.ConfigureRoleMenusRequest, callOptions ...callopt.Option) (r *identity_srv.ConfigureRoleMenusResponse, err error)
+	GetRoleMenuTree(ctx context.Context, req *identity_srv.GetRoleMenuTreeRequest, callOptions ...callopt.Option) (r *identity_srv.GetRoleMenuTreeResponse, err error)
+	GetUserMenuTree(ctx context.Context, req *identity_srv.GetUserMenuTreeRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserMenuTreeResponse, err error)
+	GetRoleMenuPermissions(ctx context.Context, req *identity_srv.GetRoleMenuPermissionsRequest, callOptions ...callopt.Option) (r *identity_srv.GetRoleMenuPermissionsResponse, err error)
+	HasMenuPermission(ctx context.Context, req *identity_srv.HasMenuPermissionRequest, callOptions ...callopt.Option) (r *identity_srv.HasMenuPermissionResponse, err error)
+	GetUserMenuPermissions(ctx context.Context, req *identity_srv.GetUserMenuPermissionsRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserMenuPermissionsResponse, err error)
+	CheckPermission(ctx context.Context, req *identity_srv.CheckPermissionRequest, callOptions ...callopt.Option) (r *identity_srv.CheckPermissionResponse, err error)
+	SyncPolicies(ctx context.Context, callOptions ...callopt.Option) (r *identity_srv.SyncPoliciesResponse, err error)
+	GetUserDataScope(ctx context.Context, req *identity_srv.GetUserDataScopeRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserDataScopeResponse, err error)
+	CreateAuditLog(ctx context.Context, req *identity_srv.CreateAuditLogRequest, callOptions ...callopt.Option) (err error)
+	ListAuditLogs(ctx context.Context, req *identity_srv.ListAuditLogsRequest, callOptions ...callopt.Option) (r *identity_srv.ListAuditLogsResponse, err error)
+	CreateOAuth2Client(ctx context.Context, req *identity_srv.CreateOAuth2ClientRequest, callOptions ...callopt.Option) (r *identity_srv.CreateOAuth2ClientResponse, err error)
+	GetOAuth2Client(ctx context.Context, req *identity_srv.GetOAuth2ClientRequest, callOptions ...callopt.Option) (r *identity_srv.OAuth2Client, err error)
+	UpdateOAuth2Client(ctx context.Context, req *identity_srv.UpdateOAuth2ClientRequest, callOptions ...callopt.Option) (r *identity_srv.OAuth2Client, err error)
+	DeleteOAuth2Client(ctx context.Context, req *identity_srv.DeleteOAuth2ClientRequest, callOptions ...callopt.Option) (err error)
+	ListOAuth2Clients(ctx context.Context, req *identity_srv.ListOAuth2ClientsRequest, callOptions ...callopt.Option) (r *identity_srv.ListOAuth2ClientsResponse, err error)
+	RotateOAuth2ClientSecret(ctx context.Context, req *identity_srv.RotateOAuth2ClientSecretRequest, callOptions ...callopt.Option) (r *identity_srv.RotateOAuth2ClientSecretResponse, err error)
+	GetOAuth2ClientForAuth(ctx context.Context, clientID string, callOptions ...callopt.Option) (r *identity_srv.GetOAuth2ClientForAuthResponse, err error)
+	ListOAuth2Scopes(ctx context.Context, req *identity_srv.ListOAuth2ScopesRequest, callOptions ...callopt.Option) (r *identity_srv.ListOAuth2ScopesResponse, err error)
+	SaveOAuth2Consent(ctx context.Context, req *identity_srv.SaveOAuth2ConsentRequest, callOptions ...callopt.Option) (err error)
+	GetOAuth2Consent(ctx context.Context, req *identity_srv.GetOAuth2ConsentRequest, callOptions ...callopt.Option) (r *identity_srv.GetOAuth2ConsentResponse, err error)
+	ListOAuth2Consents(ctx context.Context, req *identity_srv.ListOAuth2ConsentsRequest, callOptions ...callopt.Option) (r *identity_srv.ListOAuth2ConsentsResponse, err error)
+	RevokeOAuth2Consent(ctx context.Context, req *identity_srv.RevokeOAuth2ConsentRequest, callOptions ...callopt.Option) (err error)
+	CreateOAuth2AuthorizeCodeSession(ctx context.Context, req *identity_srv.OAuth2TokenSession, callOptions ...callopt.Option) (err error)
+	GetOAuth2AuthorizeCodeSession(ctx context.Context, signature string, callOptions ...callopt.Option) (r *identity_srv.OAuth2TokenSession, err error)
+	InvalidateOAuth2AuthorizeCodeSession(ctx context.Context, signature string, callOptions ...callopt.Option) (err error)
+	CreateOAuth2AccessTokenSession(ctx context.Context, req *identity_srv.OAuth2TokenSession, callOptions ...callopt.Option) (err error)
+	GetOAuth2AccessTokenSession(ctx context.Context, signature string, callOptions ...callopt.Option) (r *identity_srv.OAuth2TokenSession, err error)
+	DeleteOAuth2AccessTokenSession(ctx context.Context, signature string, callOptions ...callopt.Option) (err error)
+	RevokeOAuth2AccessToken(ctx context.Context, requestID string, callOptions ...callopt.Option) (err error)
+	CreateOAuth2RefreshTokenSession(ctx context.Context, req *identity_srv.OAuth2TokenSession, callOptions ...callopt.Option) (err error)
+	GetOAuth2RefreshTokenSession(ctx context.Context, signature string, callOptions ...callopt.Option) (r *identity_srv.OAuth2TokenSession, err error)
+	DeleteOAuth2RefreshTokenSession(ctx context.Context, signature string, callOptions ...callopt.Option) (err error)
+	RevokeOAuth2RefreshToken(ctx context.Context, requestID string, callOptions ...callopt.Option) (err error)
+	CreateOAuth2PKCESession(ctx context.Context, req *identity_srv.OAuth2TokenSession, callOptions ...callopt.Option) (err error)
+	GetOAuth2PKCESession(ctx context.Context, signature string, callOptions ...callopt.Option) (r *identity_srv.OAuth2TokenSession, err error)
+	DeleteOAuth2PKCESession(ctx context.Context, signature string, callOptions ...callopt.Option) (err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -79,7 +106,7 @@ func NewClient(destService string, opts ...client.Option) (Client, error) {
 
 	options = append(options, opts...)
 
-	kc, err := client.NewClient(serviceInfo(), options...)
+	kc, err := client.NewClient(serviceInfoForClient(), options...)
 	if err != nil {
 		return nil, err
 	}
@@ -101,297 +128,427 @@ type kIdentityServiceClient struct {
 	*kClient
 }
 
-func (p *kIdentityServiceClient) Login(ctx context.Context, Req *identity_srv.LoginRequest, callOptions ...callopt.Option) (r *identity_srv.LoginResponse, err error) {
+func (p *kIdentityServiceClient) Login(ctx context.Context, req *identity_srv.LoginRequest, callOptions ...callopt.Option) (r *identity_srv.LoginResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.Login(ctx, Req)
+	return p.kClient.Login(ctx, req)
 }
 
-func (p *kIdentityServiceClient) ChangePassword(ctx context.Context, Req *identity_srv.ChangePasswordRequest, callOptions ...callopt.Option) (r *identity_srv.ChangePasswordResponse, err error) {
+func (p *kIdentityServiceClient) ChangePassword(ctx context.Context, req *identity_srv.ChangePasswordRequest, callOptions ...callopt.Option) (err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ChangePassword(ctx, Req)
+	return p.kClient.ChangePassword(ctx, req)
 }
 
-func (p *kIdentityServiceClient) ResetPassword(ctx context.Context, Req *identity_srv.ResetPasswordRequest, callOptions ...callopt.Option) (r *identity_srv.ResetPasswordResponse, err error) {
+func (p *kIdentityServiceClient) ResetPassword(ctx context.Context, req *identity_srv.ResetPasswordRequest, callOptions ...callopt.Option) (err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ResetPassword(ctx, Req)
+	return p.kClient.ResetPassword(ctx, req)
 }
 
-func (p *kIdentityServiceClient) ForcePasswordChange(ctx context.Context, Req *identity_srv.ForcePasswordChangeRequest, callOptions ...callopt.Option) (r *identity_srv.ForcePasswordChangeResponse, err error) {
+func (p *kIdentityServiceClient) ForcePasswordChange(ctx context.Context, req *identity_srv.ForcePasswordChangeRequest, callOptions ...callopt.Option) (err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ForcePasswordChange(ctx, Req)
+	return p.kClient.ForcePasswordChange(ctx, req)
 }
 
-func (p *kIdentityServiceClient) CreateUser(ctx context.Context, Req *identity_srv.CreateUserRequest, callOptions ...callopt.Option) (r *identity_srv.CreateUserResponse, err error) {
+func (p *kIdentityServiceClient) CreateUser(ctx context.Context, req *identity_srv.CreateUserRequest, callOptions ...callopt.Option) (r *identity_srv.UserProfile, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.CreateUser(ctx, Req)
+	return p.kClient.CreateUser(ctx, req)
 }
 
-func (p *kIdentityServiceClient) GetUser(ctx context.Context, Req *identity_srv.GetUserRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserResponse, err error) {
+func (p *kIdentityServiceClient) GetUser(ctx context.Context, req *identity_srv.GetUserRequest, callOptions ...callopt.Option) (r *identity_srv.UserProfile, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetUser(ctx, Req)
+	return p.kClient.GetUser(ctx, req)
 }
 
-func (p *kIdentityServiceClient) UpdateUser(ctx context.Context, Req *identity_srv.UpdateUserRequest, callOptions ...callopt.Option) (r *identity_srv.UpdateUserResponse, err error) {
+func (p *kIdentityServiceClient) UpdateUser(ctx context.Context, req *identity_srv.UpdateUserRequest, callOptions ...callopt.Option) (r *identity_srv.UserProfile, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UpdateUser(ctx, Req)
+	return p.kClient.UpdateUser(ctx, req)
 }
 
-func (p *kIdentityServiceClient) DeleteUser(ctx context.Context, Req *identity_srv.DeleteUserRequest, callOptions ...callopt.Option) (r *identity_srv.DeleteUserResponse, err error) {
+func (p *kIdentityServiceClient) DeleteUser(ctx context.Context, req *identity_srv.DeleteUserRequest, callOptions ...callopt.Option) (err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.DeleteUser(ctx, Req)
+	return p.kClient.DeleteUser(ctx, req)
 }
 
-func (p *kIdentityServiceClient) ListUsers(ctx context.Context, Req *identity_srv.ListUsersRequest, callOptions ...callopt.Option) (r *identity_srv.ListUsersResponse, err error) {
+func (p *kIdentityServiceClient) ListUsers(ctx context.Context, req *identity_srv.ListUsersRequest, callOptions ...callopt.Option) (r *identity_srv.ListUsersResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ListUsers(ctx, Req)
+	return p.kClient.ListUsers(ctx, req)
 }
 
-func (p *kIdentityServiceClient) SearchUsers(ctx context.Context, Req *identity_srv.SearchUsersRequest, callOptions ...callopt.Option) (r *identity_srv.SearchUsersResponse, err error) {
+func (p *kIdentityServiceClient) SearchUsers(ctx context.Context, req *identity_srv.SearchUsersRequest, callOptions ...callopt.Option) (r *identity_srv.SearchUsersResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.SearchUsers(ctx, Req)
+	return p.kClient.SearchUsers(ctx, req)
 }
 
-func (p *kIdentityServiceClient) ChangeUserStatus(ctx context.Context, Req *identity_srv.ChangeUserStatusRequest, callOptions ...callopt.Option) (r *identity_srv.ChangeUserStatusResponse, err error) {
+func (p *kIdentityServiceClient) ChangeUserStatus(ctx context.Context, req *identity_srv.ChangeUserStatusRequest, callOptions ...callopt.Option) (err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ChangeUserStatus(ctx, Req)
+	return p.kClient.ChangeUserStatus(ctx, req)
 }
 
-func (p *kIdentityServiceClient) UnlockUser(ctx context.Context, Req *identity_srv.UnlockUserRequest, callOptions ...callopt.Option) (r *identity_srv.UnlockUserResponse, err error) {
+func (p *kIdentityServiceClient) UnlockUser(ctx context.Context, req *identity_srv.UnlockUserRequest, callOptions ...callopt.Option) (err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UnlockUser(ctx, Req)
+	return p.kClient.UnlockUser(ctx, req)
 }
 
-func (p *kIdentityServiceClient) CreateOrganization(ctx context.Context, Req *identity_srv.CreateOrganizationRequest, callOptions ...callopt.Option) (r *identity_srv.CreateOrganizationResponse, err error) {
+func (p *kIdentityServiceClient) CreateOrganization(ctx context.Context, req *identity_srv.CreateOrganizationRequest, callOptions ...callopt.Option) (r *identity_srv.Organization, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.CreateOrganization(ctx, Req)
+	return p.kClient.CreateOrganization(ctx, req)
 }
 
-func (p *kIdentityServiceClient) GetOrganization(ctx context.Context, Req *identity_srv.GetOrganizationRequest, callOptions ...callopt.Option) (r *identity_srv.GetOrganizationResponse, err error) {
+func (p *kIdentityServiceClient) GetOrganization(ctx context.Context, req *identity_srv.GetOrganizationRequest, callOptions ...callopt.Option) (r *identity_srv.Organization, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetOrganization(ctx, Req)
+	return p.kClient.GetOrganization(ctx, req)
 }
 
-func (p *kIdentityServiceClient) UpdateOrganization(ctx context.Context, Req *identity_srv.UpdateOrganizationRequest, callOptions ...callopt.Option) (r *identity_srv.UpdateOrganizationResponse, err error) {
+func (p *kIdentityServiceClient) UpdateOrganization(ctx context.Context, req *identity_srv.UpdateOrganizationRequest, callOptions ...callopt.Option) (r *identity_srv.Organization, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UpdateOrganization(ctx, Req)
+	return p.kClient.UpdateOrganization(ctx, req)
 }
 
-func (p *kIdentityServiceClient) DeleteOrganization(ctx context.Context, Req *identity_srv.DeleteOrganizationRequest, callOptions ...callopt.Option) (r *identity_srv.DeleteOrganizationResponse, err error) {
+func (p *kIdentityServiceClient) DeleteOrganization(ctx context.Context, organizationID core.UUID, callOptions ...callopt.Option) (err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.DeleteOrganization(ctx, Req)
+	return p.kClient.DeleteOrganization(ctx, organizationID)
 }
 
-func (p *kIdentityServiceClient) ListOrganizations(ctx context.Context, Req *identity_srv.ListOrganizationsRequest, callOptions ...callopt.Option) (r *identity_srv.ListOrganizationsResponse, err error) {
+func (p *kIdentityServiceClient) ListOrganizations(ctx context.Context, req *identity_srv.ListOrganizationsRequest, callOptions ...callopt.Option) (r *identity_srv.ListOrganizationsResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ListOrganizations(ctx, Req)
+	return p.kClient.ListOrganizations(ctx, req)
 }
 
-func (p *kIdentityServiceClient) AddMembership(ctx context.Context, Req *identity_srv.AddMembershipRequest, callOptions ...callopt.Option) (r *identity_srv.AddMembershipResponse, err error) {
+func (p *kIdentityServiceClient) AddMembership(ctx context.Context, req *identity_srv.AddMembershipRequest, callOptions ...callopt.Option) (r *identity_srv.UserMembership, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.AddMembership(ctx, Req)
+	return p.kClient.AddMembership(ctx, req)
 }
 
-func (p *kIdentityServiceClient) UpdateMembership(ctx context.Context, Req *identity_srv.UpdateMembershipRequest, callOptions ...callopt.Option) (r *identity_srv.UpdateMembershipResponse, err error) {
+func (p *kIdentityServiceClient) UpdateMembership(ctx context.Context, req *identity_srv.UpdateMembershipRequest, callOptions ...callopt.Option) (r *identity_srv.UserMembership, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UpdateMembership(ctx, Req)
+	return p.kClient.UpdateMembership(ctx, req)
 }
 
-func (p *kIdentityServiceClient) RemoveMembership(ctx context.Context, Req *identity_srv.RemoveMembershipRequest, callOptions ...callopt.Option) (r *identity_srv.RemoveMembershipResponse, err error) {
+func (p *kIdentityServiceClient) RemoveMembership(ctx context.Context, membershipID core.UUID, callOptions ...callopt.Option) (err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.RemoveMembership(ctx, Req)
+	return p.kClient.RemoveMembership(ctx, membershipID)
 }
 
-func (p *kIdentityServiceClient) GetMembership(ctx context.Context, Req *identity_srv.GetMembershipRequest, callOptions ...callopt.Option) (r *identity_srv.GetMembershipResponse, err error) {
+func (p *kIdentityServiceClient) GetMembership(ctx context.Context, membershipID core.UUID, callOptions ...callopt.Option) (r *identity_srv.UserMembership, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetMembership(ctx, Req)
+	return p.kClient.GetMembership(ctx, membershipID)
 }
 
-func (p *kIdentityServiceClient) GetUserMemberships(ctx context.Context, Req *identity_srv.GetUserMembershipsRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserMembershipsResponse, err error) {
+func (p *kIdentityServiceClient) GetUserMemberships(ctx context.Context, req *identity_srv.GetUserMembershipsRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserMembershipsResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetUserMemberships(ctx, Req)
+	return p.kClient.GetUserMemberships(ctx, req)
 }
 
-func (p *kIdentityServiceClient) GetPrimaryMembership(ctx context.Context, Req *identity_srv.GetPrimaryMembershipRequest, callOptions ...callopt.Option) (r *identity_srv.GetPrimaryMembershipResponse, err error) {
+func (p *kIdentityServiceClient) GetPrimaryMembership(ctx context.Context, userID core.UUID, callOptions ...callopt.Option) (r *identity_srv.UserMembership, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetPrimaryMembership(ctx, Req)
+	return p.kClient.GetPrimaryMembership(ctx, userID)
 }
 
-func (p *kIdentityServiceClient) CheckMembership(ctx context.Context, Req *identity_srv.CheckMembershipRequest, callOptions ...callopt.Option) (r *identity_srv.CheckMembershipResponse, err error) {
+func (p *kIdentityServiceClient) CheckMembership(ctx context.Context, req *identity_srv.CheckMembershipRequest, callOptions ...callopt.Option) (r bool, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.CheckMembership(ctx, Req)
+	return p.kClient.CheckMembership(ctx, req)
 }
 
-func (p *kIdentityServiceClient) CreateDepartment(ctx context.Context, Req *identity_srv.CreateDepartmentRequest, callOptions ...callopt.Option) (r *identity_srv.CreateDepartmentResponse, err error) {
+func (p *kIdentityServiceClient) CreateDepartment(ctx context.Context, req *identity_srv.CreateDepartmentRequest, callOptions ...callopt.Option) (r *identity_srv.Department, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.CreateDepartment(ctx, Req)
+	return p.kClient.CreateDepartment(ctx, req)
 }
 
-func (p *kIdentityServiceClient) GetDepartment(ctx context.Context, Req *identity_srv.GetDepartmentRequest, callOptions ...callopt.Option) (r *identity_srv.GetDepartmentResponse, err error) {
+func (p *kIdentityServiceClient) GetDepartment(ctx context.Context, req *identity_srv.GetDepartmentRequest, callOptions ...callopt.Option) (r *identity_srv.Department, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetDepartment(ctx, Req)
+	return p.kClient.GetDepartment(ctx, req)
 }
 
-func (p *kIdentityServiceClient) UpdateDepartment(ctx context.Context, Req *identity_srv.UpdateDepartmentRequest, callOptions ...callopt.Option) (r *identity_srv.UpdateDepartmentResponse, err error) {
+func (p *kIdentityServiceClient) UpdateDepartment(ctx context.Context, req *identity_srv.UpdateDepartmentRequest, callOptions ...callopt.Option) (r *identity_srv.Department, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UpdateDepartment(ctx, Req)
+	return p.kClient.UpdateDepartment(ctx, req)
 }
 
-func (p *kIdentityServiceClient) DeleteDepartment(ctx context.Context, Req *identity_srv.DeleteDepartmentRequest, callOptions ...callopt.Option) (r *identity_srv.DeleteDepartmentResponse, err error) {
+func (p *kIdentityServiceClient) DeleteDepartment(ctx context.Context, departmentID core.UUID, callOptions ...callopt.Option) (err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.DeleteDepartment(ctx, Req)
+	return p.kClient.DeleteDepartment(ctx, departmentID)
 }
 
-func (p *kIdentityServiceClient) GetOrganizationDepartments(ctx context.Context, Req *identity_srv.GetOrganizationDepartmentsRequest, callOptions ...callopt.Option) (r *identity_srv.GetOrganizationDepartmentsResponse, err error) {
+func (p *kIdentityServiceClient) GetOrganizationDepartments(ctx context.Context, req *identity_srv.GetOrganizationDepartmentsRequest, callOptions ...callopt.Option) (r *identity_srv.GetOrganizationDepartmentsResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetOrganizationDepartments(ctx, Req)
+	return p.kClient.GetOrganizationDepartments(ctx, req)
 }
 
-func (p *kIdentityServiceClient) UploadTemporaryLogo(ctx context.Context, Req *identity_srv.UploadTemporaryLogoRequest, callOptions ...callopt.Option) (r *identity_srv.UploadTemporaryLogoResponse, err error) {
+func (p *kIdentityServiceClient) UploadTemporaryLogo(ctx context.Context, req *identity_srv.UploadTemporaryLogoRequest, callOptions ...callopt.Option) (r *identity_srv.OrganizationLogo, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UploadTemporaryLogo(ctx, Req)
+	return p.kClient.UploadTemporaryLogo(ctx, req)
 }
 
-func (p *kIdentityServiceClient) GetOrganizationLogo(ctx context.Context, Req *identity_srv.GetOrganizationLogoRequest, callOptions ...callopt.Option) (r *identity_srv.GetOrganizationLogoResponse, err error) {
+func (p *kIdentityServiceClient) GetOrganizationLogo(ctx context.Context, req *identity_srv.GetOrganizationLogoRequest, callOptions ...callopt.Option) (r *identity_srv.OrganizationLogo, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetOrganizationLogo(ctx, Req)
+	return p.kClient.GetOrganizationLogo(ctx, req)
 }
 
-func (p *kIdentityServiceClient) DeleteOrganizationLogo(ctx context.Context, Req *identity_srv.DeleteOrganizationLogoRequest, callOptions ...callopt.Option) (r *identity_srv.DeleteOrganizationLogoResponse, err error) {
+func (p *kIdentityServiceClient) DeleteOrganizationLogo(ctx context.Context, req *identity_srv.DeleteOrganizationLogoRequest, callOptions ...callopt.Option) (err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.DeleteOrganizationLogo(ctx, Req)
+	return p.kClient.DeleteOrganizationLogo(ctx, req)
 }
 
-func (p *kIdentityServiceClient) BindLogoToOrganization(ctx context.Context, Req *identity_srv.BindLogoToOrganizationRequest, callOptions ...callopt.Option) (r *identity_srv.BindLogoToOrganizationResponse, err error) {
+func (p *kIdentityServiceClient) BindLogoToOrganization(ctx context.Context, req *identity_srv.BindLogoToOrganizationRequest, callOptions ...callopt.Option) (r *identity_srv.OrganizationLogo, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.BindLogoToOrganization(ctx, Req)
+	return p.kClient.BindLogoToOrganization(ctx, req)
 }
 
-func (p *kIdentityServiceClient) CreateRoleDefinition(ctx context.Context, Req *identity_srv.RoleDefinitionCreateRequest, callOptions ...callopt.Option) (r *identity_srv.CreateRoleDefinitionResponse, err error) {
+func (p *kIdentityServiceClient) CreateRoleDefinition(ctx context.Context, req *identity_srv.RoleDefinitionCreateRequest, callOptions ...callopt.Option) (r *identity_srv.RoleDefinition, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.CreateRoleDefinition(ctx, Req)
+	return p.kClient.CreateRoleDefinition(ctx, req)
 }
 
-func (p *kIdentityServiceClient) UpdateRoleDefinition(ctx context.Context, Req *identity_srv.RoleDefinitionUpdateRequest, callOptions ...callopt.Option) (r *identity_srv.UpdateRoleDefinitionResponse, err error) {
+func (p *kIdentityServiceClient) UpdateRoleDefinition(ctx context.Context, req *identity_srv.RoleDefinitionUpdateRequest, callOptions ...callopt.Option) (r *identity_srv.RoleDefinition, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UpdateRoleDefinition(ctx, Req)
+	return p.kClient.UpdateRoleDefinition(ctx, req)
 }
 
-func (p *kIdentityServiceClient) DeleteRoleDefinition(ctx context.Context, Req *identity_srv.DeleteRoleDefinitionRequest, callOptions ...callopt.Option) (r *identity_srv.DeleteRoleDefinitionResponse, err error) {
+func (p *kIdentityServiceClient) DeleteRoleDefinition(ctx context.Context, roleID core.UUID, callOptions ...callopt.Option) (err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.DeleteRoleDefinition(ctx, Req)
+	return p.kClient.DeleteRoleDefinition(ctx, roleID)
 }
 
-func (p *kIdentityServiceClient) GetRoleDefinition(ctx context.Context, Req *identity_srv.GetRoleDefinitionRequest, callOptions ...callopt.Option) (r *identity_srv.GetRoleDefinitionResponse, err error) {
+func (p *kIdentityServiceClient) GetRoleDefinition(ctx context.Context, roleID core.UUID, callOptions ...callopt.Option) (r *identity_srv.RoleDefinition, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetRoleDefinition(ctx, Req)
+	return p.kClient.GetRoleDefinition(ctx, roleID)
 }
 
-func (p *kIdentityServiceClient) ListRoleDefinitions(ctx context.Context, Req *identity_srv.RoleDefinitionQueryRequest, callOptions ...callopt.Option) (r *identity_srv.RoleDefinitionListResponse, err error) {
+func (p *kIdentityServiceClient) ListRoleDefinitions(ctx context.Context, req *identity_srv.RoleDefinitionQueryRequest, callOptions ...callopt.Option) (r *identity_srv.RoleDefinitionListResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ListRoleDefinitions(ctx, Req)
+	return p.kClient.ListRoleDefinitions(ctx, req)
 }
 
-func (p *kIdentityServiceClient) AssignRoleToUser(ctx context.Context, Req *identity_srv.AssignRoleToUserRequest, callOptions ...callopt.Option) (r *identity_srv.UserRoleAssignmentResponse, err error) {
+func (p *kIdentityServiceClient) AssignRoleToUser(ctx context.Context, req *identity_srv.AssignRoleToUserRequest, callOptions ...callopt.Option) (r *identity_srv.UserRoleAssignmentResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.AssignRoleToUser(ctx, Req)
+	return p.kClient.AssignRoleToUser(ctx, req)
 }
 
-func (p *kIdentityServiceClient) UpdateUserRoleAssignment(ctx context.Context, Req *identity_srv.UpdateUserRoleAssignmentRequest, callOptions ...callopt.Option) (r *identity_srv.UpdateUserRoleAssignmentResponse, err error) {
+func (p *kIdentityServiceClient) UpdateUserRoleAssignment(ctx context.Context, req *identity_srv.UpdateUserRoleAssignmentRequest, callOptions ...callopt.Option) (err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UpdateUserRoleAssignment(ctx, Req)
+	return p.kClient.UpdateUserRoleAssignment(ctx, req)
 }
 
-func (p *kIdentityServiceClient) RevokeRoleFromUser(ctx context.Context, Req *identity_srv.RevokeRoleFromUserRequest, callOptions ...callopt.Option) (r *identity_srv.RevokeRoleFromUserResponse, err error) {
+func (p *kIdentityServiceClient) RevokeRoleFromUser(ctx context.Context, req *identity_srv.RevokeRoleFromUserRequest, callOptions ...callopt.Option) (err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.RevokeRoleFromUser(ctx, Req)
+	return p.kClient.RevokeRoleFromUser(ctx, req)
 }
 
-func (p *kIdentityServiceClient) GetLastUserRoleAssignment(ctx context.Context, Req *identity_srv.GetLastUserRoleAssignmentRequest, callOptions ...callopt.Option) (r *identity_srv.GetLastUserRoleAssignmentResponse, err error) {
+func (p *kIdentityServiceClient) GetLastUserRoleAssignment(ctx context.Context, userID core.UUID, callOptions ...callopt.Option) (r *identity_srv.UserRoleAssignment, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetLastUserRoleAssignment(ctx, Req)
+	return p.kClient.GetLastUserRoleAssignment(ctx, userID)
 }
 
-func (p *kIdentityServiceClient) ListUserRoleAssignments(ctx context.Context, Req *identity_srv.UserRoleQueryRequest, callOptions ...callopt.Option) (r *identity_srv.UserRoleListResponse, err error) {
+func (p *kIdentityServiceClient) ListUserRoleAssignments(ctx context.Context, req *identity_srv.UserRoleQueryRequest, callOptions ...callopt.Option) (r *identity_srv.UserRoleListResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ListUserRoleAssignments(ctx, Req)
+	return p.kClient.ListUserRoleAssignments(ctx, req)
 }
 
-func (p *kIdentityServiceClient) GetUsersByRole(ctx context.Context, Req *identity_srv.GetUsersByRoleRequest, callOptions ...callopt.Option) (r *identity_srv.GetUsersByRoleResponse, err error) {
+func (p *kIdentityServiceClient) GetUsersByRole(ctx context.Context, req *identity_srv.GetUsersByRoleRequest, callOptions ...callopt.Option) (r *identity_srv.GetUsersByRoleResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetUsersByRole(ctx, Req)
+	return p.kClient.GetUsersByRole(ctx, req)
 }
 
-func (p *kIdentityServiceClient) BatchBindUsersToRole(ctx context.Context, Req *identity_srv.BatchBindUsersToRoleRequest, callOptions ...callopt.Option) (r *identity_srv.BatchBindUsersToRoleResponse, err error) {
+func (p *kIdentityServiceClient) BatchBindUsersToRole(ctx context.Context, req *identity_srv.BatchBindUsersToRoleRequest, callOptions ...callopt.Option) (r *identity_srv.BatchBindUsersToRoleResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.BatchBindUsersToRole(ctx, Req)
+	return p.kClient.BatchBindUsersToRole(ctx, req)
 }
 
-func (p *kIdentityServiceClient) BatchGetUserRoles(ctx context.Context, Req *identity_srv.BatchGetUserRolesRequest, callOptions ...callopt.Option) (r *identity_srv.BatchGetUserRolesResponse, err error) {
+func (p *kIdentityServiceClient) BatchGetUserRoles(ctx context.Context, req *identity_srv.BatchGetUserRolesRequest, callOptions ...callopt.Option) (r *identity_srv.BatchGetUserRolesResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.BatchGetUserRoles(ctx, Req)
+	return p.kClient.BatchGetUserRoles(ctx, req)
 }
 
-func (p *kIdentityServiceClient) UploadMenu(ctx context.Context, Req *identity_srv.UploadMenuRequest, callOptions ...callopt.Option) (r *identity_srv.UploadMenuResponse, err error) {
+func (p *kIdentityServiceClient) UploadMenu(ctx context.Context, req *identity_srv.UploadMenuRequest, callOptions ...callopt.Option) (err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UploadMenu(ctx, Req)
+	return p.kClient.UploadMenu(ctx, req)
 }
 
-func (p *kIdentityServiceClient) GetMenuTree(ctx context.Context, Req *identity_srv.GetMenuTreeRequest, callOptions ...callopt.Option) (r *identity_srv.GetMenuTreeResponse, err error) {
+func (p *kIdentityServiceClient) GetMenuTree(ctx context.Context, callOptions ...callopt.Option) (r *identity_srv.GetMenuTreeResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetMenuTree(ctx, Req)
+	return p.kClient.GetMenuTree(ctx)
 }
 
-func (p *kIdentityServiceClient) ConfigureRoleMenus(ctx context.Context, Req *identity_srv.ConfigureRoleMenusRequest, callOptions ...callopt.Option) (r *identity_srv.ConfigureRoleMenusResponse, err error) {
+func (p *kIdentityServiceClient) ConfigureRoleMenus(ctx context.Context, req *identity_srv.ConfigureRoleMenusRequest, callOptions ...callopt.Option) (r *identity_srv.ConfigureRoleMenusResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ConfigureRoleMenus(ctx, Req)
+	return p.kClient.ConfigureRoleMenus(ctx, req)
 }
 
-func (p *kIdentityServiceClient) GetRoleMenuTree(ctx context.Context, Req *identity_srv.GetRoleMenuTreeRequest, callOptions ...callopt.Option) (r *identity_srv.GetRoleMenuTreeResponse, err error) {
+func (p *kIdentityServiceClient) GetRoleMenuTree(ctx context.Context, req *identity_srv.GetRoleMenuTreeRequest, callOptions ...callopt.Option) (r *identity_srv.GetRoleMenuTreeResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetRoleMenuTree(ctx, Req)
+	return p.kClient.GetRoleMenuTree(ctx, req)
 }
 
-func (p *kIdentityServiceClient) GetUserMenuTree(ctx context.Context, Req *identity_srv.GetUserMenuTreeRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserMenuTreeResponse, err error) {
+func (p *kIdentityServiceClient) GetUserMenuTree(ctx context.Context, req *identity_srv.GetUserMenuTreeRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserMenuTreeResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetUserMenuTree(ctx, Req)
+	return p.kClient.GetUserMenuTree(ctx, req)
 }
 
-func (p *kIdentityServiceClient) GetRoleMenuPermissions(ctx context.Context, Req *identity_srv.GetRoleMenuPermissionsRequest, callOptions ...callopt.Option) (r *identity_srv.GetRoleMenuPermissionsResponse, err error) {
+func (p *kIdentityServiceClient) GetRoleMenuPermissions(ctx context.Context, req *identity_srv.GetRoleMenuPermissionsRequest, callOptions ...callopt.Option) (r *identity_srv.GetRoleMenuPermissionsResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetRoleMenuPermissions(ctx, Req)
+	return p.kClient.GetRoleMenuPermissions(ctx, req)
 }
 
-func (p *kIdentityServiceClient) HasMenuPermission(ctx context.Context, Req *identity_srv.HasMenuPermissionRequest, callOptions ...callopt.Option) (r *identity_srv.HasMenuPermissionResponse, err error) {
+func (p *kIdentityServiceClient) HasMenuPermission(ctx context.Context, req *identity_srv.HasMenuPermissionRequest, callOptions ...callopt.Option) (r *identity_srv.HasMenuPermissionResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.HasMenuPermission(ctx, Req)
+	return p.kClient.HasMenuPermission(ctx, req)
 }
 
-func (p *kIdentityServiceClient) GetUserMenuPermissions(ctx context.Context, Req *identity_srv.GetUserMenuPermissionsRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserMenuPermissionsResponse, err error) {
+func (p *kIdentityServiceClient) GetUserMenuPermissions(ctx context.Context, req *identity_srv.GetUserMenuPermissionsRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserMenuPermissionsResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetUserMenuPermissions(ctx, Req)
+	return p.kClient.GetUserMenuPermissions(ctx, req)
 }
 
-func (p *kIdentityServiceClient) CheckPermission(ctx context.Context, Req *identity_srv.CheckPermissionRequest, callOptions ...callopt.Option) (r *identity_srv.CheckPermissionResponse, err error) {
+func (p *kIdentityServiceClient) CheckPermission(ctx context.Context, req *identity_srv.CheckPermissionRequest, callOptions ...callopt.Option) (r *identity_srv.CheckPermissionResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.CheckPermission(ctx, Req)
+	return p.kClient.CheckPermission(ctx, req)
 }
 
-func (p *kIdentityServiceClient) SyncPolicies(ctx context.Context, Req *identity_srv.SyncPoliciesRequest, callOptions ...callopt.Option) (r *identity_srv.SyncPoliciesResponse, err error) {
+func (p *kIdentityServiceClient) SyncPolicies(ctx context.Context, callOptions ...callopt.Option) (r *identity_srv.SyncPoliciesResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.SyncPolicies(ctx, Req)
+	return p.kClient.SyncPolicies(ctx)
 }
 
-func (p *kIdentityServiceClient) GetUserDataScope(ctx context.Context, Req *identity_srv.GetUserDataScopeRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserDataScopeResponse, err error) {
+func (p *kIdentityServiceClient) GetUserDataScope(ctx context.Context, req *identity_srv.GetUserDataScopeRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserDataScopeResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetUserDataScope(ctx, Req)
+	return p.kClient.GetUserDataScope(ctx, req)
 }
 
-func (p *kIdentityServiceClient) CreateAuditLog(ctx context.Context, Req *identity_srv.CreateAuditLogRequest, callOptions ...callopt.Option) (r *identity_srv.CreateAuditLogResponse, err error) {
+func (p *kIdentityServiceClient) CreateAuditLog(ctx context.Context, req *identity_srv.CreateAuditLogRequest, callOptions ...callopt.Option) (err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.CreateAuditLog(ctx, Req)
+	return p.kClient.CreateAuditLog(ctx, req)
 }
 
-func (p *kIdentityServiceClient) ListAuditLogs(ctx context.Context, Req *identity_srv.ListAuditLogsRequest, callOptions ...callopt.Option) (r *identity_srv.ListAuditLogsResponse, err error) {
+func (p *kIdentityServiceClient) ListAuditLogs(ctx context.Context, req *identity_srv.ListAuditLogsRequest, callOptions ...callopt.Option) (r *identity_srv.ListAuditLogsResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ListAuditLogs(ctx, Req)
+	return p.kClient.ListAuditLogs(ctx, req)
+}
+
+func (p *kIdentityServiceClient) CreateOAuth2Client(ctx context.Context, req *identity_srv.CreateOAuth2ClientRequest, callOptions ...callopt.Option) (r *identity_srv.CreateOAuth2ClientResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CreateOAuth2Client(ctx, req)
+}
+
+func (p *kIdentityServiceClient) GetOAuth2Client(ctx context.Context, req *identity_srv.GetOAuth2ClientRequest, callOptions ...callopt.Option) (r *identity_srv.OAuth2Client, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetOAuth2Client(ctx, req)
+}
+
+func (p *kIdentityServiceClient) UpdateOAuth2Client(ctx context.Context, req *identity_srv.UpdateOAuth2ClientRequest, callOptions ...callopt.Option) (r *identity_srv.OAuth2Client, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UpdateOAuth2Client(ctx, req)
+}
+
+func (p *kIdentityServiceClient) DeleteOAuth2Client(ctx context.Context, req *identity_srv.DeleteOAuth2ClientRequest, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DeleteOAuth2Client(ctx, req)
+}
+
+func (p *kIdentityServiceClient) ListOAuth2Clients(ctx context.Context, req *identity_srv.ListOAuth2ClientsRequest, callOptions ...callopt.Option) (r *identity_srv.ListOAuth2ClientsResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ListOAuth2Clients(ctx, req)
+}
+
+func (p *kIdentityServiceClient) RotateOAuth2ClientSecret(ctx context.Context, req *identity_srv.RotateOAuth2ClientSecretRequest, callOptions ...callopt.Option) (r *identity_srv.RotateOAuth2ClientSecretResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.RotateOAuth2ClientSecret(ctx, req)
+}
+
+func (p *kIdentityServiceClient) GetOAuth2ClientForAuth(ctx context.Context, clientID string, callOptions ...callopt.Option) (r *identity_srv.GetOAuth2ClientForAuthResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetOAuth2ClientForAuth(ctx, clientID)
+}
+
+func (p *kIdentityServiceClient) ListOAuth2Scopes(ctx context.Context, req *identity_srv.ListOAuth2ScopesRequest, callOptions ...callopt.Option) (r *identity_srv.ListOAuth2ScopesResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ListOAuth2Scopes(ctx, req)
+}
+
+func (p *kIdentityServiceClient) SaveOAuth2Consent(ctx context.Context, req *identity_srv.SaveOAuth2ConsentRequest, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.SaveOAuth2Consent(ctx, req)
+}
+
+func (p *kIdentityServiceClient) GetOAuth2Consent(ctx context.Context, req *identity_srv.GetOAuth2ConsentRequest, callOptions ...callopt.Option) (r *identity_srv.GetOAuth2ConsentResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetOAuth2Consent(ctx, req)
+}
+
+func (p *kIdentityServiceClient) ListOAuth2Consents(ctx context.Context, req *identity_srv.ListOAuth2ConsentsRequest, callOptions ...callopt.Option) (r *identity_srv.ListOAuth2ConsentsResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ListOAuth2Consents(ctx, req)
+}
+
+func (p *kIdentityServiceClient) RevokeOAuth2Consent(ctx context.Context, req *identity_srv.RevokeOAuth2ConsentRequest, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.RevokeOAuth2Consent(ctx, req)
+}
+
+func (p *kIdentityServiceClient) CreateOAuth2AuthorizeCodeSession(ctx context.Context, req *identity_srv.OAuth2TokenSession, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CreateOAuth2AuthorizeCodeSession(ctx, req)
+}
+
+func (p *kIdentityServiceClient) GetOAuth2AuthorizeCodeSession(ctx context.Context, signature string, callOptions ...callopt.Option) (r *identity_srv.OAuth2TokenSession, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetOAuth2AuthorizeCodeSession(ctx, signature)
+}
+
+func (p *kIdentityServiceClient) InvalidateOAuth2AuthorizeCodeSession(ctx context.Context, signature string, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.InvalidateOAuth2AuthorizeCodeSession(ctx, signature)
+}
+
+func (p *kIdentityServiceClient) CreateOAuth2AccessTokenSession(ctx context.Context, req *identity_srv.OAuth2TokenSession, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CreateOAuth2AccessTokenSession(ctx, req)
+}
+
+func (p *kIdentityServiceClient) GetOAuth2AccessTokenSession(ctx context.Context, signature string, callOptions ...callopt.Option) (r *identity_srv.OAuth2TokenSession, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetOAuth2AccessTokenSession(ctx, signature)
+}
+
+func (p *kIdentityServiceClient) DeleteOAuth2AccessTokenSession(ctx context.Context, signature string, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DeleteOAuth2AccessTokenSession(ctx, signature)
+}
+
+func (p *kIdentityServiceClient) RevokeOAuth2AccessToken(ctx context.Context, requestID string, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.RevokeOAuth2AccessToken(ctx, requestID)
+}
+
+func (p *kIdentityServiceClient) CreateOAuth2RefreshTokenSession(ctx context.Context, req *identity_srv.OAuth2TokenSession, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CreateOAuth2RefreshTokenSession(ctx, req)
+}
+
+func (p *kIdentityServiceClient) GetOAuth2RefreshTokenSession(ctx context.Context, signature string, callOptions ...callopt.Option) (r *identity_srv.OAuth2TokenSession, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetOAuth2RefreshTokenSession(ctx, signature)
+}
+
+func (p *kIdentityServiceClient) DeleteOAuth2RefreshTokenSession(ctx context.Context, signature string, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DeleteOAuth2RefreshTokenSession(ctx, signature)
+}
+
+func (p *kIdentityServiceClient) RevokeOAuth2RefreshToken(ctx context.Context, requestID string, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.RevokeOAuth2RefreshToken(ctx, requestID)
+}
+
+func (p *kIdentityServiceClient) CreateOAuth2PKCESession(ctx context.Context, req *identity_srv.OAuth2TokenSession, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CreateOAuth2PKCESession(ctx, req)
+}
+
+func (p *kIdentityServiceClient) GetOAuth2PKCESession(ctx context.Context, signature string, callOptions ...callopt.Option) (r *identity_srv.OAuth2TokenSession, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetOAuth2PKCESession(ctx, signature)
+}
+
+func (p *kIdentityServiceClient) DeleteOAuth2PKCESession(ctx context.Context, signature string, callOptions ...callopt.Option) (err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DeleteOAuth2PKCESession(ctx, signature)
 }

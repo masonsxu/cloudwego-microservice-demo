@@ -428,6 +428,188 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"CreateOAuth2Client": kitex.NewMethodInfo(
+		createOAuth2ClientHandler,
+		newIdentityServiceCreateOAuth2ClientArgs,
+		newIdentityServiceCreateOAuth2ClientResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"GetOAuth2Client": kitex.NewMethodInfo(
+		getOAuth2ClientHandler,
+		newIdentityServiceGetOAuth2ClientArgs,
+		newIdentityServiceGetOAuth2ClientResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"UpdateOAuth2Client": kitex.NewMethodInfo(
+		updateOAuth2ClientHandler,
+		newIdentityServiceUpdateOAuth2ClientArgs,
+		newIdentityServiceUpdateOAuth2ClientResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"DeleteOAuth2Client": kitex.NewMethodInfo(
+		deleteOAuth2ClientHandler,
+		newIdentityServiceDeleteOAuth2ClientArgs,
+		newIdentityServiceDeleteOAuth2ClientResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"ListOAuth2Clients": kitex.NewMethodInfo(
+		listOAuth2ClientsHandler,
+		newIdentityServiceListOAuth2ClientsArgs,
+		newIdentityServiceListOAuth2ClientsResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"RotateOAuth2ClientSecret": kitex.NewMethodInfo(
+		rotateOAuth2ClientSecretHandler,
+		newIdentityServiceRotateOAuth2ClientSecretArgs,
+		newIdentityServiceRotateOAuth2ClientSecretResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"GetOAuth2ClientForAuth": kitex.NewMethodInfo(
+		getOAuth2ClientForAuthHandler,
+		newIdentityServiceGetOAuth2ClientForAuthArgs,
+		newIdentityServiceGetOAuth2ClientForAuthResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"ListOAuth2Scopes": kitex.NewMethodInfo(
+		listOAuth2ScopesHandler,
+		newIdentityServiceListOAuth2ScopesArgs,
+		newIdentityServiceListOAuth2ScopesResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"SaveOAuth2Consent": kitex.NewMethodInfo(
+		saveOAuth2ConsentHandler,
+		newIdentityServiceSaveOAuth2ConsentArgs,
+		newIdentityServiceSaveOAuth2ConsentResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"GetOAuth2Consent": kitex.NewMethodInfo(
+		getOAuth2ConsentHandler,
+		newIdentityServiceGetOAuth2ConsentArgs,
+		newIdentityServiceGetOAuth2ConsentResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"ListOAuth2Consents": kitex.NewMethodInfo(
+		listOAuth2ConsentsHandler,
+		newIdentityServiceListOAuth2ConsentsArgs,
+		newIdentityServiceListOAuth2ConsentsResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"RevokeOAuth2Consent": kitex.NewMethodInfo(
+		revokeOAuth2ConsentHandler,
+		newIdentityServiceRevokeOAuth2ConsentArgs,
+		newIdentityServiceRevokeOAuth2ConsentResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"CreateOAuth2AuthorizeCodeSession": kitex.NewMethodInfo(
+		createOAuth2AuthorizeCodeSessionHandler,
+		newIdentityServiceCreateOAuth2AuthorizeCodeSessionArgs,
+		newIdentityServiceCreateOAuth2AuthorizeCodeSessionResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"GetOAuth2AuthorizeCodeSession": kitex.NewMethodInfo(
+		getOAuth2AuthorizeCodeSessionHandler,
+		newIdentityServiceGetOAuth2AuthorizeCodeSessionArgs,
+		newIdentityServiceGetOAuth2AuthorizeCodeSessionResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"InvalidateOAuth2AuthorizeCodeSession": kitex.NewMethodInfo(
+		invalidateOAuth2AuthorizeCodeSessionHandler,
+		newIdentityServiceInvalidateOAuth2AuthorizeCodeSessionArgs,
+		newIdentityServiceInvalidateOAuth2AuthorizeCodeSessionResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"CreateOAuth2AccessTokenSession": kitex.NewMethodInfo(
+		createOAuth2AccessTokenSessionHandler,
+		newIdentityServiceCreateOAuth2AccessTokenSessionArgs,
+		newIdentityServiceCreateOAuth2AccessTokenSessionResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"GetOAuth2AccessTokenSession": kitex.NewMethodInfo(
+		getOAuth2AccessTokenSessionHandler,
+		newIdentityServiceGetOAuth2AccessTokenSessionArgs,
+		newIdentityServiceGetOAuth2AccessTokenSessionResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"DeleteOAuth2AccessTokenSession": kitex.NewMethodInfo(
+		deleteOAuth2AccessTokenSessionHandler,
+		newIdentityServiceDeleteOAuth2AccessTokenSessionArgs,
+		newIdentityServiceDeleteOAuth2AccessTokenSessionResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"RevokeOAuth2AccessToken": kitex.NewMethodInfo(
+		revokeOAuth2AccessTokenHandler,
+		newIdentityServiceRevokeOAuth2AccessTokenArgs,
+		newIdentityServiceRevokeOAuth2AccessTokenResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"CreateOAuth2RefreshTokenSession": kitex.NewMethodInfo(
+		createOAuth2RefreshTokenSessionHandler,
+		newIdentityServiceCreateOAuth2RefreshTokenSessionArgs,
+		newIdentityServiceCreateOAuth2RefreshTokenSessionResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"GetOAuth2RefreshTokenSession": kitex.NewMethodInfo(
+		getOAuth2RefreshTokenSessionHandler,
+		newIdentityServiceGetOAuth2RefreshTokenSessionArgs,
+		newIdentityServiceGetOAuth2RefreshTokenSessionResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"DeleteOAuth2RefreshTokenSession": kitex.NewMethodInfo(
+		deleteOAuth2RefreshTokenSessionHandler,
+		newIdentityServiceDeleteOAuth2RefreshTokenSessionArgs,
+		newIdentityServiceDeleteOAuth2RefreshTokenSessionResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"RevokeOAuth2RefreshToken": kitex.NewMethodInfo(
+		revokeOAuth2RefreshTokenHandler,
+		newIdentityServiceRevokeOAuth2RefreshTokenArgs,
+		newIdentityServiceRevokeOAuth2RefreshTokenResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"CreateOAuth2PKCESession": kitex.NewMethodInfo(
+		createOAuth2PKCESessionHandler,
+		newIdentityServiceCreateOAuth2PKCESessionArgs,
+		newIdentityServiceCreateOAuth2PKCESessionResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"GetOAuth2PKCESession": kitex.NewMethodInfo(
+		getOAuth2PKCESessionHandler,
+		newIdentityServiceGetOAuth2PKCESessionArgs,
+		newIdentityServiceGetOAuth2PKCESessionResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"DeleteOAuth2PKCESession": kitex.NewMethodInfo(
+		deleteOAuth2PKCESessionHandler,
+		newIdentityServiceDeleteOAuth2PKCESessionArgs,
+		newIdentityServiceDeleteOAuth2PKCESessionResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 }
 
 var (
@@ -7043,6 +7225,474 @@ func (p *ListAuditLogsResult) GetResult() interface{} {
 	return p.Success
 }
 
+func createOAuth2ClientHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceCreateOAuth2ClientArgs)
+	realResult := result.(*identity_srv.IdentityServiceCreateOAuth2ClientResult)
+	success, err := handler.(identity_srv.IdentityService).CreateOAuth2Client(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newIdentityServiceCreateOAuth2ClientArgs() interface{} {
+	return identity_srv.NewIdentityServiceCreateOAuth2ClientArgs()
+}
+
+func newIdentityServiceCreateOAuth2ClientResult() interface{} {
+	return identity_srv.NewIdentityServiceCreateOAuth2ClientResult()
+}
+
+func getOAuth2ClientHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceGetOAuth2ClientArgs)
+	realResult := result.(*identity_srv.IdentityServiceGetOAuth2ClientResult)
+	success, err := handler.(identity_srv.IdentityService).GetOAuth2Client(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newIdentityServiceGetOAuth2ClientArgs() interface{} {
+	return identity_srv.NewIdentityServiceGetOAuth2ClientArgs()
+}
+
+func newIdentityServiceGetOAuth2ClientResult() interface{} {
+	return identity_srv.NewIdentityServiceGetOAuth2ClientResult()
+}
+
+func updateOAuth2ClientHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceUpdateOAuth2ClientArgs)
+	realResult := result.(*identity_srv.IdentityServiceUpdateOAuth2ClientResult)
+	success, err := handler.(identity_srv.IdentityService).UpdateOAuth2Client(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newIdentityServiceUpdateOAuth2ClientArgs() interface{} {
+	return identity_srv.NewIdentityServiceUpdateOAuth2ClientArgs()
+}
+
+func newIdentityServiceUpdateOAuth2ClientResult() interface{} {
+	return identity_srv.NewIdentityServiceUpdateOAuth2ClientResult()
+}
+
+func deleteOAuth2ClientHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceDeleteOAuth2ClientArgs)
+
+	err := handler.(identity_srv.IdentityService).DeleteOAuth2Client(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func newIdentityServiceDeleteOAuth2ClientArgs() interface{} {
+	return identity_srv.NewIdentityServiceDeleteOAuth2ClientArgs()
+}
+
+func newIdentityServiceDeleteOAuth2ClientResult() interface{} {
+	return identity_srv.NewIdentityServiceDeleteOAuth2ClientResult()
+}
+
+func listOAuth2ClientsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceListOAuth2ClientsArgs)
+	realResult := result.(*identity_srv.IdentityServiceListOAuth2ClientsResult)
+	success, err := handler.(identity_srv.IdentityService).ListOAuth2Clients(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newIdentityServiceListOAuth2ClientsArgs() interface{} {
+	return identity_srv.NewIdentityServiceListOAuth2ClientsArgs()
+}
+
+func newIdentityServiceListOAuth2ClientsResult() interface{} {
+	return identity_srv.NewIdentityServiceListOAuth2ClientsResult()
+}
+
+func rotateOAuth2ClientSecretHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceRotateOAuth2ClientSecretArgs)
+	realResult := result.(*identity_srv.IdentityServiceRotateOAuth2ClientSecretResult)
+	success, err := handler.(identity_srv.IdentityService).RotateOAuth2ClientSecret(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newIdentityServiceRotateOAuth2ClientSecretArgs() interface{} {
+	return identity_srv.NewIdentityServiceRotateOAuth2ClientSecretArgs()
+}
+
+func newIdentityServiceRotateOAuth2ClientSecretResult() interface{} {
+	return identity_srv.NewIdentityServiceRotateOAuth2ClientSecretResult()
+}
+
+func getOAuth2ClientForAuthHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceGetOAuth2ClientForAuthArgs)
+	realResult := result.(*identity_srv.IdentityServiceGetOAuth2ClientForAuthResult)
+	success, err := handler.(identity_srv.IdentityService).GetOAuth2ClientForAuth(ctx, realArg.ClientID)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newIdentityServiceGetOAuth2ClientForAuthArgs() interface{} {
+	return identity_srv.NewIdentityServiceGetOAuth2ClientForAuthArgs()
+}
+
+func newIdentityServiceGetOAuth2ClientForAuthResult() interface{} {
+	return identity_srv.NewIdentityServiceGetOAuth2ClientForAuthResult()
+}
+
+func listOAuth2ScopesHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceListOAuth2ScopesArgs)
+	realResult := result.(*identity_srv.IdentityServiceListOAuth2ScopesResult)
+	success, err := handler.(identity_srv.IdentityService).ListOAuth2Scopes(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newIdentityServiceListOAuth2ScopesArgs() interface{} {
+	return identity_srv.NewIdentityServiceListOAuth2ScopesArgs()
+}
+
+func newIdentityServiceListOAuth2ScopesResult() interface{} {
+	return identity_srv.NewIdentityServiceListOAuth2ScopesResult()
+}
+
+func saveOAuth2ConsentHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceSaveOAuth2ConsentArgs)
+
+	err := handler.(identity_srv.IdentityService).SaveOAuth2Consent(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func newIdentityServiceSaveOAuth2ConsentArgs() interface{} {
+	return identity_srv.NewIdentityServiceSaveOAuth2ConsentArgs()
+}
+
+func newIdentityServiceSaveOAuth2ConsentResult() interface{} {
+	return identity_srv.NewIdentityServiceSaveOAuth2ConsentResult()
+}
+
+func getOAuth2ConsentHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceGetOAuth2ConsentArgs)
+	realResult := result.(*identity_srv.IdentityServiceGetOAuth2ConsentResult)
+	success, err := handler.(identity_srv.IdentityService).GetOAuth2Consent(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newIdentityServiceGetOAuth2ConsentArgs() interface{} {
+	return identity_srv.NewIdentityServiceGetOAuth2ConsentArgs()
+}
+
+func newIdentityServiceGetOAuth2ConsentResult() interface{} {
+	return identity_srv.NewIdentityServiceGetOAuth2ConsentResult()
+}
+
+func listOAuth2ConsentsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceListOAuth2ConsentsArgs)
+	realResult := result.(*identity_srv.IdentityServiceListOAuth2ConsentsResult)
+	success, err := handler.(identity_srv.IdentityService).ListOAuth2Consents(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newIdentityServiceListOAuth2ConsentsArgs() interface{} {
+	return identity_srv.NewIdentityServiceListOAuth2ConsentsArgs()
+}
+
+func newIdentityServiceListOAuth2ConsentsResult() interface{} {
+	return identity_srv.NewIdentityServiceListOAuth2ConsentsResult()
+}
+
+func revokeOAuth2ConsentHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceRevokeOAuth2ConsentArgs)
+
+	err := handler.(identity_srv.IdentityService).RevokeOAuth2Consent(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func newIdentityServiceRevokeOAuth2ConsentArgs() interface{} {
+	return identity_srv.NewIdentityServiceRevokeOAuth2ConsentArgs()
+}
+
+func newIdentityServiceRevokeOAuth2ConsentResult() interface{} {
+	return identity_srv.NewIdentityServiceRevokeOAuth2ConsentResult()
+}
+
+func createOAuth2AuthorizeCodeSessionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceCreateOAuth2AuthorizeCodeSessionArgs)
+
+	err := handler.(identity_srv.IdentityService).CreateOAuth2AuthorizeCodeSession(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func newIdentityServiceCreateOAuth2AuthorizeCodeSessionArgs() interface{} {
+	return identity_srv.NewIdentityServiceCreateOAuth2AuthorizeCodeSessionArgs()
+}
+
+func newIdentityServiceCreateOAuth2AuthorizeCodeSessionResult() interface{} {
+	return identity_srv.NewIdentityServiceCreateOAuth2AuthorizeCodeSessionResult()
+}
+
+func getOAuth2AuthorizeCodeSessionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceGetOAuth2AuthorizeCodeSessionArgs)
+	realResult := result.(*identity_srv.IdentityServiceGetOAuth2AuthorizeCodeSessionResult)
+	success, err := handler.(identity_srv.IdentityService).GetOAuth2AuthorizeCodeSession(ctx, realArg.Signature)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newIdentityServiceGetOAuth2AuthorizeCodeSessionArgs() interface{} {
+	return identity_srv.NewIdentityServiceGetOAuth2AuthorizeCodeSessionArgs()
+}
+
+func newIdentityServiceGetOAuth2AuthorizeCodeSessionResult() interface{} {
+	return identity_srv.NewIdentityServiceGetOAuth2AuthorizeCodeSessionResult()
+}
+
+func invalidateOAuth2AuthorizeCodeSessionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceInvalidateOAuth2AuthorizeCodeSessionArgs)
+
+	err := handler.(identity_srv.IdentityService).InvalidateOAuth2AuthorizeCodeSession(ctx, realArg.Signature)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func newIdentityServiceInvalidateOAuth2AuthorizeCodeSessionArgs() interface{} {
+	return identity_srv.NewIdentityServiceInvalidateOAuth2AuthorizeCodeSessionArgs()
+}
+
+func newIdentityServiceInvalidateOAuth2AuthorizeCodeSessionResult() interface{} {
+	return identity_srv.NewIdentityServiceInvalidateOAuth2AuthorizeCodeSessionResult()
+}
+
+func createOAuth2AccessTokenSessionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceCreateOAuth2AccessTokenSessionArgs)
+
+	err := handler.(identity_srv.IdentityService).CreateOAuth2AccessTokenSession(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func newIdentityServiceCreateOAuth2AccessTokenSessionArgs() interface{} {
+	return identity_srv.NewIdentityServiceCreateOAuth2AccessTokenSessionArgs()
+}
+
+func newIdentityServiceCreateOAuth2AccessTokenSessionResult() interface{} {
+	return identity_srv.NewIdentityServiceCreateOAuth2AccessTokenSessionResult()
+}
+
+func getOAuth2AccessTokenSessionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceGetOAuth2AccessTokenSessionArgs)
+	realResult := result.(*identity_srv.IdentityServiceGetOAuth2AccessTokenSessionResult)
+	success, err := handler.(identity_srv.IdentityService).GetOAuth2AccessTokenSession(ctx, realArg.Signature)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newIdentityServiceGetOAuth2AccessTokenSessionArgs() interface{} {
+	return identity_srv.NewIdentityServiceGetOAuth2AccessTokenSessionArgs()
+}
+
+func newIdentityServiceGetOAuth2AccessTokenSessionResult() interface{} {
+	return identity_srv.NewIdentityServiceGetOAuth2AccessTokenSessionResult()
+}
+
+func deleteOAuth2AccessTokenSessionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceDeleteOAuth2AccessTokenSessionArgs)
+
+	err := handler.(identity_srv.IdentityService).DeleteOAuth2AccessTokenSession(ctx, realArg.Signature)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func newIdentityServiceDeleteOAuth2AccessTokenSessionArgs() interface{} {
+	return identity_srv.NewIdentityServiceDeleteOAuth2AccessTokenSessionArgs()
+}
+
+func newIdentityServiceDeleteOAuth2AccessTokenSessionResult() interface{} {
+	return identity_srv.NewIdentityServiceDeleteOAuth2AccessTokenSessionResult()
+}
+
+func revokeOAuth2AccessTokenHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceRevokeOAuth2AccessTokenArgs)
+
+	err := handler.(identity_srv.IdentityService).RevokeOAuth2AccessToken(ctx, realArg.RequestID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func newIdentityServiceRevokeOAuth2AccessTokenArgs() interface{} {
+	return identity_srv.NewIdentityServiceRevokeOAuth2AccessTokenArgs()
+}
+
+func newIdentityServiceRevokeOAuth2AccessTokenResult() interface{} {
+	return identity_srv.NewIdentityServiceRevokeOAuth2AccessTokenResult()
+}
+
+func createOAuth2RefreshTokenSessionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceCreateOAuth2RefreshTokenSessionArgs)
+
+	err := handler.(identity_srv.IdentityService).CreateOAuth2RefreshTokenSession(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func newIdentityServiceCreateOAuth2RefreshTokenSessionArgs() interface{} {
+	return identity_srv.NewIdentityServiceCreateOAuth2RefreshTokenSessionArgs()
+}
+
+func newIdentityServiceCreateOAuth2RefreshTokenSessionResult() interface{} {
+	return identity_srv.NewIdentityServiceCreateOAuth2RefreshTokenSessionResult()
+}
+
+func getOAuth2RefreshTokenSessionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceGetOAuth2RefreshTokenSessionArgs)
+	realResult := result.(*identity_srv.IdentityServiceGetOAuth2RefreshTokenSessionResult)
+	success, err := handler.(identity_srv.IdentityService).GetOAuth2RefreshTokenSession(ctx, realArg.Signature)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newIdentityServiceGetOAuth2RefreshTokenSessionArgs() interface{} {
+	return identity_srv.NewIdentityServiceGetOAuth2RefreshTokenSessionArgs()
+}
+
+func newIdentityServiceGetOAuth2RefreshTokenSessionResult() interface{} {
+	return identity_srv.NewIdentityServiceGetOAuth2RefreshTokenSessionResult()
+}
+
+func deleteOAuth2RefreshTokenSessionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceDeleteOAuth2RefreshTokenSessionArgs)
+
+	err := handler.(identity_srv.IdentityService).DeleteOAuth2RefreshTokenSession(ctx, realArg.Signature)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func newIdentityServiceDeleteOAuth2RefreshTokenSessionArgs() interface{} {
+	return identity_srv.NewIdentityServiceDeleteOAuth2RefreshTokenSessionArgs()
+}
+
+func newIdentityServiceDeleteOAuth2RefreshTokenSessionResult() interface{} {
+	return identity_srv.NewIdentityServiceDeleteOAuth2RefreshTokenSessionResult()
+}
+
+func revokeOAuth2RefreshTokenHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceRevokeOAuth2RefreshTokenArgs)
+
+	err := handler.(identity_srv.IdentityService).RevokeOAuth2RefreshToken(ctx, realArg.RequestID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func newIdentityServiceRevokeOAuth2RefreshTokenArgs() interface{} {
+	return identity_srv.NewIdentityServiceRevokeOAuth2RefreshTokenArgs()
+}
+
+func newIdentityServiceRevokeOAuth2RefreshTokenResult() interface{} {
+	return identity_srv.NewIdentityServiceRevokeOAuth2RefreshTokenResult()
+}
+
+func createOAuth2PKCESessionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceCreateOAuth2PKCESessionArgs)
+
+	err := handler.(identity_srv.IdentityService).CreateOAuth2PKCESession(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func newIdentityServiceCreateOAuth2PKCESessionArgs() interface{} {
+	return identity_srv.NewIdentityServiceCreateOAuth2PKCESessionArgs()
+}
+
+func newIdentityServiceCreateOAuth2PKCESessionResult() interface{} {
+	return identity_srv.NewIdentityServiceCreateOAuth2PKCESessionResult()
+}
+
+func getOAuth2PKCESessionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceGetOAuth2PKCESessionArgs)
+	realResult := result.(*identity_srv.IdentityServiceGetOAuth2PKCESessionResult)
+	success, err := handler.(identity_srv.IdentityService).GetOAuth2PKCESession(ctx, realArg.Signature)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newIdentityServiceGetOAuth2PKCESessionArgs() interface{} {
+	return identity_srv.NewIdentityServiceGetOAuth2PKCESessionArgs()
+}
+
+func newIdentityServiceGetOAuth2PKCESessionResult() interface{} {
+	return identity_srv.NewIdentityServiceGetOAuth2PKCESessionResult()
+}
+
+func deleteOAuth2PKCESessionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*identity_srv.IdentityServiceDeleteOAuth2PKCESessionArgs)
+
+	err := handler.(identity_srv.IdentityService).DeleteOAuth2PKCESession(ctx, realArg.Signature)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func newIdentityServiceDeleteOAuth2PKCESessionArgs() interface{} {
+	return identity_srv.NewIdentityServiceDeleteOAuth2PKCESessionArgs()
+}
+
+func newIdentityServiceDeleteOAuth2PKCESessionResult() interface{} {
+	return identity_srv.NewIdentityServiceDeleteOAuth2PKCESessionResult()
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -7641,4 +8291,264 @@ func (p *kClient) ListAuditLogs(ctx context.Context, Req *identity_srv.ListAudit
 		return
 	}
 	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) CreateOAuth2Client(ctx context.Context, req *identity_srv.CreateOAuth2ClientRequest) (r *identity_srv.CreateOAuth2ClientResponse, err error) {
+	var _args identity_srv.IdentityServiceCreateOAuth2ClientArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceCreateOAuth2ClientResult
+	if err = p.c.Call(ctx, "CreateOAuth2Client", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetOAuth2Client(ctx context.Context, req *identity_srv.GetOAuth2ClientRequest) (r *identity_srv.OAuth2Client, err error) {
+	var _args identity_srv.IdentityServiceGetOAuth2ClientArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceGetOAuth2ClientResult
+	if err = p.c.Call(ctx, "GetOAuth2Client", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) UpdateOAuth2Client(ctx context.Context, req *identity_srv.UpdateOAuth2ClientRequest) (r *identity_srv.OAuth2Client, err error) {
+	var _args identity_srv.IdentityServiceUpdateOAuth2ClientArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceUpdateOAuth2ClientResult
+	if err = p.c.Call(ctx, "UpdateOAuth2Client", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) DeleteOAuth2Client(ctx context.Context, req *identity_srv.DeleteOAuth2ClientRequest) (err error) {
+	var _args identity_srv.IdentityServiceDeleteOAuth2ClientArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceDeleteOAuth2ClientResult
+	if err = p.c.Call(ctx, "DeleteOAuth2Client", &_args, &_result); err != nil {
+		return
+	}
+	return nil
+}
+
+func (p *kClient) ListOAuth2Clients(ctx context.Context, req *identity_srv.ListOAuth2ClientsRequest) (r *identity_srv.ListOAuth2ClientsResponse, err error) {
+	var _args identity_srv.IdentityServiceListOAuth2ClientsArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceListOAuth2ClientsResult
+	if err = p.c.Call(ctx, "ListOAuth2Clients", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) RotateOAuth2ClientSecret(ctx context.Context, req *identity_srv.RotateOAuth2ClientSecretRequest) (r *identity_srv.RotateOAuth2ClientSecretResponse, err error) {
+	var _args identity_srv.IdentityServiceRotateOAuth2ClientSecretArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceRotateOAuth2ClientSecretResult
+	if err = p.c.Call(ctx, "RotateOAuth2ClientSecret", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetOAuth2ClientForAuth(ctx context.Context, clientID string) (r *identity_srv.GetOAuth2ClientForAuthResponse, err error) {
+	var _args identity_srv.IdentityServiceGetOAuth2ClientForAuthArgs
+	_args.ClientID = clientID
+	var _result identity_srv.IdentityServiceGetOAuth2ClientForAuthResult
+	if err = p.c.Call(ctx, "GetOAuth2ClientForAuth", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) ListOAuth2Scopes(ctx context.Context, req *identity_srv.ListOAuth2ScopesRequest) (r *identity_srv.ListOAuth2ScopesResponse, err error) {
+	var _args identity_srv.IdentityServiceListOAuth2ScopesArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceListOAuth2ScopesResult
+	if err = p.c.Call(ctx, "ListOAuth2Scopes", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) SaveOAuth2Consent(ctx context.Context, req *identity_srv.SaveOAuth2ConsentRequest) (err error) {
+	var _args identity_srv.IdentityServiceSaveOAuth2ConsentArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceSaveOAuth2ConsentResult
+	if err = p.c.Call(ctx, "SaveOAuth2Consent", &_args, &_result); err != nil {
+		return
+	}
+	return nil
+}
+
+func (p *kClient) GetOAuth2Consent(ctx context.Context, req *identity_srv.GetOAuth2ConsentRequest) (r *identity_srv.GetOAuth2ConsentResponse, err error) {
+	var _args identity_srv.IdentityServiceGetOAuth2ConsentArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceGetOAuth2ConsentResult
+	if err = p.c.Call(ctx, "GetOAuth2Consent", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) ListOAuth2Consents(ctx context.Context, req *identity_srv.ListOAuth2ConsentsRequest) (r *identity_srv.ListOAuth2ConsentsResponse, err error) {
+	var _args identity_srv.IdentityServiceListOAuth2ConsentsArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceListOAuth2ConsentsResult
+	if err = p.c.Call(ctx, "ListOAuth2Consents", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) RevokeOAuth2Consent(ctx context.Context, req *identity_srv.RevokeOAuth2ConsentRequest) (err error) {
+	var _args identity_srv.IdentityServiceRevokeOAuth2ConsentArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceRevokeOAuth2ConsentResult
+	if err = p.c.Call(ctx, "RevokeOAuth2Consent", &_args, &_result); err != nil {
+		return
+	}
+	return nil
+}
+
+func (p *kClient) CreateOAuth2AuthorizeCodeSession(ctx context.Context, req *identity_srv.OAuth2TokenSession) (err error) {
+	var _args identity_srv.IdentityServiceCreateOAuth2AuthorizeCodeSessionArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceCreateOAuth2AuthorizeCodeSessionResult
+	if err = p.c.Call(ctx, "CreateOAuth2AuthorizeCodeSession", &_args, &_result); err != nil {
+		return
+	}
+	return nil
+}
+
+func (p *kClient) GetOAuth2AuthorizeCodeSession(ctx context.Context, signature string) (r *identity_srv.OAuth2TokenSession, err error) {
+	var _args identity_srv.IdentityServiceGetOAuth2AuthorizeCodeSessionArgs
+	_args.Signature = signature
+	var _result identity_srv.IdentityServiceGetOAuth2AuthorizeCodeSessionResult
+	if err = p.c.Call(ctx, "GetOAuth2AuthorizeCodeSession", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) InvalidateOAuth2AuthorizeCodeSession(ctx context.Context, signature string) (err error) {
+	var _args identity_srv.IdentityServiceInvalidateOAuth2AuthorizeCodeSessionArgs
+	_args.Signature = signature
+	var _result identity_srv.IdentityServiceInvalidateOAuth2AuthorizeCodeSessionResult
+	if err = p.c.Call(ctx, "InvalidateOAuth2AuthorizeCodeSession", &_args, &_result); err != nil {
+		return
+	}
+	return nil
+}
+
+func (p *kClient) CreateOAuth2AccessTokenSession(ctx context.Context, req *identity_srv.OAuth2TokenSession) (err error) {
+	var _args identity_srv.IdentityServiceCreateOAuth2AccessTokenSessionArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceCreateOAuth2AccessTokenSessionResult
+	if err = p.c.Call(ctx, "CreateOAuth2AccessTokenSession", &_args, &_result); err != nil {
+		return
+	}
+	return nil
+}
+
+func (p *kClient) GetOAuth2AccessTokenSession(ctx context.Context, signature string) (r *identity_srv.OAuth2TokenSession, err error) {
+	var _args identity_srv.IdentityServiceGetOAuth2AccessTokenSessionArgs
+	_args.Signature = signature
+	var _result identity_srv.IdentityServiceGetOAuth2AccessTokenSessionResult
+	if err = p.c.Call(ctx, "GetOAuth2AccessTokenSession", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) DeleteOAuth2AccessTokenSession(ctx context.Context, signature string) (err error) {
+	var _args identity_srv.IdentityServiceDeleteOAuth2AccessTokenSessionArgs
+	_args.Signature = signature
+	var _result identity_srv.IdentityServiceDeleteOAuth2AccessTokenSessionResult
+	if err = p.c.Call(ctx, "DeleteOAuth2AccessTokenSession", &_args, &_result); err != nil {
+		return
+	}
+	return nil
+}
+
+func (p *kClient) RevokeOAuth2AccessToken(ctx context.Context, requestID string) (err error) {
+	var _args identity_srv.IdentityServiceRevokeOAuth2AccessTokenArgs
+	_args.RequestID = requestID
+	var _result identity_srv.IdentityServiceRevokeOAuth2AccessTokenResult
+	if err = p.c.Call(ctx, "RevokeOAuth2AccessToken", &_args, &_result); err != nil {
+		return
+	}
+	return nil
+}
+
+func (p *kClient) CreateOAuth2RefreshTokenSession(ctx context.Context, req *identity_srv.OAuth2TokenSession) (err error) {
+	var _args identity_srv.IdentityServiceCreateOAuth2RefreshTokenSessionArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceCreateOAuth2RefreshTokenSessionResult
+	if err = p.c.Call(ctx, "CreateOAuth2RefreshTokenSession", &_args, &_result); err != nil {
+		return
+	}
+	return nil
+}
+
+func (p *kClient) GetOAuth2RefreshTokenSession(ctx context.Context, signature string) (r *identity_srv.OAuth2TokenSession, err error) {
+	var _args identity_srv.IdentityServiceGetOAuth2RefreshTokenSessionArgs
+	_args.Signature = signature
+	var _result identity_srv.IdentityServiceGetOAuth2RefreshTokenSessionResult
+	if err = p.c.Call(ctx, "GetOAuth2RefreshTokenSession", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) DeleteOAuth2RefreshTokenSession(ctx context.Context, signature string) (err error) {
+	var _args identity_srv.IdentityServiceDeleteOAuth2RefreshTokenSessionArgs
+	_args.Signature = signature
+	var _result identity_srv.IdentityServiceDeleteOAuth2RefreshTokenSessionResult
+	if err = p.c.Call(ctx, "DeleteOAuth2RefreshTokenSession", &_args, &_result); err != nil {
+		return
+	}
+	return nil
+}
+
+func (p *kClient) RevokeOAuth2RefreshToken(ctx context.Context, requestID string) (err error) {
+	var _args identity_srv.IdentityServiceRevokeOAuth2RefreshTokenArgs
+	_args.RequestID = requestID
+	var _result identity_srv.IdentityServiceRevokeOAuth2RefreshTokenResult
+	if err = p.c.Call(ctx, "RevokeOAuth2RefreshToken", &_args, &_result); err != nil {
+		return
+	}
+	return nil
+}
+
+func (p *kClient) CreateOAuth2PKCESession(ctx context.Context, req *identity_srv.OAuth2TokenSession) (err error) {
+	var _args identity_srv.IdentityServiceCreateOAuth2PKCESessionArgs
+	_args.Req = req
+	var _result identity_srv.IdentityServiceCreateOAuth2PKCESessionResult
+	if err = p.c.Call(ctx, "CreateOAuth2PKCESession", &_args, &_result); err != nil {
+		return
+	}
+	return nil
+}
+
+func (p *kClient) GetOAuth2PKCESession(ctx context.Context, signature string) (r *identity_srv.OAuth2TokenSession, err error) {
+	var _args identity_srv.IdentityServiceGetOAuth2PKCESessionArgs
+	_args.Signature = signature
+	var _result identity_srv.IdentityServiceGetOAuth2PKCESessionResult
+	if err = p.c.Call(ctx, "GetOAuth2PKCESession", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) DeleteOAuth2PKCESession(ctx context.Context, signature string) (err error) {
+	var _args identity_srv.IdentityServiceDeleteOAuth2PKCESessionArgs
+	_args.Signature = signature
+	var _result identity_srv.IdentityServiceDeleteOAuth2PKCESessionResult
+	if err = p.c.Call(ctx, "DeleteOAuth2PKCESession", &_args, &_result); err != nil {
+		return
+	}
+	return nil
 }
