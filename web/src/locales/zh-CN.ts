@@ -235,5 +235,51 @@ export default {
       logout: '登出',
       passwordChange: '密码修改'
     }
+  },
+  oauth2: {
+    title: 'OAuth2 应用管理',
+    client: {
+      title: '应用管理',
+      clientId: '客户端 ID',
+      clientName: '应用名称',
+      clientSecret: '客户端密钥',
+      clientType: '客户端类型',
+      confidential: '机密客户端',
+      public: '公共客户端',
+      grantTypes: '授权类型',
+      redirectUris: '回调地址',
+      scopes: '允许的作用域',
+      logoUri: 'Logo URL',
+      clientUri: '主页 URL',
+      accessTokenLifespan: 'Access Token 有效期',
+      refreshTokenLifespan: 'Refresh Token 有效期',
+      isActive: '启用状态',
+      enabled: '已启用',
+      disabled: '已禁用',
+      ownerIdLabel: '创建者',
+      createClient: '创建应用',
+      editClient: '编辑应用',
+      deleteConfirm: '确定要删除此 OAuth2 应用吗？删除后所有相关的令牌将失效。',
+      rotateSecret: '轮换密钥',
+      rotateSecretConfirm: '确定要轮换此应用的客户端密钥吗？旧密钥将立即失效。',
+      secretWarning: '请立即保存此密钥，关闭对话框后将无法再次查看。',
+      seconds: '秒',
+      grantType: {
+        authorizationCode: '授权码模式',
+        clientCredentials: '客户端凭证',
+        refreshToken: '刷新令牌'
+      }
+    },
+    scope: {
+      title: '作用域管理'
+    },
+    consent: {
+      title: '已授权应用',
+      revokeConfirm: '确定要撤销对此应用的授权吗？撤销后该应用将无法继续访问你的数据。',
+      grantedAt: '授权时间',
+      authorizedScopes: '授权范围',
+      revoke: '撤销授权',
+      noConsents: '暂无已授权的应用'
+    }
   }
 }

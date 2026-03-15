@@ -232,5 +232,51 @@ export default {
       logout: 'Logout',
       passwordChange: 'Password Change'
     }
+  },
+  oauth2: {
+    title: 'OAuth2 App Management',
+    client: {
+      title: 'App Management',
+      clientId: 'Client ID',
+      clientName: 'App Name',
+      clientSecret: 'Client Secret',
+      clientType: 'Client Type',
+      confidential: 'Confidential',
+      public: 'Public',
+      grantTypes: 'Grant Types',
+      redirectUris: 'Redirect URIs',
+      scopes: 'Allowed Scopes',
+      logoUri: 'Logo URL',
+      clientUri: 'Homepage URL',
+      accessTokenLifespan: 'Access Token Lifespan',
+      refreshTokenLifespan: 'Refresh Token Lifespan',
+      isActive: 'Status',
+      enabled: 'Enabled',
+      disabled: 'Disabled',
+      ownerIdLabel: 'Owner',
+      createClient: 'Create App',
+      editClient: 'Edit App',
+      deleteConfirm: 'Are you sure to delete this OAuth2 app? All related tokens will be invalidated.',
+      rotateSecret: 'Rotate Secret',
+      rotateSecretConfirm: 'Are you sure to rotate this app\'s client secret? The old secret will be invalidated immediately.',
+      secretWarning: 'Please save this secret now. It will not be shown again after closing this dialog.',
+      seconds: 'seconds',
+      grantType: {
+        authorizationCode: 'Authorization Code',
+        clientCredentials: 'Client Credentials',
+        refreshToken: 'Refresh Token'
+      }
+    },
+    scope: {
+      title: 'Scope Management'
+    },
+    consent: {
+      title: 'Authorized Apps',
+      revokeConfirm: 'Are you sure to revoke authorization for this app? The app will no longer be able to access your data.',
+      grantedAt: 'Granted At',
+      authorizedScopes: 'Authorized Scopes',
+      revoke: 'Revoke',
+      noConsents: 'No authorized apps'
+    }
   }
 }
