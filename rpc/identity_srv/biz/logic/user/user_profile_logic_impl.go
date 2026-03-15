@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal"
@@ -235,8 +236,23 @@ func (l *LogicImpl) DeleteUser(
 		return errno.ErrSystemUserCannotDelete
 	}
 
-	// 3. 执行软删除
+	// 3. 执行软删除（级联清理关联数据）
 	err = l.dal.WithTransaction(ctx, func(ctx context.Context, txDAL dal.DAL) error {
+		// 3a. 清理用户的角色分配记录
+		if err := txDAL.DB().WithContext(ctx).
+			Where("user_id = ?", *req.UserID).
+			Delete(&models.UserRoleAssignment{}).Error; err != nil {
+			return fmt.Errorf("清理用户角色分配失败: %w", err)
+		}
+
+		// 3b. 清理用户的组织成员关系
+		if err := txDAL.DB().WithContext(ctx).
+			Where("user_id = ?", *req.UserID).
+			Delete(&models.UserMembership{}).Error; err != nil {
+			return fmt.Errorf("清理用户成员关系失败: %w", err)
+		}
+
+		// 3c. 软删除用户档案
 		return txDAL.UserProfile().SoftDelete(ctx, *req.UserID)
 	})
 	if err != nil {
