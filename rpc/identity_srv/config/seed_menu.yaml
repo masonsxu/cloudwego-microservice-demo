@@ -30,3 +30,9 @@ menu:
         path: "audit-logs"
         icon: "IconAuditLogs"
         component: "views/system-settings/AuditLogs"
+
+      - name: "OAuth2 应用管理"
+        id: "oauth2_management"
+        path: "oauth2"
+        icon: "IconOAuth2"
+        component: "views/system-settings/OAuth2Management"

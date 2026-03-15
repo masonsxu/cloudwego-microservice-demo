@@ -12,6 +12,10 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/logo"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/membership"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/menu"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/oauth2client"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/oauth2consent"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/oauth2scope"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/oauth2token"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/organization"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/rolemenu"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/user"
@@ -54,6 +58,18 @@ type DAL interface {
 
 	// AuditLog 审计日志仓储
 	AuditLog() auditlog.AuditLogRepository
+
+	// OAuth2Client OAuth2 客户端仓储
+	OAuth2Client() oauth2client.OAuth2ClientRepository
+
+	// OAuth2Token OAuth2 令牌存储仓储
+	OAuth2Token() oauth2token.OAuth2TokenRepository
+
+	// OAuth2Consent OAuth2 授权同意仓储
+	OAuth2Consent() oauth2consent.OAuth2ConsentRepository
+
+	// OAuth2Scope OAuth2 作用域仓储
+	OAuth2Scope() oauth2scope.OAuth2ScopeRepository
 
 	// ============================================================================
 	// 事务管理

@@ -13,6 +13,10 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/logo"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/membership"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/menu"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/oauth2client"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/oauth2consent"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/oauth2scope"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/oauth2token"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/organization"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/rolemenu"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/user"
@@ -38,6 +42,10 @@ type DALImpl struct {
 	userRoleAssignmentRepo assignment.UserRoleAssignmentRepository
 	roleMenuPermissionRepo rolemenu.RoleMenuPermissionRepository
 	auditLogRepo           auditlog.AuditLogRepository
+	oauth2ClientRepo       oauth2client.OAuth2ClientRepository
+	oauth2TokenRepo        oauth2token.OAuth2TokenRepository
+	oauth2ConsentRepo      oauth2consent.OAuth2ConsentRepository
+	oauth2ScopeRepo        oauth2scope.OAuth2ScopeRepository
 
 	// 事务状态
 	isTransaction bool
@@ -58,6 +66,10 @@ func newDALImpl(db *gorm.DB) DAL {
 		userRoleAssignmentRepo: assignment.NewUserRoleAssignmentRepository(db),
 		roleMenuPermissionRepo: rolemenu.NewRoleMenuPermissionRepository(db),
 		auditLogRepo:           auditlog.NewAuditLogRepository(db),
+		oauth2ClientRepo:       oauth2client.NewOAuth2ClientRepository(db),
+		oauth2TokenRepo:        oauth2token.NewOAuth2TokenRepository(db),
+		oauth2ConsentRepo:      oauth2consent.NewOAuth2ConsentRepository(db),
+		oauth2ScopeRepo:        oauth2scope.NewOAuth2ScopeRepository(db),
 		isTransaction:          false,
 	}
 }
@@ -114,6 +126,26 @@ func (dal *DALImpl) RoleMenuPermission() rolemenu.RoleMenuPermissionRepository {
 // AuditLog 获取审计日志仓储
 func (dal *DALImpl) AuditLog() auditlog.AuditLogRepository {
 	return dal.auditLogRepo
+}
+
+// OAuth2Client 获取 OAuth2 客户端仓储
+func (dal *DALImpl) OAuth2Client() oauth2client.OAuth2ClientRepository {
+	return dal.oauth2ClientRepo
+}
+
+// OAuth2Token 获取 OAuth2 令牌存储仓储
+func (dal *DALImpl) OAuth2Token() oauth2token.OAuth2TokenRepository {
+	return dal.oauth2TokenRepo
+}
+
+// OAuth2Consent 获取 OAuth2 授权同意仓储
+func (dal *DALImpl) OAuth2Consent() oauth2consent.OAuth2ConsentRepository {
+	return dal.oauth2ConsentRepo
+}
+
+// OAuth2Scope 获取 OAuth2 作用域仓储
+func (dal *DALImpl) OAuth2Scope() oauth2scope.OAuth2ScopeRepository {
+	return dal.oauth2ScopeRepo
 }
 
 // ============================================================================
@@ -190,6 +222,10 @@ func (dal *DALImpl) WithDB(db *gorm.DB) DAL {
 		userRoleAssignmentRepo: assignment.NewUserRoleAssignmentRepository(db),
 		roleMenuPermissionRepo: rolemenu.NewRoleMenuPermissionRepository(db),
 		auditLogRepo:           auditlog.NewAuditLogRepository(db),
+		oauth2ClientRepo:       oauth2client.NewOAuth2ClientRepository(db),
+		oauth2TokenRepo:        oauth2token.NewOAuth2TokenRepository(db),
+		oauth2ConsentRepo:      oauth2consent.NewOAuth2ConsentRepository(db),
+		oauth2ScopeRepo:        oauth2scope.NewOAuth2ScopeRepository(db),
 		isTransaction:          dal.isTransaction,
 	}
 }

@@ -845,3 +845,258 @@ func (s *IdentityServiceImpl) ListAuditLogs(
 
 	return resp, nil
 }
+
+// CreateOAuth2Client implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) CreateOAuth2Client(
+	ctx context.Context,
+	req *identity_srv.CreateOAuth2ClientRequest,
+) (resp *identity_srv.CreateOAuth2ClientResponse, err error) {
+	resp, err = s.logic.CreateOAuth2Client(ctx, req)
+	if err != nil {
+		return nil, errno.ToKitexError(err)
+	}
+
+	return resp, nil
+}
+
+// GetOAuth2Client implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) GetOAuth2Client(
+	ctx context.Context,
+	req *identity_srv.GetOAuth2ClientRequest,
+) (resp *identity_srv.OAuth2Client, err error) {
+	resp, err = s.logic.GetOAuth2Client(ctx, req)
+	if err != nil {
+		return nil, errno.ToKitexError(err)
+	}
+
+	return resp, nil
+}
+
+// UpdateOAuth2Client implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) UpdateOAuth2Client(
+	ctx context.Context,
+	req *identity_srv.UpdateOAuth2ClientRequest,
+) (resp *identity_srv.OAuth2Client, err error) {
+	resp, err = s.logic.UpdateOAuth2Client(ctx, req)
+	if err != nil {
+		return nil, errno.ToKitexError(err)
+	}
+
+	return resp, nil
+}
+
+// DeleteOAuth2Client implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) DeleteOAuth2Client(
+	ctx context.Context,
+	req *identity_srv.DeleteOAuth2ClientRequest,
+) (err error) {
+	err = s.logic.DeleteOAuth2Client(ctx, req)
+	if err != nil {
+		return errno.ToKitexError(err)
+	}
+
+	return nil
+}
+
+// ListOAuth2Clients implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) ListOAuth2Clients(
+	ctx context.Context,
+	req *identity_srv.ListOAuth2ClientsRequest,
+) (resp *identity_srv.ListOAuth2ClientsResponse, err error) {
+	resp, err = s.logic.ListOAuth2Clients(ctx, req)
+	if err != nil {
+		return nil, errno.ToKitexError(err)
+	}
+
+	return resp, nil
+}
+
+// RotateOAuth2ClientSecret implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) RotateOAuth2ClientSecret(
+	ctx context.Context,
+	req *identity_srv.RotateOAuth2ClientSecretRequest,
+) (resp *identity_srv.RotateOAuth2ClientSecretResponse, err error) {
+	resp, err = s.logic.RotateOAuth2ClientSecret(ctx, req)
+	if err != nil {
+		return nil, errno.ToKitexError(err)
+	}
+
+	return resp, nil
+}
+
+// GetOAuth2ClientForAuth implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) GetOAuth2ClientForAuth(
+	ctx context.Context,
+	clientID string,
+) (resp *identity_srv.GetOAuth2ClientForAuthResponse, err error) {
+	resp, err = s.logic.GetOAuth2ClientForAuth(ctx, clientID)
+	if err != nil {
+		return nil, errno.ToKitexError(err)
+	}
+
+	return resp, nil
+}
+
+// ListOAuth2Scopes implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) ListOAuth2Scopes(
+	ctx context.Context,
+	req *identity_srv.ListOAuth2ScopesRequest,
+) (resp *identity_srv.ListOAuth2ScopesResponse, err error) {
+	resp, err = s.logic.ListOAuth2Scopes(ctx, req)
+	if err != nil {
+		return nil, errno.ToKitexError(err)
+	}
+
+	return resp, nil
+}
+
+// SaveOAuth2Consent implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) SaveOAuth2Consent(
+	ctx context.Context,
+	req *identity_srv.SaveOAuth2ConsentRequest,
+) (err error) {
+	err = s.logic.SaveOAuth2Consent(ctx, req)
+	if err != nil {
+		return errno.ToKitexError(err)
+	}
+
+	return nil
+}
+
+// GetOAuth2Consent implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) GetOAuth2Consent(
+	ctx context.Context,
+	req *identity_srv.GetOAuth2ConsentRequest,
+) (resp *identity_srv.GetOAuth2ConsentResponse, err error) {
+	resp, err = s.logic.GetOAuth2Consent(ctx, req)
+	if err != nil {
+		return nil, errno.ToKitexError(err)
+	}
+
+	return resp, nil
+}
+
+// ListOAuth2Consents implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) ListOAuth2Consents(
+	ctx context.Context,
+	req *identity_srv.ListOAuth2ConsentsRequest,
+) (resp *identity_srv.ListOAuth2ConsentsResponse, err error) {
+	resp, err = s.logic.ListOAuth2Consents(ctx, req)
+	if err != nil {
+		return nil, errno.ToKitexError(err)
+	}
+
+	return resp, nil
+}
+
+// RevokeOAuth2Consent implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) RevokeOAuth2Consent(
+	ctx context.Context,
+	req *identity_srv.RevokeOAuth2ConsentRequest,
+) (err error) {
+	err = s.logic.RevokeOAuth2Consent(ctx, req)
+	if err != nil {
+		return errno.ToKitexError(err)
+	}
+
+	return nil
+}
+
+// ===========================================================================
+// OAuth2 Token Storage (供 fosite 存储层通过 RPC 调用)
+// ===========================================================================
+
+// CreateOAuth2AuthorizeCodeSession implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) CreateOAuth2AuthorizeCodeSession(
+	ctx context.Context,
+	req *identity_srv.OAuth2TokenSession,
+) (err error) {
+	// TODO: 实现 Token 存储 RPC 接口（阶段三：fosite 存储持久化）
+	return nil
+}
+
+// GetOAuth2AuthorizeCodeSession implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) GetOAuth2AuthorizeCodeSession(
+	ctx context.Context,
+	signature string,
+) (resp *identity_srv.OAuth2TokenSession, err error) {
+	return nil, nil
+}
+
+// InvalidateOAuth2AuthorizeCodeSession implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) InvalidateOAuth2AuthorizeCodeSession(ctx context.Context, signature string) (err error) {
+	return nil
+}
+
+// CreateOAuth2AccessTokenSession implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) CreateOAuth2AccessTokenSession(
+	ctx context.Context,
+	req *identity_srv.OAuth2TokenSession,
+) (err error) {
+	return nil
+}
+
+// GetOAuth2AccessTokenSession implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) GetOAuth2AccessTokenSession(
+	ctx context.Context,
+	signature string,
+) (resp *identity_srv.OAuth2TokenSession, err error) {
+	return nil, nil
+}
+
+// DeleteOAuth2AccessTokenSession implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) DeleteOAuth2AccessTokenSession(ctx context.Context, signature string) (err error) {
+	return nil
+}
+
+// RevokeOAuth2AccessToken implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) RevokeOAuth2AccessToken(ctx context.Context, requestID string) (err error) {
+	return nil
+}
+
+// CreateOAuth2RefreshTokenSession implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) CreateOAuth2RefreshTokenSession(
+	ctx context.Context,
+	req *identity_srv.OAuth2TokenSession,
+) (err error) {
+	return nil
+}
+
+// GetOAuth2RefreshTokenSession implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) GetOAuth2RefreshTokenSession(
+	ctx context.Context,
+	signature string,
+) (resp *identity_srv.OAuth2TokenSession, err error) {
+	return nil, nil
+}
+
+// DeleteOAuth2RefreshTokenSession implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) DeleteOAuth2RefreshTokenSession(ctx context.Context, signature string) (err error) {
+	return nil
+}
+
+// RevokeOAuth2RefreshToken implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) RevokeOAuth2RefreshToken(ctx context.Context, requestID string) (err error) {
+	return nil
+}
+
+// CreateOAuth2PKCESession implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) CreateOAuth2PKCESession(
+	ctx context.Context,
+	req *identity_srv.OAuth2TokenSession,
+) (err error) {
+	return nil
+}
+
+// GetOAuth2PKCESession implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) GetOAuth2PKCESession(
+	ctx context.Context,
+	signature string,
+) (resp *identity_srv.OAuth2TokenSession, err error) {
+	return nil, nil
+}
+
+// DeleteOAuth2PKCESession implements the IdentityServiceImpl interface.
+func (s *IdentityServiceImpl) DeleteOAuth2PKCESession(ctx context.Context, signature string) (err error) {
+	return nil
+}
