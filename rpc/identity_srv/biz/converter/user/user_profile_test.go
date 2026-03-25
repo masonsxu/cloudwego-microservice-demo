@@ -19,27 +19,27 @@ type mockEnumConverter struct{}
 func (m *mockEnumConverter) ModelUserStatusToThrift(status models.UserStatus) core.UserStatus {
 	switch status {
 	case models.UserStatusActive:
-		return core.UserStatus_ACTIVE
+		return core.UserStatus_USER_STATUS_ACTIVE
 	case models.UserStatusInactive:
-		return core.UserStatus_INACTIVE
+		return core.UserStatus_USER_STATUS_INACTIVE
 	case models.UserStatusSuspended:
-		return core.UserStatus_SUSPENDED
+		return core.UserStatus_USER_STATUS_SUSPENDED
 	case models.UserStatusLocked:
-		return core.UserStatus_LOCKED
+		return core.UserStatus_USER_STATUS_LOCKED
 	default:
-		return core.UserStatus_INACTIVE
+		return core.UserStatus_USER_STATUS_INACTIVE
 	}
 }
 
 func (m *mockEnumConverter) ThriftUserStatusToModel(status core.UserStatus) models.UserStatus {
 	switch status {
-	case core.UserStatus_ACTIVE:
+	case core.UserStatus_USER_STATUS_ACTIVE:
 		return models.UserStatusActive
-	case core.UserStatus_INACTIVE:
+	case core.UserStatus_USER_STATUS_INACTIVE:
 		return models.UserStatusInactive
-	case core.UserStatus_SUSPENDED:
+	case core.UserStatus_USER_STATUS_SUSPENDED:
 		return models.UserStatusSuspended
-	case core.UserStatus_LOCKED:
+	case core.UserStatus_USER_STATUS_LOCKED:
 		return models.UserStatusLocked
 	default:
 		return models.UserStatusInactive
@@ -49,23 +49,23 @@ func (m *mockEnumConverter) ThriftUserStatusToModel(status core.UserStatus) mode
 func (m *mockEnumConverter) ModelRoleStatusToThrift(status models.RoleStatus) core.RoleStatus {
 	switch status {
 	case models.RoleStatusActive:
-		return core.RoleStatus_ACTIVE
+		return core.RoleStatus_ROLE_STATUS_ACTIVE
 	case models.RoleStatusInactive:
-		return core.RoleStatus_INACTIVE
+		return core.RoleStatus_ROLE_STATUS_INACTIVE
 	case models.RoleStatusDeprecated:
-		return core.RoleStatus_DEPRECATED
+		return core.RoleStatus_ROLE_STATUS_DEPRECATED
 	default:
-		return core.RoleStatus_INACTIVE
+		return core.RoleStatus_ROLE_STATUS_INACTIVE
 	}
 }
 
 func (m *mockEnumConverter) ThriftRoleStatusToModel(status core.RoleStatus) models.RoleStatus {
 	switch status {
-	case core.RoleStatus_ACTIVE:
+	case core.RoleStatus_ROLE_STATUS_ACTIVE:
 		return models.RoleStatusActive
-	case core.RoleStatus_INACTIVE:
+	case core.RoleStatus_ROLE_STATUS_INACTIVE:
 		return models.RoleStatusInactive
-	case core.RoleStatus_DEPRECATED:
+	case core.RoleStatus_ROLE_STATUS_DEPRECATED:
 		return models.RoleStatusDeprecated
 	default:
 		return models.RoleStatusInactive
@@ -75,19 +75,19 @@ func (m *mockEnumConverter) ThriftRoleStatusToModel(status core.RoleStatus) mode
 func (m *mockEnumConverter) ModelGenderToThrift(gender models.Gender) core.Gender {
 	switch gender {
 	case models.GenderMale:
-		return core.Gender_MALE
+		return core.Gender_GENDER_MALE
 	case models.GenderFemale:
-		return core.Gender_FEMALE
+		return core.Gender_GENDER_FEMALE
 	default:
-		return core.Gender_UNKNOWN
+		return core.Gender_GENDER_UNSPECIFIED
 	}
 }
 
 func (m *mockEnumConverter) ThriftGenderToModel(gender core.Gender) models.Gender {
 	switch gender {
-	case core.Gender_MALE:
+	case core.Gender_GENDER_MALE:
 		return models.GenderMale
-	case core.Gender_FEMALE:
+	case core.Gender_GENDER_FEMALE:
 		return models.GenderFemale
 	default:
 		return models.GenderUnknown
@@ -97,23 +97,23 @@ func (m *mockEnumConverter) ThriftGenderToModel(gender core.Gender) models.Gende
 func (m *mockEnumConverter) ModelDataScopeToThrift(scope models.DataScopeType) identity_srv.DataScope {
 	switch scope {
 	case models.DataScopeSelf:
-		return identity_srv.DataScope_SELF
+		return identity_srv.DataScope_DATA_SCOPE_SELF
 	case models.DataScopeDept:
-		return identity_srv.DataScope_DEPT
+		return identity_srv.DataScope_DATA_SCOPE_DEPT
 	case models.DataScopeOrg:
-		return identity_srv.DataScope_ORG
+		return identity_srv.DataScope_DATA_SCOPE_ORG
 	default:
-		return identity_srv.DataScope_SELF
+		return identity_srv.DataScope_DATA_SCOPE_SELF
 	}
 }
 
 func (m *mockEnumConverter) ThriftDataScopeToModel(scope identity_srv.DataScope) models.DataScopeType {
 	switch scope {
-	case identity_srv.DataScope_SELF:
+	case identity_srv.DataScope_DATA_SCOPE_SELF:
 		return models.DataScopeSelf
-	case identity_srv.DataScope_DEPT:
+	case identity_srv.DataScope_DATA_SCOPE_DEPT:
 		return models.DataScopeDept
-	case identity_srv.DataScope_ORG:
+	case identity_srv.DataScope_DATA_SCOPE_ORG:
 		return models.DataScopeOrg
 	default:
 		return models.DataScopeSelf
@@ -177,19 +177,19 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 		result := converter.ModelUserProfileToThrift(model)
 
 		require.NotNil(t, result)
-		assert.Equal(t, userID.String(), *result.ID)
+		assert.Equal(t, userID.String(), *result.Id)
 		assert.Equal(t, "testuser", *result.Username)
 		assert.Equal(t, "test@example.com", *result.Email)
 		assert.Equal(t, "13800138000", *result.Phone)
 		assert.Equal(t, "John", *result.FirstName)
 		assert.Equal(t, "Doe", *result.LastName)
 		assert.Equal(t, "John Doe", *result.RealName)
-		assert.Equal(t, core.Gender_MALE, *result.Gender)
+		assert.Equal(t, core.Gender_GENDER_MALE, *result.Gender)
 		assert.Equal(t, "Software Engineer", *result.ProfessionalTitle)
 		assert.Equal(t, "EMP001", *result.EmployeeID)
-		assert.Equal(t, core.UserStatus_ACTIVE, *result.Status)
-		assert.Equal(t, int32(2), result.LoginAttempts)
-		assert.True(t, result.MustChangePassword)
+		assert.Equal(t, core.UserStatus_USER_STATUS_ACTIVE, *result.Status)
+		assert.Equal(t, int32(2), *result.LoginAttempts)
+		assert.True(t, *result.MustChangePassword)
 		assert.Equal(t, &accountExpiry, result.AccountExpiry)
 		assert.Equal(t, createdBy.String(), *result.CreatedBy)
 		assert.Equal(t, updatedBy.String(), *result.UpdatedBy)
@@ -213,9 +213,9 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 		result := converter.ModelUserProfileToThrift(model)
 
 		require.NotNil(t, result)
-		assert.Equal(t, userID.String(), *result.ID)
+		assert.Equal(t, userID.String(), *result.Id)
 		assert.Equal(t, "minimal", *result.Username)
-		assert.Equal(t, core.UserStatus_INACTIVE, *result.Status)
+		assert.Equal(t, core.UserStatus_USER_STATUS_INACTIVE, *result.Status)
 		assert.Equal(t, &now, result.CreatedAt)
 		assert.Equal(t, &now, result.UpdatedAt)
 
@@ -228,8 +228,8 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 		assert.Nil(t, result.Gender)
 		assert.Nil(t, result.ProfessionalTitle)
 		assert.Nil(t, result.EmployeeID)
-		assert.Equal(t, int32(0), result.LoginAttempts)
-		assert.False(t, result.MustChangePassword)
+		assert.Nil(t, result.LoginAttempts)
+		assert.False(t, *result.MustChangePassword)
 		assert.Nil(t, result.AccountExpiry)
 		assert.Nil(t, result.CreatedBy)
 		assert.Nil(t, result.UpdatedBy)
@@ -298,14 +298,14 @@ func TestConverterImpl_ModelUserProfileToThrift(t *testing.T) {
 		assert.Nil(t, result.Gender)
 
 		// 零值登录尝试次数应该被忽略
-		assert.Equal(t, int32(0), result.LoginAttempts)
+		assert.Nil(t, result.LoginAttempts)
 
 		// 零值时间戳应该被忽略
 		assert.Nil(t, result.AccountExpiry)
 		assert.Nil(t, result.LastLoginTime)
 
 		// 布尔值总是设置
-		assert.False(t, result.MustChangePassword)
+		assert.False(t, *result.MustChangePassword)
 	})
 }
 
@@ -330,7 +330,7 @@ func TestConverterImpl_CreateUserRequestToModel(t *testing.T) {
 		firstName := "Jane"
 		lastName := "Smith"
 		realName := "Jane Smith"
-		gender := core.Gender_FEMALE
+		gender := core.Gender_GENDER_FEMALE
 		professionalTitle := "Product Manager"
 		employeeID := "EMP002"
 		mustChangePassword := true
@@ -428,7 +428,7 @@ func TestConverterImpl_ApplyUpdateUserToModel(t *testing.T) {
 		firstName := "Updated"
 		lastName := "Name"
 		realName := "Updated Name"
-		gender := core.Gender_MALE
+		gender := core.Gender_GENDER_MALE
 		professionalTitle := "Senior Engineer"
 		employeeID := "EMP003"
 
@@ -533,12 +533,12 @@ func TestConverterImpl_CompleteRoundTrip(t *testing.T) {
 		assert.Equal(t, original.FirstName, *thrift.FirstName)
 		assert.Equal(t, original.LastName, *thrift.LastName)
 		assert.Equal(t, original.RealName, *thrift.RealName)
-		assert.Equal(t, core.Gender_FEMALE, *thrift.Gender)
+		assert.Equal(t, core.Gender_GENDER_FEMALE, *thrift.Gender)
 		assert.Equal(t, original.ProfessionalTitle, *thrift.ProfessionalTitle)
 		assert.Equal(t, original.EmployeeID, *thrift.EmployeeID)
-		assert.Equal(t, core.UserStatus_ACTIVE, *thrift.Status)
-		assert.Equal(t, original.LoginAttempts, thrift.LoginAttempts)
-		assert.Equal(t, original.MustChangePassword, thrift.MustChangePassword)
+		assert.Equal(t, core.UserStatus_USER_STATUS_ACTIVE, *thrift.Status)
+		assert.Equal(t, original.LoginAttempts, *thrift.LoginAttempts)
+		assert.Equal(t, original.MustChangePassword, *thrift.MustChangePassword)
 		assert.Equal(t, original.AccountExpiry, thrift.AccountExpiry)
 	})
 
@@ -564,7 +564,7 @@ func TestConverterImpl_CompleteRoundTrip(t *testing.T) {
 		// 验证关键字段
 		assert.Equal(t, username, *thrift.Username)
 		assert.Equal(t, email, *thrift.Email)
-		assert.Equal(t, core.UserStatus_ACTIVE, *thrift.Status) // 默认激活状态
+		assert.Equal(t, core.UserStatus_USER_STATUS_ACTIVE, *thrift.Status) // 默认激活状态
 	})
 }
 
@@ -708,7 +708,7 @@ func BenchmarkConverterImpl_CreateUserRequestToModel(b *testing.B) {
 	firstName := "Benchmark"
 	lastName := "User"
 	realName := "Benchmark User"
-	gender := core.Gender_MALE
+	gender := core.Gender_GENDER_MALE
 	professionalTitle := "Performance Engineer"
 	employeeID := "EMP001"
 	mustChangePassword := false
@@ -746,7 +746,7 @@ func BenchmarkConverterImpl_ApplyUpdateUserToModel(b *testing.B) {
 	firstName := "Updated"
 	lastName := "Name"
 	realName := "Updated Name"
-	gender := core.Gender_FEMALE
+	gender := core.Gender_GENDER_FEMALE
 	professionalTitle := "Senior Engineer"
 	employeeID := "EMP002"
 	accountExpiry := time.Now().UnixMilli() + 86400000

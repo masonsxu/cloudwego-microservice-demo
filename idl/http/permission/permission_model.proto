@@ -1,0 +1,237 @@
+syntax = "proto3";
+
+package permission;
+
+option go_package = "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/permission";
+
+import "api.proto";
+import "google/protobuf/struct.proto";
+import "http/base/base.proto";
+
+enum PermissionLevel {
+  option allow_alias = true;
+
+  PERMISSION_LEVEL_NONE = 0;
+  PERMISSION_LEVEL_UNSPECIFIED = 0;
+  PERMISSION_LEVEL_READ = 1;
+  PERMISSION_LEVEL_WRITE = 2;
+  PERMISSION_LEVEL_FULL = 3;
+}
+
+message PermissionDTO {
+  optional string resource = 1;
+  optional string action = 2;
+  optional string description = 3;
+}
+
+message RoleDefinitionDTO {
+  optional string id = 1;
+  optional string name = 2;
+  optional string description = 3;
+  optional int32 status = 4;
+  repeated PermissionDTO permissions = 5;
+  optional bool isSystemRole = 6;
+  optional string createdBy = 7;
+  optional string updatedBy = 8;
+  optional int64 createdAt = 9;
+  optional int64 updatedAt = 10;
+  optional int64 userCount = 11;
+}
+
+message UserRoleAssignmentDTO {
+  optional string id = 1;
+  optional string userID = 2;
+  optional string roleID = 3;
+  optional string createdBy = 4;
+  optional string updatedBy = 5;
+  optional int64 createdAt = 6;
+  optional int64 updatedAt = 7;
+}
+
+message RoleDefinitionCreateRequestDTO {
+  optional string name = 1 [(api.body) = "name", (api.vd) = "@:len($) > 0; msg:'角色名称不能为空'"];
+  optional string description = 2 [(api.body) = "description"];
+  repeated PermissionDTO permissions = 3 [(api.body) = "permissions"];
+  optional bool isSystemRole = 4 [(api.body) = "is_system_role"];
+}
+
+message RoleDefinitionCreateResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1;
+  optional RoleDefinitionDTO role = 2;
+}
+
+message RoleDefinitionUpdateRequestDTO {
+  optional string roleDefinitionID = 1 [(api.path) = "roleDefinitionID", (api.vd) = "@:len($) > 0; msg:'角色定义ID不能为空'", (api.none) = "true"];
+  optional string description = 2 [(api.body) = "description"];
+  optional int32 status = 3 [(api.body) = "status"];
+  optional google.protobuf.ListValue permissions = 4 [(api.body) = "permissions"];
+  optional string name = 5 [(api.body) = "name"];
+}
+
+message RoleDefinitionUpdateResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1;
+  optional RoleDefinitionDTO role = 2;
+}
+
+message RoleDefinitionDeleteRequestDTO {
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true"];
+}
+
+message RoleDefinitionGetRequestDTO {
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true"];
+}
+
+message RoleDefinitionGetResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1;
+  optional RoleDefinitionDTO role = 2;
+}
+
+message RoleDefinitionQueryRequestDTO {
+  optional string name = 1 [(api.query) = "name"];
+  optional int32 status = 2 [(api.query) = "status"];
+  optional bool isSystemRole = 3 [(api.query) = "isSystemRole"];
+  optional http_base.PageRequestDTO page = 4 [(api.none) = "true"];
+}
+
+message RoleDefinitionListResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1;
+  repeated RoleDefinitionDTO roles = 2;
+  optional http_base.PageResponseDTO page = 3;
+}
+
+message AssignRoleToUserResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1;
+  optional string assignmentID = 2;
+}
+
+message GetLastUserRoleAssignmentRequestDTO {
+  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($) > 0; msg:'用户ID不能为空'", (api.none) = "true"];
+}
+
+message GetLastUserRoleAssignmentResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1;
+  optional UserRoleAssignmentDTO assignment = 2;
+}
+
+message UserRoleQueryRequestDTO {
+  optional string userID = 1 [(api.query) = "userID"];
+  optional string roleID = 2 [(api.query) = "roleID"];
+  optional http_base.PageRequestDTO page = 3 [(api.none) = "true"];
+}
+
+message UserRoleListResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1;
+  repeated UserRoleAssignmentDTO assignments = 2;
+  optional http_base.PageResponseDTO page = 3;
+}
+
+message GetUsersByRoleRequestDTO {
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true"];
+}
+
+message GetUsersByRoleResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1;
+  optional string roleID = 2;
+  repeated string userIDs = 3;
+}
+
+message BatchBindUsersToRoleRequestDTO {
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true"];
+  optional google.protobuf.ListValue userIDs = 2 [(api.body) = "userIDs", (api.vd) = "@:len($) > 0; msg:'用户ID列表不能为空'"];
+}
+
+message BatchBindUsersToRoleResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1;
+  optional bool success = 2;
+  optional int32 successCount = 3;
+  optional string message = 4;
+}
+
+message UploadMenuRequestDTO {
+  optional bytes menuFile = 1 [(api.form) = "menu_file"];
+}
+
+message MenuNodeDTO {
+  optional string name = 1;
+  optional string id = 2;
+  optional string path = 3;
+  optional string icon = 4;
+  optional string component = 5;
+  repeated MenuNodeDTO children = 6;
+  optional bool hasPermission = 7;
+  optional PermissionLevel permissionLevel = 8;
+}
+
+message GetMenuTreeResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1;
+  repeated MenuNodeDTO menuTree = 2;
+}
+
+message MenuConfigDTO {
+  optional string menuID = 1;
+  optional PermissionLevel permission = 2;
+}
+
+message MenuPermissionDTO {
+  optional string menuID = 1;
+  optional PermissionLevel permission = 2;
+}
+
+message ConfigureRoleMenusRequestDTO {
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true"];
+  optional google.protobuf.ListValue menuConfigs = 2 [(api.body) = "menuConfigs", (api.vd) = "@:len($) > 0; msg:'菜单配置列表不能为空'"];
+}
+
+message ConfigureRoleMenusResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1;
+  optional bool success = 2;
+  optional string message = 3;
+}
+
+message GetRoleMenuTreeRequestDTO {
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true"];
+}
+
+message GetRoleMenuTreeResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1;
+  repeated MenuNodeDTO menuTree = 2;
+  optional string roleID = 3;
+}
+
+message GetUserMenuTreeRequestDTO {
+  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($) > 0; msg:'用户ID不能为空'", (api.none) = "true"];
+}
+
+message GetUserMenuTreeResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1;
+  repeated MenuNodeDTO menuTree = 2;
+  optional string userID = 3;
+  repeated string roleIDs = 4;
+  repeated MenuPermissionDTO permissions = 5;
+}
+
+message GetRoleMenuPermissionsRequestDTO {
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true"];
+}
+
+message GetRoleMenuPermissionsResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1;
+  repeated MenuPermissionDTO permissions = 2;
+  optional string roleID = 3;
+}
+
+message HasMenuPermissionRequestDTO {
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true"];
+  optional string menuID = 2 [(api.query) = "menuID", (api.vd) = "@:len($) > 0; msg:'菜单ID不能为空'"];
+  optional PermissionLevel permission = 3 [(api.query) = "permission"];
+}
+
+message HasMenuPermissionResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1;
+  optional bool hasPermission = 2;
+  optional string roleID = 3;
+  optional string menuID = 4;
+  optional PermissionLevel permission = 5;
+}
+
+message GetMenuTreeRequestDTO {}

@@ -4,7 +4,6 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/convutil"
-	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 )
@@ -34,7 +33,7 @@ func (c *ConverterImpl) ModelDepartmentToThrift(
 	orgID := model.OrganizationID.String()
 
 	dto := &identity_srv.Department{
-		ID:             &id,
+		Id:             &id,
 		Name:           &name,
 		OrganizationID: &orgID,
 		CreatedAt:      &model.CreatedAt,
@@ -48,14 +47,7 @@ func (c *ConverterImpl) ModelDepartmentToThrift(
 
 	// 处理可用设备列表 JSON 字段
 	if model.AvailableEquipment != "" {
-		equipmentSlice := convutil.JSONToULIDSlice(model.AvailableEquipment)
-		if len(equipmentSlice) > 0 {
-			// 将 []string 转换为 []core.ULID
-			equipmentULIDs := make([]core.UUID, 0, len(equipmentSlice))
-			equipmentULIDs = append(equipmentULIDs, equipmentSlice...)
-
-			dto.AvailableEquipment = equipmentULIDs
-		}
+		dto.AvailableEquipment = convutil.JSONToULIDSlice(model.AvailableEquipment)
 	}
 
 	return dto

@@ -11,7 +11,6 @@ func NewServer(handler identity_srv.IdentityService, opts ...server.Option) serv
 	var options []server.Option
 
 	options = append(options, opts...)
-	options = append(options, server.WithCompatibleMiddlewareForUnary())
 
 	svr := server.NewServer(options...)
 	if err := svr.RegisterService(serviceInfo(), handler); err != nil {

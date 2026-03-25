@@ -19,27 +19,27 @@ type mockEnumConverter struct{}
 func (m *mockEnumConverter) ModelUserStatusToThrift(status models.UserStatus) core.UserStatus {
 	switch status {
 	case models.UserStatusActive:
-		return core.UserStatus_ACTIVE
+		return core.UserStatus_USER_STATUS_ACTIVE
 	case models.UserStatusInactive:
-		return core.UserStatus_INACTIVE
+		return core.UserStatus_USER_STATUS_INACTIVE
 	case models.UserStatusSuspended:
-		return core.UserStatus_SUSPENDED
+		return core.UserStatus_USER_STATUS_SUSPENDED
 	case models.UserStatusLocked:
-		return core.UserStatus_LOCKED
+		return core.UserStatus_USER_STATUS_LOCKED
 	default:
-		return core.UserStatus_INACTIVE
+		return core.UserStatus_USER_STATUS_INACTIVE
 	}
 }
 
 func (m *mockEnumConverter) ThriftUserStatusToModel(status core.UserStatus) models.UserStatus {
 	switch status {
-	case core.UserStatus_ACTIVE:
+	case core.UserStatus_USER_STATUS_ACTIVE:
 		return models.UserStatusActive
-	case core.UserStatus_INACTIVE:
+	case core.UserStatus_USER_STATUS_INACTIVE:
 		return models.UserStatusInactive
-	case core.UserStatus_SUSPENDED:
+	case core.UserStatus_USER_STATUS_SUSPENDED:
 		return models.UserStatusSuspended
-	case core.UserStatus_LOCKED:
+	case core.UserStatus_USER_STATUS_LOCKED:
 		return models.UserStatusLocked
 	default:
 		return models.UserStatusInactive
@@ -49,23 +49,23 @@ func (m *mockEnumConverter) ThriftUserStatusToModel(status core.UserStatus) mode
 func (m *mockEnumConverter) ModelRoleStatusToThrift(status models.RoleStatus) core.RoleStatus {
 	switch status {
 	case models.RoleStatusActive:
-		return core.RoleStatus_ACTIVE
+		return core.RoleStatus_ROLE_STATUS_ACTIVE
 	case models.RoleStatusInactive:
-		return core.RoleStatus_INACTIVE
+		return core.RoleStatus_ROLE_STATUS_INACTIVE
 	case models.RoleStatusDeprecated:
-		return core.RoleStatus_DEPRECATED
+		return core.RoleStatus_ROLE_STATUS_DEPRECATED
 	default:
-		return core.RoleStatus_INACTIVE
+		return core.RoleStatus_ROLE_STATUS_INACTIVE
 	}
 }
 
 func (m *mockEnumConverter) ThriftRoleStatusToModel(status core.RoleStatus) models.RoleStatus {
 	switch status {
-	case core.RoleStatus_ACTIVE:
+	case core.RoleStatus_ROLE_STATUS_ACTIVE:
 		return models.RoleStatusActive
-	case core.RoleStatus_INACTIVE:
+	case core.RoleStatus_ROLE_STATUS_INACTIVE:
 		return models.RoleStatusInactive
-	case core.RoleStatus_DEPRECATED:
+	case core.RoleStatus_ROLE_STATUS_DEPRECATED:
 		return models.RoleStatusDeprecated
 	default:
 		return models.RoleStatusInactive
@@ -75,19 +75,19 @@ func (m *mockEnumConverter) ThriftRoleStatusToModel(status core.RoleStatus) mode
 func (m *mockEnumConverter) ModelGenderToThrift(gender models.Gender) core.Gender {
 	switch gender {
 	case models.GenderMale:
-		return core.Gender_MALE
+		return core.Gender_GENDER_MALE
 	case models.GenderFemale:
-		return core.Gender_FEMALE
+		return core.Gender_GENDER_FEMALE
 	default:
-		return core.Gender_UNKNOWN
+		return core.Gender_GENDER_UNSPECIFIED
 	}
 }
 
 func (m *mockEnumConverter) ThriftGenderToModel(gender core.Gender) models.Gender {
 	switch gender {
-	case core.Gender_MALE:
+	case core.Gender_GENDER_MALE:
 		return models.GenderMale
-	case core.Gender_FEMALE:
+	case core.Gender_GENDER_FEMALE:
 		return models.GenderFemale
 	default:
 		return models.GenderUnknown
@@ -97,23 +97,23 @@ func (m *mockEnumConverter) ThriftGenderToModel(gender core.Gender) models.Gende
 func (m *mockEnumConverter) ModelDataScopeToThrift(scope models.DataScopeType) identity_srv.DataScope {
 	switch scope {
 	case models.DataScopeSelf:
-		return identity_srv.DataScope_SELF
+		return identity_srv.DataScope_DATA_SCOPE_SELF
 	case models.DataScopeDept:
-		return identity_srv.DataScope_DEPT
+		return identity_srv.DataScope_DATA_SCOPE_DEPT
 	case models.DataScopeOrg:
-		return identity_srv.DataScope_ORG
+		return identity_srv.DataScope_DATA_SCOPE_ORG
 	default:
-		return identity_srv.DataScope_SELF
+		return identity_srv.DataScope_DATA_SCOPE_SELF
 	}
 }
 
 func (m *mockEnumConverter) ThriftDataScopeToModel(scope identity_srv.DataScope) models.DataScopeType {
 	switch scope {
-	case identity_srv.DataScope_SELF:
+	case identity_srv.DataScope_DATA_SCOPE_SELF:
 		return models.DataScopeSelf
-	case identity_srv.DataScope_DEPT:
+	case identity_srv.DataScope_DATA_SCOPE_DEPT:
 		return models.DataScopeDept
-	case identity_srv.DataScope_ORG:
+	case identity_srv.DataScope_DATA_SCOPE_ORG:
 		return models.DataScopeOrg
 	default:
 		return models.DataScopeSelf
@@ -166,8 +166,8 @@ func TestConverterImpl_ModelToThrift(t *testing.T) {
 		assert.Equal(t, roleID.String(), *result.Id)
 		assert.Equal(t, "Admin", *result.Name)
 		assert.Equal(t, "Administrator role with full permissions", *result.Description)
-		assert.Equal(t, core.RoleStatus_ACTIVE, *result.Status)
-		assert.Equal(t, true, result.IsSystemRole)
+		assert.Equal(t, core.RoleStatus_ROLE_STATUS_ACTIVE, *result.Status)
+		assert.True(t, *result.IsSystemRole)
 		assert.Equal(t, createdByID.String(), *result.CreatedBy)
 		assert.Equal(t, updatedByID.String(), *result.UpdatedBy)
 		assert.Equal(t, nowMs, *result.CreatedAt)
@@ -203,8 +203,8 @@ func TestConverterImpl_ModelToThrift(t *testing.T) {
 		assert.Equal(t, roleID.String(), *result.Id)
 		assert.Equal(t, "User", *result.Name)
 		assert.Equal(t, "Regular user role", *result.Description)
-		assert.Equal(t, core.RoleStatus_INACTIVE, *result.Status)
-		assert.Equal(t, false, result.IsSystemRole)
+		assert.Equal(t, core.RoleStatus_ROLE_STATUS_INACTIVE, *result.Status)
+		assert.False(t, *result.IsSystemRole)
 		assert.Nil(t, result.CreatedBy)
 		assert.Nil(t, result.UpdatedBy)
 		assert.Equal(t, nowMs, *result.CreatedAt)
@@ -239,8 +239,8 @@ func TestConverterImpl_ModelToThrift(t *testing.T) {
 		assert.Equal(t, roleID.String(), *result.Id)
 		assert.Equal(t, "Legacy", *result.Name)
 		assert.Equal(t, "Deprecated legacy role", *result.Description)
-		assert.Equal(t, core.RoleStatus_DEPRECATED, *result.Status)
-		assert.Equal(t, false, result.IsSystemRole)
+		assert.Equal(t, core.RoleStatus_ROLE_STATUS_DEPRECATED, *result.Status)
+		assert.False(t, *result.IsSystemRole)
 		assert.Nil(t, result.CreatedBy)
 		assert.Nil(t, result.UpdatedBy)
 		assert.Equal(t, nowMs, *result.CreatedAt)
@@ -275,8 +275,8 @@ func TestConverterImpl_ModelToThrift(t *testing.T) {
 		assert.Equal(t, roleID.String(), *result.Id)
 		assert.Equal(t, "Test", *result.Name)
 		assert.Nil(t, result.Description) // 空描述应该被转换为nil
-		assert.Equal(t, core.RoleStatus_ACTIVE, *result.Status)
-		assert.Equal(t, false, result.IsSystemRole)
+		assert.Equal(t, core.RoleStatus_ROLE_STATUS_ACTIVE, *result.Status)
+		assert.False(t, *result.IsSystemRole)
 		assert.Nil(t, result.CreatedBy)
 		assert.Nil(t, result.UpdatedBy)
 		assert.Equal(t, nowMs, *result.CreatedAt)
@@ -312,8 +312,8 @@ func TestConverterImpl_ModelToThrift(t *testing.T) {
 		assert.Equal(t, roleID.String(), *result.Id)
 		assert.Equal(t, "CreatorOnly", *result.Name)
 		assert.Equal(t, "Role with only creator", *result.Description)
-		assert.Equal(t, core.RoleStatus_ACTIVE, *result.Status)
-		assert.Equal(t, false, result.IsSystemRole)
+		assert.Equal(t, core.RoleStatus_ROLE_STATUS_ACTIVE, *result.Status)
+		assert.False(t, *result.IsSystemRole)
 		assert.Equal(t, createdByID.String(), *result.CreatedBy)
 		assert.Nil(t, result.UpdatedBy)
 		assert.Equal(t, nowMs, *result.CreatedAt)
@@ -349,8 +349,8 @@ func TestConverterImpl_ModelToThrift(t *testing.T) {
 		assert.Equal(t, roleID.String(), *result.Id)
 		assert.Equal(t, "UpdaterOnly", *result.Name)
 		assert.Equal(t, "Role with only updater", *result.Description)
-		assert.Equal(t, core.RoleStatus_ACTIVE, *result.Status)
-		assert.Equal(t, false, result.IsSystemRole)
+		assert.Equal(t, core.RoleStatus_ROLE_STATUS_ACTIVE, *result.Status)
+		assert.False(t, *result.IsSystemRole)
 		assert.Nil(t, result.CreatedBy)
 		assert.Equal(t, updatedByID.String(), *result.UpdatedBy)
 		assert.Equal(t, nowMs, *result.CreatedAt)
@@ -385,8 +385,8 @@ func TestConverterImpl_ModelToThrift(t *testing.T) {
 		assert.Equal(t, roleID.String(), *result.Id)
 		assert.Equal(t, "Popular", *result.Name)
 		assert.Equal(t, "Popular role with many users", *result.Description)
-		assert.Equal(t, core.RoleStatus_ACTIVE, *result.Status)
-		assert.Equal(t, false, result.IsSystemRole)
+		assert.Equal(t, core.RoleStatus_ROLE_STATUS_ACTIVE, *result.Status)
+		assert.False(t, *result.IsSystemRole)
 		assert.Nil(t, result.CreatedBy)
 		assert.Nil(t, result.UpdatedBy)
 		assert.Equal(t, nowMs, *result.CreatedAt)
@@ -480,22 +480,22 @@ func TestMockEnumConverter_DataScope(t *testing.T) {
 			{
 				name:     "DataScopeSelf",
 				input:    models.DataScopeSelf,
-				expected: identity_srv.DataScope_SELF,
+				expected: identity_srv.DataScope_DATA_SCOPE_SELF,
 			},
 			{
 				name:     "DataScopeDept",
 				input:    models.DataScopeDept,
-				expected: identity_srv.DataScope_DEPT,
+				expected: identity_srv.DataScope_DATA_SCOPE_DEPT,
 			},
 			{
 				name:     "DataScopeOrg",
 				input:    models.DataScopeOrg,
-				expected: identity_srv.DataScope_ORG,
+				expected: identity_srv.DataScope_DATA_SCOPE_ORG,
 			},
 			{
 				name:     "Invalid DataScope",
 				input:    models.DataScopeType(0),
-				expected: identity_srv.DataScope_SELF, // 默认值
+				expected: identity_srv.DataScope_DATA_SCOPE_SELF, // 默认值
 			},
 		}
 
@@ -515,17 +515,17 @@ func TestMockEnumConverter_DataScope(t *testing.T) {
 		}{
 			{
 				name:     "DataScope_SELF",
-				input:    identity_srv.DataScope_SELF,
+				input:    identity_srv.DataScope_DATA_SCOPE_SELF,
 				expected: models.DataScopeSelf,
 			},
 			{
 				name:     "DataScope_DEPT",
-				input:    identity_srv.DataScope_DEPT,
+				input:    identity_srv.DataScope_DATA_SCOPE_DEPT,
 				expected: models.DataScopeDept,
 			},
 			{
 				name:     "DataScope_ORG",
-				input:    identity_srv.DataScope_ORG,
+				input:    identity_srv.DataScope_DATA_SCOPE_ORG,
 				expected: models.DataScopeOrg,
 			},
 			{
@@ -593,7 +593,7 @@ func TestConverterImpl_ModelToThrift_WithDefaultScope(t *testing.T) {
 		assert.Equal(t, roleID.String(), *result.Id)
 		assert.Equal(t, "SelfScopeRole", *result.Name)
 		assert.NotNil(t, result.DefaultScope)
-		assert.Equal(t, identity_srv.DataScope_SELF, *result.DefaultScope)
+		assert.Equal(t, identity_srv.DataScope_DATA_SCOPE_SELF, *result.DefaultScope)
 	})
 
 	t.Run("DataScopeDept 转换", func(t *testing.T) {
@@ -621,7 +621,7 @@ func TestConverterImpl_ModelToThrift_WithDefaultScope(t *testing.T) {
 		assert.Equal(t, roleID.String(), *result.Id)
 		assert.Equal(t, "DeptScopeRole", *result.Name)
 		assert.NotNil(t, result.DefaultScope)
-		assert.Equal(t, identity_srv.DataScope_DEPT, *result.DefaultScope)
+		assert.Equal(t, identity_srv.DataScope_DATA_SCOPE_DEPT, *result.DefaultScope)
 	})
 
 	t.Run("DataScopeOrg 转换", func(t *testing.T) {
@@ -649,7 +649,7 @@ func TestConverterImpl_ModelToThrift_WithDefaultScope(t *testing.T) {
 		assert.Equal(t, roleID.String(), *result.Id)
 		assert.Equal(t, "OrgScopeRole", *result.Name)
 		assert.NotNil(t, result.DefaultScope)
-		assert.Equal(t, identity_srv.DataScope_ORG, *result.DefaultScope)
+		assert.Equal(t, identity_srv.DataScope_DATA_SCOPE_ORG, *result.DefaultScope)
 	})
 
 	t.Run("零值 DefaultScope 处理", func(t *testing.T) {
@@ -678,7 +678,7 @@ func TestConverterImpl_ModelToThrift_WithDefaultScope(t *testing.T) {
 		assert.Equal(t, "ZeroScopeRole", *result.Name)
 		// 零值应该被转换为默认值 DataScope_SELF
 		assert.NotNil(t, result.DefaultScope)
-		assert.Equal(t, identity_srv.DataScope_SELF, *result.DefaultScope)
+		assert.Equal(t, identity_srv.DataScope_DATA_SCOPE_SELF, *result.DefaultScope)
 	})
 }
 
@@ -698,7 +698,7 @@ func BenchmarkMockEnumConverter_DataScope(b *testing.B) {
 		b.ResetTimer()
 
 		for i := 0; i < b.N; i++ {
-			_ = mockEnumConv.ThriftDataScopeToModel(identity_srv.DataScope_ORG)
+			_ = mockEnumConv.ThriftDataScopeToModel(identity_srv.DataScope_DATA_SCOPE_ORG)
 		}
 	})
 }

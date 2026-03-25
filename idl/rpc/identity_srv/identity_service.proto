@@ -1,0 +1,693 @@
+syntax = "proto3";
+
+package identity_srv;
+
+option go_package = "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv";
+
+import "base/core.proto";
+import "base/enums.proto";
+import "rpc/base/base.proto";
+import "rpc/identity_srv/identity_model.proto";
+
+service IdentityService {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
+  rpc ResetPassword(ResetPasswordRequest) returns (ResetPasswordResponse);
+  rpc ForcePasswordChange(ForcePasswordChangeRequest) returns (ForcePasswordChangeResponse);
+
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+  rpc SearchUsers(SearchUsersRequest) returns (SearchUsersResponse);
+  rpc ChangeUserStatus(ChangeUserStatusRequest) returns (ChangeUserStatusResponse);
+  rpc UnlockUser(UnlockUserRequest) returns (UnlockUserResponse);
+
+  rpc CreateOrganization(CreateOrganizationRequest) returns (CreateOrganizationResponse);
+  rpc GetOrganization(GetOrganizationRequest) returns (GetOrganizationResponse);
+  rpc UpdateOrganization(UpdateOrganizationRequest) returns (UpdateOrganizationResponse);
+  rpc DeleteOrganization(DeleteOrganizationRequest) returns (DeleteOrganizationResponse);
+  rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse);
+  rpc AddMembership(AddMembershipRequest) returns (AddMembershipResponse);
+  rpc UpdateMembership(UpdateMembershipRequest) returns (UpdateMembershipResponse);
+  rpc RemoveMembership(RemoveMembershipRequest) returns (RemoveMembershipResponse);
+  rpc GetMembership(GetMembershipRequest) returns (GetMembershipResponse);
+  rpc GetUserMemberships(GetUserMembershipsRequest) returns (GetUserMembershipsResponse);
+  rpc GetPrimaryMembership(GetPrimaryMembershipRequest) returns (GetPrimaryMembershipResponse);
+  rpc CheckMembership(CheckMembershipRequest) returns (CheckMembershipResponse);
+
+  rpc CreateDepartment(CreateDepartmentRequest) returns (CreateDepartmentResponse);
+  rpc GetDepartment(GetDepartmentRequest) returns (GetDepartmentResponse);
+  rpc UpdateDepartment(UpdateDepartmentRequest) returns (UpdateDepartmentResponse);
+  rpc DeleteDepartment(DeleteDepartmentRequest) returns (DeleteDepartmentResponse);
+  rpc GetOrganizationDepartments(GetOrganizationDepartmentsRequest) returns (GetOrganizationDepartmentsResponse);
+
+  rpc UploadTemporaryLogo(UploadTemporaryLogoRequest) returns (UploadTemporaryLogoResponse);
+  rpc GetOrganizationLogo(GetOrganizationLogoRequest) returns (GetOrganizationLogoResponse);
+  rpc DeleteOrganizationLogo(DeleteOrganizationLogoRequest) returns (DeleteOrganizationLogoResponse);
+  rpc BindLogoToOrganization(BindLogoToOrganizationRequest) returns (BindLogoToOrganizationResponse);
+
+  rpc CreateRoleDefinition(RoleDefinitionCreateRequest) returns (CreateRoleDefinitionResponse);
+  rpc UpdateRoleDefinition(RoleDefinitionUpdateRequest) returns (UpdateRoleDefinitionResponse);
+  rpc DeleteRoleDefinition(DeleteRoleDefinitionRequest) returns (DeleteRoleDefinitionResponse);
+  rpc GetRoleDefinition(GetRoleDefinitionRequest) returns (GetRoleDefinitionResponse);
+  rpc ListRoleDefinitions(RoleDefinitionQueryRequest) returns (RoleDefinitionListResponse);
+  rpc AssignRoleToUser(AssignRoleToUserRequest) returns (UserRoleAssignmentResponse);
+  rpc UpdateUserRoleAssignment(UpdateUserRoleAssignmentRequest) returns (UpdateUserRoleAssignmentResponse);
+  rpc RevokeRoleFromUser(RevokeRoleFromUserRequest) returns (RevokeRoleFromUserResponse);
+  rpc GetLastUserRoleAssignment(GetLastUserRoleAssignmentRequest) returns (GetLastUserRoleAssignmentResponse);
+  rpc ListUserRoleAssignments(UserRoleQueryRequest) returns (UserRoleListResponse);
+  rpc GetUsersByRole(GetUsersByRoleRequest) returns (GetUsersByRoleResponse);
+  rpc BatchBindUsersToRole(BatchBindUsersToRoleRequest) returns (BatchBindUsersToRoleResponse);
+  rpc BatchGetUserRoles(BatchGetUserRolesRequest) returns (BatchGetUserRolesResponse);
+
+  rpc UploadMenu(UploadMenuRequest) returns (UploadMenuResponse);
+  rpc GetMenuTree(GetMenuTreeRequest) returns (GetMenuTreeResponse);
+
+  rpc ConfigureRoleMenus(ConfigureRoleMenusRequest) returns (ConfigureRoleMenusResponse);
+  rpc GetRoleMenuTree(GetRoleMenuTreeRequest) returns (GetRoleMenuTreeResponse);
+  rpc GetUserMenuTree(GetUserMenuTreeRequest) returns (GetUserMenuTreeResponse);
+  rpc GetRoleMenuPermissions(GetRoleMenuPermissionsRequest) returns (GetRoleMenuPermissionsResponse);
+  rpc HasMenuPermission(HasMenuPermissionRequest) returns (HasMenuPermissionResponse);
+  rpc GetUserMenuPermissions(GetUserMenuPermissionsRequest) returns (GetUserMenuPermissionsResponse);
+
+  rpc CheckPermission(CheckPermissionRequest) returns (CheckPermissionResponse);
+  rpc SyncPolicies(SyncPoliciesRequest) returns (SyncPoliciesResponse);
+  rpc GetUserDataScope(GetUserDataScopeRequest) returns (GetUserDataScopeResponse);
+
+  rpc CreateAuditLog(CreateAuditLogRequest) returns (CreateAuditLogResponse);
+  rpc ListAuditLogs(ListAuditLogsRequest) returns (ListAuditLogsResponse);
+}
+
+message LoginRequest {
+  optional string username = 1;
+  optional string password = 2;
+}
+
+message LoginResponse {
+  optional UserProfile userProfile = 1;
+  repeated UserMembership memberships = 2;
+  repeated MenuNode menuTree = 3;
+  repeated string roleIDs = 4;
+  repeated MenuPermission permissions = 5;
+  repeated RoleDefinition roleDetails = 6;
+}
+
+message ChangePasswordRequest {
+  optional string userID = 1;
+  optional string oldPassword = 2;
+  optional string newPassword = 3;
+}
+
+message ChangePasswordResponse {}
+
+message ResetPasswordResponse {}
+
+message ForcePasswordChangeResponse {}
+
+message CreateUserResponse {
+  optional UserProfile userProfile = 1;
+}
+
+message GetUserResponse {
+  optional UserProfile userProfile = 1;
+}
+
+message UpdateUserResponse {
+  optional UserProfile userProfile = 1;
+}
+
+message ResetPasswordRequest {
+  optional string userID = 1;
+  optional string newPassword = 2;
+}
+
+message ForcePasswordChangeRequest {
+  optional string userID = 1;
+}
+
+message CreateUserRequest {
+  optional string username = 1;
+  optional string password = 2;
+  optional string email = 3;
+  optional string phone = 4;
+  optional string firstName = 5;
+  optional string lastName = 6;
+  optional string realName = 7;
+  optional core.Gender gender = 8;
+  optional string professionalTitle = 9;
+  optional string employeeID = 10;
+  optional bool mustChangePassword = 11;
+  optional int64 accountExpiry = 12;
+}
+
+message GetUserRequest {
+  optional string userID = 1;
+}
+
+message UpdateUserRequest {
+  optional string userID = 1;
+  optional string email = 2;
+  optional string phone = 3;
+  optional string firstName = 4;
+  optional string lastName = 5;
+  optional string realName = 6;
+  optional core.Gender gender = 7;
+  optional string professionalTitle = 8;
+  optional string employeeID = 9;
+  optional int64 accountExpiry = 10;
+}
+
+message DeleteUserRequest {
+  optional string userID = 1;
+}
+
+message DeleteUserResponse {}
+
+message ChangeUserStatusResponse {}
+
+message UnlockUserResponse {}
+
+message ListUsersRequest {
+  optional rpc_base.PageRequest page = 1;
+  optional string organizationID = 2;
+  optional core.UserStatus status = 3;
+}
+
+message ListUsersResponse {
+  repeated UserProfile users = 1;
+  optional rpc_base.PageResponse page = 2;
+}
+
+message SearchUsersRequest {
+  optional rpc_base.PageRequest page = 1;
+  optional string organizationID = 2;
+}
+
+message SearchUsersResponse {
+  repeated UserProfile users = 1;
+  optional rpc_base.PageResponse page = 2;
+}
+
+message ChangeUserStatusRequest {
+  optional string userID = 1;
+  optional core.UserStatus newStatus = 2;
+}
+
+message UnlockUserRequest {
+  optional string userID = 1;
+}
+
+message CreateOrganizationRequest {
+  optional string name = 1;
+  optional string parentID = 2;
+  optional string facilityType = 3;
+  optional string accreditationStatus = 4;
+  optional core.StringListValue provinceCity = 5;
+  optional string logoID = 6;
+}
+
+message GetOrganizationRequest {
+  optional string organizationID = 1;
+}
+
+message UpdateOrganizationRequest {
+  optional string organizationID = 1;
+  optional string name = 2;
+  optional string parentID = 3;
+  optional string facilityType = 4;
+  optional string accreditationStatus = 5;
+  optional core.StringListValue provinceCity = 6;
+  optional string logoID = 7;
+}
+
+message DeleteOrganizationRequest {
+  optional string organizationID = 1;
+}
+
+message DeleteOrganizationResponse {}
+
+message ListOrganizationsRequest {
+  optional string parentID = 1;
+  optional rpc_base.PageRequest page = 2;
+}
+
+message ListOrganizationsResponse {
+  repeated Organization organizations = 1;
+  optional rpc_base.PageResponse page = 2;
+}
+
+message CreateOrganizationResponse {
+  optional Organization organization = 1;
+}
+
+message GetOrganizationResponse {
+  optional Organization organization = 1;
+}
+
+message UpdateOrganizationResponse {
+  optional Organization organization = 1;
+}
+
+message AddMembershipRequest {
+  optional string userID = 1;
+  optional string organizationID = 2;
+  optional string departmentID = 3;
+  optional bool isPrimary = 4;
+}
+
+message UpdateMembershipRequest {
+  optional string membershipID = 1;
+  optional string organizationID = 2;
+  optional string departmentID = 3;
+  optional bool isPrimary = 4;
+}
+
+message RemoveMembershipRequest {
+  optional string membershipID = 1;
+}
+
+message RemoveMembershipResponse {}
+
+message GetMembershipRequest {
+  optional string membershipID = 1;
+}
+
+message GetUserMembershipsRequest {
+  optional string userID = 1;
+  optional string organizationID = 2;
+  optional string departmentID = 3;
+  optional rpc_base.PageRequest page = 4;
+}
+
+message GetUserMembershipsResponse {
+  repeated UserMembership memberships = 1;
+  optional rpc_base.PageResponse page = 2;
+}
+
+message AddMembershipResponse {
+  optional UserMembership membership = 1;
+}
+
+message UpdateMembershipResponse {
+  optional UserMembership membership = 1;
+}
+
+message GetMembershipResponse {
+  optional UserMembership membership = 1;
+}
+
+message GetPrimaryMembershipResponse {
+  optional UserMembership membership = 1;
+}
+
+message GetPrimaryMembershipRequest {
+  optional string userID = 1;
+}
+
+message CheckMembershipRequest {
+  optional string userID = 1;
+  optional string organizationID = 2;
+  optional string departmentID = 3;
+}
+
+message CheckMembershipResponse {
+  optional bool isMember = 1;
+}
+
+message CreateDepartmentRequest {
+  optional string organizationID = 1;
+  optional string name = 2;
+  optional string departmentType = 3;
+}
+
+message GetDepartmentRequest {
+  optional string departmentID = 1;
+}
+
+message UpdateDepartmentRequest {
+  optional string departmentID = 1;
+  optional string name = 2;
+  optional string departmentType = 3;
+}
+
+message DeleteDepartmentRequest {
+  optional string departmentID = 1;
+}
+
+message DeleteDepartmentResponse {}
+
+message GetOrganizationDepartmentsRequest {
+  optional string organizationID = 1;
+  optional rpc_base.PageRequest page = 2;
+}
+
+message GetOrganizationDepartmentsResponse {
+  repeated Department departments = 1;
+  optional rpc_base.PageResponse page = 2;
+}
+
+message CreateDepartmentResponse {
+  optional Department department = 1;
+}
+
+message GetDepartmentResponse {
+  optional Department department = 1;
+}
+
+message UpdateDepartmentResponse {
+  optional Department department = 1;
+}
+
+message UploadTemporaryLogoRequest {
+  optional bytes fileContent = 1;
+  optional string fileName = 2;
+  optional string mimeType = 3;
+  optional string uploadedBy = 4;
+}
+
+message GetOrganizationLogoRequest {
+  optional string logoID = 1;
+}
+
+message DeleteOrganizationLogoRequest {
+  optional string logoID = 1;
+}
+
+message DeleteOrganizationLogoResponse {}
+
+message BindLogoToOrganizationRequest {
+  optional string logoID = 1;
+  optional string organizationID = 2;
+}
+
+message UploadTemporaryLogoResponse {
+  optional OrganizationLogo organizationLogo = 1;
+}
+
+message GetOrganizationLogoResponse {
+  optional OrganizationLogo organizationLogo = 1;
+}
+
+message BindLogoToOrganizationResponse {
+  optional OrganizationLogo organizationLogo = 1;
+}
+
+message PermissionListValue {
+  repeated Permission items = 1;
+}
+
+message RoleDefinitionCreateRequest {
+  optional string name = 1;
+  optional string description = 2;
+  repeated Permission permissions = 3;
+  optional bool isSystemRole = 4;
+}
+
+message RoleDefinitionUpdateRequest {
+  optional string roleDefinitionID = 1;
+  optional string description = 2;
+  optional core.RoleStatus status = 3;
+  optional PermissionListValue permissions = 4;
+  optional string name = 5;
+}
+
+message RoleDefinitionQueryRequest {
+  optional string name = 1;
+  optional core.RoleStatus status = 2;
+  optional bool isSystemRole = 3;
+  optional rpc_base.PageRequest page = 4;
+}
+
+message RoleDefinitionListResponse {
+  repeated RoleDefinition roles = 1;
+  optional rpc_base.PageResponse page = 2;
+}
+
+message CreateRoleDefinitionResponse {
+  optional RoleDefinition roleDefinition = 1;
+}
+
+message UpdateRoleDefinitionResponse {
+  optional RoleDefinition roleDefinition = 1;
+}
+
+message GetRoleDefinitionResponse {
+  optional RoleDefinition roleDefinition = 1;
+}
+
+message AssignRoleToUserRequest {
+  optional string userID = 1;
+  optional string roleID = 2;
+  optional string assignedBy = 3;
+}
+
+message UpdateUserRoleAssignmentRequest {
+  optional string assignmentID = 1;
+  optional string userID = 2;
+  optional string roleID = 3;
+  optional string updatedBy = 4;
+}
+
+message UpdateUserRoleAssignmentResponse {}
+
+message RevokeRoleFromUserRequest {
+  optional string userID = 1;
+  optional string roleID = 2;
+  optional string revokedBy = 3;
+}
+
+message RevokeRoleFromUserResponse {}
+
+message UserRoleAssignmentResponse {
+  optional string assignmentID = 1;
+}
+
+message UserRoleQueryRequest {
+  optional string userID = 1;
+  optional string roleID = 2;
+  optional rpc_base.PageRequest page = 3;
+}
+
+message UserRoleListResponse {
+  repeated UserRoleAssignment assignments = 1;
+  optional rpc_base.PageResponse page = 2;
+}
+
+message GetUsersByRoleRequest {
+  optional string roleID = 1;
+}
+
+message GetUsersByRoleResponse {
+  optional string roleID = 1;
+  repeated string userIDs = 2;
+}
+
+message BatchBindUsersToRoleRequest {
+  optional string roleID = 1;
+  optional core.StringListValue userIDs = 2;
+  optional string operatorID = 3;
+}
+
+message BatchBindUsersToRoleResponse {
+  optional bool success = 1;
+  optional int32 successCount = 2;
+  optional string message = 3;
+}
+
+message UserRoles {
+  optional string userID = 1;
+  repeated string roleIDs = 2;
+}
+
+message BatchGetUserRolesRequest {
+  repeated string userIDs = 1;
+}
+
+message BatchGetUserRolesResponse {
+  repeated UserRoles userRoles = 1;
+}
+
+message DeleteRoleDefinitionRequest {
+  optional string roleID = 1;
+}
+
+message DeleteRoleDefinitionResponse {}
+
+message GetRoleDefinitionRequest {
+  optional string roleID = 1;
+}
+
+message GetLastUserRoleAssignmentRequest {
+  optional string userID = 1;
+}
+
+message GetLastUserRoleAssignmentResponse {
+  optional UserRoleAssignment userRoleAssignment = 1;
+}
+
+message UploadMenuRequest {
+  optional string productLine = 1;
+  optional string yamlContent = 2;
+}
+
+message UploadMenuResponse {}
+
+message GetMenuTreeRequest {}
+
+message GetMenuTreeResponse {
+  repeated MenuNode menuTree = 1;
+}
+
+message MenuConfig {
+  optional string menuID = 1;
+  optional PermissionLevel permission = 2;
+}
+
+message MenuPermission {
+  optional string menuID = 1;
+  optional PermissionLevel permission = 2;
+}
+
+message ConfigureRoleMenusRequest {
+  optional string roleID = 1;
+  repeated MenuConfig menuConfigs = 2;
+  optional string operatorID = 3;
+}
+
+message ConfigureRoleMenusResponse {
+  optional bool success = 1;
+  optional string message = 2;
+}
+
+message GetRoleMenuTreeRequest {
+  optional string roleID = 1;
+}
+
+message GetRoleMenuTreeResponse {
+  repeated MenuNode menuTree = 1;
+  optional string roleID = 2;
+}
+
+message GetUserMenuTreeRequest {
+  optional string userID = 1;
+}
+
+message GetUserMenuTreeResponse {
+  repeated MenuNode menuTree = 1;
+  optional string userID = 2;
+  repeated string roleIDs = 3;
+}
+
+message GetRoleMenuPermissionsRequest {
+  optional string roleID = 1;
+}
+
+message GetRoleMenuPermissionsResponse {
+  repeated MenuPermission permissions = 1;
+  optional string roleID = 2;
+}
+
+message HasMenuPermissionRequest {
+  optional string roleID = 1;
+  optional string menuID = 2;
+  optional PermissionLevel permission = 3;
+}
+
+message HasMenuPermissionResponse {
+  optional bool hasPermission = 1;
+  optional string roleID = 2;
+  optional string menuID = 3;
+  optional PermissionLevel permission = 4;
+}
+
+message GetUserMenuPermissionsRequest {
+  optional string userID = 1;
+}
+
+message GetUserMenuPermissionsResponse {
+  repeated MenuPermission permissions = 1;
+  optional string userID = 2;
+  repeated string roleIDs = 3;
+}
+
+message CheckPermissionRequest {
+  optional string userID = 1;
+  repeated string roleIDs = 2;
+  repeated string departmentIDs = 3;
+  optional string resource = 4;
+  optional string action = 5;
+}
+
+message CheckPermissionResponse {
+  optional bool allowed = 1;
+  optional string dataScope = 2;
+  optional string userID = 3;
+  optional string resource = 4;
+  optional string action = 5;
+}
+
+message SyncPoliciesRequest {}
+
+message SyncPoliciesResponse {
+  optional bool success = 1;
+  optional int32 rolePolicyCount = 2;
+  optional int32 userRoleBindingCount = 3;
+  optional int32 roleInheritanceCount = 4;
+  optional string message = 5;
+}
+
+message GetUserDataScopeRequest {
+  optional string userID = 1;
+  optional string resource = 2;
+  optional string action = 3;
+}
+
+message GetUserDataScopeResponse {
+  optional string dataScope = 1;
+  optional string userID = 2;
+  optional string resource = 3;
+  optional string action = 4;
+}
+
+message CreateAuditLogRequest {
+  optional string requestID = 1;
+  optional string traceID = 2;
+  optional string userID = 3;
+  optional string username = 4;
+  optional string organizationID = 5;
+  optional AuditAction action = 6;
+  optional string resource = 7;
+  optional string resourceID = 8;
+  optional int32 statusCode = 9;
+  optional bool success = 10;
+  optional string clientIP = 11;
+  optional string userAgent = 12;
+  optional string requestBody = 13;
+  optional int32 durationMs = 14;
+}
+
+message CreateAuditLogResponse {}
+
+message ListAuditLogsRequest {
+  optional rpc_base.PageRequest page = 1;
+  optional string userID = 2;
+  optional AuditAction action = 3;
+  optional string resource = 4;
+  optional bool success = 5;
+  optional int64 startTime = 6;
+  optional int64 endTime = 7;
+}
+
+message AuditLogStats {
+  optional int64 totalCount = 1;
+  optional int64 successCount = 2;
+  optional int32 avgDurationMs = 3;
+}
+
+message ListAuditLogsResponse {
+  repeated AuditLog auditLogs = 1;
+  optional rpc_base.PageResponse page = 2;
+  optional AuditLogStats stats = 3;
+}

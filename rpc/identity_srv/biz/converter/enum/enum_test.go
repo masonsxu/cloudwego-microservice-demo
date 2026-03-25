@@ -20,32 +20,32 @@ func TestConverterImpl_ModelUserStatusToThrift(t *testing.T) {
 
 	t.Run("活跃状态转换", func(t *testing.T) {
 		result := converter.ModelUserStatusToThrift(models.UserStatusActive)
-		assert.Equal(t, core.UserStatus_ACTIVE, result)
+		assert.Equal(t, core.UserStatus_USER_STATUS_ACTIVE, result)
 	})
 
 	t.Run("未激活状态转换", func(t *testing.T) {
 		result := converter.ModelUserStatusToThrift(models.UserStatusInactive)
-		assert.Equal(t, core.UserStatus_INACTIVE, result)
+		assert.Equal(t, core.UserStatus_USER_STATUS_INACTIVE, result)
 	})
 
 	t.Run("暂停状态转换", func(t *testing.T) {
 		result := converter.ModelUserStatusToThrift(models.UserStatusSuspended)
-		assert.Equal(t, core.UserStatus_SUSPENDED, result)
+		assert.Equal(t, core.UserStatus_USER_STATUS_SUSPENDED, result)
 	})
 
 	t.Run("锁定状态转换", func(t *testing.T) {
 		result := converter.ModelUserStatusToThrift(models.UserStatusLocked)
-		assert.Equal(t, core.UserStatus_LOCKED, result)
+		assert.Equal(t, core.UserStatus_USER_STATUS_LOCKED, result)
 	})
 
 	t.Run("未知状态转换", func(t *testing.T) {
 		result := converter.ModelUserStatusToThrift(models.UserStatus(999))
-		assert.Equal(t, core.UserStatus_INACTIVE, result) // 默认值
+		assert.Equal(t, core.UserStatus_USER_STATUS_UNSPECIFIED, result) // 默认值
 	})
 
 	t.Run("零值状态转换", func(t *testing.T) {
 		result := converter.ModelUserStatusToThrift(models.UserStatus(0))
-		assert.Equal(t, core.UserStatus_INACTIVE, result) // 默认值
+		assert.Equal(t, core.UserStatus_USER_STATUS_UNSPECIFIED, result) // 默认值
 	})
 }
 
@@ -53,22 +53,22 @@ func TestConverterImpl_ThriftUserStatusToModel(t *testing.T) {
 	converter := &ConverterImpl{}
 
 	t.Run("活跃状态转换", func(t *testing.T) {
-		result := converter.ThriftUserStatusToModel(core.UserStatus_ACTIVE)
+		result := converter.ThriftUserStatusToModel(core.UserStatus_USER_STATUS_ACTIVE)
 		assert.Equal(t, models.UserStatusActive, result)
 	})
 
 	t.Run("未激活状态转换", func(t *testing.T) {
-		result := converter.ThriftUserStatusToModel(core.UserStatus_INACTIVE)
+		result := converter.ThriftUserStatusToModel(core.UserStatus_USER_STATUS_INACTIVE)
 		assert.Equal(t, models.UserStatusInactive, result)
 	})
 
 	t.Run("暂停状态转换", func(t *testing.T) {
-		result := converter.ThriftUserStatusToModel(core.UserStatus_SUSPENDED)
+		result := converter.ThriftUserStatusToModel(core.UserStatus_USER_STATUS_SUSPENDED)
 		assert.Equal(t, models.UserStatusSuspended, result)
 	})
 
 	t.Run("锁定状态转换", func(t *testing.T) {
-		result := converter.ThriftUserStatusToModel(core.UserStatus_LOCKED)
+		result := converter.ThriftUserStatusToModel(core.UserStatus_USER_STATUS_LOCKED)
 		assert.Equal(t, models.UserStatusLocked, result)
 	})
 
@@ -88,27 +88,27 @@ func TestConverterImpl_ModelRoleStatusToThrift(t *testing.T) {
 
 	t.Run("活跃状态转换", func(t *testing.T) {
 		result := converter.ModelRoleStatusToThrift(models.RoleStatusActive)
-		assert.Equal(t, core.RoleStatus_ACTIVE, result)
+		assert.Equal(t, core.RoleStatus_ROLE_STATUS_ACTIVE, result)
 	})
 
 	t.Run("未激活状态转换", func(t *testing.T) {
 		result := converter.ModelRoleStatusToThrift(models.RoleStatusInactive)
-		assert.Equal(t, core.RoleStatus_INACTIVE, result)
+		assert.Equal(t, core.RoleStatus_ROLE_STATUS_INACTIVE, result)
 	})
 
 	t.Run("已弃用状态转换", func(t *testing.T) {
 		result := converter.ModelRoleStatusToThrift(models.RoleStatusDeprecated)
-		assert.Equal(t, core.RoleStatus_DEPRECATED, result)
+		assert.Equal(t, core.RoleStatus_ROLE_STATUS_DEPRECATED, result)
 	})
 
 	t.Run("未知状态转换", func(t *testing.T) {
 		result := converter.ModelRoleStatusToThrift(models.RoleStatus(999))
-		assert.Equal(t, core.RoleStatus_INACTIVE, result) // 默认值
+		assert.Equal(t, core.RoleStatus_ROLE_STATUS_UNSPECIFIED, result) // 默认值
 	})
 
 	t.Run("零值状态转换", func(t *testing.T) {
 		result := converter.ModelRoleStatusToThrift(models.RoleStatus(0))
-		assert.Equal(t, core.RoleStatus_INACTIVE, result) // 默认值
+		assert.Equal(t, core.RoleStatus_ROLE_STATUS_UNSPECIFIED, result) // 默认值
 	})
 }
 
@@ -116,17 +116,17 @@ func TestConverterImpl_ThriftRoleStatusToModel(t *testing.T) {
 	converter := &ConverterImpl{}
 
 	t.Run("活跃状态转换", func(t *testing.T) {
-		result := converter.ThriftRoleStatusToModel(core.RoleStatus_ACTIVE)
+		result := converter.ThriftRoleStatusToModel(core.RoleStatus_ROLE_STATUS_ACTIVE)
 		assert.Equal(t, models.RoleStatusActive, result)
 	})
 
 	t.Run("未激活状态转换", func(t *testing.T) {
-		result := converter.ThriftRoleStatusToModel(core.RoleStatus_INACTIVE)
+		result := converter.ThriftRoleStatusToModel(core.RoleStatus_ROLE_STATUS_INACTIVE)
 		assert.Equal(t, models.RoleStatusInactive, result)
 	})
 
 	t.Run("已弃用状态转换", func(t *testing.T) {
-		result := converter.ThriftRoleStatusToModel(core.RoleStatus_DEPRECATED)
+		result := converter.ThriftRoleStatusToModel(core.RoleStatus_ROLE_STATUS_DEPRECATED)
 		assert.Equal(t, models.RoleStatusDeprecated, result)
 	})
 
@@ -146,27 +146,27 @@ func TestConverterImpl_ModelGenderToThrift(t *testing.T) {
 
 	t.Run("男性性别转换", func(t *testing.T) {
 		result := converter.ModelGenderToThrift(models.GenderMale)
-		assert.Equal(t, core.Gender_MALE, result)
+		assert.Equal(t, core.Gender_GENDER_MALE, result)
 	})
 
 	t.Run("女性性别转换", func(t *testing.T) {
 		result := converter.ModelGenderToThrift(models.GenderFemale)
-		assert.Equal(t, core.Gender_FEMALE, result)
+		assert.Equal(t, core.Gender_GENDER_FEMALE, result)
 	})
 
 	t.Run("未知性别转换", func(t *testing.T) {
 		result := converter.ModelGenderToThrift(models.GenderUnknown)
-		assert.Equal(t, core.Gender_UNKNOWN, result)
+		assert.Equal(t, core.Gender_GENDER_UNSPECIFIED, result)
 	})
 
 	t.Run("未知性别值转换", func(t *testing.T) {
 		result := converter.ModelGenderToThrift(models.Gender(999))
-		assert.Equal(t, core.Gender_UNKNOWN, result) // 默认值
+		assert.Equal(t, core.Gender_GENDER_UNSPECIFIED, result) // 默认值
 	})
 
 	t.Run("零值性别转换", func(t *testing.T) {
 		result := converter.ModelGenderToThrift(models.Gender(0))
-		assert.Equal(t, core.Gender_UNKNOWN, result) // 默认值
+		assert.Equal(t, core.Gender_GENDER_UNSPECIFIED, result) // 默认值
 	})
 }
 
@@ -174,17 +174,17 @@ func TestConverterImpl_ThriftGenderToModel(t *testing.T) {
 	converter := &ConverterImpl{}
 
 	t.Run("男性性别转换", func(t *testing.T) {
-		result := converter.ThriftGenderToModel(core.Gender_MALE)
+		result := converter.ThriftGenderToModel(core.Gender_GENDER_MALE)
 		assert.Equal(t, models.GenderMale, result)
 	})
 
 	t.Run("女性性别转换", func(t *testing.T) {
-		result := converter.ThriftGenderToModel(core.Gender_FEMALE)
+		result := converter.ThriftGenderToModel(core.Gender_GENDER_FEMALE)
 		assert.Equal(t, models.GenderFemale, result)
 	})
 
 	t.Run("未知性别转换", func(t *testing.T) {
-		result := converter.ThriftGenderToModel(core.Gender_UNKNOWN)
+		result := converter.ThriftGenderToModel(core.Gender_GENDER_UNSPECIFIED)
 		assert.Equal(t, models.GenderUnknown, result)
 	})
 
@@ -212,25 +212,25 @@ func TestConverterImpl_UserStatus_RoundTrip(t *testing.T) {
 		{
 			name:     "活跃状态往返转换",
 			model:    models.UserStatusActive,
-			thrift:   core.UserStatus_ACTIVE,
+			thrift:   core.UserStatus_USER_STATUS_ACTIVE,
 			expected: models.UserStatusActive,
 		},
 		{
 			name:     "未激活状态往返转换",
 			model:    models.UserStatusInactive,
-			thrift:   core.UserStatus_INACTIVE,
+			thrift:   core.UserStatus_USER_STATUS_INACTIVE,
 			expected: models.UserStatusInactive,
 		},
 		{
 			name:     "暂停状态往返转换",
 			model:    models.UserStatusSuspended,
-			thrift:   core.UserStatus_SUSPENDED,
+			thrift:   core.UserStatus_USER_STATUS_SUSPENDED,
 			expected: models.UserStatusSuspended,
 		},
 		{
 			name:     "锁定状态往返转换",
 			model:    models.UserStatusLocked,
-			thrift:   core.UserStatus_LOCKED,
+			thrift:   core.UserStatus_USER_STATUS_LOCKED,
 			expected: models.UserStatusLocked,
 		},
 	}
@@ -261,19 +261,19 @@ func TestConverterImpl_RoleStatus_RoundTrip(t *testing.T) {
 		{
 			name:     "活跃状态往返转换",
 			model:    models.RoleStatusActive,
-			thrift:   core.RoleStatus_ACTIVE,
+			thrift:   core.RoleStatus_ROLE_STATUS_ACTIVE,
 			expected: models.RoleStatusActive,
 		},
 		{
 			name:     "未激活状态往返转换",
 			model:    models.RoleStatusInactive,
-			thrift:   core.RoleStatus_INACTIVE,
+			thrift:   core.RoleStatus_ROLE_STATUS_INACTIVE,
 			expected: models.RoleStatusInactive,
 		},
 		{
 			name:     "已弃用状态往返转换",
 			model:    models.RoleStatusDeprecated,
-			thrift:   core.RoleStatus_DEPRECATED,
+			thrift:   core.RoleStatus_ROLE_STATUS_DEPRECATED,
 			expected: models.RoleStatusDeprecated,
 		},
 	}
@@ -304,19 +304,19 @@ func TestConverterImpl_Gender_RoundTrip(t *testing.T) {
 		{
 			name:     "男性性别往返转换",
 			model:    models.GenderMale,
-			thrift:   core.Gender_MALE,
+			thrift:   core.Gender_GENDER_MALE,
 			expected: models.GenderMale,
 		},
 		{
 			name:     "女性性别往返转换",
 			model:    models.GenderFemale,
-			thrift:   core.Gender_FEMALE,
+			thrift:   core.Gender_GENDER_FEMALE,
 			expected: models.GenderFemale,
 		},
 		{
 			name:     "未知性别往返转换",
 			model:    models.GenderUnknown,
-			thrift:   core.Gender_UNKNOWN,
+			thrift:   core.Gender_GENDER_UNSPECIFIED,
 			expected: models.GenderUnknown,
 		},
 	}
@@ -341,7 +341,7 @@ func TestConverterImpl_DefaultValues(t *testing.T) {
 	t.Run("UserStatus 默认值", func(t *testing.T) {
 		// 未知模型值 -> Thrift
 		thriftResult := converter.ModelUserStatusToThrift(models.UserStatus(999))
-		assert.Equal(t, core.UserStatus_INACTIVE, thriftResult)
+		assert.Equal(t, core.UserStatus_USER_STATUS_UNSPECIFIED, thriftResult)
 
 		// 未知 Thrift 值 -> Model
 		modelResult := converter.ThriftUserStatusToModel(core.UserStatus(999))
@@ -351,7 +351,7 @@ func TestConverterImpl_DefaultValues(t *testing.T) {
 	t.Run("RoleStatus 默认值", func(t *testing.T) {
 		// 未知模型值 -> Thrift
 		thriftResult := converter.ModelRoleStatusToThrift(models.RoleStatus(999))
-		assert.Equal(t, core.RoleStatus_INACTIVE, thriftResult)
+		assert.Equal(t, core.RoleStatus_ROLE_STATUS_UNSPECIFIED, thriftResult)
 
 		// 未知 Thrift 值 -> Model
 		modelResult := converter.ThriftRoleStatusToModel(core.RoleStatus(999))
@@ -361,7 +361,7 @@ func TestConverterImpl_DefaultValues(t *testing.T) {
 	t.Run("Gender 默认值", func(t *testing.T) {
 		// 未知模型值 -> Thrift
 		thriftResult := converter.ModelGenderToThrift(models.Gender(999))
-		assert.Equal(t, core.Gender_UNKNOWN, thriftResult)
+		assert.Equal(t, core.Gender_GENDER_UNSPECIFIED, thriftResult)
 
 		// 未知 Thrift 值 -> Model
 		modelResult := converter.ThriftGenderToModel(core.Gender(999))
@@ -427,7 +427,7 @@ func BenchmarkConverterImpl_ThriftUserStatusToModel(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_ = converter.ThriftUserStatusToModel(core.UserStatus_ACTIVE)
+		_ = converter.ThriftUserStatusToModel(core.UserStatus_USER_STATUS_ACTIVE)
 	}
 }
 
@@ -447,7 +447,7 @@ func BenchmarkConverterImpl_ThriftRoleStatusToModel(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_ = converter.ThriftRoleStatusToModel(core.RoleStatus_ACTIVE)
+		_ = converter.ThriftRoleStatusToModel(core.RoleStatus_ROLE_STATUS_ACTIVE)
 	}
 }
 
@@ -467,7 +467,7 @@ func BenchmarkConverterImpl_ThriftGenderToModel(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_ = converter.ThriftGenderToModel(core.Gender_MALE)
+		_ = converter.ThriftGenderToModel(core.Gender_GENDER_MALE)
 	}
 }
 

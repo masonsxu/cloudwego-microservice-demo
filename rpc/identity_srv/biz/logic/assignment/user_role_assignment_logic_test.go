@@ -12,6 +12,7 @@ import (
 
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/mock"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/pkg/errno"
@@ -876,7 +877,7 @@ func TestLogicImpl_BatchBindUsersToRole(t *testing.T) {
 
 		req := &identity_srv.BatchBindUsersToRoleRequest{
 			RoleID:     &roleID,
-			UserIDs:    userIDs,
+			UserIDs:    &core.StringListValue{Items: userIDs},
 			OperatorID: &operatorID,
 		}
 
@@ -900,7 +901,7 @@ func TestLogicImpl_BatchBindUsersToRole(t *testing.T) {
 
 		req := &identity_srv.BatchBindUsersToRoleRequest{
 			RoleID:  &roleID,
-			UserIDs: userIDs,
+			UserIDs: &core.StringListValue{Items: userIDs},
 		}
 
 		mocks.DefinitionRepo.EXPECT().GetByID(ctx, roleID).Return(&models.RoleDefinition{
@@ -921,7 +922,7 @@ func TestLogicImpl_BatchBindUsersToRole(t *testing.T) {
 		ctx := context.Background()
 
 		req := &identity_srv.BatchBindUsersToRoleRequest{
-			UserIDs: userIDs,
+			UserIDs: &core.StringListValue{Items: userIDs},
 		}
 
 		result, err := logic.BatchBindUsersToRole(ctx, req)
@@ -937,7 +938,7 @@ func TestLogicImpl_BatchBindUsersToRole(t *testing.T) {
 		emptyRoleID := ""
 		req := &identity_srv.BatchBindUsersToRoleRequest{
 			RoleID:  &emptyRoleID,
-			UserIDs: userIDs,
+			UserIDs: &core.StringListValue{Items: userIDs},
 		}
 
 		result, err := logic.BatchBindUsersToRole(ctx, req)
@@ -966,7 +967,7 @@ func TestLogicImpl_BatchBindUsersToRole(t *testing.T) {
 
 		req := &identity_srv.BatchBindUsersToRoleRequest{
 			RoleID:  &roleID,
-			UserIDs: userIDs,
+			UserIDs: &core.StringListValue{Items: userIDs},
 		}
 
 		mocks.DefinitionRepo.EXPECT().GetByID(ctx, roleID).Return(nil, nil)
@@ -983,7 +984,7 @@ func TestLogicImpl_BatchBindUsersToRole(t *testing.T) {
 
 		req := &identity_srv.BatchBindUsersToRoleRequest{
 			RoleID:  &roleID,
-			UserIDs: userIDs,
+			UserIDs: &core.StringListValue{Items: userIDs},
 		}
 
 		mocks.DefinitionRepo.EXPECT().GetByID(ctx, roleID).Return(nil, errors.New("db error"))
@@ -1000,7 +1001,7 @@ func TestLogicImpl_BatchBindUsersToRole(t *testing.T) {
 
 		req := &identity_srv.BatchBindUsersToRoleRequest{
 			RoleID:     &roleID,
-			UserIDs:    userIDs,
+			UserIDs:    &core.StringListValue{Items: userIDs},
 			OperatorID: &operatorID,
 		}
 

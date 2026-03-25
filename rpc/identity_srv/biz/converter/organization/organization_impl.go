@@ -32,7 +32,7 @@ func (c *ConverterImpl) ModelOrganizationToThrift(
 	name := model.Name
 
 	dto := &identity_srv.Organization{
-		ID:        &id,
+		Id:        &id,
 		Name:      &name,
 		CreatedAt: &model.CreatedAt,
 		UpdatedAt: &model.UpdatedAt,
@@ -74,7 +74,7 @@ func (c *ConverterImpl) ThriftOrganizationToModel(
 		return nil
 	}
 
-	id := uuid.MustParse(*dto.ID)
+	id := uuid.MustParse(*dto.Id)
 	name := *dto.Name
 
 	model := &models.Organization{
@@ -155,7 +155,7 @@ func (c *ConverterImpl) CreateRequestToModel(
 	}
 
 	if req.ProvinceCity != nil {
-		model.ProvinceCity = models.StringSlice(req.ProvinceCity)
+		model.ProvinceCity = models.StringSlice(req.ProvinceCity.GetItems())
 	}
 
 	return model
@@ -191,7 +191,7 @@ func (c *ConverterImpl) ApplyUpdateToModel(
 	}
 
 	if req.ProvinceCity != nil {
-		updated.ProvinceCity = models.StringSlice(req.ProvinceCity)
+		updated.ProvinceCity = models.StringSlice(req.ProvinceCity.GetItems())
 	}
 
 	return &updated

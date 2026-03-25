@@ -7,7 +7,8 @@ import (
 	"errors"
 	client "github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
-	core "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
+	streaming "github.com/cloudwego/kitex/pkg/streaming"
+	proto "github.com/cloudwego/prutal"
 	identity_srv "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 )
 
@@ -16,416 +17,416 @@ var errInvalidMessageType = errors.New("invalid message type for service method 
 var serviceMethods = map[string]kitex.MethodInfo{
 	"Login": kitex.NewMethodInfo(
 		loginHandler,
-		newIdentityServiceLoginArgs,
-		newIdentityServiceLoginResult,
+		newLoginArgs,
+		newLoginResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"ChangePassword": kitex.NewMethodInfo(
 		changePasswordHandler,
-		newIdentityServiceChangePasswordArgs,
-		newIdentityServiceChangePasswordResult,
+		newChangePasswordArgs,
+		newChangePasswordResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"ResetPassword": kitex.NewMethodInfo(
 		resetPasswordHandler,
-		newIdentityServiceResetPasswordArgs,
-		newIdentityServiceResetPasswordResult,
+		newResetPasswordArgs,
+		newResetPasswordResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"ForcePasswordChange": kitex.NewMethodInfo(
 		forcePasswordChangeHandler,
-		newIdentityServiceForcePasswordChangeArgs,
-		newIdentityServiceForcePasswordChangeResult,
+		newForcePasswordChangeArgs,
+		newForcePasswordChangeResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"CreateUser": kitex.NewMethodInfo(
 		createUserHandler,
-		newIdentityServiceCreateUserArgs,
-		newIdentityServiceCreateUserResult,
+		newCreateUserArgs,
+		newCreateUserResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"GetUser": kitex.NewMethodInfo(
 		getUserHandler,
-		newIdentityServiceGetUserArgs,
-		newIdentityServiceGetUserResult,
+		newGetUserArgs,
+		newGetUserResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"UpdateUser": kitex.NewMethodInfo(
 		updateUserHandler,
-		newIdentityServiceUpdateUserArgs,
-		newIdentityServiceUpdateUserResult,
+		newUpdateUserArgs,
+		newUpdateUserResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"DeleteUser": kitex.NewMethodInfo(
 		deleteUserHandler,
-		newIdentityServiceDeleteUserArgs,
-		newIdentityServiceDeleteUserResult,
+		newDeleteUserArgs,
+		newDeleteUserResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"ListUsers": kitex.NewMethodInfo(
 		listUsersHandler,
-		newIdentityServiceListUsersArgs,
-		newIdentityServiceListUsersResult,
+		newListUsersArgs,
+		newListUsersResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"SearchUsers": kitex.NewMethodInfo(
 		searchUsersHandler,
-		newIdentityServiceSearchUsersArgs,
-		newIdentityServiceSearchUsersResult,
+		newSearchUsersArgs,
+		newSearchUsersResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"ChangeUserStatus": kitex.NewMethodInfo(
 		changeUserStatusHandler,
-		newIdentityServiceChangeUserStatusArgs,
-		newIdentityServiceChangeUserStatusResult,
+		newChangeUserStatusArgs,
+		newChangeUserStatusResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"UnlockUser": kitex.NewMethodInfo(
 		unlockUserHandler,
-		newIdentityServiceUnlockUserArgs,
-		newIdentityServiceUnlockUserResult,
+		newUnlockUserArgs,
+		newUnlockUserResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"CreateOrganization": kitex.NewMethodInfo(
 		createOrganizationHandler,
-		newIdentityServiceCreateOrganizationArgs,
-		newIdentityServiceCreateOrganizationResult,
+		newCreateOrganizationArgs,
+		newCreateOrganizationResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"GetOrganization": kitex.NewMethodInfo(
 		getOrganizationHandler,
-		newIdentityServiceGetOrganizationArgs,
-		newIdentityServiceGetOrganizationResult,
+		newGetOrganizationArgs,
+		newGetOrganizationResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"UpdateOrganization": kitex.NewMethodInfo(
 		updateOrganizationHandler,
-		newIdentityServiceUpdateOrganizationArgs,
-		newIdentityServiceUpdateOrganizationResult,
+		newUpdateOrganizationArgs,
+		newUpdateOrganizationResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"DeleteOrganization": kitex.NewMethodInfo(
 		deleteOrganizationHandler,
-		newIdentityServiceDeleteOrganizationArgs,
-		newIdentityServiceDeleteOrganizationResult,
+		newDeleteOrganizationArgs,
+		newDeleteOrganizationResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"ListOrganizations": kitex.NewMethodInfo(
 		listOrganizationsHandler,
-		newIdentityServiceListOrganizationsArgs,
-		newIdentityServiceListOrganizationsResult,
+		newListOrganizationsArgs,
+		newListOrganizationsResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"AddMembership": kitex.NewMethodInfo(
 		addMembershipHandler,
-		newIdentityServiceAddMembershipArgs,
-		newIdentityServiceAddMembershipResult,
+		newAddMembershipArgs,
+		newAddMembershipResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"UpdateMembership": kitex.NewMethodInfo(
 		updateMembershipHandler,
-		newIdentityServiceUpdateMembershipArgs,
-		newIdentityServiceUpdateMembershipResult,
+		newUpdateMembershipArgs,
+		newUpdateMembershipResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"RemoveMembership": kitex.NewMethodInfo(
 		removeMembershipHandler,
-		newIdentityServiceRemoveMembershipArgs,
-		newIdentityServiceRemoveMembershipResult,
+		newRemoveMembershipArgs,
+		newRemoveMembershipResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"GetMembership": kitex.NewMethodInfo(
 		getMembershipHandler,
-		newIdentityServiceGetMembershipArgs,
-		newIdentityServiceGetMembershipResult,
+		newGetMembershipArgs,
+		newGetMembershipResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"GetUserMemberships": kitex.NewMethodInfo(
 		getUserMembershipsHandler,
-		newIdentityServiceGetUserMembershipsArgs,
-		newIdentityServiceGetUserMembershipsResult,
+		newGetUserMembershipsArgs,
+		newGetUserMembershipsResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"GetPrimaryMembership": kitex.NewMethodInfo(
 		getPrimaryMembershipHandler,
-		newIdentityServiceGetPrimaryMembershipArgs,
-		newIdentityServiceGetPrimaryMembershipResult,
+		newGetPrimaryMembershipArgs,
+		newGetPrimaryMembershipResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"CheckMembership": kitex.NewMethodInfo(
 		checkMembershipHandler,
-		newIdentityServiceCheckMembershipArgs,
-		newIdentityServiceCheckMembershipResult,
+		newCheckMembershipArgs,
+		newCheckMembershipResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"CreateDepartment": kitex.NewMethodInfo(
 		createDepartmentHandler,
-		newIdentityServiceCreateDepartmentArgs,
-		newIdentityServiceCreateDepartmentResult,
+		newCreateDepartmentArgs,
+		newCreateDepartmentResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"GetDepartment": kitex.NewMethodInfo(
 		getDepartmentHandler,
-		newIdentityServiceGetDepartmentArgs,
-		newIdentityServiceGetDepartmentResult,
+		newGetDepartmentArgs,
+		newGetDepartmentResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"UpdateDepartment": kitex.NewMethodInfo(
 		updateDepartmentHandler,
-		newIdentityServiceUpdateDepartmentArgs,
-		newIdentityServiceUpdateDepartmentResult,
+		newUpdateDepartmentArgs,
+		newUpdateDepartmentResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"DeleteDepartment": kitex.NewMethodInfo(
 		deleteDepartmentHandler,
-		newIdentityServiceDeleteDepartmentArgs,
-		newIdentityServiceDeleteDepartmentResult,
+		newDeleteDepartmentArgs,
+		newDeleteDepartmentResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"GetOrganizationDepartments": kitex.NewMethodInfo(
 		getOrganizationDepartmentsHandler,
-		newIdentityServiceGetOrganizationDepartmentsArgs,
-		newIdentityServiceGetOrganizationDepartmentsResult,
+		newGetOrganizationDepartmentsArgs,
+		newGetOrganizationDepartmentsResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"UploadTemporaryLogo": kitex.NewMethodInfo(
 		uploadTemporaryLogoHandler,
-		newIdentityServiceUploadTemporaryLogoArgs,
-		newIdentityServiceUploadTemporaryLogoResult,
+		newUploadTemporaryLogoArgs,
+		newUploadTemporaryLogoResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"GetOrganizationLogo": kitex.NewMethodInfo(
 		getOrganizationLogoHandler,
-		newIdentityServiceGetOrganizationLogoArgs,
-		newIdentityServiceGetOrganizationLogoResult,
+		newGetOrganizationLogoArgs,
+		newGetOrganizationLogoResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"DeleteOrganizationLogo": kitex.NewMethodInfo(
 		deleteOrganizationLogoHandler,
-		newIdentityServiceDeleteOrganizationLogoArgs,
-		newIdentityServiceDeleteOrganizationLogoResult,
+		newDeleteOrganizationLogoArgs,
+		newDeleteOrganizationLogoResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"BindLogoToOrganization": kitex.NewMethodInfo(
 		bindLogoToOrganizationHandler,
-		newIdentityServiceBindLogoToOrganizationArgs,
-		newIdentityServiceBindLogoToOrganizationResult,
+		newBindLogoToOrganizationArgs,
+		newBindLogoToOrganizationResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"CreateRoleDefinition": kitex.NewMethodInfo(
 		createRoleDefinitionHandler,
-		newIdentityServiceCreateRoleDefinitionArgs,
-		newIdentityServiceCreateRoleDefinitionResult,
+		newCreateRoleDefinitionArgs,
+		newCreateRoleDefinitionResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"UpdateRoleDefinition": kitex.NewMethodInfo(
 		updateRoleDefinitionHandler,
-		newIdentityServiceUpdateRoleDefinitionArgs,
-		newIdentityServiceUpdateRoleDefinitionResult,
+		newUpdateRoleDefinitionArgs,
+		newUpdateRoleDefinitionResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"DeleteRoleDefinition": kitex.NewMethodInfo(
 		deleteRoleDefinitionHandler,
-		newIdentityServiceDeleteRoleDefinitionArgs,
-		newIdentityServiceDeleteRoleDefinitionResult,
+		newDeleteRoleDefinitionArgs,
+		newDeleteRoleDefinitionResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"GetRoleDefinition": kitex.NewMethodInfo(
 		getRoleDefinitionHandler,
-		newIdentityServiceGetRoleDefinitionArgs,
-		newIdentityServiceGetRoleDefinitionResult,
+		newGetRoleDefinitionArgs,
+		newGetRoleDefinitionResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"ListRoleDefinitions": kitex.NewMethodInfo(
 		listRoleDefinitionsHandler,
-		newIdentityServiceListRoleDefinitionsArgs,
-		newIdentityServiceListRoleDefinitionsResult,
+		newListRoleDefinitionsArgs,
+		newListRoleDefinitionsResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"AssignRoleToUser": kitex.NewMethodInfo(
 		assignRoleToUserHandler,
-		newIdentityServiceAssignRoleToUserArgs,
-		newIdentityServiceAssignRoleToUserResult,
+		newAssignRoleToUserArgs,
+		newAssignRoleToUserResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"UpdateUserRoleAssignment": kitex.NewMethodInfo(
 		updateUserRoleAssignmentHandler,
-		newIdentityServiceUpdateUserRoleAssignmentArgs,
-		newIdentityServiceUpdateUserRoleAssignmentResult,
+		newUpdateUserRoleAssignmentArgs,
+		newUpdateUserRoleAssignmentResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"RevokeRoleFromUser": kitex.NewMethodInfo(
 		revokeRoleFromUserHandler,
-		newIdentityServiceRevokeRoleFromUserArgs,
-		newIdentityServiceRevokeRoleFromUserResult,
+		newRevokeRoleFromUserArgs,
+		newRevokeRoleFromUserResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"GetLastUserRoleAssignment": kitex.NewMethodInfo(
 		getLastUserRoleAssignmentHandler,
-		newIdentityServiceGetLastUserRoleAssignmentArgs,
-		newIdentityServiceGetLastUserRoleAssignmentResult,
+		newGetLastUserRoleAssignmentArgs,
+		newGetLastUserRoleAssignmentResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"ListUserRoleAssignments": kitex.NewMethodInfo(
 		listUserRoleAssignmentsHandler,
-		newIdentityServiceListUserRoleAssignmentsArgs,
-		newIdentityServiceListUserRoleAssignmentsResult,
+		newListUserRoleAssignmentsArgs,
+		newListUserRoleAssignmentsResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"GetUsersByRole": kitex.NewMethodInfo(
 		getUsersByRoleHandler,
-		newIdentityServiceGetUsersByRoleArgs,
-		newIdentityServiceGetUsersByRoleResult,
+		newGetUsersByRoleArgs,
+		newGetUsersByRoleResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"BatchBindUsersToRole": kitex.NewMethodInfo(
 		batchBindUsersToRoleHandler,
-		newIdentityServiceBatchBindUsersToRoleArgs,
-		newIdentityServiceBatchBindUsersToRoleResult,
+		newBatchBindUsersToRoleArgs,
+		newBatchBindUsersToRoleResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"BatchGetUserRoles": kitex.NewMethodInfo(
 		batchGetUserRolesHandler,
-		newIdentityServiceBatchGetUserRolesArgs,
-		newIdentityServiceBatchGetUserRolesResult,
+		newBatchGetUserRolesArgs,
+		newBatchGetUserRolesResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"UploadMenu": kitex.NewMethodInfo(
 		uploadMenuHandler,
-		newIdentityServiceUploadMenuArgs,
-		newIdentityServiceUploadMenuResult,
+		newUploadMenuArgs,
+		newUploadMenuResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"GetMenuTree": kitex.NewMethodInfo(
 		getMenuTreeHandler,
-		newIdentityServiceGetMenuTreeArgs,
-		newIdentityServiceGetMenuTreeResult,
+		newGetMenuTreeArgs,
+		newGetMenuTreeResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"ConfigureRoleMenus": kitex.NewMethodInfo(
 		configureRoleMenusHandler,
-		newIdentityServiceConfigureRoleMenusArgs,
-		newIdentityServiceConfigureRoleMenusResult,
+		newConfigureRoleMenusArgs,
+		newConfigureRoleMenusResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"GetRoleMenuTree": kitex.NewMethodInfo(
 		getRoleMenuTreeHandler,
-		newIdentityServiceGetRoleMenuTreeArgs,
-		newIdentityServiceGetRoleMenuTreeResult,
+		newGetRoleMenuTreeArgs,
+		newGetRoleMenuTreeResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"GetUserMenuTree": kitex.NewMethodInfo(
 		getUserMenuTreeHandler,
-		newIdentityServiceGetUserMenuTreeArgs,
-		newIdentityServiceGetUserMenuTreeResult,
+		newGetUserMenuTreeArgs,
+		newGetUserMenuTreeResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"GetRoleMenuPermissions": kitex.NewMethodInfo(
 		getRoleMenuPermissionsHandler,
-		newIdentityServiceGetRoleMenuPermissionsArgs,
-		newIdentityServiceGetRoleMenuPermissionsResult,
+		newGetRoleMenuPermissionsArgs,
+		newGetRoleMenuPermissionsResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"HasMenuPermission": kitex.NewMethodInfo(
 		hasMenuPermissionHandler,
-		newIdentityServiceHasMenuPermissionArgs,
-		newIdentityServiceHasMenuPermissionResult,
+		newHasMenuPermissionArgs,
+		newHasMenuPermissionResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"GetUserMenuPermissions": kitex.NewMethodInfo(
 		getUserMenuPermissionsHandler,
-		newIdentityServiceGetUserMenuPermissionsArgs,
-		newIdentityServiceGetUserMenuPermissionsResult,
+		newGetUserMenuPermissionsArgs,
+		newGetUserMenuPermissionsResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"CheckPermission": kitex.NewMethodInfo(
 		checkPermissionHandler,
-		newIdentityServiceCheckPermissionArgs,
-		newIdentityServiceCheckPermissionResult,
+		newCheckPermissionArgs,
+		newCheckPermissionResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"SyncPolicies": kitex.NewMethodInfo(
 		syncPoliciesHandler,
-		newIdentityServiceSyncPoliciesArgs,
-		newIdentityServiceSyncPoliciesResult,
+		newSyncPoliciesArgs,
+		newSyncPoliciesResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"GetUserDataScope": kitex.NewMethodInfo(
 		getUserDataScopeHandler,
-		newIdentityServiceGetUserDataScopeArgs,
-		newIdentityServiceGetUserDataScopeResult,
+		newGetUserDataScopeArgs,
+		newGetUserDataScopeResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"CreateAuditLog": kitex.NewMethodInfo(
 		createAuditLogHandler,
-		newIdentityServiceCreateAuditLogArgs,
-		newIdentityServiceCreateAuditLogResult,
+		newCreateAuditLogArgs,
+		newCreateAuditLogResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 	"ListAuditLogs": kitex.NewMethodInfo(
 		listAuditLogsHandler,
-		newIdentityServiceListAuditLogsArgs,
-		newIdentityServiceListAuditLogsResult,
+		newListAuditLogsArgs,
+		newListAuditLogsResult,
 		false,
-		kitex.WithStreamingMode(kitex.StreamingNone),
+		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
 }
 
@@ -486,7 +487,7 @@ func newServiceInfo(hasStreaming bool, keepStreamingMethods bool, keepNonStreami
 		ServiceName:     serviceName,
 		HandlerType:     handlerType,
 		Methods:         methods,
-		PayloadCodec:    kitex.Thrift,
+		PayloadCodec:    kitex.Protobuf,
 		KiteXGenVersion: "v0.16.1",
 		Extra:           extra,
 	}
@@ -494,1065 +495,6552 @@ func newServiceInfo(hasStreaming bool, keepStreamingMethods bool, keepNonStreami
 }
 
 func loginHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceLoginArgs)
-	realResult := result.(*identity_srv.IdentityServiceLoginResult)
-	success, err := handler.(identity_srv.IdentityService).Login(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.LoginRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).Login(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *LoginArgs:
+		success, err := handler.(identity_srv.IdentityService).Login(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*LoginResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceLoginArgs() interface{} {
-	return identity_srv.NewIdentityServiceLoginArgs()
+func newLoginArgs() interface{} {
+	return &LoginArgs{}
 }
 
-func newIdentityServiceLoginResult() interface{} {
-	return identity_srv.NewIdentityServiceLoginResult()
+func newLoginResult() interface{} {
+	return &LoginResult{}
+}
+
+type LoginArgs struct {
+	Req *identity_srv.LoginRequest
+}
+
+func (p *LoginArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *LoginArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.LoginRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var LoginArgs_Req_DEFAULT *identity_srv.LoginRequest
+
+func (p *LoginArgs) GetReq() *identity_srv.LoginRequest {
+	if !p.IsSetReq() {
+		return LoginArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *LoginArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *LoginArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type LoginResult struct {
+	Success *identity_srv.LoginResponse
+}
+
+var LoginResult_Success_DEFAULT *identity_srv.LoginResponse
+
+func (p *LoginResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *LoginResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.LoginResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *LoginResult) GetSuccess() *identity_srv.LoginResponse {
+	if !p.IsSetSuccess() {
+		return LoginResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *LoginResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.LoginResponse)
+}
+
+func (p *LoginResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *LoginResult) GetResult() interface{} {
+	return p.Success
 }
 
 func changePasswordHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceChangePasswordArgs)
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.ChangePasswordRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).ChangePassword(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *ChangePasswordArgs:
+		success, err := handler.(identity_srv.IdentityService).ChangePassword(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*ChangePasswordResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newChangePasswordArgs() interface{} {
+	return &ChangePasswordArgs{}
+}
 
-	err := handler.(identity_srv.IdentityService).ChangePassword(ctx, realArg.Req)
-	if err != nil {
+func newChangePasswordResult() interface{} {
+	return &ChangePasswordResult{}
+}
+
+type ChangePasswordArgs struct {
+	Req *identity_srv.ChangePasswordRequest
+}
+
+func (p *ChangePasswordArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *ChangePasswordArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.ChangePasswordRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
-
+	p.Req = msg
 	return nil
 }
-func newIdentityServiceChangePasswordArgs() interface{} {
-	return identity_srv.NewIdentityServiceChangePasswordArgs()
+
+var ChangePasswordArgs_Req_DEFAULT *identity_srv.ChangePasswordRequest
+
+func (p *ChangePasswordArgs) GetReq() *identity_srv.ChangePasswordRequest {
+	if !p.IsSetReq() {
+		return ChangePasswordArgs_Req_DEFAULT
+	}
+	return p.Req
 }
 
-func newIdentityServiceChangePasswordResult() interface{} {
-	return identity_srv.NewIdentityServiceChangePasswordResult()
+func (p *ChangePasswordArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *ChangePasswordArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type ChangePasswordResult struct {
+	Success *identity_srv.ChangePasswordResponse
+}
+
+var ChangePasswordResult_Success_DEFAULT *identity_srv.ChangePasswordResponse
+
+func (p *ChangePasswordResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *ChangePasswordResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.ChangePasswordResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ChangePasswordResult) GetSuccess() *identity_srv.ChangePasswordResponse {
+	if !p.IsSetSuccess() {
+		return ChangePasswordResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ChangePasswordResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.ChangePasswordResponse)
+}
+
+func (p *ChangePasswordResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ChangePasswordResult) GetResult() interface{} {
+	return p.Success
 }
 
 func resetPasswordHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceResetPasswordArgs)
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.ResetPasswordRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).ResetPassword(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *ResetPasswordArgs:
+		success, err := handler.(identity_srv.IdentityService).ResetPassword(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*ResetPasswordResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newResetPasswordArgs() interface{} {
+	return &ResetPasswordArgs{}
+}
 
-	err := handler.(identity_srv.IdentityService).ResetPassword(ctx, realArg.Req)
-	if err != nil {
+func newResetPasswordResult() interface{} {
+	return &ResetPasswordResult{}
+}
+
+type ResetPasswordArgs struct {
+	Req *identity_srv.ResetPasswordRequest
+}
+
+func (p *ResetPasswordArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *ResetPasswordArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.ResetPasswordRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
-
+	p.Req = msg
 	return nil
 }
-func newIdentityServiceResetPasswordArgs() interface{} {
-	return identity_srv.NewIdentityServiceResetPasswordArgs()
+
+var ResetPasswordArgs_Req_DEFAULT *identity_srv.ResetPasswordRequest
+
+func (p *ResetPasswordArgs) GetReq() *identity_srv.ResetPasswordRequest {
+	if !p.IsSetReq() {
+		return ResetPasswordArgs_Req_DEFAULT
+	}
+	return p.Req
 }
 
-func newIdentityServiceResetPasswordResult() interface{} {
-	return identity_srv.NewIdentityServiceResetPasswordResult()
+func (p *ResetPasswordArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *ResetPasswordArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type ResetPasswordResult struct {
+	Success *identity_srv.ResetPasswordResponse
+}
+
+var ResetPasswordResult_Success_DEFAULT *identity_srv.ResetPasswordResponse
+
+func (p *ResetPasswordResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *ResetPasswordResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.ResetPasswordResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ResetPasswordResult) GetSuccess() *identity_srv.ResetPasswordResponse {
+	if !p.IsSetSuccess() {
+		return ResetPasswordResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ResetPasswordResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.ResetPasswordResponse)
+}
+
+func (p *ResetPasswordResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ResetPasswordResult) GetResult() interface{} {
+	return p.Success
 }
 
 func forcePasswordChangeHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceForcePasswordChangeArgs)
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.ForcePasswordChangeRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).ForcePasswordChange(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *ForcePasswordChangeArgs:
+		success, err := handler.(identity_srv.IdentityService).ForcePasswordChange(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*ForcePasswordChangeResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newForcePasswordChangeArgs() interface{} {
+	return &ForcePasswordChangeArgs{}
+}
 
-	err := handler.(identity_srv.IdentityService).ForcePasswordChange(ctx, realArg.Req)
-	if err != nil {
+func newForcePasswordChangeResult() interface{} {
+	return &ForcePasswordChangeResult{}
+}
+
+type ForcePasswordChangeArgs struct {
+	Req *identity_srv.ForcePasswordChangeRequest
+}
+
+func (p *ForcePasswordChangeArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *ForcePasswordChangeArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.ForcePasswordChangeRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
-
+	p.Req = msg
 	return nil
 }
-func newIdentityServiceForcePasswordChangeArgs() interface{} {
-	return identity_srv.NewIdentityServiceForcePasswordChangeArgs()
+
+var ForcePasswordChangeArgs_Req_DEFAULT *identity_srv.ForcePasswordChangeRequest
+
+func (p *ForcePasswordChangeArgs) GetReq() *identity_srv.ForcePasswordChangeRequest {
+	if !p.IsSetReq() {
+		return ForcePasswordChangeArgs_Req_DEFAULT
+	}
+	return p.Req
 }
 
-func newIdentityServiceForcePasswordChangeResult() interface{} {
-	return identity_srv.NewIdentityServiceForcePasswordChangeResult()
+func (p *ForcePasswordChangeArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *ForcePasswordChangeArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type ForcePasswordChangeResult struct {
+	Success *identity_srv.ForcePasswordChangeResponse
+}
+
+var ForcePasswordChangeResult_Success_DEFAULT *identity_srv.ForcePasswordChangeResponse
+
+func (p *ForcePasswordChangeResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *ForcePasswordChangeResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.ForcePasswordChangeResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ForcePasswordChangeResult) GetSuccess() *identity_srv.ForcePasswordChangeResponse {
+	if !p.IsSetSuccess() {
+		return ForcePasswordChangeResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ForcePasswordChangeResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.ForcePasswordChangeResponse)
+}
+
+func (p *ForcePasswordChangeResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ForcePasswordChangeResult) GetResult() interface{} {
+	return p.Success
 }
 
 func createUserHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceCreateUserArgs)
-	realResult := result.(*identity_srv.IdentityServiceCreateUserResult)
-	success, err := handler.(identity_srv.IdentityService).CreateUser(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.CreateUserRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).CreateUser(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *CreateUserArgs:
+		success, err := handler.(identity_srv.IdentityService).CreateUser(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*CreateUserResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceCreateUserArgs() interface{} {
-	return identity_srv.NewIdentityServiceCreateUserArgs()
+func newCreateUserArgs() interface{} {
+	return &CreateUserArgs{}
 }
 
-func newIdentityServiceCreateUserResult() interface{} {
-	return identity_srv.NewIdentityServiceCreateUserResult()
+func newCreateUserResult() interface{} {
+	return &CreateUserResult{}
+}
+
+type CreateUserArgs struct {
+	Req *identity_srv.CreateUserRequest
+}
+
+func (p *CreateUserArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *CreateUserArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.CreateUserRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var CreateUserArgs_Req_DEFAULT *identity_srv.CreateUserRequest
+
+func (p *CreateUserArgs) GetReq() *identity_srv.CreateUserRequest {
+	if !p.IsSetReq() {
+		return CreateUserArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *CreateUserArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *CreateUserArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type CreateUserResult struct {
+	Success *identity_srv.CreateUserResponse
+}
+
+var CreateUserResult_Success_DEFAULT *identity_srv.CreateUserResponse
+
+func (p *CreateUserResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *CreateUserResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.CreateUserResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CreateUserResult) GetSuccess() *identity_srv.CreateUserResponse {
+	if !p.IsSetSuccess() {
+		return CreateUserResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CreateUserResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.CreateUserResponse)
+}
+
+func (p *CreateUserResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CreateUserResult) GetResult() interface{} {
+	return p.Success
 }
 
 func getUserHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceGetUserArgs)
-	realResult := result.(*identity_srv.IdentityServiceGetUserResult)
-	success, err := handler.(identity_srv.IdentityService).GetUser(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.GetUserRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).GetUser(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetUserArgs:
+		success, err := handler.(identity_srv.IdentityService).GetUser(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetUserResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceGetUserArgs() interface{} {
-	return identity_srv.NewIdentityServiceGetUserArgs()
+func newGetUserArgs() interface{} {
+	return &GetUserArgs{}
 }
 
-func newIdentityServiceGetUserResult() interface{} {
-	return identity_srv.NewIdentityServiceGetUserResult()
+func newGetUserResult() interface{} {
+	return &GetUserResult{}
+}
+
+type GetUserArgs struct {
+	Req *identity_srv.GetUserRequest
+}
+
+func (p *GetUserArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetUserArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetUserRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetUserArgs_Req_DEFAULT *identity_srv.GetUserRequest
+
+func (p *GetUserArgs) GetReq() *identity_srv.GetUserRequest {
+	if !p.IsSetReq() {
+		return GetUserArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetUserArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetUserArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetUserResult struct {
+	Success *identity_srv.GetUserResponse
+}
+
+var GetUserResult_Success_DEFAULT *identity_srv.GetUserResponse
+
+func (p *GetUserResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetUserResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetUserResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetUserResult) GetSuccess() *identity_srv.GetUserResponse {
+	if !p.IsSetSuccess() {
+		return GetUserResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetUserResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.GetUserResponse)
+}
+
+func (p *GetUserResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetUserResult) GetResult() interface{} {
+	return p.Success
 }
 
 func updateUserHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceUpdateUserArgs)
-	realResult := result.(*identity_srv.IdentityServiceUpdateUserResult)
-	success, err := handler.(identity_srv.IdentityService).UpdateUser(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.UpdateUserRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).UpdateUser(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *UpdateUserArgs:
+		success, err := handler.(identity_srv.IdentityService).UpdateUser(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*UpdateUserResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceUpdateUserArgs() interface{} {
-	return identity_srv.NewIdentityServiceUpdateUserArgs()
+func newUpdateUserArgs() interface{} {
+	return &UpdateUserArgs{}
 }
 
-func newIdentityServiceUpdateUserResult() interface{} {
-	return identity_srv.NewIdentityServiceUpdateUserResult()
+func newUpdateUserResult() interface{} {
+	return &UpdateUserResult{}
+}
+
+type UpdateUserArgs struct {
+	Req *identity_srv.UpdateUserRequest
+}
+
+func (p *UpdateUserArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *UpdateUserArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UpdateUserRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var UpdateUserArgs_Req_DEFAULT *identity_srv.UpdateUserRequest
+
+func (p *UpdateUserArgs) GetReq() *identity_srv.UpdateUserRequest {
+	if !p.IsSetReq() {
+		return UpdateUserArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *UpdateUserArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *UpdateUserArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type UpdateUserResult struct {
+	Success *identity_srv.UpdateUserResponse
+}
+
+var UpdateUserResult_Success_DEFAULT *identity_srv.UpdateUserResponse
+
+func (p *UpdateUserResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *UpdateUserResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UpdateUserResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UpdateUserResult) GetSuccess() *identity_srv.UpdateUserResponse {
+	if !p.IsSetSuccess() {
+		return UpdateUserResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *UpdateUserResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.UpdateUserResponse)
+}
+
+func (p *UpdateUserResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *UpdateUserResult) GetResult() interface{} {
+	return p.Success
 }
 
 func deleteUserHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceDeleteUserArgs)
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.DeleteUserRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).DeleteUser(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *DeleteUserArgs:
+		success, err := handler.(identity_srv.IdentityService).DeleteUser(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*DeleteUserResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newDeleteUserArgs() interface{} {
+	return &DeleteUserArgs{}
+}
 
-	err := handler.(identity_srv.IdentityService).DeleteUser(ctx, realArg.Req)
-	if err != nil {
+func newDeleteUserResult() interface{} {
+	return &DeleteUserResult{}
+}
+
+type DeleteUserArgs struct {
+	Req *identity_srv.DeleteUserRequest
+}
+
+func (p *DeleteUserArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *DeleteUserArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.DeleteUserRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
-
+	p.Req = msg
 	return nil
 }
-func newIdentityServiceDeleteUserArgs() interface{} {
-	return identity_srv.NewIdentityServiceDeleteUserArgs()
+
+var DeleteUserArgs_Req_DEFAULT *identity_srv.DeleteUserRequest
+
+func (p *DeleteUserArgs) GetReq() *identity_srv.DeleteUserRequest {
+	if !p.IsSetReq() {
+		return DeleteUserArgs_Req_DEFAULT
+	}
+	return p.Req
 }
 
-func newIdentityServiceDeleteUserResult() interface{} {
-	return identity_srv.NewIdentityServiceDeleteUserResult()
+func (p *DeleteUserArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *DeleteUserArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type DeleteUserResult struct {
+	Success *identity_srv.DeleteUserResponse
+}
+
+var DeleteUserResult_Success_DEFAULT *identity_srv.DeleteUserResponse
+
+func (p *DeleteUserResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *DeleteUserResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.DeleteUserResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *DeleteUserResult) GetSuccess() *identity_srv.DeleteUserResponse {
+	if !p.IsSetSuccess() {
+		return DeleteUserResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *DeleteUserResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.DeleteUserResponse)
+}
+
+func (p *DeleteUserResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *DeleteUserResult) GetResult() interface{} {
+	return p.Success
 }
 
 func listUsersHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceListUsersArgs)
-	realResult := result.(*identity_srv.IdentityServiceListUsersResult)
-	success, err := handler.(identity_srv.IdentityService).ListUsers(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.ListUsersRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).ListUsers(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *ListUsersArgs:
+		success, err := handler.(identity_srv.IdentityService).ListUsers(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*ListUsersResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceListUsersArgs() interface{} {
-	return identity_srv.NewIdentityServiceListUsersArgs()
+func newListUsersArgs() interface{} {
+	return &ListUsersArgs{}
 }
 
-func newIdentityServiceListUsersResult() interface{} {
-	return identity_srv.NewIdentityServiceListUsersResult()
+func newListUsersResult() interface{} {
+	return &ListUsersResult{}
+}
+
+type ListUsersArgs struct {
+	Req *identity_srv.ListUsersRequest
+}
+
+func (p *ListUsersArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *ListUsersArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.ListUsersRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var ListUsersArgs_Req_DEFAULT *identity_srv.ListUsersRequest
+
+func (p *ListUsersArgs) GetReq() *identity_srv.ListUsersRequest {
+	if !p.IsSetReq() {
+		return ListUsersArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ListUsersArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *ListUsersArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type ListUsersResult struct {
+	Success *identity_srv.ListUsersResponse
+}
+
+var ListUsersResult_Success_DEFAULT *identity_srv.ListUsersResponse
+
+func (p *ListUsersResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *ListUsersResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.ListUsersResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ListUsersResult) GetSuccess() *identity_srv.ListUsersResponse {
+	if !p.IsSetSuccess() {
+		return ListUsersResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ListUsersResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.ListUsersResponse)
+}
+
+func (p *ListUsersResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ListUsersResult) GetResult() interface{} {
+	return p.Success
 }
 
 func searchUsersHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceSearchUsersArgs)
-	realResult := result.(*identity_srv.IdentityServiceSearchUsersResult)
-	success, err := handler.(identity_srv.IdentityService).SearchUsers(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.SearchUsersRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).SearchUsers(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *SearchUsersArgs:
+		success, err := handler.(identity_srv.IdentityService).SearchUsers(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*SearchUsersResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceSearchUsersArgs() interface{} {
-	return identity_srv.NewIdentityServiceSearchUsersArgs()
+func newSearchUsersArgs() interface{} {
+	return &SearchUsersArgs{}
 }
 
-func newIdentityServiceSearchUsersResult() interface{} {
-	return identity_srv.NewIdentityServiceSearchUsersResult()
+func newSearchUsersResult() interface{} {
+	return &SearchUsersResult{}
+}
+
+type SearchUsersArgs struct {
+	Req *identity_srv.SearchUsersRequest
+}
+
+func (p *SearchUsersArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *SearchUsersArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.SearchUsersRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var SearchUsersArgs_Req_DEFAULT *identity_srv.SearchUsersRequest
+
+func (p *SearchUsersArgs) GetReq() *identity_srv.SearchUsersRequest {
+	if !p.IsSetReq() {
+		return SearchUsersArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *SearchUsersArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *SearchUsersArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type SearchUsersResult struct {
+	Success *identity_srv.SearchUsersResponse
+}
+
+var SearchUsersResult_Success_DEFAULT *identity_srv.SearchUsersResponse
+
+func (p *SearchUsersResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *SearchUsersResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.SearchUsersResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *SearchUsersResult) GetSuccess() *identity_srv.SearchUsersResponse {
+	if !p.IsSetSuccess() {
+		return SearchUsersResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *SearchUsersResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.SearchUsersResponse)
+}
+
+func (p *SearchUsersResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SearchUsersResult) GetResult() interface{} {
+	return p.Success
 }
 
 func changeUserStatusHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceChangeUserStatusArgs)
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.ChangeUserStatusRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).ChangeUserStatus(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *ChangeUserStatusArgs:
+		success, err := handler.(identity_srv.IdentityService).ChangeUserStatus(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*ChangeUserStatusResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newChangeUserStatusArgs() interface{} {
+	return &ChangeUserStatusArgs{}
+}
 
-	err := handler.(identity_srv.IdentityService).ChangeUserStatus(ctx, realArg.Req)
-	if err != nil {
+func newChangeUserStatusResult() interface{} {
+	return &ChangeUserStatusResult{}
+}
+
+type ChangeUserStatusArgs struct {
+	Req *identity_srv.ChangeUserStatusRequest
+}
+
+func (p *ChangeUserStatusArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *ChangeUserStatusArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.ChangeUserStatusRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
-
+	p.Req = msg
 	return nil
 }
-func newIdentityServiceChangeUserStatusArgs() interface{} {
-	return identity_srv.NewIdentityServiceChangeUserStatusArgs()
+
+var ChangeUserStatusArgs_Req_DEFAULT *identity_srv.ChangeUserStatusRequest
+
+func (p *ChangeUserStatusArgs) GetReq() *identity_srv.ChangeUserStatusRequest {
+	if !p.IsSetReq() {
+		return ChangeUserStatusArgs_Req_DEFAULT
+	}
+	return p.Req
 }
 
-func newIdentityServiceChangeUserStatusResult() interface{} {
-	return identity_srv.NewIdentityServiceChangeUserStatusResult()
+func (p *ChangeUserStatusArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *ChangeUserStatusArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type ChangeUserStatusResult struct {
+	Success *identity_srv.ChangeUserStatusResponse
+}
+
+var ChangeUserStatusResult_Success_DEFAULT *identity_srv.ChangeUserStatusResponse
+
+func (p *ChangeUserStatusResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *ChangeUserStatusResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.ChangeUserStatusResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ChangeUserStatusResult) GetSuccess() *identity_srv.ChangeUserStatusResponse {
+	if !p.IsSetSuccess() {
+		return ChangeUserStatusResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ChangeUserStatusResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.ChangeUserStatusResponse)
+}
+
+func (p *ChangeUserStatusResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ChangeUserStatusResult) GetResult() interface{} {
+	return p.Success
 }
 
 func unlockUserHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceUnlockUserArgs)
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.UnlockUserRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).UnlockUser(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *UnlockUserArgs:
+		success, err := handler.(identity_srv.IdentityService).UnlockUser(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*UnlockUserResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newUnlockUserArgs() interface{} {
+	return &UnlockUserArgs{}
+}
 
-	err := handler.(identity_srv.IdentityService).UnlockUser(ctx, realArg.Req)
-	if err != nil {
+func newUnlockUserResult() interface{} {
+	return &UnlockUserResult{}
+}
+
+type UnlockUserArgs struct {
+	Req *identity_srv.UnlockUserRequest
+}
+
+func (p *UnlockUserArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *UnlockUserArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UnlockUserRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
-
+	p.Req = msg
 	return nil
 }
-func newIdentityServiceUnlockUserArgs() interface{} {
-	return identity_srv.NewIdentityServiceUnlockUserArgs()
+
+var UnlockUserArgs_Req_DEFAULT *identity_srv.UnlockUserRequest
+
+func (p *UnlockUserArgs) GetReq() *identity_srv.UnlockUserRequest {
+	if !p.IsSetReq() {
+		return UnlockUserArgs_Req_DEFAULT
+	}
+	return p.Req
 }
 
-func newIdentityServiceUnlockUserResult() interface{} {
-	return identity_srv.NewIdentityServiceUnlockUserResult()
+func (p *UnlockUserArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *UnlockUserArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type UnlockUserResult struct {
+	Success *identity_srv.UnlockUserResponse
+}
+
+var UnlockUserResult_Success_DEFAULT *identity_srv.UnlockUserResponse
+
+func (p *UnlockUserResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *UnlockUserResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UnlockUserResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UnlockUserResult) GetSuccess() *identity_srv.UnlockUserResponse {
+	if !p.IsSetSuccess() {
+		return UnlockUserResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *UnlockUserResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.UnlockUserResponse)
+}
+
+func (p *UnlockUserResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *UnlockUserResult) GetResult() interface{} {
+	return p.Success
 }
 
 func createOrganizationHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceCreateOrganizationArgs)
-	realResult := result.(*identity_srv.IdentityServiceCreateOrganizationResult)
-	success, err := handler.(identity_srv.IdentityService).CreateOrganization(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.CreateOrganizationRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).CreateOrganization(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *CreateOrganizationArgs:
+		success, err := handler.(identity_srv.IdentityService).CreateOrganization(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*CreateOrganizationResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceCreateOrganizationArgs() interface{} {
-	return identity_srv.NewIdentityServiceCreateOrganizationArgs()
+func newCreateOrganizationArgs() interface{} {
+	return &CreateOrganizationArgs{}
 }
 
-func newIdentityServiceCreateOrganizationResult() interface{} {
-	return identity_srv.NewIdentityServiceCreateOrganizationResult()
+func newCreateOrganizationResult() interface{} {
+	return &CreateOrganizationResult{}
+}
+
+type CreateOrganizationArgs struct {
+	Req *identity_srv.CreateOrganizationRequest
+}
+
+func (p *CreateOrganizationArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *CreateOrganizationArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.CreateOrganizationRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var CreateOrganizationArgs_Req_DEFAULT *identity_srv.CreateOrganizationRequest
+
+func (p *CreateOrganizationArgs) GetReq() *identity_srv.CreateOrganizationRequest {
+	if !p.IsSetReq() {
+		return CreateOrganizationArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *CreateOrganizationArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *CreateOrganizationArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type CreateOrganizationResult struct {
+	Success *identity_srv.CreateOrganizationResponse
+}
+
+var CreateOrganizationResult_Success_DEFAULT *identity_srv.CreateOrganizationResponse
+
+func (p *CreateOrganizationResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *CreateOrganizationResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.CreateOrganizationResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CreateOrganizationResult) GetSuccess() *identity_srv.CreateOrganizationResponse {
+	if !p.IsSetSuccess() {
+		return CreateOrganizationResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CreateOrganizationResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.CreateOrganizationResponse)
+}
+
+func (p *CreateOrganizationResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CreateOrganizationResult) GetResult() interface{} {
+	return p.Success
 }
 
 func getOrganizationHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceGetOrganizationArgs)
-	realResult := result.(*identity_srv.IdentityServiceGetOrganizationResult)
-	success, err := handler.(identity_srv.IdentityService).GetOrganization(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.GetOrganizationRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).GetOrganization(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetOrganizationArgs:
+		success, err := handler.(identity_srv.IdentityService).GetOrganization(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetOrganizationResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceGetOrganizationArgs() interface{} {
-	return identity_srv.NewIdentityServiceGetOrganizationArgs()
+func newGetOrganizationArgs() interface{} {
+	return &GetOrganizationArgs{}
 }
 
-func newIdentityServiceGetOrganizationResult() interface{} {
-	return identity_srv.NewIdentityServiceGetOrganizationResult()
+func newGetOrganizationResult() interface{} {
+	return &GetOrganizationResult{}
+}
+
+type GetOrganizationArgs struct {
+	Req *identity_srv.GetOrganizationRequest
+}
+
+func (p *GetOrganizationArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetOrganizationArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetOrganizationRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetOrganizationArgs_Req_DEFAULT *identity_srv.GetOrganizationRequest
+
+func (p *GetOrganizationArgs) GetReq() *identity_srv.GetOrganizationRequest {
+	if !p.IsSetReq() {
+		return GetOrganizationArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetOrganizationArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetOrganizationArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetOrganizationResult struct {
+	Success *identity_srv.GetOrganizationResponse
+}
+
+var GetOrganizationResult_Success_DEFAULT *identity_srv.GetOrganizationResponse
+
+func (p *GetOrganizationResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetOrganizationResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetOrganizationResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetOrganizationResult) GetSuccess() *identity_srv.GetOrganizationResponse {
+	if !p.IsSetSuccess() {
+		return GetOrganizationResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetOrganizationResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.GetOrganizationResponse)
+}
+
+func (p *GetOrganizationResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetOrganizationResult) GetResult() interface{} {
+	return p.Success
 }
 
 func updateOrganizationHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceUpdateOrganizationArgs)
-	realResult := result.(*identity_srv.IdentityServiceUpdateOrganizationResult)
-	success, err := handler.(identity_srv.IdentityService).UpdateOrganization(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.UpdateOrganizationRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).UpdateOrganization(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *UpdateOrganizationArgs:
+		success, err := handler.(identity_srv.IdentityService).UpdateOrganization(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*UpdateOrganizationResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceUpdateOrganizationArgs() interface{} {
-	return identity_srv.NewIdentityServiceUpdateOrganizationArgs()
+func newUpdateOrganizationArgs() interface{} {
+	return &UpdateOrganizationArgs{}
 }
 
-func newIdentityServiceUpdateOrganizationResult() interface{} {
-	return identity_srv.NewIdentityServiceUpdateOrganizationResult()
+func newUpdateOrganizationResult() interface{} {
+	return &UpdateOrganizationResult{}
+}
+
+type UpdateOrganizationArgs struct {
+	Req *identity_srv.UpdateOrganizationRequest
+}
+
+func (p *UpdateOrganizationArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *UpdateOrganizationArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UpdateOrganizationRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var UpdateOrganizationArgs_Req_DEFAULT *identity_srv.UpdateOrganizationRequest
+
+func (p *UpdateOrganizationArgs) GetReq() *identity_srv.UpdateOrganizationRequest {
+	if !p.IsSetReq() {
+		return UpdateOrganizationArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *UpdateOrganizationArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *UpdateOrganizationArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type UpdateOrganizationResult struct {
+	Success *identity_srv.UpdateOrganizationResponse
+}
+
+var UpdateOrganizationResult_Success_DEFAULT *identity_srv.UpdateOrganizationResponse
+
+func (p *UpdateOrganizationResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *UpdateOrganizationResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UpdateOrganizationResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UpdateOrganizationResult) GetSuccess() *identity_srv.UpdateOrganizationResponse {
+	if !p.IsSetSuccess() {
+		return UpdateOrganizationResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *UpdateOrganizationResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.UpdateOrganizationResponse)
+}
+
+func (p *UpdateOrganizationResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *UpdateOrganizationResult) GetResult() interface{} {
+	return p.Success
 }
 
 func deleteOrganizationHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceDeleteOrganizationArgs)
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.DeleteOrganizationRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).DeleteOrganization(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *DeleteOrganizationArgs:
+		success, err := handler.(identity_srv.IdentityService).DeleteOrganization(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*DeleteOrganizationResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newDeleteOrganizationArgs() interface{} {
+	return &DeleteOrganizationArgs{}
+}
 
-	err := handler.(identity_srv.IdentityService).DeleteOrganization(ctx, realArg.OrganizationID)
-	if err != nil {
+func newDeleteOrganizationResult() interface{} {
+	return &DeleteOrganizationResult{}
+}
+
+type DeleteOrganizationArgs struct {
+	Req *identity_srv.DeleteOrganizationRequest
+}
+
+func (p *DeleteOrganizationArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *DeleteOrganizationArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.DeleteOrganizationRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
-
+	p.Req = msg
 	return nil
 }
-func newIdentityServiceDeleteOrganizationArgs() interface{} {
-	return identity_srv.NewIdentityServiceDeleteOrganizationArgs()
+
+var DeleteOrganizationArgs_Req_DEFAULT *identity_srv.DeleteOrganizationRequest
+
+func (p *DeleteOrganizationArgs) GetReq() *identity_srv.DeleteOrganizationRequest {
+	if !p.IsSetReq() {
+		return DeleteOrganizationArgs_Req_DEFAULT
+	}
+	return p.Req
 }
 
-func newIdentityServiceDeleteOrganizationResult() interface{} {
-	return identity_srv.NewIdentityServiceDeleteOrganizationResult()
+func (p *DeleteOrganizationArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *DeleteOrganizationArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type DeleteOrganizationResult struct {
+	Success *identity_srv.DeleteOrganizationResponse
+}
+
+var DeleteOrganizationResult_Success_DEFAULT *identity_srv.DeleteOrganizationResponse
+
+func (p *DeleteOrganizationResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *DeleteOrganizationResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.DeleteOrganizationResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *DeleteOrganizationResult) GetSuccess() *identity_srv.DeleteOrganizationResponse {
+	if !p.IsSetSuccess() {
+		return DeleteOrganizationResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *DeleteOrganizationResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.DeleteOrganizationResponse)
+}
+
+func (p *DeleteOrganizationResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *DeleteOrganizationResult) GetResult() interface{} {
+	return p.Success
 }
 
 func listOrganizationsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceListOrganizationsArgs)
-	realResult := result.(*identity_srv.IdentityServiceListOrganizationsResult)
-	success, err := handler.(identity_srv.IdentityService).ListOrganizations(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.ListOrganizationsRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).ListOrganizations(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *ListOrganizationsArgs:
+		success, err := handler.(identity_srv.IdentityService).ListOrganizations(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*ListOrganizationsResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceListOrganizationsArgs() interface{} {
-	return identity_srv.NewIdentityServiceListOrganizationsArgs()
+func newListOrganizationsArgs() interface{} {
+	return &ListOrganizationsArgs{}
 }
 
-func newIdentityServiceListOrganizationsResult() interface{} {
-	return identity_srv.NewIdentityServiceListOrganizationsResult()
+func newListOrganizationsResult() interface{} {
+	return &ListOrganizationsResult{}
+}
+
+type ListOrganizationsArgs struct {
+	Req *identity_srv.ListOrganizationsRequest
+}
+
+func (p *ListOrganizationsArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *ListOrganizationsArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.ListOrganizationsRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var ListOrganizationsArgs_Req_DEFAULT *identity_srv.ListOrganizationsRequest
+
+func (p *ListOrganizationsArgs) GetReq() *identity_srv.ListOrganizationsRequest {
+	if !p.IsSetReq() {
+		return ListOrganizationsArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ListOrganizationsArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *ListOrganizationsArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type ListOrganizationsResult struct {
+	Success *identity_srv.ListOrganizationsResponse
+}
+
+var ListOrganizationsResult_Success_DEFAULT *identity_srv.ListOrganizationsResponse
+
+func (p *ListOrganizationsResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *ListOrganizationsResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.ListOrganizationsResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ListOrganizationsResult) GetSuccess() *identity_srv.ListOrganizationsResponse {
+	if !p.IsSetSuccess() {
+		return ListOrganizationsResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ListOrganizationsResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.ListOrganizationsResponse)
+}
+
+func (p *ListOrganizationsResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ListOrganizationsResult) GetResult() interface{} {
+	return p.Success
 }
 
 func addMembershipHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceAddMembershipArgs)
-	realResult := result.(*identity_srv.IdentityServiceAddMembershipResult)
-	success, err := handler.(identity_srv.IdentityService).AddMembership(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.AddMembershipRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).AddMembership(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *AddMembershipArgs:
+		success, err := handler.(identity_srv.IdentityService).AddMembership(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*AddMembershipResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceAddMembershipArgs() interface{} {
-	return identity_srv.NewIdentityServiceAddMembershipArgs()
+func newAddMembershipArgs() interface{} {
+	return &AddMembershipArgs{}
 }
 
-func newIdentityServiceAddMembershipResult() interface{} {
-	return identity_srv.NewIdentityServiceAddMembershipResult()
+func newAddMembershipResult() interface{} {
+	return &AddMembershipResult{}
+}
+
+type AddMembershipArgs struct {
+	Req *identity_srv.AddMembershipRequest
+}
+
+func (p *AddMembershipArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *AddMembershipArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.AddMembershipRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var AddMembershipArgs_Req_DEFAULT *identity_srv.AddMembershipRequest
+
+func (p *AddMembershipArgs) GetReq() *identity_srv.AddMembershipRequest {
+	if !p.IsSetReq() {
+		return AddMembershipArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *AddMembershipArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *AddMembershipArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type AddMembershipResult struct {
+	Success *identity_srv.AddMembershipResponse
+}
+
+var AddMembershipResult_Success_DEFAULT *identity_srv.AddMembershipResponse
+
+func (p *AddMembershipResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *AddMembershipResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.AddMembershipResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *AddMembershipResult) GetSuccess() *identity_srv.AddMembershipResponse {
+	if !p.IsSetSuccess() {
+		return AddMembershipResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *AddMembershipResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.AddMembershipResponse)
+}
+
+func (p *AddMembershipResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *AddMembershipResult) GetResult() interface{} {
+	return p.Success
 }
 
 func updateMembershipHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceUpdateMembershipArgs)
-	realResult := result.(*identity_srv.IdentityServiceUpdateMembershipResult)
-	success, err := handler.(identity_srv.IdentityService).UpdateMembership(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.UpdateMembershipRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).UpdateMembership(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *UpdateMembershipArgs:
+		success, err := handler.(identity_srv.IdentityService).UpdateMembership(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*UpdateMembershipResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceUpdateMembershipArgs() interface{} {
-	return identity_srv.NewIdentityServiceUpdateMembershipArgs()
+func newUpdateMembershipArgs() interface{} {
+	return &UpdateMembershipArgs{}
 }
 
-func newIdentityServiceUpdateMembershipResult() interface{} {
-	return identity_srv.NewIdentityServiceUpdateMembershipResult()
+func newUpdateMembershipResult() interface{} {
+	return &UpdateMembershipResult{}
+}
+
+type UpdateMembershipArgs struct {
+	Req *identity_srv.UpdateMembershipRequest
+}
+
+func (p *UpdateMembershipArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *UpdateMembershipArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UpdateMembershipRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var UpdateMembershipArgs_Req_DEFAULT *identity_srv.UpdateMembershipRequest
+
+func (p *UpdateMembershipArgs) GetReq() *identity_srv.UpdateMembershipRequest {
+	if !p.IsSetReq() {
+		return UpdateMembershipArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *UpdateMembershipArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *UpdateMembershipArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type UpdateMembershipResult struct {
+	Success *identity_srv.UpdateMembershipResponse
+}
+
+var UpdateMembershipResult_Success_DEFAULT *identity_srv.UpdateMembershipResponse
+
+func (p *UpdateMembershipResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *UpdateMembershipResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UpdateMembershipResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UpdateMembershipResult) GetSuccess() *identity_srv.UpdateMembershipResponse {
+	if !p.IsSetSuccess() {
+		return UpdateMembershipResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *UpdateMembershipResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.UpdateMembershipResponse)
+}
+
+func (p *UpdateMembershipResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *UpdateMembershipResult) GetResult() interface{} {
+	return p.Success
 }
 
 func removeMembershipHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceRemoveMembershipArgs)
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.RemoveMembershipRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).RemoveMembership(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *RemoveMembershipArgs:
+		success, err := handler.(identity_srv.IdentityService).RemoveMembership(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*RemoveMembershipResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newRemoveMembershipArgs() interface{} {
+	return &RemoveMembershipArgs{}
+}
 
-	err := handler.(identity_srv.IdentityService).RemoveMembership(ctx, realArg.MembershipID)
-	if err != nil {
+func newRemoveMembershipResult() interface{} {
+	return &RemoveMembershipResult{}
+}
+
+type RemoveMembershipArgs struct {
+	Req *identity_srv.RemoveMembershipRequest
+}
+
+func (p *RemoveMembershipArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *RemoveMembershipArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.RemoveMembershipRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
-
+	p.Req = msg
 	return nil
 }
-func newIdentityServiceRemoveMembershipArgs() interface{} {
-	return identity_srv.NewIdentityServiceRemoveMembershipArgs()
+
+var RemoveMembershipArgs_Req_DEFAULT *identity_srv.RemoveMembershipRequest
+
+func (p *RemoveMembershipArgs) GetReq() *identity_srv.RemoveMembershipRequest {
+	if !p.IsSetReq() {
+		return RemoveMembershipArgs_Req_DEFAULT
+	}
+	return p.Req
 }
 
-func newIdentityServiceRemoveMembershipResult() interface{} {
-	return identity_srv.NewIdentityServiceRemoveMembershipResult()
+func (p *RemoveMembershipArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *RemoveMembershipArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type RemoveMembershipResult struct {
+	Success *identity_srv.RemoveMembershipResponse
+}
+
+var RemoveMembershipResult_Success_DEFAULT *identity_srv.RemoveMembershipResponse
+
+func (p *RemoveMembershipResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *RemoveMembershipResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.RemoveMembershipResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *RemoveMembershipResult) GetSuccess() *identity_srv.RemoveMembershipResponse {
+	if !p.IsSetSuccess() {
+		return RemoveMembershipResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *RemoveMembershipResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.RemoveMembershipResponse)
+}
+
+func (p *RemoveMembershipResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *RemoveMembershipResult) GetResult() interface{} {
+	return p.Success
 }
 
 func getMembershipHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceGetMembershipArgs)
-	realResult := result.(*identity_srv.IdentityServiceGetMembershipResult)
-	success, err := handler.(identity_srv.IdentityService).GetMembership(ctx, realArg.MembershipID)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.GetMembershipRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).GetMembership(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetMembershipArgs:
+		success, err := handler.(identity_srv.IdentityService).GetMembership(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetMembershipResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceGetMembershipArgs() interface{} {
-	return identity_srv.NewIdentityServiceGetMembershipArgs()
+func newGetMembershipArgs() interface{} {
+	return &GetMembershipArgs{}
 }
 
-func newIdentityServiceGetMembershipResult() interface{} {
-	return identity_srv.NewIdentityServiceGetMembershipResult()
+func newGetMembershipResult() interface{} {
+	return &GetMembershipResult{}
+}
+
+type GetMembershipArgs struct {
+	Req *identity_srv.GetMembershipRequest
+}
+
+func (p *GetMembershipArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetMembershipArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetMembershipRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetMembershipArgs_Req_DEFAULT *identity_srv.GetMembershipRequest
+
+func (p *GetMembershipArgs) GetReq() *identity_srv.GetMembershipRequest {
+	if !p.IsSetReq() {
+		return GetMembershipArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetMembershipArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetMembershipArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetMembershipResult struct {
+	Success *identity_srv.GetMembershipResponse
+}
+
+var GetMembershipResult_Success_DEFAULT *identity_srv.GetMembershipResponse
+
+func (p *GetMembershipResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetMembershipResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetMembershipResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetMembershipResult) GetSuccess() *identity_srv.GetMembershipResponse {
+	if !p.IsSetSuccess() {
+		return GetMembershipResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetMembershipResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.GetMembershipResponse)
+}
+
+func (p *GetMembershipResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetMembershipResult) GetResult() interface{} {
+	return p.Success
 }
 
 func getUserMembershipsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceGetUserMembershipsArgs)
-	realResult := result.(*identity_srv.IdentityServiceGetUserMembershipsResult)
-	success, err := handler.(identity_srv.IdentityService).GetUserMemberships(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.GetUserMembershipsRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).GetUserMemberships(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetUserMembershipsArgs:
+		success, err := handler.(identity_srv.IdentityService).GetUserMemberships(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetUserMembershipsResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceGetUserMembershipsArgs() interface{} {
-	return identity_srv.NewIdentityServiceGetUserMembershipsArgs()
+func newGetUserMembershipsArgs() interface{} {
+	return &GetUserMembershipsArgs{}
 }
 
-func newIdentityServiceGetUserMembershipsResult() interface{} {
-	return identity_srv.NewIdentityServiceGetUserMembershipsResult()
+func newGetUserMembershipsResult() interface{} {
+	return &GetUserMembershipsResult{}
+}
+
+type GetUserMembershipsArgs struct {
+	Req *identity_srv.GetUserMembershipsRequest
+}
+
+func (p *GetUserMembershipsArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetUserMembershipsArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetUserMembershipsRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetUserMembershipsArgs_Req_DEFAULT *identity_srv.GetUserMembershipsRequest
+
+func (p *GetUserMembershipsArgs) GetReq() *identity_srv.GetUserMembershipsRequest {
+	if !p.IsSetReq() {
+		return GetUserMembershipsArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetUserMembershipsArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetUserMembershipsArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetUserMembershipsResult struct {
+	Success *identity_srv.GetUserMembershipsResponse
+}
+
+var GetUserMembershipsResult_Success_DEFAULT *identity_srv.GetUserMembershipsResponse
+
+func (p *GetUserMembershipsResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetUserMembershipsResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetUserMembershipsResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetUserMembershipsResult) GetSuccess() *identity_srv.GetUserMembershipsResponse {
+	if !p.IsSetSuccess() {
+		return GetUserMembershipsResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetUserMembershipsResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.GetUserMembershipsResponse)
+}
+
+func (p *GetUserMembershipsResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetUserMembershipsResult) GetResult() interface{} {
+	return p.Success
 }
 
 func getPrimaryMembershipHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceGetPrimaryMembershipArgs)
-	realResult := result.(*identity_srv.IdentityServiceGetPrimaryMembershipResult)
-	success, err := handler.(identity_srv.IdentityService).GetPrimaryMembership(ctx, realArg.UserID)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.GetPrimaryMembershipRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).GetPrimaryMembership(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetPrimaryMembershipArgs:
+		success, err := handler.(identity_srv.IdentityService).GetPrimaryMembership(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetPrimaryMembershipResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceGetPrimaryMembershipArgs() interface{} {
-	return identity_srv.NewIdentityServiceGetPrimaryMembershipArgs()
+func newGetPrimaryMembershipArgs() interface{} {
+	return &GetPrimaryMembershipArgs{}
 }
 
-func newIdentityServiceGetPrimaryMembershipResult() interface{} {
-	return identity_srv.NewIdentityServiceGetPrimaryMembershipResult()
+func newGetPrimaryMembershipResult() interface{} {
+	return &GetPrimaryMembershipResult{}
+}
+
+type GetPrimaryMembershipArgs struct {
+	Req *identity_srv.GetPrimaryMembershipRequest
+}
+
+func (p *GetPrimaryMembershipArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetPrimaryMembershipArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetPrimaryMembershipRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetPrimaryMembershipArgs_Req_DEFAULT *identity_srv.GetPrimaryMembershipRequest
+
+func (p *GetPrimaryMembershipArgs) GetReq() *identity_srv.GetPrimaryMembershipRequest {
+	if !p.IsSetReq() {
+		return GetPrimaryMembershipArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetPrimaryMembershipArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetPrimaryMembershipArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetPrimaryMembershipResult struct {
+	Success *identity_srv.GetPrimaryMembershipResponse
+}
+
+var GetPrimaryMembershipResult_Success_DEFAULT *identity_srv.GetPrimaryMembershipResponse
+
+func (p *GetPrimaryMembershipResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetPrimaryMembershipResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetPrimaryMembershipResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetPrimaryMembershipResult) GetSuccess() *identity_srv.GetPrimaryMembershipResponse {
+	if !p.IsSetSuccess() {
+		return GetPrimaryMembershipResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetPrimaryMembershipResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.GetPrimaryMembershipResponse)
+}
+
+func (p *GetPrimaryMembershipResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetPrimaryMembershipResult) GetResult() interface{} {
+	return p.Success
 }
 
 func checkMembershipHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceCheckMembershipArgs)
-	realResult := result.(*identity_srv.IdentityServiceCheckMembershipResult)
-	success, err := handler.(identity_srv.IdentityService).CheckMembership(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.CheckMembershipRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).CheckMembership(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *CheckMembershipArgs:
+		success, err := handler.(identity_srv.IdentityService).CheckMembership(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*CheckMembershipResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = &success
-	return nil
 }
-func newIdentityServiceCheckMembershipArgs() interface{} {
-	return identity_srv.NewIdentityServiceCheckMembershipArgs()
+func newCheckMembershipArgs() interface{} {
+	return &CheckMembershipArgs{}
 }
 
-func newIdentityServiceCheckMembershipResult() interface{} {
-	return identity_srv.NewIdentityServiceCheckMembershipResult()
+func newCheckMembershipResult() interface{} {
+	return &CheckMembershipResult{}
+}
+
+type CheckMembershipArgs struct {
+	Req *identity_srv.CheckMembershipRequest
+}
+
+func (p *CheckMembershipArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *CheckMembershipArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.CheckMembershipRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var CheckMembershipArgs_Req_DEFAULT *identity_srv.CheckMembershipRequest
+
+func (p *CheckMembershipArgs) GetReq() *identity_srv.CheckMembershipRequest {
+	if !p.IsSetReq() {
+		return CheckMembershipArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *CheckMembershipArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *CheckMembershipArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type CheckMembershipResult struct {
+	Success *identity_srv.CheckMembershipResponse
+}
+
+var CheckMembershipResult_Success_DEFAULT *identity_srv.CheckMembershipResponse
+
+func (p *CheckMembershipResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *CheckMembershipResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.CheckMembershipResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CheckMembershipResult) GetSuccess() *identity_srv.CheckMembershipResponse {
+	if !p.IsSetSuccess() {
+		return CheckMembershipResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CheckMembershipResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.CheckMembershipResponse)
+}
+
+func (p *CheckMembershipResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CheckMembershipResult) GetResult() interface{} {
+	return p.Success
 }
 
 func createDepartmentHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceCreateDepartmentArgs)
-	realResult := result.(*identity_srv.IdentityServiceCreateDepartmentResult)
-	success, err := handler.(identity_srv.IdentityService).CreateDepartment(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.CreateDepartmentRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).CreateDepartment(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *CreateDepartmentArgs:
+		success, err := handler.(identity_srv.IdentityService).CreateDepartment(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*CreateDepartmentResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceCreateDepartmentArgs() interface{} {
-	return identity_srv.NewIdentityServiceCreateDepartmentArgs()
+func newCreateDepartmentArgs() interface{} {
+	return &CreateDepartmentArgs{}
 }
 
-func newIdentityServiceCreateDepartmentResult() interface{} {
-	return identity_srv.NewIdentityServiceCreateDepartmentResult()
+func newCreateDepartmentResult() interface{} {
+	return &CreateDepartmentResult{}
+}
+
+type CreateDepartmentArgs struct {
+	Req *identity_srv.CreateDepartmentRequest
+}
+
+func (p *CreateDepartmentArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *CreateDepartmentArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.CreateDepartmentRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var CreateDepartmentArgs_Req_DEFAULT *identity_srv.CreateDepartmentRequest
+
+func (p *CreateDepartmentArgs) GetReq() *identity_srv.CreateDepartmentRequest {
+	if !p.IsSetReq() {
+		return CreateDepartmentArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *CreateDepartmentArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *CreateDepartmentArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type CreateDepartmentResult struct {
+	Success *identity_srv.CreateDepartmentResponse
+}
+
+var CreateDepartmentResult_Success_DEFAULT *identity_srv.CreateDepartmentResponse
+
+func (p *CreateDepartmentResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *CreateDepartmentResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.CreateDepartmentResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CreateDepartmentResult) GetSuccess() *identity_srv.CreateDepartmentResponse {
+	if !p.IsSetSuccess() {
+		return CreateDepartmentResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CreateDepartmentResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.CreateDepartmentResponse)
+}
+
+func (p *CreateDepartmentResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CreateDepartmentResult) GetResult() interface{} {
+	return p.Success
 }
 
 func getDepartmentHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceGetDepartmentArgs)
-	realResult := result.(*identity_srv.IdentityServiceGetDepartmentResult)
-	success, err := handler.(identity_srv.IdentityService).GetDepartment(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.GetDepartmentRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).GetDepartment(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetDepartmentArgs:
+		success, err := handler.(identity_srv.IdentityService).GetDepartment(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetDepartmentResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceGetDepartmentArgs() interface{} {
-	return identity_srv.NewIdentityServiceGetDepartmentArgs()
+func newGetDepartmentArgs() interface{} {
+	return &GetDepartmentArgs{}
 }
 
-func newIdentityServiceGetDepartmentResult() interface{} {
-	return identity_srv.NewIdentityServiceGetDepartmentResult()
+func newGetDepartmentResult() interface{} {
+	return &GetDepartmentResult{}
+}
+
+type GetDepartmentArgs struct {
+	Req *identity_srv.GetDepartmentRequest
+}
+
+func (p *GetDepartmentArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetDepartmentArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetDepartmentRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetDepartmentArgs_Req_DEFAULT *identity_srv.GetDepartmentRequest
+
+func (p *GetDepartmentArgs) GetReq() *identity_srv.GetDepartmentRequest {
+	if !p.IsSetReq() {
+		return GetDepartmentArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetDepartmentArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetDepartmentArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetDepartmentResult struct {
+	Success *identity_srv.GetDepartmentResponse
+}
+
+var GetDepartmentResult_Success_DEFAULT *identity_srv.GetDepartmentResponse
+
+func (p *GetDepartmentResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetDepartmentResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetDepartmentResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetDepartmentResult) GetSuccess() *identity_srv.GetDepartmentResponse {
+	if !p.IsSetSuccess() {
+		return GetDepartmentResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetDepartmentResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.GetDepartmentResponse)
+}
+
+func (p *GetDepartmentResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetDepartmentResult) GetResult() interface{} {
+	return p.Success
 }
 
 func updateDepartmentHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceUpdateDepartmentArgs)
-	realResult := result.(*identity_srv.IdentityServiceUpdateDepartmentResult)
-	success, err := handler.(identity_srv.IdentityService).UpdateDepartment(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.UpdateDepartmentRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).UpdateDepartment(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *UpdateDepartmentArgs:
+		success, err := handler.(identity_srv.IdentityService).UpdateDepartment(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*UpdateDepartmentResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceUpdateDepartmentArgs() interface{} {
-	return identity_srv.NewIdentityServiceUpdateDepartmentArgs()
+func newUpdateDepartmentArgs() interface{} {
+	return &UpdateDepartmentArgs{}
 }
 
-func newIdentityServiceUpdateDepartmentResult() interface{} {
-	return identity_srv.NewIdentityServiceUpdateDepartmentResult()
+func newUpdateDepartmentResult() interface{} {
+	return &UpdateDepartmentResult{}
+}
+
+type UpdateDepartmentArgs struct {
+	Req *identity_srv.UpdateDepartmentRequest
+}
+
+func (p *UpdateDepartmentArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *UpdateDepartmentArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UpdateDepartmentRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var UpdateDepartmentArgs_Req_DEFAULT *identity_srv.UpdateDepartmentRequest
+
+func (p *UpdateDepartmentArgs) GetReq() *identity_srv.UpdateDepartmentRequest {
+	if !p.IsSetReq() {
+		return UpdateDepartmentArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *UpdateDepartmentArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *UpdateDepartmentArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type UpdateDepartmentResult struct {
+	Success *identity_srv.UpdateDepartmentResponse
+}
+
+var UpdateDepartmentResult_Success_DEFAULT *identity_srv.UpdateDepartmentResponse
+
+func (p *UpdateDepartmentResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *UpdateDepartmentResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UpdateDepartmentResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UpdateDepartmentResult) GetSuccess() *identity_srv.UpdateDepartmentResponse {
+	if !p.IsSetSuccess() {
+		return UpdateDepartmentResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *UpdateDepartmentResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.UpdateDepartmentResponse)
+}
+
+func (p *UpdateDepartmentResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *UpdateDepartmentResult) GetResult() interface{} {
+	return p.Success
 }
 
 func deleteDepartmentHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceDeleteDepartmentArgs)
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.DeleteDepartmentRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).DeleteDepartment(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *DeleteDepartmentArgs:
+		success, err := handler.(identity_srv.IdentityService).DeleteDepartment(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*DeleteDepartmentResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newDeleteDepartmentArgs() interface{} {
+	return &DeleteDepartmentArgs{}
+}
 
-	err := handler.(identity_srv.IdentityService).DeleteDepartment(ctx, realArg.DepartmentID)
-	if err != nil {
+func newDeleteDepartmentResult() interface{} {
+	return &DeleteDepartmentResult{}
+}
+
+type DeleteDepartmentArgs struct {
+	Req *identity_srv.DeleteDepartmentRequest
+}
+
+func (p *DeleteDepartmentArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *DeleteDepartmentArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.DeleteDepartmentRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
-
+	p.Req = msg
 	return nil
 }
-func newIdentityServiceDeleteDepartmentArgs() interface{} {
-	return identity_srv.NewIdentityServiceDeleteDepartmentArgs()
+
+var DeleteDepartmentArgs_Req_DEFAULT *identity_srv.DeleteDepartmentRequest
+
+func (p *DeleteDepartmentArgs) GetReq() *identity_srv.DeleteDepartmentRequest {
+	if !p.IsSetReq() {
+		return DeleteDepartmentArgs_Req_DEFAULT
+	}
+	return p.Req
 }
 
-func newIdentityServiceDeleteDepartmentResult() interface{} {
-	return identity_srv.NewIdentityServiceDeleteDepartmentResult()
+func (p *DeleteDepartmentArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *DeleteDepartmentArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type DeleteDepartmentResult struct {
+	Success *identity_srv.DeleteDepartmentResponse
+}
+
+var DeleteDepartmentResult_Success_DEFAULT *identity_srv.DeleteDepartmentResponse
+
+func (p *DeleteDepartmentResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *DeleteDepartmentResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.DeleteDepartmentResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *DeleteDepartmentResult) GetSuccess() *identity_srv.DeleteDepartmentResponse {
+	if !p.IsSetSuccess() {
+		return DeleteDepartmentResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *DeleteDepartmentResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.DeleteDepartmentResponse)
+}
+
+func (p *DeleteDepartmentResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *DeleteDepartmentResult) GetResult() interface{} {
+	return p.Success
 }
 
 func getOrganizationDepartmentsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceGetOrganizationDepartmentsArgs)
-	realResult := result.(*identity_srv.IdentityServiceGetOrganizationDepartmentsResult)
-	success, err := handler.(identity_srv.IdentityService).GetOrganizationDepartments(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.GetOrganizationDepartmentsRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).GetOrganizationDepartments(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetOrganizationDepartmentsArgs:
+		success, err := handler.(identity_srv.IdentityService).GetOrganizationDepartments(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetOrganizationDepartmentsResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceGetOrganizationDepartmentsArgs() interface{} {
-	return identity_srv.NewIdentityServiceGetOrganizationDepartmentsArgs()
+func newGetOrganizationDepartmentsArgs() interface{} {
+	return &GetOrganizationDepartmentsArgs{}
 }
 
-func newIdentityServiceGetOrganizationDepartmentsResult() interface{} {
-	return identity_srv.NewIdentityServiceGetOrganizationDepartmentsResult()
+func newGetOrganizationDepartmentsResult() interface{} {
+	return &GetOrganizationDepartmentsResult{}
+}
+
+type GetOrganizationDepartmentsArgs struct {
+	Req *identity_srv.GetOrganizationDepartmentsRequest
+}
+
+func (p *GetOrganizationDepartmentsArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetOrganizationDepartmentsArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetOrganizationDepartmentsRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetOrganizationDepartmentsArgs_Req_DEFAULT *identity_srv.GetOrganizationDepartmentsRequest
+
+func (p *GetOrganizationDepartmentsArgs) GetReq() *identity_srv.GetOrganizationDepartmentsRequest {
+	if !p.IsSetReq() {
+		return GetOrganizationDepartmentsArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetOrganizationDepartmentsArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetOrganizationDepartmentsArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetOrganizationDepartmentsResult struct {
+	Success *identity_srv.GetOrganizationDepartmentsResponse
+}
+
+var GetOrganizationDepartmentsResult_Success_DEFAULT *identity_srv.GetOrganizationDepartmentsResponse
+
+func (p *GetOrganizationDepartmentsResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetOrganizationDepartmentsResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetOrganizationDepartmentsResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetOrganizationDepartmentsResult) GetSuccess() *identity_srv.GetOrganizationDepartmentsResponse {
+	if !p.IsSetSuccess() {
+		return GetOrganizationDepartmentsResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetOrganizationDepartmentsResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.GetOrganizationDepartmentsResponse)
+}
+
+func (p *GetOrganizationDepartmentsResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetOrganizationDepartmentsResult) GetResult() interface{} {
+	return p.Success
 }
 
 func uploadTemporaryLogoHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceUploadTemporaryLogoArgs)
-	realResult := result.(*identity_srv.IdentityServiceUploadTemporaryLogoResult)
-	success, err := handler.(identity_srv.IdentityService).UploadTemporaryLogo(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.UploadTemporaryLogoRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).UploadTemporaryLogo(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *UploadTemporaryLogoArgs:
+		success, err := handler.(identity_srv.IdentityService).UploadTemporaryLogo(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*UploadTemporaryLogoResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceUploadTemporaryLogoArgs() interface{} {
-	return identity_srv.NewIdentityServiceUploadTemporaryLogoArgs()
+func newUploadTemporaryLogoArgs() interface{} {
+	return &UploadTemporaryLogoArgs{}
 }
 
-func newIdentityServiceUploadTemporaryLogoResult() interface{} {
-	return identity_srv.NewIdentityServiceUploadTemporaryLogoResult()
+func newUploadTemporaryLogoResult() interface{} {
+	return &UploadTemporaryLogoResult{}
+}
+
+type UploadTemporaryLogoArgs struct {
+	Req *identity_srv.UploadTemporaryLogoRequest
+}
+
+func (p *UploadTemporaryLogoArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *UploadTemporaryLogoArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UploadTemporaryLogoRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var UploadTemporaryLogoArgs_Req_DEFAULT *identity_srv.UploadTemporaryLogoRequest
+
+func (p *UploadTemporaryLogoArgs) GetReq() *identity_srv.UploadTemporaryLogoRequest {
+	if !p.IsSetReq() {
+		return UploadTemporaryLogoArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *UploadTemporaryLogoArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *UploadTemporaryLogoArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type UploadTemporaryLogoResult struct {
+	Success *identity_srv.UploadTemporaryLogoResponse
+}
+
+var UploadTemporaryLogoResult_Success_DEFAULT *identity_srv.UploadTemporaryLogoResponse
+
+func (p *UploadTemporaryLogoResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *UploadTemporaryLogoResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UploadTemporaryLogoResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UploadTemporaryLogoResult) GetSuccess() *identity_srv.UploadTemporaryLogoResponse {
+	if !p.IsSetSuccess() {
+		return UploadTemporaryLogoResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *UploadTemporaryLogoResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.UploadTemporaryLogoResponse)
+}
+
+func (p *UploadTemporaryLogoResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *UploadTemporaryLogoResult) GetResult() interface{} {
+	return p.Success
 }
 
 func getOrganizationLogoHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceGetOrganizationLogoArgs)
-	realResult := result.(*identity_srv.IdentityServiceGetOrganizationLogoResult)
-	success, err := handler.(identity_srv.IdentityService).GetOrganizationLogo(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.GetOrganizationLogoRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).GetOrganizationLogo(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetOrganizationLogoArgs:
+		success, err := handler.(identity_srv.IdentityService).GetOrganizationLogo(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetOrganizationLogoResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceGetOrganizationLogoArgs() interface{} {
-	return identity_srv.NewIdentityServiceGetOrganizationLogoArgs()
+func newGetOrganizationLogoArgs() interface{} {
+	return &GetOrganizationLogoArgs{}
 }
 
-func newIdentityServiceGetOrganizationLogoResult() interface{} {
-	return identity_srv.NewIdentityServiceGetOrganizationLogoResult()
+func newGetOrganizationLogoResult() interface{} {
+	return &GetOrganizationLogoResult{}
+}
+
+type GetOrganizationLogoArgs struct {
+	Req *identity_srv.GetOrganizationLogoRequest
+}
+
+func (p *GetOrganizationLogoArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetOrganizationLogoArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetOrganizationLogoRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetOrganizationLogoArgs_Req_DEFAULT *identity_srv.GetOrganizationLogoRequest
+
+func (p *GetOrganizationLogoArgs) GetReq() *identity_srv.GetOrganizationLogoRequest {
+	if !p.IsSetReq() {
+		return GetOrganizationLogoArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetOrganizationLogoArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetOrganizationLogoArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetOrganizationLogoResult struct {
+	Success *identity_srv.GetOrganizationLogoResponse
+}
+
+var GetOrganizationLogoResult_Success_DEFAULT *identity_srv.GetOrganizationLogoResponse
+
+func (p *GetOrganizationLogoResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetOrganizationLogoResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetOrganizationLogoResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetOrganizationLogoResult) GetSuccess() *identity_srv.GetOrganizationLogoResponse {
+	if !p.IsSetSuccess() {
+		return GetOrganizationLogoResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetOrganizationLogoResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.GetOrganizationLogoResponse)
+}
+
+func (p *GetOrganizationLogoResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetOrganizationLogoResult) GetResult() interface{} {
+	return p.Success
 }
 
 func deleteOrganizationLogoHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceDeleteOrganizationLogoArgs)
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.DeleteOrganizationLogoRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).DeleteOrganizationLogo(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *DeleteOrganizationLogoArgs:
+		success, err := handler.(identity_srv.IdentityService).DeleteOrganizationLogo(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*DeleteOrganizationLogoResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newDeleteOrganizationLogoArgs() interface{} {
+	return &DeleteOrganizationLogoArgs{}
+}
 
-	err := handler.(identity_srv.IdentityService).DeleteOrganizationLogo(ctx, realArg.Req)
-	if err != nil {
+func newDeleteOrganizationLogoResult() interface{} {
+	return &DeleteOrganizationLogoResult{}
+}
+
+type DeleteOrganizationLogoArgs struct {
+	Req *identity_srv.DeleteOrganizationLogoRequest
+}
+
+func (p *DeleteOrganizationLogoArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *DeleteOrganizationLogoArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.DeleteOrganizationLogoRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
-
+	p.Req = msg
 	return nil
 }
-func newIdentityServiceDeleteOrganizationLogoArgs() interface{} {
-	return identity_srv.NewIdentityServiceDeleteOrganizationLogoArgs()
+
+var DeleteOrganizationLogoArgs_Req_DEFAULT *identity_srv.DeleteOrganizationLogoRequest
+
+func (p *DeleteOrganizationLogoArgs) GetReq() *identity_srv.DeleteOrganizationLogoRequest {
+	if !p.IsSetReq() {
+		return DeleteOrganizationLogoArgs_Req_DEFAULT
+	}
+	return p.Req
 }
 
-func newIdentityServiceDeleteOrganizationLogoResult() interface{} {
-	return identity_srv.NewIdentityServiceDeleteOrganizationLogoResult()
+func (p *DeleteOrganizationLogoArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *DeleteOrganizationLogoArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type DeleteOrganizationLogoResult struct {
+	Success *identity_srv.DeleteOrganizationLogoResponse
+}
+
+var DeleteOrganizationLogoResult_Success_DEFAULT *identity_srv.DeleteOrganizationLogoResponse
+
+func (p *DeleteOrganizationLogoResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *DeleteOrganizationLogoResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.DeleteOrganizationLogoResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *DeleteOrganizationLogoResult) GetSuccess() *identity_srv.DeleteOrganizationLogoResponse {
+	if !p.IsSetSuccess() {
+		return DeleteOrganizationLogoResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *DeleteOrganizationLogoResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.DeleteOrganizationLogoResponse)
+}
+
+func (p *DeleteOrganizationLogoResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *DeleteOrganizationLogoResult) GetResult() interface{} {
+	return p.Success
 }
 
 func bindLogoToOrganizationHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceBindLogoToOrganizationArgs)
-	realResult := result.(*identity_srv.IdentityServiceBindLogoToOrganizationResult)
-	success, err := handler.(identity_srv.IdentityService).BindLogoToOrganization(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.BindLogoToOrganizationRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).BindLogoToOrganization(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *BindLogoToOrganizationArgs:
+		success, err := handler.(identity_srv.IdentityService).BindLogoToOrganization(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*BindLogoToOrganizationResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceBindLogoToOrganizationArgs() interface{} {
-	return identity_srv.NewIdentityServiceBindLogoToOrganizationArgs()
+func newBindLogoToOrganizationArgs() interface{} {
+	return &BindLogoToOrganizationArgs{}
 }
 
-func newIdentityServiceBindLogoToOrganizationResult() interface{} {
-	return identity_srv.NewIdentityServiceBindLogoToOrganizationResult()
+func newBindLogoToOrganizationResult() interface{} {
+	return &BindLogoToOrganizationResult{}
+}
+
+type BindLogoToOrganizationArgs struct {
+	Req *identity_srv.BindLogoToOrganizationRequest
+}
+
+func (p *BindLogoToOrganizationArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *BindLogoToOrganizationArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.BindLogoToOrganizationRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var BindLogoToOrganizationArgs_Req_DEFAULT *identity_srv.BindLogoToOrganizationRequest
+
+func (p *BindLogoToOrganizationArgs) GetReq() *identity_srv.BindLogoToOrganizationRequest {
+	if !p.IsSetReq() {
+		return BindLogoToOrganizationArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *BindLogoToOrganizationArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *BindLogoToOrganizationArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type BindLogoToOrganizationResult struct {
+	Success *identity_srv.BindLogoToOrganizationResponse
+}
+
+var BindLogoToOrganizationResult_Success_DEFAULT *identity_srv.BindLogoToOrganizationResponse
+
+func (p *BindLogoToOrganizationResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *BindLogoToOrganizationResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.BindLogoToOrganizationResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *BindLogoToOrganizationResult) GetSuccess() *identity_srv.BindLogoToOrganizationResponse {
+	if !p.IsSetSuccess() {
+		return BindLogoToOrganizationResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *BindLogoToOrganizationResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.BindLogoToOrganizationResponse)
+}
+
+func (p *BindLogoToOrganizationResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *BindLogoToOrganizationResult) GetResult() interface{} {
+	return p.Success
 }
 
 func createRoleDefinitionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceCreateRoleDefinitionArgs)
-	realResult := result.(*identity_srv.IdentityServiceCreateRoleDefinitionResult)
-	success, err := handler.(identity_srv.IdentityService).CreateRoleDefinition(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.RoleDefinitionCreateRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).CreateRoleDefinition(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *CreateRoleDefinitionArgs:
+		success, err := handler.(identity_srv.IdentityService).CreateRoleDefinition(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*CreateRoleDefinitionResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceCreateRoleDefinitionArgs() interface{} {
-	return identity_srv.NewIdentityServiceCreateRoleDefinitionArgs()
+func newCreateRoleDefinitionArgs() interface{} {
+	return &CreateRoleDefinitionArgs{}
 }
 
-func newIdentityServiceCreateRoleDefinitionResult() interface{} {
-	return identity_srv.NewIdentityServiceCreateRoleDefinitionResult()
+func newCreateRoleDefinitionResult() interface{} {
+	return &CreateRoleDefinitionResult{}
+}
+
+type CreateRoleDefinitionArgs struct {
+	Req *identity_srv.RoleDefinitionCreateRequest
+}
+
+func (p *CreateRoleDefinitionArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *CreateRoleDefinitionArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.RoleDefinitionCreateRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var CreateRoleDefinitionArgs_Req_DEFAULT *identity_srv.RoleDefinitionCreateRequest
+
+func (p *CreateRoleDefinitionArgs) GetReq() *identity_srv.RoleDefinitionCreateRequest {
+	if !p.IsSetReq() {
+		return CreateRoleDefinitionArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *CreateRoleDefinitionArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *CreateRoleDefinitionArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type CreateRoleDefinitionResult struct {
+	Success *identity_srv.CreateRoleDefinitionResponse
+}
+
+var CreateRoleDefinitionResult_Success_DEFAULT *identity_srv.CreateRoleDefinitionResponse
+
+func (p *CreateRoleDefinitionResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *CreateRoleDefinitionResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.CreateRoleDefinitionResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CreateRoleDefinitionResult) GetSuccess() *identity_srv.CreateRoleDefinitionResponse {
+	if !p.IsSetSuccess() {
+		return CreateRoleDefinitionResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CreateRoleDefinitionResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.CreateRoleDefinitionResponse)
+}
+
+func (p *CreateRoleDefinitionResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CreateRoleDefinitionResult) GetResult() interface{} {
+	return p.Success
 }
 
 func updateRoleDefinitionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceUpdateRoleDefinitionArgs)
-	realResult := result.(*identity_srv.IdentityServiceUpdateRoleDefinitionResult)
-	success, err := handler.(identity_srv.IdentityService).UpdateRoleDefinition(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.RoleDefinitionUpdateRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).UpdateRoleDefinition(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *UpdateRoleDefinitionArgs:
+		success, err := handler.(identity_srv.IdentityService).UpdateRoleDefinition(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*UpdateRoleDefinitionResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceUpdateRoleDefinitionArgs() interface{} {
-	return identity_srv.NewIdentityServiceUpdateRoleDefinitionArgs()
+func newUpdateRoleDefinitionArgs() interface{} {
+	return &UpdateRoleDefinitionArgs{}
 }
 
-func newIdentityServiceUpdateRoleDefinitionResult() interface{} {
-	return identity_srv.NewIdentityServiceUpdateRoleDefinitionResult()
+func newUpdateRoleDefinitionResult() interface{} {
+	return &UpdateRoleDefinitionResult{}
+}
+
+type UpdateRoleDefinitionArgs struct {
+	Req *identity_srv.RoleDefinitionUpdateRequest
+}
+
+func (p *UpdateRoleDefinitionArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *UpdateRoleDefinitionArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.RoleDefinitionUpdateRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var UpdateRoleDefinitionArgs_Req_DEFAULT *identity_srv.RoleDefinitionUpdateRequest
+
+func (p *UpdateRoleDefinitionArgs) GetReq() *identity_srv.RoleDefinitionUpdateRequest {
+	if !p.IsSetReq() {
+		return UpdateRoleDefinitionArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *UpdateRoleDefinitionArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *UpdateRoleDefinitionArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type UpdateRoleDefinitionResult struct {
+	Success *identity_srv.UpdateRoleDefinitionResponse
+}
+
+var UpdateRoleDefinitionResult_Success_DEFAULT *identity_srv.UpdateRoleDefinitionResponse
+
+func (p *UpdateRoleDefinitionResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *UpdateRoleDefinitionResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UpdateRoleDefinitionResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UpdateRoleDefinitionResult) GetSuccess() *identity_srv.UpdateRoleDefinitionResponse {
+	if !p.IsSetSuccess() {
+		return UpdateRoleDefinitionResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *UpdateRoleDefinitionResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.UpdateRoleDefinitionResponse)
+}
+
+func (p *UpdateRoleDefinitionResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *UpdateRoleDefinitionResult) GetResult() interface{} {
+	return p.Success
 }
 
 func deleteRoleDefinitionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceDeleteRoleDefinitionArgs)
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.DeleteRoleDefinitionRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).DeleteRoleDefinition(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *DeleteRoleDefinitionArgs:
+		success, err := handler.(identity_srv.IdentityService).DeleteRoleDefinition(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*DeleteRoleDefinitionResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newDeleteRoleDefinitionArgs() interface{} {
+	return &DeleteRoleDefinitionArgs{}
+}
 
-	err := handler.(identity_srv.IdentityService).DeleteRoleDefinition(ctx, realArg.RoleID)
-	if err != nil {
+func newDeleteRoleDefinitionResult() interface{} {
+	return &DeleteRoleDefinitionResult{}
+}
+
+type DeleteRoleDefinitionArgs struct {
+	Req *identity_srv.DeleteRoleDefinitionRequest
+}
+
+func (p *DeleteRoleDefinitionArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *DeleteRoleDefinitionArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.DeleteRoleDefinitionRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
-
+	p.Req = msg
 	return nil
 }
-func newIdentityServiceDeleteRoleDefinitionArgs() interface{} {
-	return identity_srv.NewIdentityServiceDeleteRoleDefinitionArgs()
+
+var DeleteRoleDefinitionArgs_Req_DEFAULT *identity_srv.DeleteRoleDefinitionRequest
+
+func (p *DeleteRoleDefinitionArgs) GetReq() *identity_srv.DeleteRoleDefinitionRequest {
+	if !p.IsSetReq() {
+		return DeleteRoleDefinitionArgs_Req_DEFAULT
+	}
+	return p.Req
 }
 
-func newIdentityServiceDeleteRoleDefinitionResult() interface{} {
-	return identity_srv.NewIdentityServiceDeleteRoleDefinitionResult()
+func (p *DeleteRoleDefinitionArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *DeleteRoleDefinitionArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type DeleteRoleDefinitionResult struct {
+	Success *identity_srv.DeleteRoleDefinitionResponse
+}
+
+var DeleteRoleDefinitionResult_Success_DEFAULT *identity_srv.DeleteRoleDefinitionResponse
+
+func (p *DeleteRoleDefinitionResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *DeleteRoleDefinitionResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.DeleteRoleDefinitionResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *DeleteRoleDefinitionResult) GetSuccess() *identity_srv.DeleteRoleDefinitionResponse {
+	if !p.IsSetSuccess() {
+		return DeleteRoleDefinitionResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *DeleteRoleDefinitionResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.DeleteRoleDefinitionResponse)
+}
+
+func (p *DeleteRoleDefinitionResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *DeleteRoleDefinitionResult) GetResult() interface{} {
+	return p.Success
 }
 
 func getRoleDefinitionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceGetRoleDefinitionArgs)
-	realResult := result.(*identity_srv.IdentityServiceGetRoleDefinitionResult)
-	success, err := handler.(identity_srv.IdentityService).GetRoleDefinition(ctx, realArg.RoleID)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.GetRoleDefinitionRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).GetRoleDefinition(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetRoleDefinitionArgs:
+		success, err := handler.(identity_srv.IdentityService).GetRoleDefinition(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetRoleDefinitionResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceGetRoleDefinitionArgs() interface{} {
-	return identity_srv.NewIdentityServiceGetRoleDefinitionArgs()
+func newGetRoleDefinitionArgs() interface{} {
+	return &GetRoleDefinitionArgs{}
 }
 
-func newIdentityServiceGetRoleDefinitionResult() interface{} {
-	return identity_srv.NewIdentityServiceGetRoleDefinitionResult()
+func newGetRoleDefinitionResult() interface{} {
+	return &GetRoleDefinitionResult{}
+}
+
+type GetRoleDefinitionArgs struct {
+	Req *identity_srv.GetRoleDefinitionRequest
+}
+
+func (p *GetRoleDefinitionArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetRoleDefinitionArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetRoleDefinitionRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetRoleDefinitionArgs_Req_DEFAULT *identity_srv.GetRoleDefinitionRequest
+
+func (p *GetRoleDefinitionArgs) GetReq() *identity_srv.GetRoleDefinitionRequest {
+	if !p.IsSetReq() {
+		return GetRoleDefinitionArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetRoleDefinitionArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetRoleDefinitionArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetRoleDefinitionResult struct {
+	Success *identity_srv.GetRoleDefinitionResponse
+}
+
+var GetRoleDefinitionResult_Success_DEFAULT *identity_srv.GetRoleDefinitionResponse
+
+func (p *GetRoleDefinitionResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetRoleDefinitionResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetRoleDefinitionResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetRoleDefinitionResult) GetSuccess() *identity_srv.GetRoleDefinitionResponse {
+	if !p.IsSetSuccess() {
+		return GetRoleDefinitionResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetRoleDefinitionResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.GetRoleDefinitionResponse)
+}
+
+func (p *GetRoleDefinitionResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetRoleDefinitionResult) GetResult() interface{} {
+	return p.Success
 }
 
 func listRoleDefinitionsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceListRoleDefinitionsArgs)
-	realResult := result.(*identity_srv.IdentityServiceListRoleDefinitionsResult)
-	success, err := handler.(identity_srv.IdentityService).ListRoleDefinitions(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.RoleDefinitionQueryRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).ListRoleDefinitions(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *ListRoleDefinitionsArgs:
+		success, err := handler.(identity_srv.IdentityService).ListRoleDefinitions(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*ListRoleDefinitionsResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceListRoleDefinitionsArgs() interface{} {
-	return identity_srv.NewIdentityServiceListRoleDefinitionsArgs()
+func newListRoleDefinitionsArgs() interface{} {
+	return &ListRoleDefinitionsArgs{}
 }
 
-func newIdentityServiceListRoleDefinitionsResult() interface{} {
-	return identity_srv.NewIdentityServiceListRoleDefinitionsResult()
+func newListRoleDefinitionsResult() interface{} {
+	return &ListRoleDefinitionsResult{}
+}
+
+type ListRoleDefinitionsArgs struct {
+	Req *identity_srv.RoleDefinitionQueryRequest
+}
+
+func (p *ListRoleDefinitionsArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *ListRoleDefinitionsArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.RoleDefinitionQueryRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var ListRoleDefinitionsArgs_Req_DEFAULT *identity_srv.RoleDefinitionQueryRequest
+
+func (p *ListRoleDefinitionsArgs) GetReq() *identity_srv.RoleDefinitionQueryRequest {
+	if !p.IsSetReq() {
+		return ListRoleDefinitionsArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ListRoleDefinitionsArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *ListRoleDefinitionsArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type ListRoleDefinitionsResult struct {
+	Success *identity_srv.RoleDefinitionListResponse
+}
+
+var ListRoleDefinitionsResult_Success_DEFAULT *identity_srv.RoleDefinitionListResponse
+
+func (p *ListRoleDefinitionsResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *ListRoleDefinitionsResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.RoleDefinitionListResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ListRoleDefinitionsResult) GetSuccess() *identity_srv.RoleDefinitionListResponse {
+	if !p.IsSetSuccess() {
+		return ListRoleDefinitionsResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ListRoleDefinitionsResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.RoleDefinitionListResponse)
+}
+
+func (p *ListRoleDefinitionsResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ListRoleDefinitionsResult) GetResult() interface{} {
+	return p.Success
 }
 
 func assignRoleToUserHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceAssignRoleToUserArgs)
-	realResult := result.(*identity_srv.IdentityServiceAssignRoleToUserResult)
-	success, err := handler.(identity_srv.IdentityService).AssignRoleToUser(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.AssignRoleToUserRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).AssignRoleToUser(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *AssignRoleToUserArgs:
+		success, err := handler.(identity_srv.IdentityService).AssignRoleToUser(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*AssignRoleToUserResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceAssignRoleToUserArgs() interface{} {
-	return identity_srv.NewIdentityServiceAssignRoleToUserArgs()
+func newAssignRoleToUserArgs() interface{} {
+	return &AssignRoleToUserArgs{}
 }
 
-func newIdentityServiceAssignRoleToUserResult() interface{} {
-	return identity_srv.NewIdentityServiceAssignRoleToUserResult()
+func newAssignRoleToUserResult() interface{} {
+	return &AssignRoleToUserResult{}
+}
+
+type AssignRoleToUserArgs struct {
+	Req *identity_srv.AssignRoleToUserRequest
+}
+
+func (p *AssignRoleToUserArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *AssignRoleToUserArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.AssignRoleToUserRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var AssignRoleToUserArgs_Req_DEFAULT *identity_srv.AssignRoleToUserRequest
+
+func (p *AssignRoleToUserArgs) GetReq() *identity_srv.AssignRoleToUserRequest {
+	if !p.IsSetReq() {
+		return AssignRoleToUserArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *AssignRoleToUserArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *AssignRoleToUserArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type AssignRoleToUserResult struct {
+	Success *identity_srv.UserRoleAssignmentResponse
+}
+
+var AssignRoleToUserResult_Success_DEFAULT *identity_srv.UserRoleAssignmentResponse
+
+func (p *AssignRoleToUserResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *AssignRoleToUserResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UserRoleAssignmentResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *AssignRoleToUserResult) GetSuccess() *identity_srv.UserRoleAssignmentResponse {
+	if !p.IsSetSuccess() {
+		return AssignRoleToUserResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *AssignRoleToUserResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.UserRoleAssignmentResponse)
+}
+
+func (p *AssignRoleToUserResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *AssignRoleToUserResult) GetResult() interface{} {
+	return p.Success
 }
 
 func updateUserRoleAssignmentHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceUpdateUserRoleAssignmentArgs)
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.UpdateUserRoleAssignmentRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).UpdateUserRoleAssignment(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *UpdateUserRoleAssignmentArgs:
+		success, err := handler.(identity_srv.IdentityService).UpdateUserRoleAssignment(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*UpdateUserRoleAssignmentResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newUpdateUserRoleAssignmentArgs() interface{} {
+	return &UpdateUserRoleAssignmentArgs{}
+}
 
-	err := handler.(identity_srv.IdentityService).UpdateUserRoleAssignment(ctx, realArg.Req)
-	if err != nil {
+func newUpdateUserRoleAssignmentResult() interface{} {
+	return &UpdateUserRoleAssignmentResult{}
+}
+
+type UpdateUserRoleAssignmentArgs struct {
+	Req *identity_srv.UpdateUserRoleAssignmentRequest
+}
+
+func (p *UpdateUserRoleAssignmentArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *UpdateUserRoleAssignmentArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UpdateUserRoleAssignmentRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
-
+	p.Req = msg
 	return nil
 }
-func newIdentityServiceUpdateUserRoleAssignmentArgs() interface{} {
-	return identity_srv.NewIdentityServiceUpdateUserRoleAssignmentArgs()
+
+var UpdateUserRoleAssignmentArgs_Req_DEFAULT *identity_srv.UpdateUserRoleAssignmentRequest
+
+func (p *UpdateUserRoleAssignmentArgs) GetReq() *identity_srv.UpdateUserRoleAssignmentRequest {
+	if !p.IsSetReq() {
+		return UpdateUserRoleAssignmentArgs_Req_DEFAULT
+	}
+	return p.Req
 }
 
-func newIdentityServiceUpdateUserRoleAssignmentResult() interface{} {
-	return identity_srv.NewIdentityServiceUpdateUserRoleAssignmentResult()
+func (p *UpdateUserRoleAssignmentArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *UpdateUserRoleAssignmentArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type UpdateUserRoleAssignmentResult struct {
+	Success *identity_srv.UpdateUserRoleAssignmentResponse
+}
+
+var UpdateUserRoleAssignmentResult_Success_DEFAULT *identity_srv.UpdateUserRoleAssignmentResponse
+
+func (p *UpdateUserRoleAssignmentResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *UpdateUserRoleAssignmentResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UpdateUserRoleAssignmentResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UpdateUserRoleAssignmentResult) GetSuccess() *identity_srv.UpdateUserRoleAssignmentResponse {
+	if !p.IsSetSuccess() {
+		return UpdateUserRoleAssignmentResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *UpdateUserRoleAssignmentResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.UpdateUserRoleAssignmentResponse)
+}
+
+func (p *UpdateUserRoleAssignmentResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *UpdateUserRoleAssignmentResult) GetResult() interface{} {
+	return p.Success
 }
 
 func revokeRoleFromUserHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceRevokeRoleFromUserArgs)
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.RevokeRoleFromUserRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).RevokeRoleFromUser(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *RevokeRoleFromUserArgs:
+		success, err := handler.(identity_srv.IdentityService).RevokeRoleFromUser(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*RevokeRoleFromUserResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newRevokeRoleFromUserArgs() interface{} {
+	return &RevokeRoleFromUserArgs{}
+}
 
-	err := handler.(identity_srv.IdentityService).RevokeRoleFromUser(ctx, realArg.Req)
-	if err != nil {
+func newRevokeRoleFromUserResult() interface{} {
+	return &RevokeRoleFromUserResult{}
+}
+
+type RevokeRoleFromUserArgs struct {
+	Req *identity_srv.RevokeRoleFromUserRequest
+}
+
+func (p *RevokeRoleFromUserArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *RevokeRoleFromUserArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.RevokeRoleFromUserRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
-
+	p.Req = msg
 	return nil
 }
-func newIdentityServiceRevokeRoleFromUserArgs() interface{} {
-	return identity_srv.NewIdentityServiceRevokeRoleFromUserArgs()
+
+var RevokeRoleFromUserArgs_Req_DEFAULT *identity_srv.RevokeRoleFromUserRequest
+
+func (p *RevokeRoleFromUserArgs) GetReq() *identity_srv.RevokeRoleFromUserRequest {
+	if !p.IsSetReq() {
+		return RevokeRoleFromUserArgs_Req_DEFAULT
+	}
+	return p.Req
 }
 
-func newIdentityServiceRevokeRoleFromUserResult() interface{} {
-	return identity_srv.NewIdentityServiceRevokeRoleFromUserResult()
+func (p *RevokeRoleFromUserArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *RevokeRoleFromUserArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type RevokeRoleFromUserResult struct {
+	Success *identity_srv.RevokeRoleFromUserResponse
+}
+
+var RevokeRoleFromUserResult_Success_DEFAULT *identity_srv.RevokeRoleFromUserResponse
+
+func (p *RevokeRoleFromUserResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *RevokeRoleFromUserResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.RevokeRoleFromUserResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *RevokeRoleFromUserResult) GetSuccess() *identity_srv.RevokeRoleFromUserResponse {
+	if !p.IsSetSuccess() {
+		return RevokeRoleFromUserResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *RevokeRoleFromUserResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.RevokeRoleFromUserResponse)
+}
+
+func (p *RevokeRoleFromUserResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *RevokeRoleFromUserResult) GetResult() interface{} {
+	return p.Success
 }
 
 func getLastUserRoleAssignmentHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceGetLastUserRoleAssignmentArgs)
-	realResult := result.(*identity_srv.IdentityServiceGetLastUserRoleAssignmentResult)
-	success, err := handler.(identity_srv.IdentityService).GetLastUserRoleAssignment(ctx, realArg.UserID)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.GetLastUserRoleAssignmentRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).GetLastUserRoleAssignment(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetLastUserRoleAssignmentArgs:
+		success, err := handler.(identity_srv.IdentityService).GetLastUserRoleAssignment(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetLastUserRoleAssignmentResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceGetLastUserRoleAssignmentArgs() interface{} {
-	return identity_srv.NewIdentityServiceGetLastUserRoleAssignmentArgs()
+func newGetLastUserRoleAssignmentArgs() interface{} {
+	return &GetLastUserRoleAssignmentArgs{}
 }
 
-func newIdentityServiceGetLastUserRoleAssignmentResult() interface{} {
-	return identity_srv.NewIdentityServiceGetLastUserRoleAssignmentResult()
+func newGetLastUserRoleAssignmentResult() interface{} {
+	return &GetLastUserRoleAssignmentResult{}
+}
+
+type GetLastUserRoleAssignmentArgs struct {
+	Req *identity_srv.GetLastUserRoleAssignmentRequest
+}
+
+func (p *GetLastUserRoleAssignmentArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetLastUserRoleAssignmentArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetLastUserRoleAssignmentRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetLastUserRoleAssignmentArgs_Req_DEFAULT *identity_srv.GetLastUserRoleAssignmentRequest
+
+func (p *GetLastUserRoleAssignmentArgs) GetReq() *identity_srv.GetLastUserRoleAssignmentRequest {
+	if !p.IsSetReq() {
+		return GetLastUserRoleAssignmentArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetLastUserRoleAssignmentArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetLastUserRoleAssignmentArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetLastUserRoleAssignmentResult struct {
+	Success *identity_srv.GetLastUserRoleAssignmentResponse
+}
+
+var GetLastUserRoleAssignmentResult_Success_DEFAULT *identity_srv.GetLastUserRoleAssignmentResponse
+
+func (p *GetLastUserRoleAssignmentResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetLastUserRoleAssignmentResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetLastUserRoleAssignmentResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetLastUserRoleAssignmentResult) GetSuccess() *identity_srv.GetLastUserRoleAssignmentResponse {
+	if !p.IsSetSuccess() {
+		return GetLastUserRoleAssignmentResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetLastUserRoleAssignmentResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.GetLastUserRoleAssignmentResponse)
+}
+
+func (p *GetLastUserRoleAssignmentResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetLastUserRoleAssignmentResult) GetResult() interface{} {
+	return p.Success
 }
 
 func listUserRoleAssignmentsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceListUserRoleAssignmentsArgs)
-	realResult := result.(*identity_srv.IdentityServiceListUserRoleAssignmentsResult)
-	success, err := handler.(identity_srv.IdentityService).ListUserRoleAssignments(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.UserRoleQueryRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).ListUserRoleAssignments(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *ListUserRoleAssignmentsArgs:
+		success, err := handler.(identity_srv.IdentityService).ListUserRoleAssignments(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*ListUserRoleAssignmentsResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceListUserRoleAssignmentsArgs() interface{} {
-	return identity_srv.NewIdentityServiceListUserRoleAssignmentsArgs()
+func newListUserRoleAssignmentsArgs() interface{} {
+	return &ListUserRoleAssignmentsArgs{}
 }
 
-func newIdentityServiceListUserRoleAssignmentsResult() interface{} {
-	return identity_srv.NewIdentityServiceListUserRoleAssignmentsResult()
+func newListUserRoleAssignmentsResult() interface{} {
+	return &ListUserRoleAssignmentsResult{}
+}
+
+type ListUserRoleAssignmentsArgs struct {
+	Req *identity_srv.UserRoleQueryRequest
+}
+
+func (p *ListUserRoleAssignmentsArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *ListUserRoleAssignmentsArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UserRoleQueryRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var ListUserRoleAssignmentsArgs_Req_DEFAULT *identity_srv.UserRoleQueryRequest
+
+func (p *ListUserRoleAssignmentsArgs) GetReq() *identity_srv.UserRoleQueryRequest {
+	if !p.IsSetReq() {
+		return ListUserRoleAssignmentsArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ListUserRoleAssignmentsArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *ListUserRoleAssignmentsArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type ListUserRoleAssignmentsResult struct {
+	Success *identity_srv.UserRoleListResponse
+}
+
+var ListUserRoleAssignmentsResult_Success_DEFAULT *identity_srv.UserRoleListResponse
+
+func (p *ListUserRoleAssignmentsResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *ListUserRoleAssignmentsResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UserRoleListResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ListUserRoleAssignmentsResult) GetSuccess() *identity_srv.UserRoleListResponse {
+	if !p.IsSetSuccess() {
+		return ListUserRoleAssignmentsResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ListUserRoleAssignmentsResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.UserRoleListResponse)
+}
+
+func (p *ListUserRoleAssignmentsResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ListUserRoleAssignmentsResult) GetResult() interface{} {
+	return p.Success
 }
 
 func getUsersByRoleHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceGetUsersByRoleArgs)
-	realResult := result.(*identity_srv.IdentityServiceGetUsersByRoleResult)
-	success, err := handler.(identity_srv.IdentityService).GetUsersByRole(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.GetUsersByRoleRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).GetUsersByRole(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetUsersByRoleArgs:
+		success, err := handler.(identity_srv.IdentityService).GetUsersByRole(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetUsersByRoleResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceGetUsersByRoleArgs() interface{} {
-	return identity_srv.NewIdentityServiceGetUsersByRoleArgs()
+func newGetUsersByRoleArgs() interface{} {
+	return &GetUsersByRoleArgs{}
 }
 
-func newIdentityServiceGetUsersByRoleResult() interface{} {
-	return identity_srv.NewIdentityServiceGetUsersByRoleResult()
+func newGetUsersByRoleResult() interface{} {
+	return &GetUsersByRoleResult{}
+}
+
+type GetUsersByRoleArgs struct {
+	Req *identity_srv.GetUsersByRoleRequest
+}
+
+func (p *GetUsersByRoleArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetUsersByRoleArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetUsersByRoleRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetUsersByRoleArgs_Req_DEFAULT *identity_srv.GetUsersByRoleRequest
+
+func (p *GetUsersByRoleArgs) GetReq() *identity_srv.GetUsersByRoleRequest {
+	if !p.IsSetReq() {
+		return GetUsersByRoleArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetUsersByRoleArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetUsersByRoleArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetUsersByRoleResult struct {
+	Success *identity_srv.GetUsersByRoleResponse
+}
+
+var GetUsersByRoleResult_Success_DEFAULT *identity_srv.GetUsersByRoleResponse
+
+func (p *GetUsersByRoleResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetUsersByRoleResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetUsersByRoleResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetUsersByRoleResult) GetSuccess() *identity_srv.GetUsersByRoleResponse {
+	if !p.IsSetSuccess() {
+		return GetUsersByRoleResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetUsersByRoleResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.GetUsersByRoleResponse)
+}
+
+func (p *GetUsersByRoleResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetUsersByRoleResult) GetResult() interface{} {
+	return p.Success
 }
 
 func batchBindUsersToRoleHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceBatchBindUsersToRoleArgs)
-	realResult := result.(*identity_srv.IdentityServiceBatchBindUsersToRoleResult)
-	success, err := handler.(identity_srv.IdentityService).BatchBindUsersToRole(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.BatchBindUsersToRoleRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).BatchBindUsersToRole(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *BatchBindUsersToRoleArgs:
+		success, err := handler.(identity_srv.IdentityService).BatchBindUsersToRole(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*BatchBindUsersToRoleResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceBatchBindUsersToRoleArgs() interface{} {
-	return identity_srv.NewIdentityServiceBatchBindUsersToRoleArgs()
+func newBatchBindUsersToRoleArgs() interface{} {
+	return &BatchBindUsersToRoleArgs{}
 }
 
-func newIdentityServiceBatchBindUsersToRoleResult() interface{} {
-	return identity_srv.NewIdentityServiceBatchBindUsersToRoleResult()
+func newBatchBindUsersToRoleResult() interface{} {
+	return &BatchBindUsersToRoleResult{}
+}
+
+type BatchBindUsersToRoleArgs struct {
+	Req *identity_srv.BatchBindUsersToRoleRequest
+}
+
+func (p *BatchBindUsersToRoleArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *BatchBindUsersToRoleArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.BatchBindUsersToRoleRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var BatchBindUsersToRoleArgs_Req_DEFAULT *identity_srv.BatchBindUsersToRoleRequest
+
+func (p *BatchBindUsersToRoleArgs) GetReq() *identity_srv.BatchBindUsersToRoleRequest {
+	if !p.IsSetReq() {
+		return BatchBindUsersToRoleArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *BatchBindUsersToRoleArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *BatchBindUsersToRoleArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type BatchBindUsersToRoleResult struct {
+	Success *identity_srv.BatchBindUsersToRoleResponse
+}
+
+var BatchBindUsersToRoleResult_Success_DEFAULT *identity_srv.BatchBindUsersToRoleResponse
+
+func (p *BatchBindUsersToRoleResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *BatchBindUsersToRoleResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.BatchBindUsersToRoleResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *BatchBindUsersToRoleResult) GetSuccess() *identity_srv.BatchBindUsersToRoleResponse {
+	if !p.IsSetSuccess() {
+		return BatchBindUsersToRoleResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *BatchBindUsersToRoleResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.BatchBindUsersToRoleResponse)
+}
+
+func (p *BatchBindUsersToRoleResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *BatchBindUsersToRoleResult) GetResult() interface{} {
+	return p.Success
 }
 
 func batchGetUserRolesHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceBatchGetUserRolesArgs)
-	realResult := result.(*identity_srv.IdentityServiceBatchGetUserRolesResult)
-	success, err := handler.(identity_srv.IdentityService).BatchGetUserRoles(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.BatchGetUserRolesRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).BatchGetUserRoles(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *BatchGetUserRolesArgs:
+		success, err := handler.(identity_srv.IdentityService).BatchGetUserRoles(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*BatchGetUserRolesResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceBatchGetUserRolesArgs() interface{} {
-	return identity_srv.NewIdentityServiceBatchGetUserRolesArgs()
+func newBatchGetUserRolesArgs() interface{} {
+	return &BatchGetUserRolesArgs{}
 }
 
-func newIdentityServiceBatchGetUserRolesResult() interface{} {
-	return identity_srv.NewIdentityServiceBatchGetUserRolesResult()
+func newBatchGetUserRolesResult() interface{} {
+	return &BatchGetUserRolesResult{}
+}
+
+type BatchGetUserRolesArgs struct {
+	Req *identity_srv.BatchGetUserRolesRequest
+}
+
+func (p *BatchGetUserRolesArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *BatchGetUserRolesArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.BatchGetUserRolesRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var BatchGetUserRolesArgs_Req_DEFAULT *identity_srv.BatchGetUserRolesRequest
+
+func (p *BatchGetUserRolesArgs) GetReq() *identity_srv.BatchGetUserRolesRequest {
+	if !p.IsSetReq() {
+		return BatchGetUserRolesArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *BatchGetUserRolesArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *BatchGetUserRolesArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type BatchGetUserRolesResult struct {
+	Success *identity_srv.BatchGetUserRolesResponse
+}
+
+var BatchGetUserRolesResult_Success_DEFAULT *identity_srv.BatchGetUserRolesResponse
+
+func (p *BatchGetUserRolesResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *BatchGetUserRolesResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.BatchGetUserRolesResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *BatchGetUserRolesResult) GetSuccess() *identity_srv.BatchGetUserRolesResponse {
+	if !p.IsSetSuccess() {
+		return BatchGetUserRolesResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *BatchGetUserRolesResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.BatchGetUserRolesResponse)
+}
+
+func (p *BatchGetUserRolesResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *BatchGetUserRolesResult) GetResult() interface{} {
+	return p.Success
 }
 
 func uploadMenuHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceUploadMenuArgs)
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.UploadMenuRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).UploadMenu(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *UploadMenuArgs:
+		success, err := handler.(identity_srv.IdentityService).UploadMenu(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*UploadMenuResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newUploadMenuArgs() interface{} {
+	return &UploadMenuArgs{}
+}
 
-	err := handler.(identity_srv.IdentityService).UploadMenu(ctx, realArg.Req)
-	if err != nil {
+func newUploadMenuResult() interface{} {
+	return &UploadMenuResult{}
+}
+
+type UploadMenuArgs struct {
+	Req *identity_srv.UploadMenuRequest
+}
+
+func (p *UploadMenuArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *UploadMenuArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UploadMenuRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
-
+	p.Req = msg
 	return nil
 }
-func newIdentityServiceUploadMenuArgs() interface{} {
-	return identity_srv.NewIdentityServiceUploadMenuArgs()
+
+var UploadMenuArgs_Req_DEFAULT *identity_srv.UploadMenuRequest
+
+func (p *UploadMenuArgs) GetReq() *identity_srv.UploadMenuRequest {
+	if !p.IsSetReq() {
+		return UploadMenuArgs_Req_DEFAULT
+	}
+	return p.Req
 }
 
-func newIdentityServiceUploadMenuResult() interface{} {
-	return identity_srv.NewIdentityServiceUploadMenuResult()
+func (p *UploadMenuArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *UploadMenuArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type UploadMenuResult struct {
+	Success *identity_srv.UploadMenuResponse
+}
+
+var UploadMenuResult_Success_DEFAULT *identity_srv.UploadMenuResponse
+
+func (p *UploadMenuResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *UploadMenuResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.UploadMenuResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UploadMenuResult) GetSuccess() *identity_srv.UploadMenuResponse {
+	if !p.IsSetSuccess() {
+		return UploadMenuResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *UploadMenuResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.UploadMenuResponse)
+}
+
+func (p *UploadMenuResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *UploadMenuResult) GetResult() interface{} {
+	return p.Success
 }
 
 func getMenuTreeHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	_ = arg.(*identity_srv.IdentityServiceGetMenuTreeArgs)
-	realResult := result.(*identity_srv.IdentityServiceGetMenuTreeResult)
-	success, err := handler.(identity_srv.IdentityService).GetMenuTree(ctx)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.GetMenuTreeRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).GetMenuTree(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetMenuTreeArgs:
+		success, err := handler.(identity_srv.IdentityService).GetMenuTree(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetMenuTreeResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceGetMenuTreeArgs() interface{} {
-	return identity_srv.NewIdentityServiceGetMenuTreeArgs()
+func newGetMenuTreeArgs() interface{} {
+	return &GetMenuTreeArgs{}
 }
 
-func newIdentityServiceGetMenuTreeResult() interface{} {
-	return identity_srv.NewIdentityServiceGetMenuTreeResult()
+func newGetMenuTreeResult() interface{} {
+	return &GetMenuTreeResult{}
+}
+
+type GetMenuTreeArgs struct {
+	Req *identity_srv.GetMenuTreeRequest
+}
+
+func (p *GetMenuTreeArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetMenuTreeArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetMenuTreeRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetMenuTreeArgs_Req_DEFAULT *identity_srv.GetMenuTreeRequest
+
+func (p *GetMenuTreeArgs) GetReq() *identity_srv.GetMenuTreeRequest {
+	if !p.IsSetReq() {
+		return GetMenuTreeArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetMenuTreeArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetMenuTreeArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetMenuTreeResult struct {
+	Success *identity_srv.GetMenuTreeResponse
+}
+
+var GetMenuTreeResult_Success_DEFAULT *identity_srv.GetMenuTreeResponse
+
+func (p *GetMenuTreeResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetMenuTreeResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetMenuTreeResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetMenuTreeResult) GetSuccess() *identity_srv.GetMenuTreeResponse {
+	if !p.IsSetSuccess() {
+		return GetMenuTreeResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetMenuTreeResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.GetMenuTreeResponse)
+}
+
+func (p *GetMenuTreeResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetMenuTreeResult) GetResult() interface{} {
+	return p.Success
 }
 
 func configureRoleMenusHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceConfigureRoleMenusArgs)
-	realResult := result.(*identity_srv.IdentityServiceConfigureRoleMenusResult)
-	success, err := handler.(identity_srv.IdentityService).ConfigureRoleMenus(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.ConfigureRoleMenusRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).ConfigureRoleMenus(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *ConfigureRoleMenusArgs:
+		success, err := handler.(identity_srv.IdentityService).ConfigureRoleMenus(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*ConfigureRoleMenusResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceConfigureRoleMenusArgs() interface{} {
-	return identity_srv.NewIdentityServiceConfigureRoleMenusArgs()
+func newConfigureRoleMenusArgs() interface{} {
+	return &ConfigureRoleMenusArgs{}
 }
 
-func newIdentityServiceConfigureRoleMenusResult() interface{} {
-	return identity_srv.NewIdentityServiceConfigureRoleMenusResult()
+func newConfigureRoleMenusResult() interface{} {
+	return &ConfigureRoleMenusResult{}
+}
+
+type ConfigureRoleMenusArgs struct {
+	Req *identity_srv.ConfigureRoleMenusRequest
+}
+
+func (p *ConfigureRoleMenusArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *ConfigureRoleMenusArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.ConfigureRoleMenusRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var ConfigureRoleMenusArgs_Req_DEFAULT *identity_srv.ConfigureRoleMenusRequest
+
+func (p *ConfigureRoleMenusArgs) GetReq() *identity_srv.ConfigureRoleMenusRequest {
+	if !p.IsSetReq() {
+		return ConfigureRoleMenusArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ConfigureRoleMenusArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *ConfigureRoleMenusArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type ConfigureRoleMenusResult struct {
+	Success *identity_srv.ConfigureRoleMenusResponse
+}
+
+var ConfigureRoleMenusResult_Success_DEFAULT *identity_srv.ConfigureRoleMenusResponse
+
+func (p *ConfigureRoleMenusResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *ConfigureRoleMenusResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.ConfigureRoleMenusResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ConfigureRoleMenusResult) GetSuccess() *identity_srv.ConfigureRoleMenusResponse {
+	if !p.IsSetSuccess() {
+		return ConfigureRoleMenusResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ConfigureRoleMenusResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.ConfigureRoleMenusResponse)
+}
+
+func (p *ConfigureRoleMenusResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ConfigureRoleMenusResult) GetResult() interface{} {
+	return p.Success
 }
 
 func getRoleMenuTreeHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceGetRoleMenuTreeArgs)
-	realResult := result.(*identity_srv.IdentityServiceGetRoleMenuTreeResult)
-	success, err := handler.(identity_srv.IdentityService).GetRoleMenuTree(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.GetRoleMenuTreeRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).GetRoleMenuTree(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetRoleMenuTreeArgs:
+		success, err := handler.(identity_srv.IdentityService).GetRoleMenuTree(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetRoleMenuTreeResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceGetRoleMenuTreeArgs() interface{} {
-	return identity_srv.NewIdentityServiceGetRoleMenuTreeArgs()
+func newGetRoleMenuTreeArgs() interface{} {
+	return &GetRoleMenuTreeArgs{}
 }
 
-func newIdentityServiceGetRoleMenuTreeResult() interface{} {
-	return identity_srv.NewIdentityServiceGetRoleMenuTreeResult()
+func newGetRoleMenuTreeResult() interface{} {
+	return &GetRoleMenuTreeResult{}
+}
+
+type GetRoleMenuTreeArgs struct {
+	Req *identity_srv.GetRoleMenuTreeRequest
+}
+
+func (p *GetRoleMenuTreeArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetRoleMenuTreeArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetRoleMenuTreeRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetRoleMenuTreeArgs_Req_DEFAULT *identity_srv.GetRoleMenuTreeRequest
+
+func (p *GetRoleMenuTreeArgs) GetReq() *identity_srv.GetRoleMenuTreeRequest {
+	if !p.IsSetReq() {
+		return GetRoleMenuTreeArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetRoleMenuTreeArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetRoleMenuTreeArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetRoleMenuTreeResult struct {
+	Success *identity_srv.GetRoleMenuTreeResponse
+}
+
+var GetRoleMenuTreeResult_Success_DEFAULT *identity_srv.GetRoleMenuTreeResponse
+
+func (p *GetRoleMenuTreeResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetRoleMenuTreeResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetRoleMenuTreeResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetRoleMenuTreeResult) GetSuccess() *identity_srv.GetRoleMenuTreeResponse {
+	if !p.IsSetSuccess() {
+		return GetRoleMenuTreeResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetRoleMenuTreeResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.GetRoleMenuTreeResponse)
+}
+
+func (p *GetRoleMenuTreeResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetRoleMenuTreeResult) GetResult() interface{} {
+	return p.Success
 }
 
 func getUserMenuTreeHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceGetUserMenuTreeArgs)
-	realResult := result.(*identity_srv.IdentityServiceGetUserMenuTreeResult)
-	success, err := handler.(identity_srv.IdentityService).GetUserMenuTree(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.GetUserMenuTreeRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).GetUserMenuTree(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetUserMenuTreeArgs:
+		success, err := handler.(identity_srv.IdentityService).GetUserMenuTree(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetUserMenuTreeResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceGetUserMenuTreeArgs() interface{} {
-	return identity_srv.NewIdentityServiceGetUserMenuTreeArgs()
+func newGetUserMenuTreeArgs() interface{} {
+	return &GetUserMenuTreeArgs{}
 }
 
-func newIdentityServiceGetUserMenuTreeResult() interface{} {
-	return identity_srv.NewIdentityServiceGetUserMenuTreeResult()
+func newGetUserMenuTreeResult() interface{} {
+	return &GetUserMenuTreeResult{}
+}
+
+type GetUserMenuTreeArgs struct {
+	Req *identity_srv.GetUserMenuTreeRequest
+}
+
+func (p *GetUserMenuTreeArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetUserMenuTreeArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetUserMenuTreeRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetUserMenuTreeArgs_Req_DEFAULT *identity_srv.GetUserMenuTreeRequest
+
+func (p *GetUserMenuTreeArgs) GetReq() *identity_srv.GetUserMenuTreeRequest {
+	if !p.IsSetReq() {
+		return GetUserMenuTreeArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetUserMenuTreeArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetUserMenuTreeArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetUserMenuTreeResult struct {
+	Success *identity_srv.GetUserMenuTreeResponse
+}
+
+var GetUserMenuTreeResult_Success_DEFAULT *identity_srv.GetUserMenuTreeResponse
+
+func (p *GetUserMenuTreeResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetUserMenuTreeResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetUserMenuTreeResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetUserMenuTreeResult) GetSuccess() *identity_srv.GetUserMenuTreeResponse {
+	if !p.IsSetSuccess() {
+		return GetUserMenuTreeResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetUserMenuTreeResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.GetUserMenuTreeResponse)
+}
+
+func (p *GetUserMenuTreeResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetUserMenuTreeResult) GetResult() interface{} {
+	return p.Success
 }
 
 func getRoleMenuPermissionsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceGetRoleMenuPermissionsArgs)
-	realResult := result.(*identity_srv.IdentityServiceGetRoleMenuPermissionsResult)
-	success, err := handler.(identity_srv.IdentityService).GetRoleMenuPermissions(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.GetRoleMenuPermissionsRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).GetRoleMenuPermissions(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetRoleMenuPermissionsArgs:
+		success, err := handler.(identity_srv.IdentityService).GetRoleMenuPermissions(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetRoleMenuPermissionsResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceGetRoleMenuPermissionsArgs() interface{} {
-	return identity_srv.NewIdentityServiceGetRoleMenuPermissionsArgs()
+func newGetRoleMenuPermissionsArgs() interface{} {
+	return &GetRoleMenuPermissionsArgs{}
 }
 
-func newIdentityServiceGetRoleMenuPermissionsResult() interface{} {
-	return identity_srv.NewIdentityServiceGetRoleMenuPermissionsResult()
+func newGetRoleMenuPermissionsResult() interface{} {
+	return &GetRoleMenuPermissionsResult{}
+}
+
+type GetRoleMenuPermissionsArgs struct {
+	Req *identity_srv.GetRoleMenuPermissionsRequest
+}
+
+func (p *GetRoleMenuPermissionsArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetRoleMenuPermissionsArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetRoleMenuPermissionsRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetRoleMenuPermissionsArgs_Req_DEFAULT *identity_srv.GetRoleMenuPermissionsRequest
+
+func (p *GetRoleMenuPermissionsArgs) GetReq() *identity_srv.GetRoleMenuPermissionsRequest {
+	if !p.IsSetReq() {
+		return GetRoleMenuPermissionsArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetRoleMenuPermissionsArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetRoleMenuPermissionsArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetRoleMenuPermissionsResult struct {
+	Success *identity_srv.GetRoleMenuPermissionsResponse
+}
+
+var GetRoleMenuPermissionsResult_Success_DEFAULT *identity_srv.GetRoleMenuPermissionsResponse
+
+func (p *GetRoleMenuPermissionsResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetRoleMenuPermissionsResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetRoleMenuPermissionsResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetRoleMenuPermissionsResult) GetSuccess() *identity_srv.GetRoleMenuPermissionsResponse {
+	if !p.IsSetSuccess() {
+		return GetRoleMenuPermissionsResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetRoleMenuPermissionsResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.GetRoleMenuPermissionsResponse)
+}
+
+func (p *GetRoleMenuPermissionsResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetRoleMenuPermissionsResult) GetResult() interface{} {
+	return p.Success
 }
 
 func hasMenuPermissionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceHasMenuPermissionArgs)
-	realResult := result.(*identity_srv.IdentityServiceHasMenuPermissionResult)
-	success, err := handler.(identity_srv.IdentityService).HasMenuPermission(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.HasMenuPermissionRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).HasMenuPermission(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *HasMenuPermissionArgs:
+		success, err := handler.(identity_srv.IdentityService).HasMenuPermission(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*HasMenuPermissionResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceHasMenuPermissionArgs() interface{} {
-	return identity_srv.NewIdentityServiceHasMenuPermissionArgs()
+func newHasMenuPermissionArgs() interface{} {
+	return &HasMenuPermissionArgs{}
 }
 
-func newIdentityServiceHasMenuPermissionResult() interface{} {
-	return identity_srv.NewIdentityServiceHasMenuPermissionResult()
+func newHasMenuPermissionResult() interface{} {
+	return &HasMenuPermissionResult{}
+}
+
+type HasMenuPermissionArgs struct {
+	Req *identity_srv.HasMenuPermissionRequest
+}
+
+func (p *HasMenuPermissionArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *HasMenuPermissionArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.HasMenuPermissionRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var HasMenuPermissionArgs_Req_DEFAULT *identity_srv.HasMenuPermissionRequest
+
+func (p *HasMenuPermissionArgs) GetReq() *identity_srv.HasMenuPermissionRequest {
+	if !p.IsSetReq() {
+		return HasMenuPermissionArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *HasMenuPermissionArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *HasMenuPermissionArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type HasMenuPermissionResult struct {
+	Success *identity_srv.HasMenuPermissionResponse
+}
+
+var HasMenuPermissionResult_Success_DEFAULT *identity_srv.HasMenuPermissionResponse
+
+func (p *HasMenuPermissionResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *HasMenuPermissionResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.HasMenuPermissionResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *HasMenuPermissionResult) GetSuccess() *identity_srv.HasMenuPermissionResponse {
+	if !p.IsSetSuccess() {
+		return HasMenuPermissionResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *HasMenuPermissionResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.HasMenuPermissionResponse)
+}
+
+func (p *HasMenuPermissionResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *HasMenuPermissionResult) GetResult() interface{} {
+	return p.Success
 }
 
 func getUserMenuPermissionsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceGetUserMenuPermissionsArgs)
-	realResult := result.(*identity_srv.IdentityServiceGetUserMenuPermissionsResult)
-	success, err := handler.(identity_srv.IdentityService).GetUserMenuPermissions(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.GetUserMenuPermissionsRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).GetUserMenuPermissions(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetUserMenuPermissionsArgs:
+		success, err := handler.(identity_srv.IdentityService).GetUserMenuPermissions(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetUserMenuPermissionsResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceGetUserMenuPermissionsArgs() interface{} {
-	return identity_srv.NewIdentityServiceGetUserMenuPermissionsArgs()
+func newGetUserMenuPermissionsArgs() interface{} {
+	return &GetUserMenuPermissionsArgs{}
 }
 
-func newIdentityServiceGetUserMenuPermissionsResult() interface{} {
-	return identity_srv.NewIdentityServiceGetUserMenuPermissionsResult()
+func newGetUserMenuPermissionsResult() interface{} {
+	return &GetUserMenuPermissionsResult{}
+}
+
+type GetUserMenuPermissionsArgs struct {
+	Req *identity_srv.GetUserMenuPermissionsRequest
+}
+
+func (p *GetUserMenuPermissionsArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetUserMenuPermissionsArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetUserMenuPermissionsRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetUserMenuPermissionsArgs_Req_DEFAULT *identity_srv.GetUserMenuPermissionsRequest
+
+func (p *GetUserMenuPermissionsArgs) GetReq() *identity_srv.GetUserMenuPermissionsRequest {
+	if !p.IsSetReq() {
+		return GetUserMenuPermissionsArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetUserMenuPermissionsArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetUserMenuPermissionsArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetUserMenuPermissionsResult struct {
+	Success *identity_srv.GetUserMenuPermissionsResponse
+}
+
+var GetUserMenuPermissionsResult_Success_DEFAULT *identity_srv.GetUserMenuPermissionsResponse
+
+func (p *GetUserMenuPermissionsResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetUserMenuPermissionsResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetUserMenuPermissionsResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetUserMenuPermissionsResult) GetSuccess() *identity_srv.GetUserMenuPermissionsResponse {
+	if !p.IsSetSuccess() {
+		return GetUserMenuPermissionsResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetUserMenuPermissionsResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.GetUserMenuPermissionsResponse)
+}
+
+func (p *GetUserMenuPermissionsResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetUserMenuPermissionsResult) GetResult() interface{} {
+	return p.Success
 }
 
 func checkPermissionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceCheckPermissionArgs)
-	realResult := result.(*identity_srv.IdentityServiceCheckPermissionResult)
-	success, err := handler.(identity_srv.IdentityService).CheckPermission(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.CheckPermissionRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).CheckPermission(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *CheckPermissionArgs:
+		success, err := handler.(identity_srv.IdentityService).CheckPermission(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*CheckPermissionResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceCheckPermissionArgs() interface{} {
-	return identity_srv.NewIdentityServiceCheckPermissionArgs()
+func newCheckPermissionArgs() interface{} {
+	return &CheckPermissionArgs{}
 }
 
-func newIdentityServiceCheckPermissionResult() interface{} {
-	return identity_srv.NewIdentityServiceCheckPermissionResult()
+func newCheckPermissionResult() interface{} {
+	return &CheckPermissionResult{}
+}
+
+type CheckPermissionArgs struct {
+	Req *identity_srv.CheckPermissionRequest
+}
+
+func (p *CheckPermissionArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *CheckPermissionArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.CheckPermissionRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var CheckPermissionArgs_Req_DEFAULT *identity_srv.CheckPermissionRequest
+
+func (p *CheckPermissionArgs) GetReq() *identity_srv.CheckPermissionRequest {
+	if !p.IsSetReq() {
+		return CheckPermissionArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *CheckPermissionArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *CheckPermissionArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type CheckPermissionResult struct {
+	Success *identity_srv.CheckPermissionResponse
+}
+
+var CheckPermissionResult_Success_DEFAULT *identity_srv.CheckPermissionResponse
+
+func (p *CheckPermissionResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *CheckPermissionResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.CheckPermissionResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CheckPermissionResult) GetSuccess() *identity_srv.CheckPermissionResponse {
+	if !p.IsSetSuccess() {
+		return CheckPermissionResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CheckPermissionResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.CheckPermissionResponse)
+}
+
+func (p *CheckPermissionResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CheckPermissionResult) GetResult() interface{} {
+	return p.Success
 }
 
 func syncPoliciesHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	_ = arg.(*identity_srv.IdentityServiceSyncPoliciesArgs)
-	realResult := result.(*identity_srv.IdentityServiceSyncPoliciesResult)
-	success, err := handler.(identity_srv.IdentityService).SyncPolicies(ctx)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.SyncPoliciesRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).SyncPolicies(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *SyncPoliciesArgs:
+		success, err := handler.(identity_srv.IdentityService).SyncPolicies(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*SyncPoliciesResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceSyncPoliciesArgs() interface{} {
-	return identity_srv.NewIdentityServiceSyncPoliciesArgs()
+func newSyncPoliciesArgs() interface{} {
+	return &SyncPoliciesArgs{}
 }
 
-func newIdentityServiceSyncPoliciesResult() interface{} {
-	return identity_srv.NewIdentityServiceSyncPoliciesResult()
+func newSyncPoliciesResult() interface{} {
+	return &SyncPoliciesResult{}
+}
+
+type SyncPoliciesArgs struct {
+	Req *identity_srv.SyncPoliciesRequest
+}
+
+func (p *SyncPoliciesArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *SyncPoliciesArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.SyncPoliciesRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var SyncPoliciesArgs_Req_DEFAULT *identity_srv.SyncPoliciesRequest
+
+func (p *SyncPoliciesArgs) GetReq() *identity_srv.SyncPoliciesRequest {
+	if !p.IsSetReq() {
+		return SyncPoliciesArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *SyncPoliciesArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *SyncPoliciesArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type SyncPoliciesResult struct {
+	Success *identity_srv.SyncPoliciesResponse
+}
+
+var SyncPoliciesResult_Success_DEFAULT *identity_srv.SyncPoliciesResponse
+
+func (p *SyncPoliciesResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *SyncPoliciesResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.SyncPoliciesResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *SyncPoliciesResult) GetSuccess() *identity_srv.SyncPoliciesResponse {
+	if !p.IsSetSuccess() {
+		return SyncPoliciesResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *SyncPoliciesResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.SyncPoliciesResponse)
+}
+
+func (p *SyncPoliciesResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SyncPoliciesResult) GetResult() interface{} {
+	return p.Success
 }
 
 func getUserDataScopeHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceGetUserDataScopeArgs)
-	realResult := result.(*identity_srv.IdentityServiceGetUserDataScopeResult)
-	success, err := handler.(identity_srv.IdentityService).GetUserDataScope(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.GetUserDataScopeRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).GetUserDataScope(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetUserDataScopeArgs:
+		success, err := handler.(identity_srv.IdentityService).GetUserDataScope(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetUserDataScopeResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceGetUserDataScopeArgs() interface{} {
-	return identity_srv.NewIdentityServiceGetUserDataScopeArgs()
+func newGetUserDataScopeArgs() interface{} {
+	return &GetUserDataScopeArgs{}
 }
 
-func newIdentityServiceGetUserDataScopeResult() interface{} {
-	return identity_srv.NewIdentityServiceGetUserDataScopeResult()
+func newGetUserDataScopeResult() interface{} {
+	return &GetUserDataScopeResult{}
+}
+
+type GetUserDataScopeArgs struct {
+	Req *identity_srv.GetUserDataScopeRequest
+}
+
+func (p *GetUserDataScopeArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetUserDataScopeArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetUserDataScopeRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetUserDataScopeArgs_Req_DEFAULT *identity_srv.GetUserDataScopeRequest
+
+func (p *GetUserDataScopeArgs) GetReq() *identity_srv.GetUserDataScopeRequest {
+	if !p.IsSetReq() {
+		return GetUserDataScopeArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetUserDataScopeArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetUserDataScopeArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetUserDataScopeResult struct {
+	Success *identity_srv.GetUserDataScopeResponse
+}
+
+var GetUserDataScopeResult_Success_DEFAULT *identity_srv.GetUserDataScopeResponse
+
+func (p *GetUserDataScopeResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetUserDataScopeResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.GetUserDataScopeResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetUserDataScopeResult) GetSuccess() *identity_srv.GetUserDataScopeResponse {
+	if !p.IsSetSuccess() {
+		return GetUserDataScopeResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetUserDataScopeResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.GetUserDataScopeResponse)
+}
+
+func (p *GetUserDataScopeResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetUserDataScopeResult) GetResult() interface{} {
+	return p.Success
 }
 
 func createAuditLogHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceCreateAuditLogArgs)
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.CreateAuditLogRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).CreateAuditLog(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *CreateAuditLogArgs:
+		success, err := handler.(identity_srv.IdentityService).CreateAuditLog(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*CreateAuditLogResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newCreateAuditLogArgs() interface{} {
+	return &CreateAuditLogArgs{}
+}
 
-	err := handler.(identity_srv.IdentityService).CreateAuditLog(ctx, realArg.Req)
-	if err != nil {
+func newCreateAuditLogResult() interface{} {
+	return &CreateAuditLogResult{}
+}
+
+type CreateAuditLogArgs struct {
+	Req *identity_srv.CreateAuditLogRequest
+}
+
+func (p *CreateAuditLogArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *CreateAuditLogArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.CreateAuditLogRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
-
+	p.Req = msg
 	return nil
 }
-func newIdentityServiceCreateAuditLogArgs() interface{} {
-	return identity_srv.NewIdentityServiceCreateAuditLogArgs()
+
+var CreateAuditLogArgs_Req_DEFAULT *identity_srv.CreateAuditLogRequest
+
+func (p *CreateAuditLogArgs) GetReq() *identity_srv.CreateAuditLogRequest {
+	if !p.IsSetReq() {
+		return CreateAuditLogArgs_Req_DEFAULT
+	}
+	return p.Req
 }
 
-func newIdentityServiceCreateAuditLogResult() interface{} {
-	return identity_srv.NewIdentityServiceCreateAuditLogResult()
+func (p *CreateAuditLogArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *CreateAuditLogArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type CreateAuditLogResult struct {
+	Success *identity_srv.CreateAuditLogResponse
+}
+
+var CreateAuditLogResult_Success_DEFAULT *identity_srv.CreateAuditLogResponse
+
+func (p *CreateAuditLogResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *CreateAuditLogResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.CreateAuditLogResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CreateAuditLogResult) GetSuccess() *identity_srv.CreateAuditLogResponse {
+	if !p.IsSetSuccess() {
+		return CreateAuditLogResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CreateAuditLogResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.CreateAuditLogResponse)
+}
+
+func (p *CreateAuditLogResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CreateAuditLogResult) GetResult() interface{} {
+	return p.Success
 }
 
 func listAuditLogsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*identity_srv.IdentityServiceListAuditLogsArgs)
-	realResult := result.(*identity_srv.IdentityServiceListAuditLogsResult)
-	success, err := handler.(identity_srv.IdentityService).ListAuditLogs(ctx, realArg.Req)
-	if err != nil {
-		return err
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(identity_srv.ListAuditLogsRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(identity_srv.IdentityService).ListAuditLogs(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *ListAuditLogsArgs:
+		success, err := handler.(identity_srv.IdentityService).ListAuditLogs(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*ListAuditLogsResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
 	}
-	realResult.Success = success
-	return nil
 }
-func newIdentityServiceListAuditLogsArgs() interface{} {
-	return identity_srv.NewIdentityServiceListAuditLogsArgs()
+func newListAuditLogsArgs() interface{} {
+	return &ListAuditLogsArgs{}
 }
 
-func newIdentityServiceListAuditLogsResult() interface{} {
-	return identity_srv.NewIdentityServiceListAuditLogsResult()
+func newListAuditLogsResult() interface{} {
+	return &ListAuditLogsResult{}
+}
+
+type ListAuditLogsArgs struct {
+	Req *identity_srv.ListAuditLogsRequest
+}
+
+func (p *ListAuditLogsArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *ListAuditLogsArgs) Unmarshal(in []byte) error {
+	msg := new(identity_srv.ListAuditLogsRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var ListAuditLogsArgs_Req_DEFAULT *identity_srv.ListAuditLogsRequest
+
+func (p *ListAuditLogsArgs) GetReq() *identity_srv.ListAuditLogsRequest {
+	if !p.IsSetReq() {
+		return ListAuditLogsArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ListAuditLogsArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *ListAuditLogsArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type ListAuditLogsResult struct {
+	Success *identity_srv.ListAuditLogsResponse
+}
+
+var ListAuditLogsResult_Success_DEFAULT *identity_srv.ListAuditLogsResponse
+
+func (p *ListAuditLogsResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *ListAuditLogsResult) Unmarshal(in []byte) error {
+	msg := new(identity_srv.ListAuditLogsResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ListAuditLogsResult) GetSuccess() *identity_srv.ListAuditLogsResponse {
+	if !p.IsSetSuccess() {
+		return ListAuditLogsResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ListAuditLogsResult) SetSuccess(x interface{}) {
+	p.Success = x.(*identity_srv.ListAuditLogsResponse)
+}
+
+func (p *ListAuditLogsResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ListAuditLogsResult) GetResult() interface{} {
+	return p.Success
 }
 
 type kClient struct {
@@ -1565,588 +7053,590 @@ func newServiceClient(c client.Client) *kClient {
 	}
 }
 
-func (p *kClient) Login(ctx context.Context, req *identity_srv.LoginRequest) (r *identity_srv.LoginResponse, err error) {
-	var _args identity_srv.IdentityServiceLoginArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceLoginResult
+func (p *kClient) Login(ctx context.Context, Req *identity_srv.LoginRequest) (r *identity_srv.LoginResponse, err error) {
+	var _args LoginArgs
+	_args.Req = Req
+	var _result LoginResult
 	if err = p.c.Call(ctx, "Login", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) ChangePassword(ctx context.Context, req *identity_srv.ChangePasswordRequest) (err error) {
-	var _args identity_srv.IdentityServiceChangePasswordArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceChangePasswordResult
+func (p *kClient) ChangePassword(ctx context.Context, Req *identity_srv.ChangePasswordRequest) (r *identity_srv.ChangePasswordResponse, err error) {
+	var _args ChangePasswordArgs
+	_args.Req = Req
+	var _result ChangePasswordResult
 	if err = p.c.Call(ctx, "ChangePassword", &_args, &_result); err != nil {
 		return
 	}
-	return nil
+	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) ResetPassword(ctx context.Context, req *identity_srv.ResetPasswordRequest) (err error) {
-	var _args identity_srv.IdentityServiceResetPasswordArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceResetPasswordResult
+func (p *kClient) ResetPassword(ctx context.Context, Req *identity_srv.ResetPasswordRequest) (r *identity_srv.ResetPasswordResponse, err error) {
+	var _args ResetPasswordArgs
+	_args.Req = Req
+	var _result ResetPasswordResult
 	if err = p.c.Call(ctx, "ResetPassword", &_args, &_result); err != nil {
 		return
 	}
-	return nil
+	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) ForcePasswordChange(ctx context.Context, req *identity_srv.ForcePasswordChangeRequest) (err error) {
-	var _args identity_srv.IdentityServiceForcePasswordChangeArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceForcePasswordChangeResult
+func (p *kClient) ForcePasswordChange(ctx context.Context, Req *identity_srv.ForcePasswordChangeRequest) (r *identity_srv.ForcePasswordChangeResponse, err error) {
+	var _args ForcePasswordChangeArgs
+	_args.Req = Req
+	var _result ForcePasswordChangeResult
 	if err = p.c.Call(ctx, "ForcePasswordChange", &_args, &_result); err != nil {
 		return
 	}
-	return nil
+	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) CreateUser(ctx context.Context, req *identity_srv.CreateUserRequest) (r *identity_srv.UserProfile, err error) {
-	var _args identity_srv.IdentityServiceCreateUserArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceCreateUserResult
+func (p *kClient) CreateUser(ctx context.Context, Req *identity_srv.CreateUserRequest) (r *identity_srv.CreateUserResponse, err error) {
+	var _args CreateUserArgs
+	_args.Req = Req
+	var _result CreateUserResult
 	if err = p.c.Call(ctx, "CreateUser", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetUser(ctx context.Context, req *identity_srv.GetUserRequest) (r *identity_srv.UserProfile, err error) {
-	var _args identity_srv.IdentityServiceGetUserArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceGetUserResult
+func (p *kClient) GetUser(ctx context.Context, Req *identity_srv.GetUserRequest) (r *identity_srv.GetUserResponse, err error) {
+	var _args GetUserArgs
+	_args.Req = Req
+	var _result GetUserResult
 	if err = p.c.Call(ctx, "GetUser", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) UpdateUser(ctx context.Context, req *identity_srv.UpdateUserRequest) (r *identity_srv.UserProfile, err error) {
-	var _args identity_srv.IdentityServiceUpdateUserArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceUpdateUserResult
+func (p *kClient) UpdateUser(ctx context.Context, Req *identity_srv.UpdateUserRequest) (r *identity_srv.UpdateUserResponse, err error) {
+	var _args UpdateUserArgs
+	_args.Req = Req
+	var _result UpdateUserResult
 	if err = p.c.Call(ctx, "UpdateUser", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) DeleteUser(ctx context.Context, req *identity_srv.DeleteUserRequest) (err error) {
-	var _args identity_srv.IdentityServiceDeleteUserArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceDeleteUserResult
+func (p *kClient) DeleteUser(ctx context.Context, Req *identity_srv.DeleteUserRequest) (r *identity_srv.DeleteUserResponse, err error) {
+	var _args DeleteUserArgs
+	_args.Req = Req
+	var _result DeleteUserResult
 	if err = p.c.Call(ctx, "DeleteUser", &_args, &_result); err != nil {
 		return
 	}
-	return nil
+	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) ListUsers(ctx context.Context, req *identity_srv.ListUsersRequest) (r *identity_srv.ListUsersResponse, err error) {
-	var _args identity_srv.IdentityServiceListUsersArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceListUsersResult
+func (p *kClient) ListUsers(ctx context.Context, Req *identity_srv.ListUsersRequest) (r *identity_srv.ListUsersResponse, err error) {
+	var _args ListUsersArgs
+	_args.Req = Req
+	var _result ListUsersResult
 	if err = p.c.Call(ctx, "ListUsers", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) SearchUsers(ctx context.Context, req *identity_srv.SearchUsersRequest) (r *identity_srv.SearchUsersResponse, err error) {
-	var _args identity_srv.IdentityServiceSearchUsersArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceSearchUsersResult
+func (p *kClient) SearchUsers(ctx context.Context, Req *identity_srv.SearchUsersRequest) (r *identity_srv.SearchUsersResponse, err error) {
+	var _args SearchUsersArgs
+	_args.Req = Req
+	var _result SearchUsersResult
 	if err = p.c.Call(ctx, "SearchUsers", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) ChangeUserStatus(ctx context.Context, req *identity_srv.ChangeUserStatusRequest) (err error) {
-	var _args identity_srv.IdentityServiceChangeUserStatusArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceChangeUserStatusResult
+func (p *kClient) ChangeUserStatus(ctx context.Context, Req *identity_srv.ChangeUserStatusRequest) (r *identity_srv.ChangeUserStatusResponse, err error) {
+	var _args ChangeUserStatusArgs
+	_args.Req = Req
+	var _result ChangeUserStatusResult
 	if err = p.c.Call(ctx, "ChangeUserStatus", &_args, &_result); err != nil {
 		return
 	}
-	return nil
+	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) UnlockUser(ctx context.Context, req *identity_srv.UnlockUserRequest) (err error) {
-	var _args identity_srv.IdentityServiceUnlockUserArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceUnlockUserResult
+func (p *kClient) UnlockUser(ctx context.Context, Req *identity_srv.UnlockUserRequest) (r *identity_srv.UnlockUserResponse, err error) {
+	var _args UnlockUserArgs
+	_args.Req = Req
+	var _result UnlockUserResult
 	if err = p.c.Call(ctx, "UnlockUser", &_args, &_result); err != nil {
 		return
 	}
-	return nil
+	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) CreateOrganization(ctx context.Context, req *identity_srv.CreateOrganizationRequest) (r *identity_srv.Organization, err error) {
-	var _args identity_srv.IdentityServiceCreateOrganizationArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceCreateOrganizationResult
+func (p *kClient) CreateOrganization(ctx context.Context, Req *identity_srv.CreateOrganizationRequest) (r *identity_srv.CreateOrganizationResponse, err error) {
+	var _args CreateOrganizationArgs
+	_args.Req = Req
+	var _result CreateOrganizationResult
 	if err = p.c.Call(ctx, "CreateOrganization", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetOrganization(ctx context.Context, req *identity_srv.GetOrganizationRequest) (r *identity_srv.Organization, err error) {
-	var _args identity_srv.IdentityServiceGetOrganizationArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceGetOrganizationResult
+func (p *kClient) GetOrganization(ctx context.Context, Req *identity_srv.GetOrganizationRequest) (r *identity_srv.GetOrganizationResponse, err error) {
+	var _args GetOrganizationArgs
+	_args.Req = Req
+	var _result GetOrganizationResult
 	if err = p.c.Call(ctx, "GetOrganization", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) UpdateOrganization(ctx context.Context, req *identity_srv.UpdateOrganizationRequest) (r *identity_srv.Organization, err error) {
-	var _args identity_srv.IdentityServiceUpdateOrganizationArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceUpdateOrganizationResult
+func (p *kClient) UpdateOrganization(ctx context.Context, Req *identity_srv.UpdateOrganizationRequest) (r *identity_srv.UpdateOrganizationResponse, err error) {
+	var _args UpdateOrganizationArgs
+	_args.Req = Req
+	var _result UpdateOrganizationResult
 	if err = p.c.Call(ctx, "UpdateOrganization", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) DeleteOrganization(ctx context.Context, organizationID core.UUID) (err error) {
-	var _args identity_srv.IdentityServiceDeleteOrganizationArgs
-	_args.OrganizationID = organizationID
-	var _result identity_srv.IdentityServiceDeleteOrganizationResult
+func (p *kClient) DeleteOrganization(ctx context.Context, Req *identity_srv.DeleteOrganizationRequest) (r *identity_srv.DeleteOrganizationResponse, err error) {
+	var _args DeleteOrganizationArgs
+	_args.Req = Req
+	var _result DeleteOrganizationResult
 	if err = p.c.Call(ctx, "DeleteOrganization", &_args, &_result); err != nil {
 		return
 	}
-	return nil
+	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) ListOrganizations(ctx context.Context, req *identity_srv.ListOrganizationsRequest) (r *identity_srv.ListOrganizationsResponse, err error) {
-	var _args identity_srv.IdentityServiceListOrganizationsArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceListOrganizationsResult
+func (p *kClient) ListOrganizations(ctx context.Context, Req *identity_srv.ListOrganizationsRequest) (r *identity_srv.ListOrganizationsResponse, err error) {
+	var _args ListOrganizationsArgs
+	_args.Req = Req
+	var _result ListOrganizationsResult
 	if err = p.c.Call(ctx, "ListOrganizations", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) AddMembership(ctx context.Context, req *identity_srv.AddMembershipRequest) (r *identity_srv.UserMembership, err error) {
-	var _args identity_srv.IdentityServiceAddMembershipArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceAddMembershipResult
+func (p *kClient) AddMembership(ctx context.Context, Req *identity_srv.AddMembershipRequest) (r *identity_srv.AddMembershipResponse, err error) {
+	var _args AddMembershipArgs
+	_args.Req = Req
+	var _result AddMembershipResult
 	if err = p.c.Call(ctx, "AddMembership", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) UpdateMembership(ctx context.Context, req *identity_srv.UpdateMembershipRequest) (r *identity_srv.UserMembership, err error) {
-	var _args identity_srv.IdentityServiceUpdateMembershipArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceUpdateMembershipResult
+func (p *kClient) UpdateMembership(ctx context.Context, Req *identity_srv.UpdateMembershipRequest) (r *identity_srv.UpdateMembershipResponse, err error) {
+	var _args UpdateMembershipArgs
+	_args.Req = Req
+	var _result UpdateMembershipResult
 	if err = p.c.Call(ctx, "UpdateMembership", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) RemoveMembership(ctx context.Context, membershipID core.UUID) (err error) {
-	var _args identity_srv.IdentityServiceRemoveMembershipArgs
-	_args.MembershipID = membershipID
-	var _result identity_srv.IdentityServiceRemoveMembershipResult
+func (p *kClient) RemoveMembership(ctx context.Context, Req *identity_srv.RemoveMembershipRequest) (r *identity_srv.RemoveMembershipResponse, err error) {
+	var _args RemoveMembershipArgs
+	_args.Req = Req
+	var _result RemoveMembershipResult
 	if err = p.c.Call(ctx, "RemoveMembership", &_args, &_result); err != nil {
 		return
 	}
-	return nil
+	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetMembership(ctx context.Context, membershipID core.UUID) (r *identity_srv.UserMembership, err error) {
-	var _args identity_srv.IdentityServiceGetMembershipArgs
-	_args.MembershipID = membershipID
-	var _result identity_srv.IdentityServiceGetMembershipResult
+func (p *kClient) GetMembership(ctx context.Context, Req *identity_srv.GetMembershipRequest) (r *identity_srv.GetMembershipResponse, err error) {
+	var _args GetMembershipArgs
+	_args.Req = Req
+	var _result GetMembershipResult
 	if err = p.c.Call(ctx, "GetMembership", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetUserMemberships(ctx context.Context, req *identity_srv.GetUserMembershipsRequest) (r *identity_srv.GetUserMembershipsResponse, err error) {
-	var _args identity_srv.IdentityServiceGetUserMembershipsArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceGetUserMembershipsResult
+func (p *kClient) GetUserMemberships(ctx context.Context, Req *identity_srv.GetUserMembershipsRequest) (r *identity_srv.GetUserMembershipsResponse, err error) {
+	var _args GetUserMembershipsArgs
+	_args.Req = Req
+	var _result GetUserMembershipsResult
 	if err = p.c.Call(ctx, "GetUserMemberships", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetPrimaryMembership(ctx context.Context, userID core.UUID) (r *identity_srv.UserMembership, err error) {
-	var _args identity_srv.IdentityServiceGetPrimaryMembershipArgs
-	_args.UserID = userID
-	var _result identity_srv.IdentityServiceGetPrimaryMembershipResult
+func (p *kClient) GetPrimaryMembership(ctx context.Context, Req *identity_srv.GetPrimaryMembershipRequest) (r *identity_srv.GetPrimaryMembershipResponse, err error) {
+	var _args GetPrimaryMembershipArgs
+	_args.Req = Req
+	var _result GetPrimaryMembershipResult
 	if err = p.c.Call(ctx, "GetPrimaryMembership", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) CheckMembership(ctx context.Context, req *identity_srv.CheckMembershipRequest) (r bool, err error) {
-	var _args identity_srv.IdentityServiceCheckMembershipArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceCheckMembershipResult
+func (p *kClient) CheckMembership(ctx context.Context, Req *identity_srv.CheckMembershipRequest) (r *identity_srv.CheckMembershipResponse, err error) {
+	var _args CheckMembershipArgs
+	_args.Req = Req
+	var _result CheckMembershipResult
 	if err = p.c.Call(ctx, "CheckMembership", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) CreateDepartment(ctx context.Context, req *identity_srv.CreateDepartmentRequest) (r *identity_srv.Department, err error) {
-	var _args identity_srv.IdentityServiceCreateDepartmentArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceCreateDepartmentResult
+func (p *kClient) CreateDepartment(ctx context.Context, Req *identity_srv.CreateDepartmentRequest) (r *identity_srv.CreateDepartmentResponse, err error) {
+	var _args CreateDepartmentArgs
+	_args.Req = Req
+	var _result CreateDepartmentResult
 	if err = p.c.Call(ctx, "CreateDepartment", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetDepartment(ctx context.Context, req *identity_srv.GetDepartmentRequest) (r *identity_srv.Department, err error) {
-	var _args identity_srv.IdentityServiceGetDepartmentArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceGetDepartmentResult
+func (p *kClient) GetDepartment(ctx context.Context, Req *identity_srv.GetDepartmentRequest) (r *identity_srv.GetDepartmentResponse, err error) {
+	var _args GetDepartmentArgs
+	_args.Req = Req
+	var _result GetDepartmentResult
 	if err = p.c.Call(ctx, "GetDepartment", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) UpdateDepartment(ctx context.Context, req *identity_srv.UpdateDepartmentRequest) (r *identity_srv.Department, err error) {
-	var _args identity_srv.IdentityServiceUpdateDepartmentArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceUpdateDepartmentResult
+func (p *kClient) UpdateDepartment(ctx context.Context, Req *identity_srv.UpdateDepartmentRequest) (r *identity_srv.UpdateDepartmentResponse, err error) {
+	var _args UpdateDepartmentArgs
+	_args.Req = Req
+	var _result UpdateDepartmentResult
 	if err = p.c.Call(ctx, "UpdateDepartment", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) DeleteDepartment(ctx context.Context, departmentID core.UUID) (err error) {
-	var _args identity_srv.IdentityServiceDeleteDepartmentArgs
-	_args.DepartmentID = departmentID
-	var _result identity_srv.IdentityServiceDeleteDepartmentResult
+func (p *kClient) DeleteDepartment(ctx context.Context, Req *identity_srv.DeleteDepartmentRequest) (r *identity_srv.DeleteDepartmentResponse, err error) {
+	var _args DeleteDepartmentArgs
+	_args.Req = Req
+	var _result DeleteDepartmentResult
 	if err = p.c.Call(ctx, "DeleteDepartment", &_args, &_result); err != nil {
 		return
 	}
-	return nil
+	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetOrganizationDepartments(ctx context.Context, req *identity_srv.GetOrganizationDepartmentsRequest) (r *identity_srv.GetOrganizationDepartmentsResponse, err error) {
-	var _args identity_srv.IdentityServiceGetOrganizationDepartmentsArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceGetOrganizationDepartmentsResult
+func (p *kClient) GetOrganizationDepartments(ctx context.Context, Req *identity_srv.GetOrganizationDepartmentsRequest) (r *identity_srv.GetOrganizationDepartmentsResponse, err error) {
+	var _args GetOrganizationDepartmentsArgs
+	_args.Req = Req
+	var _result GetOrganizationDepartmentsResult
 	if err = p.c.Call(ctx, "GetOrganizationDepartments", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) UploadTemporaryLogo(ctx context.Context, req *identity_srv.UploadTemporaryLogoRequest) (r *identity_srv.OrganizationLogo, err error) {
-	var _args identity_srv.IdentityServiceUploadTemporaryLogoArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceUploadTemporaryLogoResult
+func (p *kClient) UploadTemporaryLogo(ctx context.Context, Req *identity_srv.UploadTemporaryLogoRequest) (r *identity_srv.UploadTemporaryLogoResponse, err error) {
+	var _args UploadTemporaryLogoArgs
+	_args.Req = Req
+	var _result UploadTemporaryLogoResult
 	if err = p.c.Call(ctx, "UploadTemporaryLogo", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetOrganizationLogo(ctx context.Context, req *identity_srv.GetOrganizationLogoRequest) (r *identity_srv.OrganizationLogo, err error) {
-	var _args identity_srv.IdentityServiceGetOrganizationLogoArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceGetOrganizationLogoResult
+func (p *kClient) GetOrganizationLogo(ctx context.Context, Req *identity_srv.GetOrganizationLogoRequest) (r *identity_srv.GetOrganizationLogoResponse, err error) {
+	var _args GetOrganizationLogoArgs
+	_args.Req = Req
+	var _result GetOrganizationLogoResult
 	if err = p.c.Call(ctx, "GetOrganizationLogo", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) DeleteOrganizationLogo(ctx context.Context, req *identity_srv.DeleteOrganizationLogoRequest) (err error) {
-	var _args identity_srv.IdentityServiceDeleteOrganizationLogoArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceDeleteOrganizationLogoResult
+func (p *kClient) DeleteOrganizationLogo(ctx context.Context, Req *identity_srv.DeleteOrganizationLogoRequest) (r *identity_srv.DeleteOrganizationLogoResponse, err error) {
+	var _args DeleteOrganizationLogoArgs
+	_args.Req = Req
+	var _result DeleteOrganizationLogoResult
 	if err = p.c.Call(ctx, "DeleteOrganizationLogo", &_args, &_result); err != nil {
 		return
 	}
-	return nil
+	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) BindLogoToOrganization(ctx context.Context, req *identity_srv.BindLogoToOrganizationRequest) (r *identity_srv.OrganizationLogo, err error) {
-	var _args identity_srv.IdentityServiceBindLogoToOrganizationArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceBindLogoToOrganizationResult
+func (p *kClient) BindLogoToOrganization(ctx context.Context, Req *identity_srv.BindLogoToOrganizationRequest) (r *identity_srv.BindLogoToOrganizationResponse, err error) {
+	var _args BindLogoToOrganizationArgs
+	_args.Req = Req
+	var _result BindLogoToOrganizationResult
 	if err = p.c.Call(ctx, "BindLogoToOrganization", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) CreateRoleDefinition(ctx context.Context, req *identity_srv.RoleDefinitionCreateRequest) (r *identity_srv.RoleDefinition, err error) {
-	var _args identity_srv.IdentityServiceCreateRoleDefinitionArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceCreateRoleDefinitionResult
+func (p *kClient) CreateRoleDefinition(ctx context.Context, Req *identity_srv.RoleDefinitionCreateRequest) (r *identity_srv.CreateRoleDefinitionResponse, err error) {
+	var _args CreateRoleDefinitionArgs
+	_args.Req = Req
+	var _result CreateRoleDefinitionResult
 	if err = p.c.Call(ctx, "CreateRoleDefinition", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) UpdateRoleDefinition(ctx context.Context, req *identity_srv.RoleDefinitionUpdateRequest) (r *identity_srv.RoleDefinition, err error) {
-	var _args identity_srv.IdentityServiceUpdateRoleDefinitionArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceUpdateRoleDefinitionResult
+func (p *kClient) UpdateRoleDefinition(ctx context.Context, Req *identity_srv.RoleDefinitionUpdateRequest) (r *identity_srv.UpdateRoleDefinitionResponse, err error) {
+	var _args UpdateRoleDefinitionArgs
+	_args.Req = Req
+	var _result UpdateRoleDefinitionResult
 	if err = p.c.Call(ctx, "UpdateRoleDefinition", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) DeleteRoleDefinition(ctx context.Context, roleID core.UUID) (err error) {
-	var _args identity_srv.IdentityServiceDeleteRoleDefinitionArgs
-	_args.RoleID = roleID
-	var _result identity_srv.IdentityServiceDeleteRoleDefinitionResult
+func (p *kClient) DeleteRoleDefinition(ctx context.Context, Req *identity_srv.DeleteRoleDefinitionRequest) (r *identity_srv.DeleteRoleDefinitionResponse, err error) {
+	var _args DeleteRoleDefinitionArgs
+	_args.Req = Req
+	var _result DeleteRoleDefinitionResult
 	if err = p.c.Call(ctx, "DeleteRoleDefinition", &_args, &_result); err != nil {
 		return
 	}
-	return nil
+	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetRoleDefinition(ctx context.Context, roleID core.UUID) (r *identity_srv.RoleDefinition, err error) {
-	var _args identity_srv.IdentityServiceGetRoleDefinitionArgs
-	_args.RoleID = roleID
-	var _result identity_srv.IdentityServiceGetRoleDefinitionResult
+func (p *kClient) GetRoleDefinition(ctx context.Context, Req *identity_srv.GetRoleDefinitionRequest) (r *identity_srv.GetRoleDefinitionResponse, err error) {
+	var _args GetRoleDefinitionArgs
+	_args.Req = Req
+	var _result GetRoleDefinitionResult
 	if err = p.c.Call(ctx, "GetRoleDefinition", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) ListRoleDefinitions(ctx context.Context, req *identity_srv.RoleDefinitionQueryRequest) (r *identity_srv.RoleDefinitionListResponse, err error) {
-	var _args identity_srv.IdentityServiceListRoleDefinitionsArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceListRoleDefinitionsResult
+func (p *kClient) ListRoleDefinitions(ctx context.Context, Req *identity_srv.RoleDefinitionQueryRequest) (r *identity_srv.RoleDefinitionListResponse, err error) {
+	var _args ListRoleDefinitionsArgs
+	_args.Req = Req
+	var _result ListRoleDefinitionsResult
 	if err = p.c.Call(ctx, "ListRoleDefinitions", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) AssignRoleToUser(ctx context.Context, req *identity_srv.AssignRoleToUserRequest) (r *identity_srv.UserRoleAssignmentResponse, err error) {
-	var _args identity_srv.IdentityServiceAssignRoleToUserArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceAssignRoleToUserResult
+func (p *kClient) AssignRoleToUser(ctx context.Context, Req *identity_srv.AssignRoleToUserRequest) (r *identity_srv.UserRoleAssignmentResponse, err error) {
+	var _args AssignRoleToUserArgs
+	_args.Req = Req
+	var _result AssignRoleToUserResult
 	if err = p.c.Call(ctx, "AssignRoleToUser", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) UpdateUserRoleAssignment(ctx context.Context, req *identity_srv.UpdateUserRoleAssignmentRequest) (err error) {
-	var _args identity_srv.IdentityServiceUpdateUserRoleAssignmentArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceUpdateUserRoleAssignmentResult
+func (p *kClient) UpdateUserRoleAssignment(ctx context.Context, Req *identity_srv.UpdateUserRoleAssignmentRequest) (r *identity_srv.UpdateUserRoleAssignmentResponse, err error) {
+	var _args UpdateUserRoleAssignmentArgs
+	_args.Req = Req
+	var _result UpdateUserRoleAssignmentResult
 	if err = p.c.Call(ctx, "UpdateUserRoleAssignment", &_args, &_result); err != nil {
 		return
 	}
-	return nil
+	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) RevokeRoleFromUser(ctx context.Context, req *identity_srv.RevokeRoleFromUserRequest) (err error) {
-	var _args identity_srv.IdentityServiceRevokeRoleFromUserArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceRevokeRoleFromUserResult
+func (p *kClient) RevokeRoleFromUser(ctx context.Context, Req *identity_srv.RevokeRoleFromUserRequest) (r *identity_srv.RevokeRoleFromUserResponse, err error) {
+	var _args RevokeRoleFromUserArgs
+	_args.Req = Req
+	var _result RevokeRoleFromUserResult
 	if err = p.c.Call(ctx, "RevokeRoleFromUser", &_args, &_result); err != nil {
 		return
 	}
-	return nil
+	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetLastUserRoleAssignment(ctx context.Context, userID core.UUID) (r *identity_srv.UserRoleAssignment, err error) {
-	var _args identity_srv.IdentityServiceGetLastUserRoleAssignmentArgs
-	_args.UserID = userID
-	var _result identity_srv.IdentityServiceGetLastUserRoleAssignmentResult
+func (p *kClient) GetLastUserRoleAssignment(ctx context.Context, Req *identity_srv.GetLastUserRoleAssignmentRequest) (r *identity_srv.GetLastUserRoleAssignmentResponse, err error) {
+	var _args GetLastUserRoleAssignmentArgs
+	_args.Req = Req
+	var _result GetLastUserRoleAssignmentResult
 	if err = p.c.Call(ctx, "GetLastUserRoleAssignment", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) ListUserRoleAssignments(ctx context.Context, req *identity_srv.UserRoleQueryRequest) (r *identity_srv.UserRoleListResponse, err error) {
-	var _args identity_srv.IdentityServiceListUserRoleAssignmentsArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceListUserRoleAssignmentsResult
+func (p *kClient) ListUserRoleAssignments(ctx context.Context, Req *identity_srv.UserRoleQueryRequest) (r *identity_srv.UserRoleListResponse, err error) {
+	var _args ListUserRoleAssignmentsArgs
+	_args.Req = Req
+	var _result ListUserRoleAssignmentsResult
 	if err = p.c.Call(ctx, "ListUserRoleAssignments", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetUsersByRole(ctx context.Context, req *identity_srv.GetUsersByRoleRequest) (r *identity_srv.GetUsersByRoleResponse, err error) {
-	var _args identity_srv.IdentityServiceGetUsersByRoleArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceGetUsersByRoleResult
+func (p *kClient) GetUsersByRole(ctx context.Context, Req *identity_srv.GetUsersByRoleRequest) (r *identity_srv.GetUsersByRoleResponse, err error) {
+	var _args GetUsersByRoleArgs
+	_args.Req = Req
+	var _result GetUsersByRoleResult
 	if err = p.c.Call(ctx, "GetUsersByRole", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) BatchBindUsersToRole(ctx context.Context, req *identity_srv.BatchBindUsersToRoleRequest) (r *identity_srv.BatchBindUsersToRoleResponse, err error) {
-	var _args identity_srv.IdentityServiceBatchBindUsersToRoleArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceBatchBindUsersToRoleResult
+func (p *kClient) BatchBindUsersToRole(ctx context.Context, Req *identity_srv.BatchBindUsersToRoleRequest) (r *identity_srv.BatchBindUsersToRoleResponse, err error) {
+	var _args BatchBindUsersToRoleArgs
+	_args.Req = Req
+	var _result BatchBindUsersToRoleResult
 	if err = p.c.Call(ctx, "BatchBindUsersToRole", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) BatchGetUserRoles(ctx context.Context, req *identity_srv.BatchGetUserRolesRequest) (r *identity_srv.BatchGetUserRolesResponse, err error) {
-	var _args identity_srv.IdentityServiceBatchGetUserRolesArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceBatchGetUserRolesResult
+func (p *kClient) BatchGetUserRoles(ctx context.Context, Req *identity_srv.BatchGetUserRolesRequest) (r *identity_srv.BatchGetUserRolesResponse, err error) {
+	var _args BatchGetUserRolesArgs
+	_args.Req = Req
+	var _result BatchGetUserRolesResult
 	if err = p.c.Call(ctx, "BatchGetUserRoles", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) UploadMenu(ctx context.Context, req *identity_srv.UploadMenuRequest) (err error) {
-	var _args identity_srv.IdentityServiceUploadMenuArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceUploadMenuResult
+func (p *kClient) UploadMenu(ctx context.Context, Req *identity_srv.UploadMenuRequest) (r *identity_srv.UploadMenuResponse, err error) {
+	var _args UploadMenuArgs
+	_args.Req = Req
+	var _result UploadMenuResult
 	if err = p.c.Call(ctx, "UploadMenu", &_args, &_result); err != nil {
 		return
 	}
-	return nil
+	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetMenuTree(ctx context.Context) (r *identity_srv.GetMenuTreeResponse, err error) {
-	var _args identity_srv.IdentityServiceGetMenuTreeArgs
-	var _result identity_srv.IdentityServiceGetMenuTreeResult
+func (p *kClient) GetMenuTree(ctx context.Context, Req *identity_srv.GetMenuTreeRequest) (r *identity_srv.GetMenuTreeResponse, err error) {
+	var _args GetMenuTreeArgs
+	_args.Req = Req
+	var _result GetMenuTreeResult
 	if err = p.c.Call(ctx, "GetMenuTree", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) ConfigureRoleMenus(ctx context.Context, req *identity_srv.ConfigureRoleMenusRequest) (r *identity_srv.ConfigureRoleMenusResponse, err error) {
-	var _args identity_srv.IdentityServiceConfigureRoleMenusArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceConfigureRoleMenusResult
+func (p *kClient) ConfigureRoleMenus(ctx context.Context, Req *identity_srv.ConfigureRoleMenusRequest) (r *identity_srv.ConfigureRoleMenusResponse, err error) {
+	var _args ConfigureRoleMenusArgs
+	_args.Req = Req
+	var _result ConfigureRoleMenusResult
 	if err = p.c.Call(ctx, "ConfigureRoleMenus", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetRoleMenuTree(ctx context.Context, req *identity_srv.GetRoleMenuTreeRequest) (r *identity_srv.GetRoleMenuTreeResponse, err error) {
-	var _args identity_srv.IdentityServiceGetRoleMenuTreeArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceGetRoleMenuTreeResult
+func (p *kClient) GetRoleMenuTree(ctx context.Context, Req *identity_srv.GetRoleMenuTreeRequest) (r *identity_srv.GetRoleMenuTreeResponse, err error) {
+	var _args GetRoleMenuTreeArgs
+	_args.Req = Req
+	var _result GetRoleMenuTreeResult
 	if err = p.c.Call(ctx, "GetRoleMenuTree", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetUserMenuTree(ctx context.Context, req *identity_srv.GetUserMenuTreeRequest) (r *identity_srv.GetUserMenuTreeResponse, err error) {
-	var _args identity_srv.IdentityServiceGetUserMenuTreeArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceGetUserMenuTreeResult
+func (p *kClient) GetUserMenuTree(ctx context.Context, Req *identity_srv.GetUserMenuTreeRequest) (r *identity_srv.GetUserMenuTreeResponse, err error) {
+	var _args GetUserMenuTreeArgs
+	_args.Req = Req
+	var _result GetUserMenuTreeResult
 	if err = p.c.Call(ctx, "GetUserMenuTree", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetRoleMenuPermissions(ctx context.Context, req *identity_srv.GetRoleMenuPermissionsRequest) (r *identity_srv.GetRoleMenuPermissionsResponse, err error) {
-	var _args identity_srv.IdentityServiceGetRoleMenuPermissionsArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceGetRoleMenuPermissionsResult
+func (p *kClient) GetRoleMenuPermissions(ctx context.Context, Req *identity_srv.GetRoleMenuPermissionsRequest) (r *identity_srv.GetRoleMenuPermissionsResponse, err error) {
+	var _args GetRoleMenuPermissionsArgs
+	_args.Req = Req
+	var _result GetRoleMenuPermissionsResult
 	if err = p.c.Call(ctx, "GetRoleMenuPermissions", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) HasMenuPermission(ctx context.Context, req *identity_srv.HasMenuPermissionRequest) (r *identity_srv.HasMenuPermissionResponse, err error) {
-	var _args identity_srv.IdentityServiceHasMenuPermissionArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceHasMenuPermissionResult
+func (p *kClient) HasMenuPermission(ctx context.Context, Req *identity_srv.HasMenuPermissionRequest) (r *identity_srv.HasMenuPermissionResponse, err error) {
+	var _args HasMenuPermissionArgs
+	_args.Req = Req
+	var _result HasMenuPermissionResult
 	if err = p.c.Call(ctx, "HasMenuPermission", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetUserMenuPermissions(ctx context.Context, req *identity_srv.GetUserMenuPermissionsRequest) (r *identity_srv.GetUserMenuPermissionsResponse, err error) {
-	var _args identity_srv.IdentityServiceGetUserMenuPermissionsArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceGetUserMenuPermissionsResult
+func (p *kClient) GetUserMenuPermissions(ctx context.Context, Req *identity_srv.GetUserMenuPermissionsRequest) (r *identity_srv.GetUserMenuPermissionsResponse, err error) {
+	var _args GetUserMenuPermissionsArgs
+	_args.Req = Req
+	var _result GetUserMenuPermissionsResult
 	if err = p.c.Call(ctx, "GetUserMenuPermissions", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) CheckPermission(ctx context.Context, req *identity_srv.CheckPermissionRequest) (r *identity_srv.CheckPermissionResponse, err error) {
-	var _args identity_srv.IdentityServiceCheckPermissionArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceCheckPermissionResult
+func (p *kClient) CheckPermission(ctx context.Context, Req *identity_srv.CheckPermissionRequest) (r *identity_srv.CheckPermissionResponse, err error) {
+	var _args CheckPermissionArgs
+	_args.Req = Req
+	var _result CheckPermissionResult
 	if err = p.c.Call(ctx, "CheckPermission", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) SyncPolicies(ctx context.Context) (r *identity_srv.SyncPoliciesResponse, err error) {
-	var _args identity_srv.IdentityServiceSyncPoliciesArgs
-	var _result identity_srv.IdentityServiceSyncPoliciesResult
+func (p *kClient) SyncPolicies(ctx context.Context, Req *identity_srv.SyncPoliciesRequest) (r *identity_srv.SyncPoliciesResponse, err error) {
+	var _args SyncPoliciesArgs
+	_args.Req = Req
+	var _result SyncPoliciesResult
 	if err = p.c.Call(ctx, "SyncPolicies", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetUserDataScope(ctx context.Context, req *identity_srv.GetUserDataScopeRequest) (r *identity_srv.GetUserDataScopeResponse, err error) {
-	var _args identity_srv.IdentityServiceGetUserDataScopeArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceGetUserDataScopeResult
+func (p *kClient) GetUserDataScope(ctx context.Context, Req *identity_srv.GetUserDataScopeRequest) (r *identity_srv.GetUserDataScopeResponse, err error) {
+	var _args GetUserDataScopeArgs
+	_args.Req = Req
+	var _result GetUserDataScopeResult
 	if err = p.c.Call(ctx, "GetUserDataScope", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) CreateAuditLog(ctx context.Context, req *identity_srv.CreateAuditLogRequest) (err error) {
-	var _args identity_srv.IdentityServiceCreateAuditLogArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceCreateAuditLogResult
+func (p *kClient) CreateAuditLog(ctx context.Context, Req *identity_srv.CreateAuditLogRequest) (r *identity_srv.CreateAuditLogResponse, err error) {
+	var _args CreateAuditLogArgs
+	_args.Req = Req
+	var _result CreateAuditLogResult
 	if err = p.c.Call(ctx, "CreateAuditLog", &_args, &_result); err != nil {
 		return
 	}
-	return nil
+	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) ListAuditLogs(ctx context.Context, req *identity_srv.ListAuditLogsRequest) (r *identity_srv.ListAuditLogsResponse, err error) {
-	var _args identity_srv.IdentityServiceListAuditLogsArgs
-	_args.Req = req
-	var _result identity_srv.IdentityServiceListAuditLogsResult
+func (p *kClient) ListAuditLogs(ctx context.Context, Req *identity_srv.ListAuditLogsRequest) (r *identity_srv.ListAuditLogsResponse, err error) {
+	var _args ListAuditLogsArgs
+	_args.Req = Req
+	var _result ListAuditLogsResult
 	if err = p.c.Call(ctx, "ListAuditLogs", &_args, &_result); err != nil {
 		return
 	}

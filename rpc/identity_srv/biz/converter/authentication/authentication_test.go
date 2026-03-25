@@ -57,7 +57,7 @@ func TestConverterImpl_ModelUserMembershipsToThrift(t *testing.T) {
 		require.Len(t, result, 1)
 
 		thriftMembership := result[0]
-		assert.Equal(t, membershipID.String(), *thriftMembership.ID)
+		assert.Equal(t, membershipID.String(), *thriftMembership.Id)
 		assert.Equal(t, userID.String(), *thriftMembership.UserID)
 		assert.Equal(t, orgID.String(), *thriftMembership.OrganizationID)
 		assert.Equal(t, deptID.String(), *thriftMembership.DepartmentID)
@@ -108,7 +108,7 @@ func TestConverterImpl_ModelUserMembershipsToThrift(t *testing.T) {
 
 		// 验证第一个成员关系
 		thriftMembership1 := result[0]
-		assert.Equal(t, membershipID1.String(), *thriftMembership1.ID)
+		assert.Equal(t, membershipID1.String(), *thriftMembership1.Id)
 		assert.Equal(t, userID1.String(), *thriftMembership1.UserID)
 		assert.Equal(t, orgID1.String(), *thriftMembership1.OrganizationID)
 		assert.Equal(t, deptID1.String(), *thriftMembership1.DepartmentID)
@@ -116,7 +116,7 @@ func TestConverterImpl_ModelUserMembershipsToThrift(t *testing.T) {
 
 		// 验证第二个成员关系
 		thriftMembership2 := result[1]
-		assert.Equal(t, membershipID2.String(), *thriftMembership2.ID)
+		assert.Equal(t, membershipID2.String(), *thriftMembership2.Id)
 		assert.Equal(t, userID2.String(), *thriftMembership2.UserID)
 		assert.Equal(t, orgID2.String(), *thriftMembership2.OrganizationID)
 		assert.Nil(t, thriftMembership2.DepartmentID) // 无部门ID应为nil
@@ -155,7 +155,7 @@ func TestConverterImpl_ModelUserMembershipsToThrift(t *testing.T) {
 		// 第一个元素应该正确转换
 		thriftMembership := result[0]
 		assert.NotNil(t, thriftMembership)
-		assert.Equal(t, membershipID.String(), *thriftMembership.ID)
+		assert.Equal(t, membershipID.String(), *thriftMembership.Id)
 		assert.Equal(t, userID.String(), *thriftMembership.UserID)
 		assert.Equal(t, orgID.String(), *thriftMembership.OrganizationID)
 		assert.Nil(t, thriftMembership.IsPrimary) // IsPrimary为false时不设置字段
@@ -178,7 +178,7 @@ func TestConverterImpl_ModelUserMembershipsToThrift(t *testing.T) {
 		require.Len(t, result, 1)
 
 		thriftMembership := result[0]
-		assert.Equal(t, uuid.Nil.String(), *thriftMembership.ID)
+		assert.Equal(t, uuid.Nil.String(), *thriftMembership.Id)
 		assert.Equal(t, uuid.Nil.String(), *thriftMembership.UserID)
 		assert.Equal(t, uuid.Nil.String(), *thriftMembership.OrganizationID)
 		assert.Nil(t, thriftMembership.DepartmentID) // uuid.Nil应该被跳过
@@ -209,7 +209,7 @@ func TestConverterImpl_ModelUserMembershipsToThrift(t *testing.T) {
 		require.Len(t, result, 1)
 
 		thriftMembership := result[0]
-		assert.Equal(t, membershipID.String(), *thriftMembership.ID)
+		assert.Equal(t, membershipID.String(), *thriftMembership.Id)
 		assert.Equal(t, userID.String(), *thriftMembership.UserID)
 		assert.Equal(t, orgID.String(), *thriftMembership.OrganizationID)
 		assert.Nil(t, thriftMembership.DepartmentID) // 零值DepartmentID应该为nil

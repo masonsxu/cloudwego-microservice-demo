@@ -18,7 +18,7 @@ import (
 type mockEnumConverter struct{}
 
 func (m *mockEnumConverter) ModelUserStatusToThrift(status models.UserStatus) core.UserStatus {
-	return core.UserStatus_ACTIVE
+	return core.UserStatus_USER_STATUS_ACTIVE
 }
 
 func (m *mockEnumConverter) ThriftUserStatusToModel(status core.UserStatus) models.UserStatus {
@@ -26,7 +26,7 @@ func (m *mockEnumConverter) ThriftUserStatusToModel(status core.UserStatus) mode
 }
 
 func (m *mockEnumConverter) ModelRoleStatusToThrift(status models.RoleStatus) core.RoleStatus {
-	return core.RoleStatus_ACTIVE
+	return core.RoleStatus_ROLE_STATUS_ACTIVE
 }
 
 func (m *mockEnumConverter) ThriftRoleStatusToModel(status core.RoleStatus) models.RoleStatus {
@@ -34,7 +34,7 @@ func (m *mockEnumConverter) ThriftRoleStatusToModel(status core.RoleStatus) mode
 }
 
 func (m *mockEnumConverter) ModelGenderToThrift(gender models.Gender) core.Gender {
-	return core.Gender_UNKNOWN
+	return core.Gender_GENDER_UNSPECIFIED
 }
 
 func (m *mockEnumConverter) ThriftGenderToModel(gender core.Gender) models.Gender {
@@ -42,7 +42,7 @@ func (m *mockEnumConverter) ThriftGenderToModel(gender core.Gender) models.Gende
 }
 
 func (m *mockEnumConverter) ModelDataScopeToThrift(scope models.DataScopeType) identity_srv.DataScope {
-	return identity_srv.DataScope_SELF
+	return identity_srv.DataScope_DATA_SCOPE_SELF
 }
 
 func (m *mockEnumConverter) ThriftDataScopeToModel(scope identity_srv.DataScope) models.DataScopeType {
@@ -89,7 +89,7 @@ func TestConverterImpl_ModelUserMembershipToThrift(t *testing.T) {
 		result := converter.ModelUserMembershipToThrift(model)
 
 		require.NotNil(t, result)
-		assert.Equal(t, userID.String(), *result.ID)
+		assert.Equal(t, userID.String(), *result.Id)
 		assert.Equal(t, userID.String(), *result.UserID)
 		assert.Equal(t, orgID.String(), *result.OrganizationID)
 		assert.Equal(t, deptID.String(), *result.DepartmentID)
@@ -120,7 +120,7 @@ func TestConverterImpl_ModelUserMembershipToThrift(t *testing.T) {
 		result := converter.ModelUserMembershipToThrift(model)
 
 		require.NotNil(t, result)
-		assert.Equal(t, userID.String(), *result.ID)
+		assert.Equal(t, userID.String(), *result.Id)
 		assert.Equal(t, userID.String(), *result.UserID)
 		assert.Equal(t, orgID.String(), *result.OrganizationID)
 		assert.Nil(t, result.DepartmentID) // 零值不设置
@@ -174,7 +174,7 @@ func TestConverterImpl_ThriftUserMembershipToModel(t *testing.T) {
 		isPrimary := true
 
 		dto := &identity_srv.UserMembership{
-			ID:             &idStr,
+			Id:             &idStr,
 			UserID:         &userIDStr,
 			OrganizationID: &orgIDStr,
 			DepartmentID:   &deptIDStr,
@@ -200,7 +200,7 @@ func TestConverterImpl_ThriftUserMembershipToModel(t *testing.T) {
 		orgIDStr := orgID.String()
 
 		dto := &identity_srv.UserMembership{
-			ID:             &idStr,
+			Id:             &idStr,
 			UserID:         &userIDStr,
 			OrganizationID: &orgIDStr,
 			DepartmentID:   nil, // 可选字段为nil
@@ -227,7 +227,7 @@ func TestConverterImpl_ThriftUserMembershipToModel(t *testing.T) {
 		isPrimary := false
 
 		dto := &identity_srv.UserMembership{
-			ID:             &idStr,
+			Id:             &idStr,
 			UserID:         &userIDStr,
 			OrganizationID: &orgIDStr,
 			IsPrimary:      &isPrimary,
@@ -290,8 +290,8 @@ func TestConverterImpl_ModelUserMembershipsToThrift(t *testing.T) {
 
 		require.NotNil(t, result)
 		assert.Len(t, result, 2)
-		assert.Equal(t, userID1.String(), *result[0].ID)
-		assert.Equal(t, userID2.String(), *result[1].ID)
+		assert.Equal(t, userID1.String(), *result[0].Id)
+		assert.Equal(t, userID2.String(), *result[1].Id)
 	})
 
 	t.Run("批量转换包含nil", func(t *testing.T) {
@@ -318,7 +318,7 @@ func TestConverterImpl_ModelUserMembershipsToThrift(t *testing.T) {
 
 		require.NotNil(t, result)
 		assert.Len(t, result, 1) // nil应该被过滤掉
-		assert.Equal(t, userID.String(), *result[0].ID)
+		assert.Equal(t, userID.String(), *result[0].Id)
 	})
 }
 
@@ -345,7 +345,7 @@ func TestConverterImpl_AddMembershipRequestToModel(t *testing.T) {
 			UserID:         &userIDStr,
 			OrganizationID: &orgIDStr,
 			DepartmentID:   &deptIDStr,
-			IsPrimary:      isPrimary,
+			IsPrimary:      &isPrimary,
 		}
 
 		result := converter.AddMembershipRequestToModel(req)
@@ -365,10 +365,11 @@ func TestConverterImpl_AddMembershipRequestToModel(t *testing.T) {
 		userIDStr := userID.String()
 		orgIDStr := orgID.String()
 
+		isPrimary := false
 		req := &identity_srv.AddMembershipRequest{
 			UserID:         &userIDStr,
 			OrganizationID: &orgIDStr,
-			IsPrimary:      false,
+			IsPrimary:      &isPrimary,
 		}
 
 		result := converter.AddMembershipRequestToModel(req)
@@ -388,11 +389,12 @@ func TestConverterImpl_AddMembershipRequestToModel(t *testing.T) {
 		userIDStr := userID.String()
 		orgIDStr := orgID.String()
 
+		isPrimary := true
 		req := &identity_srv.AddMembershipRequest{
 			UserID:         &userIDStr,
 			OrganizationID: &orgIDStr,
 			DepartmentID:   nil,
-			IsPrimary:      true,
+			IsPrimary:      &isPrimary,
 		}
 
 		result := converter.AddMembershipRequestToModel(req)
@@ -503,7 +505,7 @@ func TestConverterImpl_ModelToThrift_Alias(t *testing.T) {
 		result := converter.ModelToThrift(model)
 
 		require.NotNil(t, result)
-		assert.Equal(t, userID.String(), *result.ID)
+		assert.Equal(t, userID.String(), *result.Id)
 		assert.Equal(t, userID.String(), *result.UserID)
 		assert.Equal(t, orgID.String(), *result.OrganizationID)
 		assert.NotNil(t, result.IsPrimary)
@@ -561,7 +563,7 @@ func TestConverterImpl_CompleteRoundTrip(t *testing.T) {
 		req := &identity_srv.AddMembershipRequest{
 			UserID:         &userIDStr,
 			OrganizationID: &orgIDStr,
-			IsPrimary:      isPrimary,
+			IsPrimary:      &isPrimary,
 		}
 
 		// Request -> Model
@@ -591,7 +593,7 @@ func TestConverterImpl_EdgeCases(t *testing.T) {
 		orgIDStr := zeroUUID.String()
 
 		dto := &identity_srv.UserMembership{
-			ID:             &idStr,
+			Id:             &idStr,
 			UserID:         &userIDStr,
 			OrganizationID: &orgIDStr,
 			IsPrimary:      nil,

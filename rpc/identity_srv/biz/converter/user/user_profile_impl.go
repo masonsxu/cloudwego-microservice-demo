@@ -39,7 +39,7 @@ func (c *ConverterImpl) ModelUserProfileToThrift(
 	status := c.enumConverter.ModelUserStatusToThrift(model.Status)
 
 	dto := &identity_srv.UserProfile{
-		ID:        &id,
+		Id:        &id,
 		Username:  &username,
 		Status:    &status,
 		CreatedAt: &model.CreatedAt,
@@ -83,10 +83,10 @@ func (c *ConverterImpl) ModelUserProfileToThrift(
 
 	// 处理可选数值字段
 	if model.LoginAttempts > 0 {
-		dto.LoginAttempts = model.LoginAttempts
+		dto.LoginAttempts = convutil.Int32Ptr(model.LoginAttempts)
 	}
 
-	dto.MustChangePassword = model.MustChangePassword
+	dto.MustChangePassword = convutil.BoolPtr(model.MustChangePassword)
 
 	// 处理可选时间戳字段
 	if model.AccountExpiry != nil && *model.AccountExpiry > 0 {

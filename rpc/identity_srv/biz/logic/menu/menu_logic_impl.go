@@ -51,15 +51,15 @@ func NewLogic(
 func toThriftPermissionLevel(p models.MenuPermissionType) identity_srv.PermissionLevel {
 	switch p {
 	case models.PermissionNone:
-		return identity_srv.PermissionLevel_NONE
+		return identity_srv.PermissionLevel_PERMISSION_LEVEL_UNSPECIFIED
 	case models.PermissionView:
-		return identity_srv.PermissionLevel_READ
+		return identity_srv.PermissionLevel_PERMISSION_LEVEL_READ
 	case models.PermissionEdit, models.PermissionManage:
-		return identity_srv.PermissionLevel_WRITE
+		return identity_srv.PermissionLevel_PERMISSION_LEVEL_WRITE
 	case models.PermissionFull:
-		return identity_srv.PermissionLevel_FULL
+		return identity_srv.PermissionLevel_PERMISSION_LEVEL_FULL
 	default:
-		return identity_srv.PermissionLevel_NONE
+		return identity_srv.PermissionLevel_PERMISSION_LEVEL_UNSPECIFIED
 	}
 }
 
@@ -72,13 +72,13 @@ func toThriftPermissionLevelPtr(p models.MenuPermissionType) *identity_srv.Permi
 // parsePermissionTypeFromThrift 从 Thrift 枚举解析权限类型
 func parsePermissionTypeFromThrift(level identity_srv.PermissionLevel) models.MenuPermissionType {
 	switch level {
-	case identity_srv.PermissionLevel_NONE:
+	case identity_srv.PermissionLevel_PERMISSION_LEVEL_UNSPECIFIED:
 		return models.PermissionNone
-	case identity_srv.PermissionLevel_READ:
+	case identity_srv.PermissionLevel_PERMISSION_LEVEL_READ:
 		return models.PermissionView
-	case identity_srv.PermissionLevel_WRITE:
+	case identity_srv.PermissionLevel_PERMISSION_LEVEL_WRITE:
 		return models.PermissionEdit
-	case identity_srv.PermissionLevel_FULL:
+	case identity_srv.PermissionLevel_PERMISSION_LEVEL_FULL:
 		return models.PermissionFull
 	default:
 		return models.PermissionNone
@@ -182,7 +182,7 @@ func (l *LogicImpl) ConfigureRoleMenus(
 		if cfg.Permission != nil {
 			permission.PermissionType = parsePermissionTypeFromThrift(*cfg.Permission)
 			// DataScope 根据权限类型设置
-			if *cfg.Permission == identity_srv.PermissionLevel_FULL {
+			if *cfg.Permission == identity_srv.PermissionLevel_PERMISSION_LEVEL_FULL {
 				permission.DataScope = models.DataScopeAllOrgs
 			}
 		}
@@ -599,7 +599,7 @@ func (l *LogicImpl) markMenuPermissions(
 			newNode.PermissionLevel = toThriftPermissionLevelPtr(perm.PermissionType)
 		} else {
 			newNode.HasPermission = convutil.BoolPtr(false)
-			noneLevel := identity_srv.PermissionLevel_NONE
+			noneLevel := identity_srv.PermissionLevel_PERMISSION_LEVEL_UNSPECIFIED
 			newNode.PermissionLevel = &noneLevel
 		}
 

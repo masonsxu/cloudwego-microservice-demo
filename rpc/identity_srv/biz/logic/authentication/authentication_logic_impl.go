@@ -166,7 +166,7 @@ func (l *LogicImpl) ChangePassword(
 		return errno.ErrInvalidParams.WithMessage("用户ID不能为空")
 	}
 
-	if req.NewPassword_ == nil || *req.NewPassword_ == "" {
+	if req.NewPassword == nil || *req.NewPassword == "" {
 		return errno.ErrInvalidParams.WithMessage("新密码不能为空")
 	}
 
@@ -186,7 +186,7 @@ func (l *LogicImpl) ChangePassword(
 	}
 
 	// 生成新密码哈希
-	newPasswordHash, err := convutil.HashPassword(*req.NewPassword_)
+	newPasswordHash, err := convutil.HashPassword(*req.NewPassword)
 	if err != nil {
 		return errno.ErrOperationFailed.WithMessage("密码哈希生成失败: " + err.Error())
 	}
@@ -211,12 +211,12 @@ func (l *LogicImpl) ResetPassword(
 		return errno.ErrInvalidParams.WithMessage("用户ID不能为空")
 	}
 
-	if req.NewPassword_ == nil || *req.NewPassword_ == "" {
+	if req.NewPassword == nil || *req.NewPassword == "" {
 		return errno.ErrInvalidParams.WithMessage("新密码不能为空")
 	}
 
 	// 生成新密码哈希
-	newPasswordHash, err := convutil.HashPassword(*req.NewPassword_)
+	newPasswordHash, err := convutil.HashPassword(*req.NewPassword)
 	if err != nil {
 		return errno.ErrOperationFailed.WithMessage("密码哈希生成失败: " + err.Error())
 	}

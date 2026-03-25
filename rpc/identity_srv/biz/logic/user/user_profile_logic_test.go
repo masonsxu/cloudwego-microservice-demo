@@ -686,7 +686,7 @@ func TestLogicImpl_ListUsers(t *testing.T) {
 		logic, mocks := setupTest(t)
 		ctx := context.Background()
 
-		activeStatus := core.UserStatus_ACTIVE
+		activeStatus := core.UserStatus_USER_STATUS_ACTIVE
 		req := &identity_srv.ListUsersRequest{
 			Status: &activeStatus,
 		}
@@ -698,7 +698,7 @@ func TestLogicImpl_ListUsers(t *testing.T) {
 				cond *userDAL.UserProfileQueryConditions,
 			) ([]*models.UserProfile, *models.PageResult, error) {
 				require.NotNil(t, cond.Status)
-				assert.Equal(t, models.UserStatus(core.UserStatus_ACTIVE), *cond.Status)
+				assert.Equal(t, models.UserStatus(core.UserStatus_USER_STATUS_ACTIVE), *cond.Status)
 
 				return []*models.UserProfile{}, &models.PageResult{Total: 0, Page: 1, Limit: 20, TotalPages: 1}, nil
 			})
@@ -741,8 +741,10 @@ func TestLogicImpl_ListUsers(t *testing.T) {
 		logic, mocks := setupTest(t)
 		ctx := context.Background()
 
+		page := int32(2)
+		limit := int32(10)
 		req := &identity_srv.ListUsersRequest{
-			Page: &rpc_base.PageRequest{Page: 2, Limit: 10},
+			Page: &rpc_base.PageRequest{Page: &page, Limit: &limit},
 		}
 
 		mocks.UserRepo.EXPECT().
@@ -861,8 +863,10 @@ func TestLogicImpl_SearchUsers(t *testing.T) {
 		logic, mocks := setupTest(t)
 		ctx := context.Background()
 
+		page := int32(1)
+		limit := int32(5)
 		req := &identity_srv.SearchUsersRequest{
-			Page: &rpc_base.PageRequest{Page: 1, Limit: 5},
+			Page: &rpc_base.PageRequest{Page: &page, Limit: &limit},
 		}
 
 		mocks.UserRepo.EXPECT().
@@ -910,10 +914,10 @@ func TestLogicImpl_ChangeUserStatus(t *testing.T) {
 			Status:    models.UserStatusActive,
 		}
 
-		newStatus := core.UserStatus_SUSPENDED
+		newStatus := core.UserStatus_USER_STATUS_SUSPENDED
 		req := &identity_srv.ChangeUserStatusRequest{
 			UserID:     &userID,
-			NewStatus_: &newStatus,
+			NewStatus: &newStatus,
 		}
 
 		mocks.UserRepo.EXPECT().GetByID(ctx, userID).Return(profile, nil)
@@ -938,10 +942,10 @@ func TestLogicImpl_ChangeUserStatus(t *testing.T) {
 			Status:    models.UserStatusInactive,
 		}
 
-		newStatus := core.UserStatus_ACTIVE
+		newStatus := core.UserStatus_USER_STATUS_ACTIVE
 		req := &identity_srv.ChangeUserStatusRequest{
 			UserID:     &userID,
-			NewStatus_: &newStatus,
+			NewStatus: &newStatus,
 		}
 
 		mocks.UserRepo.EXPECT().GetByID(ctx, userID).Return(profile, nil)
@@ -960,10 +964,10 @@ func TestLogicImpl_ChangeUserStatus(t *testing.T) {
 		logic, mocks := setupTest(t)
 		ctx := context.Background()
 
-		newStatus := core.UserStatus_ACTIVE
+		newStatus := core.UserStatus_USER_STATUS_ACTIVE
 		req := &identity_srv.ChangeUserStatusRequest{
 			UserID:     &userID,
-			NewStatus_: &newStatus,
+			NewStatus: &newStatus,
 		}
 
 		mocks.UserRepo.EXPECT().GetByID(ctx, userID).Return(nil, gorm.ErrRecordNotFound)
@@ -978,10 +982,10 @@ func TestLogicImpl_ChangeUserStatus(t *testing.T) {
 		ctx := context.Background()
 
 		emptyID := ""
-		newStatus := core.UserStatus_ACTIVE
+		newStatus := core.UserStatus_USER_STATUS_ACTIVE
 		req := &identity_srv.ChangeUserStatusRequest{
 			UserID:     &emptyID,
-			NewStatus_: &newStatus,
+			NewStatus: &newStatus,
 		}
 
 		err := logic.ChangeUserStatus(ctx, req)
@@ -993,10 +997,10 @@ func TestLogicImpl_ChangeUserStatus(t *testing.T) {
 		logic, mocks := setupTest(t)
 		ctx := context.Background()
 
-		newStatus := core.UserStatus_ACTIVE
+		newStatus := core.UserStatus_USER_STATUS_ACTIVE
 		req := &identity_srv.ChangeUserStatusRequest{
 			UserID:     &userID,
-			NewStatus_: &newStatus,
+			NewStatus: &newStatus,
 		}
 
 		mocks.UserRepo.EXPECT().GetByID(ctx, userID).Return(nil, gorm.ErrInvalidDB)
@@ -1016,10 +1020,10 @@ func TestLogicImpl_ChangeUserStatus(t *testing.T) {
 			Status:    models.UserStatusActive,
 		}
 
-		newStatus := core.UserStatus_SUSPENDED
+		newStatus := core.UserStatus_USER_STATUS_SUSPENDED
 		req := &identity_srv.ChangeUserStatusRequest{
 			UserID:     &userID,
-			NewStatus_: &newStatus,
+			NewStatus: &newStatus,
 		}
 
 		mocks.UserRepo.EXPECT().GetByID(ctx, userID).Return(profile, nil)

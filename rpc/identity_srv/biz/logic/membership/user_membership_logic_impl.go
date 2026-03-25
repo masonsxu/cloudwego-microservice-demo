@@ -720,8 +720,8 @@ func (l *LogicImpl) buildQueryOptionsFromRequest(
 
 	// 处理分页参数
 	if req.Page != nil {
-		opts.Page = req.Page.Page
-		opts.PageSize = req.Page.Limit
+		opts.Page = req.Page.GetPage()
+		opts.PageSize = req.Page.GetLimit()
 	}
 
 	// 设置默认排序

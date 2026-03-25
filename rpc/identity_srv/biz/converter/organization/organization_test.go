@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 )
@@ -48,7 +49,7 @@ func TestConverterImpl_ModelOrganizationToThrift(t *testing.T) {
 		result := converter.ModelOrganizationToThrift(model)
 
 		require.NotNil(t, result)
-		assert.Equal(t, orgID.String(), *result.ID)
+		assert.Equal(t, orgID.String(), *result.Id)
 		assert.Equal(t, "HOSPITAL_001", *result.Code)
 		assert.Equal(t, "北京协和医院", *result.Name)
 		require.NotNil(t, result.ParentID)
@@ -83,7 +84,7 @@ func TestConverterImpl_ModelOrganizationToThrift(t *testing.T) {
 		result := converter.ModelOrganizationToThrift(model)
 
 		require.NotNil(t, result)
-		assert.Equal(t, orgID.String(), *result.ID)
+		assert.Equal(t, orgID.String(), *result.Id)
 		assert.Equal(t, "ORG_001", *result.Code)
 		assert.Equal(t, "测试组织", *result.Name)
 		assert.Nil(t, result.ParentID)            // uuid.Nil应该被跳过
@@ -115,7 +116,7 @@ func TestConverterImpl_ModelOrganizationToThrift(t *testing.T) {
 		result := converter.ModelOrganizationToThrift(model)
 
 		require.NotNil(t, result)
-		assert.Equal(t, orgID.String(), *result.ID)
+		assert.Equal(t, orgID.String(), *result.Id)
 		assert.Equal(t, "CLINIC_001", *result.Code)
 		assert.Equal(t, "社区诊所", *result.Name)
 		assert.Nil(t, result.ParentID)
@@ -146,7 +147,7 @@ func TestConverterImpl_ModelOrganizationToThrift(t *testing.T) {
 		result := converter.ModelOrganizationToThrift(model)
 
 		require.NotNil(t, result)
-		assert.Equal(t, orgID.String(), *result.ID)
+		assert.Equal(t, orgID.String(), *result.Id)
 		assert.Equal(t, "CHAIN_001", *result.Code)
 		assert.Equal(t, "连锁集团", *result.Name)
 		assert.Nil(t, result.ParentID)
@@ -178,7 +179,7 @@ func TestConverterImpl_ThriftOrganizationToModel(t *testing.T) {
 		accreditationStatus := "JCI认证"
 
 		dto := &identity_srv.Organization{
-			ID:                  &orgIDStr,
+			Id:                  &orgIDStr,
 			Code:                &code,
 			Name:                &name,
 			ParentID:            &parentIDStr,
@@ -213,7 +214,7 @@ func TestConverterImpl_ThriftOrganizationToModel(t *testing.T) {
 		name := "测试组织"
 
 		dto := &identity_srv.Organization{
-			ID:        &orgIDStr,
+			Id:        &orgIDStr,
 			Code:      &code,
 			Name:      &name,
 			CreatedAt: &now,
@@ -245,7 +246,7 @@ func TestConverterImpl_ThriftOrganizationToModel(t *testing.T) {
 		facilityType := "总部"
 
 		dto := &identity_srv.Organization{
-			ID:           &orgIDStr,
+			Id:           &orgIDStr,
 			Code:         &code,
 			Name:         &name,
 			ParentID:     nil, // 根组织没有父组织
@@ -275,7 +276,7 @@ func TestConverterImpl_ThriftOrganizationToModel(t *testing.T) {
 		name := "空省市组织"
 
 		dto := &identity_srv.Organization{
-			ID:           &orgIDStr,
+			Id:           &orgIDStr,
 			Code:         &code,
 			Name:         &name,
 			ProvinceCity: []string{}, // 空列表
@@ -340,12 +341,12 @@ func TestConverterImpl_ModelOrganizationsToThrift(t *testing.T) {
 		require.Len(t, result, 2)
 
 		// 验证第一个组织
-		assert.Equal(t, org1ID.String(), *result[0].ID)
+		assert.Equal(t, org1ID.String(), *result[0].Id)
 		assert.Equal(t, "ORG_001", *result[0].Code)
 		assert.Equal(t, "组织1", *result[0].Name)
 
 		// 验证第二个组织
-		assert.Equal(t, org2ID.String(), *result[1].ID)
+		assert.Equal(t, org2ID.String(), *result[1].Id)
 		assert.Equal(t, "ORG_002", *result[1].Code)
 		assert.Equal(t, "组织2", *result[1].Name)
 	})
@@ -372,11 +373,11 @@ func TestConverterImpl_ModelOrganizationsToThrift(t *testing.T) {
 		require.Len(t, result, 2) // nil元素被过滤掉了
 
 		// 第一个组织应该正常转换
-		assert.Equal(t, orgID.String(), *result[0].ID)
+		assert.Equal(t, orgID.String(), *result[0].Id)
 		assert.Equal(t, "ORG_001", *result[0].Code)
 
 		// 第二个组织应该正常转换
-		assert.Equal(t, orgID.String(), *result[1].ID)
+		assert.Equal(t, orgID.String(), *result[1].Id)
 		assert.Equal(t, "ORG_001", *result[1].Code)
 	})
 }
@@ -402,7 +403,7 @@ func TestConverterImpl_CreateRequestToModel(t *testing.T) {
 			ParentID:            &parentIDStr,
 			FacilityType:        &facilityType,
 			AccreditationStatus: &accreditationStatus,
-			ProvinceCity:        provinceCity,
+			ProvinceCity:        &core.StringListValue{Items: provinceCity},
 		}
 
 		result := converter.CreateRequestToModel(req)
@@ -502,7 +503,7 @@ func TestConverterImpl_ApplyUpdateToModel(t *testing.T) {
 			ParentID:            &newParentIDStr,
 			FacilityType:        &facilityType,
 			AccreditationStatus: &accreditationStatus,
-			ProvinceCity:        provinceCity,
+			ProvinceCity:        &core.StringListValue{Items: provinceCity},
 		}
 
 		result := converter.ApplyUpdateToModel(existing, req)
@@ -575,7 +576,7 @@ func TestConverterImpl_ApplyUpdateToModel(t *testing.T) {
 			ParentID:            nil,                                     // nil ParentID
 			FacilityType:        func() *string { s := ""; return &s }(), // 空字符串
 			AccreditationStatus: nil,                                     // nil
-			ProvinceCity:        []string{},                              // 空列表
+			ProvinceCity:        &core.StringListValue{Items: []string{}}, // 空列表
 		}
 
 		result := converter.ApplyUpdateToModel(existing, req)
@@ -617,7 +618,7 @@ func TestConverterImpl_ModelToThrift_Alias(t *testing.T) {
 		// 结果应该相同
 		assert.Equal(t, result1, result2)
 		require.NotNil(t, result1)
-		assert.Equal(t, orgID.String(), *result1.ID)
+		assert.Equal(t, orgID.String(), *result1.Id)
 		assert.Equal(t, "ALIAS_TEST", *result1.Code)
 		assert.Equal(t, "别名测试", *result1.Name)
 	})
@@ -680,7 +681,7 @@ func TestConverterImpl_CompleteRoundTrip(t *testing.T) {
 		accreditationStatus := "测试状态2"
 
 		originalThrift := &identity_srv.Organization{
-			ID:                  &orgIDStr,
+			Id:                  &orgIDStr,
 			Code:                &code,
 			Name:                &name,
 			ParentID:            &parentIDStr,
@@ -700,7 +701,7 @@ func TestConverterImpl_CompleteRoundTrip(t *testing.T) {
 		require.NotNil(t, resultThrift)
 
 		// 验证关键字段
-		assert.Equal(t, originalThrift.ID, resultThrift.ID)
+		assert.Equal(t, originalThrift.Id, resultThrift.Id)
 		assert.Equal(t, originalThrift.Code, resultThrift.Code)
 		assert.Equal(t, originalThrift.Name, resultThrift.Name)
 		assert.Equal(t, originalThrift.ParentID, resultThrift.ParentID)
@@ -756,7 +757,7 @@ func TestConverterImpl_EdgeCases(t *testing.T) {
 		name := "nil字段测试"
 
 		dto := &identity_srv.Organization{
-			ID:        &orgIDStr,
+			Id:        &orgIDStr,
 			Code:      &code,
 			Name:      &name,
 			ParentID:  nil, // nil
@@ -820,7 +821,7 @@ func BenchmarkConverterImpl_ThriftOrganizationToModel(b *testing.B) {
 	accreditationStatus := "测试状态"
 
 	dto := &identity_srv.Organization{
-		ID:                  &orgIDStr,
+		Id:                  &orgIDStr,
 		Code:                &code,
 		Name:                &name,
 		ParentID:            &parentIDStr,

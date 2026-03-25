@@ -302,10 +302,9 @@ func (l *LogicImpl) validateCreateOrganizationRequest(
 		return errno.ErrInvalidParams.WithMessage("组织名称不能为空")
 	}
 
-	// 验证省市信息格式（如果提供了）
-	if len(req.ProvinceCity) > 0 {
-		// 验证省市信息列表中每个项目的长度
-		for i, city := range req.ProvinceCity {
+	provinceCity := req.GetProvinceCity().GetItems()
+	if len(provinceCity) > 0 {
+		for i, city := range provinceCity {
 			if len(city) > 100 {
 				return errno.ErrInvalidParams.WithMessage(fmt.Sprintf("第%d个省市信息长度不能超过100字符", i+1))
 			}
@@ -314,8 +313,7 @@ func (l *LogicImpl) validateCreateOrganizationRequest(
 				return errno.ErrInvalidParams.WithMessage("省市信息不能为空")
 			}
 		}
-		// 限制省市信息列表的项目数量
-		if len(req.ProvinceCity) > 10 {
+		if len(provinceCity) > 10 {
 			return errno.ErrInvalidParams.WithMessage("省市信息列表项目数量不能超过10个")
 		}
 	}
@@ -327,10 +325,9 @@ func (l *LogicImpl) validateCreateOrganizationRequest(
 func (l *LogicImpl) validateUpdateOrganizationRequest(
 	req *identity_srv.UpdateOrganizationRequest,
 ) error {
-	// 验证省市信息格式（如果提供了）
-	if len(req.ProvinceCity) > 0 {
-		// 验证省市信息列表中每个项目的长度
-		for i, city := range req.ProvinceCity {
+	provinceCity := req.GetProvinceCity().GetItems()
+	if len(provinceCity) > 0 {
+		for i, city := range provinceCity {
 			if len(city) > 100 {
 				return errno.ErrInvalidParams.WithMessage(fmt.Sprintf("第%d个省市信息长度不能超过100字符", i+1))
 			}
@@ -339,8 +336,7 @@ func (l *LogicImpl) validateUpdateOrganizationRequest(
 				return errno.ErrInvalidParams.WithMessage("省市信息不能为空")
 			}
 		}
-		// 限制省市信息列表的项目数量
-		if len(req.ProvinceCity) > 10 {
+		if len(provinceCity) > 10 {
 			return errno.ErrInvalidParams.WithMessage("省市信息列表项目数量不能超过10个")
 		}
 	}

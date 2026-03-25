@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package permission;
+
+option go_package = "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/permission";
+
+import "api.proto";
+import "http/base/base.proto";
+import "http/permission/permission_model.proto";
+
+service PermissionService {
+  rpc CreateRoleDefinition(RoleDefinitionCreateRequestDTO) returns (RoleDefinitionCreateResponseDTO) {
+    option (api.post) = "/api/v1/permission/roles";
+  }
+
+  rpc UpdateRoleDefinition(RoleDefinitionUpdateRequestDTO) returns (RoleDefinitionUpdateResponseDTO) {
+    option (api.put) = "/api/v1/permission/roles/:roleDefinitionID";
+  }
+
+  rpc DeleteRoleDefinition(RoleDefinitionDeleteRequestDTO) returns (http_base.OperationStatusResponseDTO) {
+    option (api.delete) = "/api/v1/permission/roles/:roleID";
+  }
+
+  rpc GetRoleDefinition(RoleDefinitionGetRequestDTO) returns (RoleDefinitionGetResponseDTO) {
+    option (api.get) = "/api/v1/permission/roles/:roleID";
+  }
+
+  rpc ListRoleDefinitions(RoleDefinitionQueryRequestDTO) returns (RoleDefinitionListResponseDTO) {
+    option (api.get) = "/api/v1/permission/roles";
+  }
+
+  rpc GetLastUserRoleAssignment(GetLastUserRoleAssignmentRequestDTO) returns (GetLastUserRoleAssignmentResponseDTO) {
+    option (api.get) = "/api/v1/permission/users/:userID/roles/latest";
+  }
+
+  rpc ListUserRoleAssignments(UserRoleQueryRequestDTO) returns (UserRoleListResponseDTO) {
+    option (api.get) = "/api/v1/permission/user-roles";
+  }
+
+  rpc GetUsersByRole(GetUsersByRoleRequestDTO) returns (GetUsersByRoleResponseDTO) {
+    option (api.get) = "/api/v1/permission/roles/:roleID/users";
+  }
+
+  rpc BatchBindUsersToRole(BatchBindUsersToRoleRequestDTO) returns (BatchBindUsersToRoleResponseDTO) {
+    option (api.post) = "/api/v1/permission/roles/:roleID/users/batch-bind";
+  }
+
+  rpc UploadMenu(UploadMenuRequestDTO) returns (http_base.OperationStatusResponseDTO) {
+    option (api.post) = "/api/v1/permission/menu/upload";
+  }
+
+  rpc GetMenuTree(GetMenuTreeRequestDTO) returns (GetMenuTreeResponseDTO) {
+    option (api.get) = "/api/v1/permission/menu/tree";
+  }
+
+  rpc ConfigureRoleMenus(ConfigureRoleMenusRequestDTO) returns (ConfigureRoleMenusResponseDTO) {
+    option (api.post) = "/api/v1/permission/roles/:roleID/menus";
+  }
+
+  rpc GetRoleMenuTree(GetRoleMenuTreeRequestDTO) returns (GetRoleMenuTreeResponseDTO) {
+    option (api.get) = "/api/v1/permission/roles/:roleID/menu-tree";
+  }
+
+  rpc GetUserMenuTree(GetUserMenuTreeRequestDTO) returns (GetUserMenuTreeResponseDTO) {
+    option (api.get) = "/api/v1/permission/users/:userID/menu-tree";
+  }
+
+  rpc GetRoleMenuPermissions(GetRoleMenuPermissionsRequestDTO) returns (GetRoleMenuPermissionsResponseDTO) {
+    option (api.get) = "/api/v1/permission/roles/:roleID/menu-permissions";
+  }
+
+  rpc HasMenuPermission(HasMenuPermissionRequestDTO) returns (HasMenuPermissionResponseDTO) {
+    option (api.post) = "/api/v1/permission/roles/:roleID/check-menu-permission";
+  }
+}

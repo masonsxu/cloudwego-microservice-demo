@@ -55,10 +55,11 @@ func TestLogicImpl_AddMembership(t *testing.T) {
 		logic, mocks := setupTest(t)
 		ctx := context.Background()
 
+		isPrimary := false
 		req := &identity_srv.AddMembershipRequest{
 			UserID:         &userID,
 			OrganizationID: &orgID,
-			IsPrimary:      false,
+			IsPrimary:      &isPrimary,
 		}
 
 		// 验证实体存在性
@@ -83,11 +84,12 @@ func TestLogicImpl_AddMembership(t *testing.T) {
 		logic, mocks := setupTest(t)
 		ctx := context.Background()
 
+		isPrimary := false
 		req := &identity_srv.AddMembershipRequest{
 			UserID:         &userID,
 			OrganizationID: &orgID,
 			DepartmentID:   &deptID,
-			IsPrimary:      false,
+			IsPrimary:      &isPrimary,
 		}
 
 		// 验证实体存在性
@@ -116,10 +118,11 @@ func TestLogicImpl_AddMembership(t *testing.T) {
 		logic, mocks := setupTest(t)
 		ctx := context.Background()
 
+		isPrimary := true
 		req := &identity_srv.AddMembershipRequest{
 			UserID:         &userID,
 			OrganizationID: &orgID,
-			IsPrimary:      true,
+			IsPrimary:      &isPrimary,
 		}
 
 		mocks.UserRepo.EXPECT().Exists(ctx, userID).Return(true, nil)
@@ -789,9 +792,11 @@ func TestLogicImpl_GetUserMemberships(t *testing.T) {
 		logic, mocks := setupTest(t)
 		ctx := context.Background()
 
+		page := int32(2)
+		limit := int32(10)
 		req := &identity_srv.GetUserMembershipsRequest{
 			UserID: &userID,
-			Page:   &rpc_base.PageRequest{Page: 2, Limit: 10},
+			Page:   &rpc_base.PageRequest{Page: &page, Limit: &limit},
 		}
 
 		mocks.MembershipRepo.EXPECT().

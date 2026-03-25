@@ -59,7 +59,7 @@ func (c *ConverterImpl) ModelToThrift(
 		Description:  convutil.StringPtr(model.Description),
 		Status:       &status,
 		Permissions:  []*identity_srv.Permission{}, // 暂时返回空数组
-		IsSystemRole: model.IsSystemRole,
+		IsSystemRole: convutil.BoolPtr(model.IsSystemRole),
 		CreatedBy:    createdBy,
 		UpdatedBy:    updatedBy,
 		CreatedAt:    &model.CreatedAt,

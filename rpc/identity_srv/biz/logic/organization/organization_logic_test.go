@@ -13,6 +13,7 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/base"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/mock"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/rpc_base"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
@@ -79,7 +80,7 @@ func TestLogicImpl_CreateOrganization(t *testing.T) {
 			Name:                &orgName,
 			FacilityType:        &facilityType,
 			AccreditationStatus: &accreditationStatus,
-			ProvinceCity:        []string{"北京", "海淀区"},
+			ProvinceCity:        &core.StringListValue{Items: []string{"北京", "海淀区"}},
 		}
 
 		mocks.OrgRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil)
@@ -131,7 +132,7 @@ func TestLogicImpl_CreateOrganization(t *testing.T) {
 
 		req := &identity_srv.CreateOrganizationRequest{
 			Name:         &orgName,
-			ProvinceCity: provinceCity,
+			ProvinceCity: &core.StringListValue{Items: provinceCity},
 		}
 
 		result, err := logic.CreateOrganization(ctx, req)
@@ -146,7 +147,7 @@ func TestLogicImpl_CreateOrganization(t *testing.T) {
 
 		req := &identity_srv.CreateOrganizationRequest{
 			Name:         &orgName,
-			ProvinceCity: []string{"北京", ""},
+			ProvinceCity: &core.StringListValue{Items: []string{"北京", ""}},
 		}
 
 		result, err := logic.CreateOrganization(ctx, req)
@@ -412,7 +413,7 @@ func TestLogicImpl_UpdateOrganization(t *testing.T) {
 
 		req := &identity_srv.UpdateOrganizationRequest{
 			OrganizationID: &orgID,
-			ProvinceCity:   []string{"北京", ""},
+			ProvinceCity:   &core.StringListValue{Items: []string{"北京", ""}},
 		}
 
 		result, err := logic.UpdateOrganization(ctx, req)
@@ -432,7 +433,7 @@ func TestLogicImpl_UpdateOrganization(t *testing.T) {
 
 		req := &identity_srv.UpdateOrganizationRequest{
 			OrganizationID: &orgID,
-			ProvinceCity:   provinceCity,
+			ProvinceCity:   &core.StringListValue{Items: provinceCity},
 		}
 
 		result, err := logic.UpdateOrganization(ctx, req)
@@ -532,8 +533,10 @@ func TestLogicImpl_ListOrganizations(t *testing.T) {
 		logic, mocks := setupTest(t)
 		ctx := context.Background()
 
+		page := int32(2)
+		limit := int32(10)
 		req := &identity_srv.ListOrganizationsRequest{
-			Page: &rpc_base.PageRequest{Page: 2, Limit: 10},
+			Page: &rpc_base.PageRequest{Page: &page, Limit: &limit},
 		}
 
 		mocks.OrgRepo.EXPECT().

@@ -1,0 +1,191 @@
+syntax = "proto3";
+
+package identity_srv;
+
+option go_package = "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv";
+
+import "base/enums.proto";
+
+// 审计操作类型。
+enum AuditAction {
+  AUDIT_ACTION_UNSPECIFIED = 0;
+  AUDIT_ACTION_CREATE = 1;
+  AUDIT_ACTION_UPDATE = 2;
+  AUDIT_ACTION_DELETE = 3;
+  AUDIT_ACTION_LOGIN = 4;
+  AUDIT_ACTION_LOGOUT = 5;
+  AUDIT_ACTION_PASSWORD_CHANGE = 6;
+}
+
+// 审计日志。
+message AuditLog {
+  optional string id = 1;
+  optional string requestID = 2;
+  optional string traceID = 3;
+  optional string userID = 4;
+  optional string username = 5;
+  optional string organizationID = 6;
+  optional AuditAction action = 7;
+  optional string resource = 8;
+  optional string resourceID = 9;
+  optional int32 statusCode = 10;
+  optional bool success = 11;
+  optional string clientIP = 12;
+  optional string userAgent = 13;
+  optional string requestBody = 14;
+  optional int32 durationMs = 15;
+  optional int64 createdAt = 16;
+}
+
+// 权限级别。
+enum PermissionLevel {
+  PERMISSION_LEVEL_UNSPECIFIED = 0;
+  PERMISSION_LEVEL_READ = 1;
+  PERMISSION_LEVEL_WRITE = 2;
+  PERMISSION_LEVEL_FULL = 3;
+}
+
+// 数据范围。
+enum DataScope {
+  DATA_SCOPE_UNSPECIFIED = 0;
+  DATA_SCOPE_SELF = 1;
+  DATA_SCOPE_DEPT = 2;
+  DATA_SCOPE_ORG = 3;
+}
+
+// 用户画像。
+message UserProfile {
+  optional string id = 1;
+  optional string username = 2;
+  optional string email = 3;
+  optional string phone = 4;
+  optional string firstName = 5;
+  optional string lastName = 6;
+  optional string realName = 7;
+  optional core.Gender gender = 8;
+  optional string professionalTitle = 9;
+  optional string employeeID = 10;
+  optional core.UserStatus status = 11;
+  optional int32 loginAttempts = 12;
+  optional bool mustChangePassword = 13;
+  optional int64 accountExpiry = 14;
+  optional int64 lastLoginTime = 15;
+  optional int64 createdAt = 16;
+  optional int64 updatedAt = 17;
+  optional string createdBy = 18;
+  optional string updatedBy = 19;
+  optional bool deleted = 20;
+  repeated string roleIDs = 21;
+  optional string primaryOrganizationID = 22;
+  optional string primaryDepartmentID = 23;
+}
+
+// 用户成员关系。
+message UserMembership {
+  optional string id = 1;
+  optional string userID = 2;
+  optional string organizationID = 3;
+  optional string departmentID = 4;
+  optional bool isPrimary = 5;
+  optional int64 createdAt = 6;
+  optional int64 updatedAt = 7;
+}
+
+// 组织。
+message Organization {
+  optional string id = 1;
+  optional string code = 2;
+  optional string name = 3;
+  optional string parentID = 4;
+  optional string facilityType = 5;
+  optional string accreditationStatus = 6;
+  optional string logo = 7;
+  repeated string provinceCity = 8;
+  optional int64 createdAt = 9;
+  optional int64 updatedAt = 10;
+  optional string logoID = 15;
+}
+
+// 部门。
+message Department {
+  optional string id = 1;
+  optional string code = 2;
+  optional string name = 3;
+  optional string organizationID = 4;
+  optional string departmentType = 5;
+  repeated string availableEquipment = 6;
+  optional int64 createdAt = 7;
+  optional int64 updatedAt = 8;
+}
+
+// 组织 Logo 资源状态。
+enum OrganizationLogoStatus {
+  ORGANIZATION_LOGO_STATUS_UNSPECIFIED = 0;
+  ORGANIZATION_LOGO_STATUS_BOUND = 1;
+  ORGANIZATION_LOGO_STATUS_DELETED = 2;
+}
+
+// 组织 Logo。
+message OrganizationLogo {
+  optional string id = 1;
+  optional string fileID = 2;
+  optional OrganizationLogoStatus status = 3;
+  optional string boundOrganizationID = 4;
+  optional string fileName = 5;
+  optional int64 fileSize = 6;
+  optional string mimeType = 7;
+  optional string downloadUrl = 8;
+  optional int64 expiresAt = 9;
+  optional string uploadedBy = 10;
+  optional int64 createdAt = 11;
+  optional int64 updatedAt = 12;
+}
+
+// 权限。
+message Permission {
+  optional string resource = 1;
+  optional string action = 2;
+  optional string description = 3;
+}
+
+// 角色定义。
+message RoleDefinition {
+  optional string id = 1;
+  optional string name = 2;
+  optional string description = 3;
+  optional core.RoleStatus status = 5;
+  repeated Permission permissions = 6;
+  optional bool isSystemRole = 7;
+  optional string createdBy = 8;
+  optional string updatedBy = 9;
+  optional int64 createdAt = 10;
+  optional int64 updatedAt = 11;
+  optional int64 userCount = 12;
+  optional string roleCode = 13;
+  optional string parentRoleID = 14;
+  optional string departmentID = 15;
+  optional DataScope defaultScope = 16;
+}
+
+// 用户角色分配。
+message UserRoleAssignment {
+  optional string id = 1;
+  optional string userID = 2;
+  optional string roleID = 3;
+  optional string createdBy = 11;
+  optional string updatedBy = 12;
+  optional int64 createdAt = 13;
+  optional int64 updatedAt = 14;
+}
+
+// 菜单节点。
+message MenuNode {
+  optional string name = 1;
+  optional string id = 2;
+  optional string path = 3;
+  optional string icon = 4;
+  optional string component = 5;
+  repeated MenuNode children = 6;
+  optional bool hasPermission = 7;
+  optional PermissionLevel permissionLevel = 8;
+}

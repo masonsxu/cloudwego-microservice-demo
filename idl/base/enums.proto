@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package core;
+
+option go_package = "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core";
+
+// User account status.
+enum UserStatus {
+  USER_STATUS_UNSPECIFIED = 0;
+  USER_STATUS_ACTIVE = 1;
+  USER_STATUS_INACTIVE = 2;
+  USER_STATUS_SUSPENDED = 3;
+  USER_STATUS_LOCKED = 4;
+}
+
+// Role definition status.
+enum RoleStatus {
+  ROLE_STATUS_UNSPECIFIED = 0;
+  ROLE_STATUS_ACTIVE = 1;
+  ROLE_STATUS_INACTIVE = 2;
+  ROLE_STATUS_DEPRECATED = 3;
+}
+
+// Gender zero value follows protobuf UNSPECIFIED convention.
+enum Gender {
+  GENDER_UNSPECIFIED = 0;
+  GENDER_MALE = 1;
+  GENDER_FEMALE = 2;
+}

@@ -38,7 +38,7 @@ func (c *ConverterImpl) ModelUserMembershipToThrift(
 	orgID := model.OrganizationID.String()
 
 	dto := &identity_srv.UserMembership{
-		ID:             &id,
+		Id:             &id,
 		UserID:         &userID,
 		OrganizationID: &orgID,
 		IsPrimary:      convutil.BoolPtr(model.IsPrimary),
@@ -62,7 +62,7 @@ func (c *ConverterImpl) ThriftUserMembershipToModel(
 		return nil
 	}
 
-	id := uuid.MustParse(*dto.ID)
+	id := uuid.MustParse(*dto.Id)
 	userID := uuid.MustParse(*dto.UserID)
 	orgID := uuid.MustParse(*dto.OrganizationID)
 
@@ -134,7 +134,7 @@ func (c *ConverterImpl) AddMembershipRequestToModel(
 		membership.DepartmentID = uuid.MustParse(*req.DepartmentID)
 	}
 
-	membership.IsPrimary = req.IsPrimary
+	membership.IsPrimary = convutil.BoolValue(req.IsPrimary)
 
 	return membership
 }

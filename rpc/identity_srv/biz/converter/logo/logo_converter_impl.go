@@ -30,7 +30,7 @@ func (c *ConverterImpl) ModelToThrift(
 	status := c.StatusModelToThrift(model.Status)
 
 	thrift := &identity_srv.OrganizationLogo{
-		ID:        &idStr,
+		Id:        &idStr,
 		FileID:    &model.FileID,
 		Status:    &status,
 		FileName:  &model.FileName,
@@ -147,13 +147,13 @@ func (c *ConverterImpl) StatusModelToThrift(
 ) identity_srv.OrganizationLogoStatus {
 	switch status {
 	case models.LogoStatusTemporary:
-		return identity_srv.OrganizationLogoStatus_TEMPORARY
+		return identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_UNSPECIFIED
 	case models.LogoStatusBound:
-		return identity_srv.OrganizationLogoStatus_BOUND
+		return identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_BOUND
 	case models.LogoStatusDeleted:
-		return identity_srv.OrganizationLogoStatus_DELETED
+		return identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_DELETED
 	default:
-		return identity_srv.OrganizationLogoStatus_TEMPORARY
+		return identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_UNSPECIFIED
 	}
 }
 
@@ -162,11 +162,9 @@ func (c *ConverterImpl) StatusThriftToModel(
 	status identity_srv.OrganizationLogoStatus,
 ) models.OrganizationLogoStatus {
 	switch status {
-	case identity_srv.OrganizationLogoStatus_TEMPORARY:
-		return models.LogoStatusTemporary
-	case identity_srv.OrganizationLogoStatus_BOUND:
+	case identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_BOUND:
 		return models.LogoStatusBound
-	case identity_srv.OrganizationLogoStatus_DELETED:
+	case identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_DELETED:
 		return models.LogoStatusDeleted
 	default:
 		return models.LogoStatusTemporary

@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package core;
+
+option go_package = "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core";
+
+// Common wrapper for map presence.
+message StringMapValue {
+  map<string, string> entries = 1;
+}
+
+// Common wrapper for repeated string presence.
+message StringListValue {
+  repeated string items = 1;
+}
+
+// RequestContext carries core request metadata.
+message RequestContext {
+  optional string requestID = 1;
+  optional string traceID = 2;
+  optional int64 requestTime = 3;
+  optional string clientIP = 4;
+  optional string userAgent = 5;
+  optional string userID = 6;
+  optional string organizationID = 7;
+  optional string tenantID = 8;
+  optional string source = 9;
+  optional string locale = 10;
+  optional StringMapValue metadata = 11;
+}

@@ -454,9 +454,11 @@ func TestLogicImpl_GetDepartmentsByOrganization(t *testing.T) {
 		logic, mocks := setupTest(t)
 		ctx := context.Background()
 
+		page := int32(2)
+		limit := int32(10)
 		req := &identity_srv.GetOrganizationDepartmentsRequest{
 			OrganizationID: &orgID,
-			Page:           &rpc_base.PageRequest{Page: 2, Limit: 10},
+			Page:           &rpc_base.PageRequest{Page: &page, Limit: &limit},
 		}
 
 		mocks.DeptRepo.EXPECT().

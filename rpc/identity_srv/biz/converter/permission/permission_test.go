@@ -18,23 +18,23 @@ type mockEnumConverter struct{}
 func (m *mockEnumConverter) ModelUserStatusToThrift(status models.UserStatus) core.UserStatus {
 	switch status {
 	case models.UserStatusActive:
-		return core.UserStatus_ACTIVE
+		return core.UserStatus_USER_STATUS_ACTIVE
 	case models.UserStatusInactive:
-		return core.UserStatus_INACTIVE
+		return core.UserStatus_USER_STATUS_INACTIVE
 	case models.UserStatusSuspended:
-		return core.UserStatus_SUSPENDED
+		return core.UserStatus_USER_STATUS_SUSPENDED
 	default:
-		return core.UserStatus_LOCKED
+		return core.UserStatus_USER_STATUS_LOCKED
 	}
 }
 
 func (m *mockEnumConverter) ThriftUserStatusToModel(status core.UserStatus) models.UserStatus {
 	switch status {
-	case core.UserStatus_ACTIVE:
+	case core.UserStatus_USER_STATUS_ACTIVE:
 		return models.UserStatusActive
-	case core.UserStatus_INACTIVE:
+	case core.UserStatus_USER_STATUS_INACTIVE:
 		return models.UserStatusInactive
-	case core.UserStatus_SUSPENDED:
+	case core.UserStatus_USER_STATUS_SUSPENDED:
 		return models.UserStatusSuspended
 	default:
 		return models.UserStatusLocked
@@ -44,19 +44,19 @@ func (m *mockEnumConverter) ThriftUserStatusToModel(status core.UserStatus) mode
 func (m *mockEnumConverter) ModelRoleStatusToThrift(status models.RoleStatus) core.RoleStatus {
 	switch status {
 	case models.RoleStatusActive:
-		return core.RoleStatus_ACTIVE
+		return core.RoleStatus_ROLE_STATUS_ACTIVE
 	case models.RoleStatusInactive:
-		return core.RoleStatus_INACTIVE
+		return core.RoleStatus_ROLE_STATUS_INACTIVE
 	default:
-		return core.RoleStatus_DEPRECATED
+		return core.RoleStatus_ROLE_STATUS_DEPRECATED
 	}
 }
 
 func (m *mockEnumConverter) ThriftRoleStatusToModel(status core.RoleStatus) models.RoleStatus {
 	switch status {
-	case core.RoleStatus_ACTIVE:
+	case core.RoleStatus_ROLE_STATUS_ACTIVE:
 		return models.RoleStatusActive
-	case core.RoleStatus_INACTIVE:
+	case core.RoleStatus_ROLE_STATUS_INACTIVE:
 		return models.RoleStatusInactive
 	default:
 		return models.RoleStatusDeprecated
@@ -66,19 +66,19 @@ func (m *mockEnumConverter) ThriftRoleStatusToModel(status core.RoleStatus) mode
 func (m *mockEnumConverter) ModelGenderToThrift(gender models.Gender) core.Gender {
 	switch gender {
 	case models.GenderMale:
-		return core.Gender_MALE
+		return core.Gender_GENDER_MALE
 	case models.GenderFemale:
-		return core.Gender_FEMALE
+		return core.Gender_GENDER_FEMALE
 	default:
-		return core.Gender_UNKNOWN
+		return core.Gender_GENDER_UNSPECIFIED
 	}
 }
 
 func (m *mockEnumConverter) ThriftGenderToModel(gender core.Gender) models.Gender {
 	switch gender {
-	case core.Gender_MALE:
+	case core.Gender_GENDER_MALE:
 		return models.GenderMale
-	case core.Gender_FEMALE:
+	case core.Gender_GENDER_FEMALE:
 		return models.GenderFemale
 	default:
 		return models.GenderUnknown
@@ -88,23 +88,23 @@ func (m *mockEnumConverter) ThriftGenderToModel(gender core.Gender) models.Gende
 func (m *mockEnumConverter) ModelDataScopeToThrift(scope models.DataScopeType) identity_srv.DataScope {
 	switch scope {
 	case models.DataScopeSelf:
-		return identity_srv.DataScope_SELF
+		return identity_srv.DataScope_DATA_SCOPE_SELF
 	case models.DataScopeDept:
-		return identity_srv.DataScope_DEPT
+		return identity_srv.DataScope_DATA_SCOPE_DEPT
 	case models.DataScopeOrg:
-		return identity_srv.DataScope_ORG
+		return identity_srv.DataScope_DATA_SCOPE_ORG
 	default:
-		return identity_srv.DataScope_SELF
+		return identity_srv.DataScope_DATA_SCOPE_SELF
 	}
 }
 
 func (m *mockEnumConverter) ThriftDataScopeToModel(scope identity_srv.DataScope) models.DataScopeType {
 	switch scope {
-	case identity_srv.DataScope_SELF:
+	case identity_srv.DataScope_DATA_SCOPE_SELF:
 		return models.DataScopeSelf
-	case identity_srv.DataScope_DEPT:
+	case identity_srv.DataScope_DATA_SCOPE_DEPT:
 		return models.DataScopeDept
-	case identity_srv.DataScope_ORG:
+	case identity_srv.DataScope_DATA_SCOPE_ORG:
 		return models.DataScopeOrg
 	default:
 		return models.DataScopeSelf

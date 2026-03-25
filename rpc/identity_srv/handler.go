@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic"
-	core "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
 	identity_srv "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/pkg/errno"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/wire"
@@ -30,52 +29,51 @@ func NewIdentityServiceImpl(container *wire.AppContainer) *IdentityServiceImpl {
 func (s *IdentityServiceImpl) CreateUser(
 	ctx context.Context,
 	req *identity_srv.CreateUserRequest,
-) (resp *identity_srv.UserProfile, err error) {
-	resp, err = s.logic.CreateUser(ctx, req)
+) (resp *identity_srv.CreateUserResponse, err error) {
+	userProfile, err := s.logic.CreateUser(ctx, req)
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.CreateUserResponse{UserProfile: userProfile}, nil
 }
 
 // GetUser implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) GetUser(
 	ctx context.Context,
 	req *identity_srv.GetUserRequest,
-) (resp *identity_srv.UserProfile, err error) {
-	resp, err = s.logic.GetUser(ctx, req)
+) (resp *identity_srv.GetUserResponse, err error) {
+	userProfile, err := s.logic.GetUser(ctx, req)
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.GetUserResponse{UserProfile: userProfile}, nil
 }
 
 // UpdateUser implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) UpdateUser(
 	ctx context.Context,
 	req *identity_srv.UpdateUserRequest,
-) (resp *identity_srv.UserProfile, err error) {
-	resp, err = s.logic.UpdateUser(ctx, req)
+) (resp *identity_srv.UpdateUserResponse, err error) {
+	userProfile, err := s.logic.UpdateUser(ctx, req)
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.UpdateUserResponse{UserProfile: userProfile}, nil
 }
 
 // DeleteUser implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) DeleteUser(
 	ctx context.Context,
 	req *identity_srv.DeleteUserRequest,
-) (err error) {
-	err = s.logic.DeleteUser(ctx, req)
-	if err != nil {
-		return errno.ToKitexError(err)
+) (resp *identity_srv.DeleteUserResponse, err error) {
+	if err := s.logic.DeleteUser(ctx, req); err != nil {
+		return nil, errno.ToKitexError(err)
 	}
 
-	return nil
+	return &identity_srv.DeleteUserResponse{}, nil
 }
 
 // ListUsers implements the IdentityServiceImpl interface.
@@ -108,26 +106,24 @@ func (s *IdentityServiceImpl) SearchUsers(
 func (s *IdentityServiceImpl) ChangeUserStatus(
 	ctx context.Context,
 	req *identity_srv.ChangeUserStatusRequest,
-) (err error) {
-	err = s.logic.ChangeUserStatus(ctx, req)
-	if err != nil {
-		return errno.ToKitexError(err)
+) (resp *identity_srv.ChangeUserStatusResponse, err error) {
+	if err := s.logic.ChangeUserStatus(ctx, req); err != nil {
+		return nil, errno.ToKitexError(err)
 	}
 
-	return nil
+	return &identity_srv.ChangeUserStatusResponse{}, nil
 }
 
 // UnlockUser implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) UnlockUser(
 	ctx context.Context,
 	req *identity_srv.UnlockUserRequest,
-) (err error) {
-	err = s.logic.UnlockUser(ctx, req)
-	if err != nil {
-		return errno.ToKitexError(err)
+) (resp *identity_srv.UnlockUserResponse, err error) {
+	if err := s.logic.UnlockUser(ctx, req); err != nil {
+		return nil, errno.ToKitexError(err)
 	}
 
-	return nil
+	return &identity_srv.UnlockUserResponse{}, nil
 }
 
 // ===========================================================================
@@ -150,39 +146,36 @@ func (s *IdentityServiceImpl) Login(
 func (s *IdentityServiceImpl) ChangePassword(
 	ctx context.Context,
 	req *identity_srv.ChangePasswordRequest,
-) (err error) {
-	err = s.logic.ChangePassword(ctx, req)
-	if err != nil {
-		return errno.ToKitexError(err)
+) (resp *identity_srv.ChangePasswordResponse, err error) {
+	if err := s.logic.ChangePassword(ctx, req); err != nil {
+		return nil, errno.ToKitexError(err)
 	}
 
-	return nil
+	return &identity_srv.ChangePasswordResponse{}, nil
 }
 
 // ResetPassword implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) ResetPassword(
 	ctx context.Context,
 	req *identity_srv.ResetPasswordRequest,
-) (err error) {
-	err = s.logic.ResetPassword(ctx, req)
-	if err != nil {
-		return errno.ToKitexError(err)
+) (resp *identity_srv.ResetPasswordResponse, err error) {
+	if err := s.logic.ResetPassword(ctx, req); err != nil {
+		return nil, errno.ToKitexError(err)
 	}
 
-	return nil
+	return &identity_srv.ResetPasswordResponse{}, nil
 }
 
 // ForcePasswordChange implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) ForcePasswordChange(
 	ctx context.Context,
 	req *identity_srv.ForcePasswordChangeRequest,
-) (err error) {
-	err = s.logic.ForcePasswordChange(ctx, req)
-	if err != nil {
-		return errno.ToKitexError(err)
+) (resp *identity_srv.ForcePasswordChangeResponse, err error) {
+	if err := s.logic.ForcePasswordChange(ctx, req); err != nil {
+		return nil, errno.ToKitexError(err)
 	}
 
-	return nil
+	return &identity_srv.ForcePasswordChangeResponse{}, nil
 }
 
 // ===========================================================================
@@ -193,39 +186,38 @@ func (s *IdentityServiceImpl) ForcePasswordChange(
 func (s *IdentityServiceImpl) AddMembership(
 	ctx context.Context,
 	req *identity_srv.AddMembershipRequest,
-) (resp *identity_srv.UserMembership, err error) {
-	resp, err = s.logic.AddMembership(ctx, req)
+) (resp *identity_srv.AddMembershipResponse, err error) {
+	membership, err := s.logic.AddMembership(ctx, req)
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.AddMembershipResponse{Membership: membership}, nil
 }
 
 // UpdateMembership implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) UpdateMembership(
 	ctx context.Context,
 	req *identity_srv.UpdateMembershipRequest,
-) (resp *identity_srv.UserMembership, err error) {
-	resp, err = s.logic.UpdateMembership(ctx, req)
+) (resp *identity_srv.UpdateMembershipResponse, err error) {
+	membership, err := s.logic.UpdateMembership(ctx, req)
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.UpdateMembershipResponse{Membership: membership}, nil
 }
 
 // RemoveMembership implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) RemoveMembership(
 	ctx context.Context,
-	membershipID string,
-) (err error) {
-	err = s.logic.RemoveMembership(ctx, membershipID)
-	if err != nil {
-		return errno.ToKitexError(err)
+	req *identity_srv.RemoveMembershipRequest,
+) (resp *identity_srv.RemoveMembershipResponse, err error) {
+	if err := s.logic.RemoveMembership(ctx, req.GetMembershipID()); err != nil {
+		return nil, errno.ToKitexError(err)
 	}
 
-	return nil
+	return &identity_srv.RemoveMembershipResponse{}, nil
 }
 
 // GetUserMemberships implements the IdentityServiceImpl interface.
@@ -245,52 +237,51 @@ func (s *IdentityServiceImpl) GetUserMemberships(
 func (s *IdentityServiceImpl) CreateOrganization(
 	ctx context.Context,
 	req *identity_srv.CreateOrganizationRequest,
-) (resp *identity_srv.Organization, err error) {
-	resp, err = s.logic.CreateOrganization(ctx, req)
+) (resp *identity_srv.CreateOrganizationResponse, err error) {
+	organization, err := s.logic.CreateOrganization(ctx, req)
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.CreateOrganizationResponse{Organization: organization}, nil
 }
 
 // GetOrganization implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) GetOrganization(
 	ctx context.Context,
 	req *identity_srv.GetOrganizationRequest,
-) (resp *identity_srv.Organization, err error) {
-	resp, err = s.logic.GetOrganization(ctx, req)
+) (resp *identity_srv.GetOrganizationResponse, err error) {
+	organization, err := s.logic.GetOrganization(ctx, req)
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.GetOrganizationResponse{Organization: organization}, nil
 }
 
 // UpdateOrganization implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) UpdateOrganization(
 	ctx context.Context,
 	req *identity_srv.UpdateOrganizationRequest,
-) (resp *identity_srv.Organization, err error) {
-	resp, err = s.logic.UpdateOrganization(ctx, req)
+) (resp *identity_srv.UpdateOrganizationResponse, err error) {
+	organization, err := s.logic.UpdateOrganization(ctx, req)
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.UpdateOrganizationResponse{Organization: organization}, nil
 }
 
 // DeleteOrganization implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) DeleteOrganization(
 	ctx context.Context,
-	organizationID string,
-) (err error) {
-	err = s.logic.DeleteOrganization(ctx, organizationID)
-	if err != nil {
-		return errno.ToKitexError(err)
+	req *identity_srv.DeleteOrganizationRequest,
+) (resp *identity_srv.DeleteOrganizationResponse, err error) {
+	if err := s.logic.DeleteOrganization(ctx, req.GetOrganizationID()); err != nil {
+		return nil, errno.ToKitexError(err)
 	}
 
-	return nil
+	return &identity_srv.DeleteOrganizationResponse{}, nil
 }
 
 // ListOrganizations implements the IdentityServiceImpl interface.
@@ -310,52 +301,51 @@ func (s *IdentityServiceImpl) ListOrganizations(
 func (s *IdentityServiceImpl) CreateDepartment(
 	ctx context.Context,
 	req *identity_srv.CreateDepartmentRequest,
-) (resp *identity_srv.Department, err error) {
-	resp, err = s.logic.CreateDepartment(ctx, req)
+) (resp *identity_srv.CreateDepartmentResponse, err error) {
+	department, err := s.logic.CreateDepartment(ctx, req)
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.CreateDepartmentResponse{Department: department}, nil
 }
 
 // GetDepartment implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) GetDepartment(
 	ctx context.Context,
 	req *identity_srv.GetDepartmentRequest,
-) (resp *identity_srv.Department, err error) {
-	resp, err = s.logic.GetDepartment(ctx, req)
+) (resp *identity_srv.GetDepartmentResponse, err error) {
+	department, err := s.logic.GetDepartment(ctx, req)
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.GetDepartmentResponse{Department: department}, nil
 }
 
 // UpdateDepartment implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) UpdateDepartment(
 	ctx context.Context,
 	req *identity_srv.UpdateDepartmentRequest,
-) (resp *identity_srv.Department, err error) {
-	resp, err = s.logic.UpdateDepartment(ctx, req)
+) (resp *identity_srv.UpdateDepartmentResponse, err error) {
+	department, err := s.logic.UpdateDepartment(ctx, req)
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.UpdateDepartmentResponse{Department: department}, nil
 }
 
 // DeleteDepartment implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) DeleteDepartment(
 	ctx context.Context,
-	departmentID string,
-) (err error) {
-	err = s.logic.DeleteDepartment(ctx, departmentID)
-	if err != nil {
-		return errno.ToKitexError(err)
+	req *identity_srv.DeleteDepartmentRequest,
+) (resp *identity_srv.DeleteDepartmentResponse, err error) {
+	if err := s.logic.DeleteDepartment(ctx, req.GetDepartmentID()); err != nil {
+		return nil, errno.ToKitexError(err)
 	}
 
-	return nil
+	return &identity_srv.DeleteDepartmentResponse{}, nil
 }
 
 // GetOrganizationDepartments implements the IdentityServiceImpl interface.
@@ -374,144 +364,142 @@ func (s *IdentityServiceImpl) GetOrganizationDepartments(
 // GetMembership implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) GetMembership(
 	ctx context.Context,
-	membershipID core.UUID,
-) (resp *identity_srv.UserMembership, err error) {
-	resp, err = s.logic.GetMembership(ctx, membershipID)
+	req *identity_srv.GetMembershipRequest,
+) (resp *identity_srv.GetMembershipResponse, err error) {
+	membership, err := s.logic.GetMembership(ctx, req.GetMembershipID())
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.GetMembershipResponse{Membership: membership}, nil
 }
 
 // GetPrimaryMembership implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) GetPrimaryMembership(
 	ctx context.Context,
-	userID core.UUID,
-) (resp *identity_srv.UserMembership, err error) {
-	resp, err = s.logic.GetPrimaryMembership(ctx, userID)
+	req *identity_srv.GetPrimaryMembershipRequest,
+) (resp *identity_srv.GetPrimaryMembershipResponse, err error) {
+	membership, err := s.logic.GetPrimaryMembership(ctx, req.GetUserID())
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.GetPrimaryMembershipResponse{Membership: membership}, nil
 }
 
 // CheckMembership implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) CheckMembership(
 	ctx context.Context,
 	req *identity_srv.CheckMembershipRequest,
-) (resp bool, err error) {
-	resp, err = s.logic.CheckMembership(ctx, req)
+) (resp *identity_srv.CheckMembershipResponse, err error) {
+	isMember, err := s.logic.CheckMembership(ctx, req)
 	if err != nil {
-		return false, errno.ToKitexError(err)
+		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.CheckMembershipResponse{IsMember: &isMember}, nil
 }
 
 // UploadTemporaryLogo implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) UploadTemporaryLogo(
 	ctx context.Context,
 	req *identity_srv.UploadTemporaryLogoRequest,
-) (resp *identity_srv.OrganizationLogo, err error) {
-	resp, err = s.logic.UploadTemporaryLogo(ctx, req)
+) (resp *identity_srv.UploadTemporaryLogoResponse, err error) {
+	organizationLogo, err := s.logic.UploadTemporaryLogo(ctx, req)
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.UploadTemporaryLogoResponse{OrganizationLogo: organizationLogo}, nil
 }
 
 // GetOrganizationLogo implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) GetOrganizationLogo(
 	ctx context.Context,
 	req *identity_srv.GetOrganizationLogoRequest,
-) (resp *identity_srv.OrganizationLogo, err error) {
-	resp, err = s.logic.GetOrganizationLogo(ctx, req)
+) (resp *identity_srv.GetOrganizationLogoResponse, err error) {
+	organizationLogo, err := s.logic.GetOrganizationLogo(ctx, req)
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.GetOrganizationLogoResponse{OrganizationLogo: organizationLogo}, nil
 }
 
 // DeleteOrganizationLogo implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) DeleteOrganizationLogo(
 	ctx context.Context,
 	req *identity_srv.DeleteOrganizationLogoRequest,
-) (err error) {
-	err = s.logic.DeleteOrganizationLogo(ctx, req)
-	if err != nil {
-		return errno.ToKitexError(err)
+) (resp *identity_srv.DeleteOrganizationLogoResponse, err error) {
+	if err := s.logic.DeleteOrganizationLogo(ctx, req); err != nil {
+		return nil, errno.ToKitexError(err)
 	}
 
-	return nil
+	return &identity_srv.DeleteOrganizationLogoResponse{}, nil
 }
 
 // BindLogoToOrganization implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) BindLogoToOrganization(
 	ctx context.Context,
 	req *identity_srv.BindLogoToOrganizationRequest,
-) (resp *identity_srv.OrganizationLogo, err error) {
-	resp, err = s.logic.BindLogoToOrganization(ctx, req)
+) (resp *identity_srv.BindLogoToOrganizationResponse, err error) {
+	organizationLogo, err := s.logic.BindLogoToOrganization(ctx, req)
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.BindLogoToOrganizationResponse{OrganizationLogo: organizationLogo}, nil
 }
 
 // CreateRoleDefinition implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) CreateRoleDefinition(
 	ctx context.Context,
 	req *identity_srv.RoleDefinitionCreateRequest,
-) (resp *identity_srv.RoleDefinition, err error) {
-	resp, err = s.logic.CreateRoleDefinition(ctx, req)
+) (resp *identity_srv.CreateRoleDefinitionResponse, err error) {
+	roleDefinition, err := s.logic.CreateRoleDefinition(ctx, req)
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.CreateRoleDefinitionResponse{RoleDefinition: roleDefinition}, nil
 }
 
 // UpdateRoleDefinition implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) UpdateRoleDefinition(
 	ctx context.Context,
 	req *identity_srv.RoleDefinitionUpdateRequest,
-) (resp *identity_srv.RoleDefinition, err error) {
-	resp, err = s.logic.UpdateRoleDefinition(ctx, req)
+) (resp *identity_srv.UpdateRoleDefinitionResponse, err error) {
+	roleDefinition, err := s.logic.UpdateRoleDefinition(ctx, req)
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.UpdateRoleDefinitionResponse{RoleDefinition: roleDefinition}, nil
 }
 
 // DeleteRoleDefinition implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) DeleteRoleDefinition(
 	ctx context.Context,
-	roleID core.UUID,
-) (err error) {
-	err = s.logic.DeleteRoleDefinition(ctx, roleID)
-	if err != nil {
-		return errno.ToKitexError(err)
+	req *identity_srv.DeleteRoleDefinitionRequest,
+) (resp *identity_srv.DeleteRoleDefinitionResponse, err error) {
+	if err := s.logic.DeleteRoleDefinition(ctx, req.GetRoleID()); err != nil {
+		return nil, errno.ToKitexError(err)
 	}
 
-	return nil
+	return &identity_srv.DeleteRoleDefinitionResponse{}, nil
 }
 
 // GetRoleDefinition implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) GetRoleDefinition(
 	ctx context.Context,
-	roleID core.UUID,
-) (resp *identity_srv.RoleDefinition, err error) {
-	resp, err = s.logic.GetRoleDefinition(ctx, roleID)
+	req *identity_srv.GetRoleDefinitionRequest,
+) (resp *identity_srv.GetRoleDefinitionResponse, err error) {
+	roleDefinition, err := s.logic.GetRoleDefinition(ctx, req.GetRoleID())
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.GetRoleDefinitionResponse{RoleDefinition: roleDefinition}, nil
 }
 
 // ListRoleDefinitions implements the IdentityServiceImpl interface.
@@ -544,39 +532,37 @@ func (s *IdentityServiceImpl) AssignRoleToUser(
 func (s *IdentityServiceImpl) UpdateUserRoleAssignment(
 	ctx context.Context,
 	req *identity_srv.UpdateUserRoleAssignmentRequest,
-) (err error) {
-	err = s.logic.UpdateUserRoleAssignment(ctx, req)
-	if err != nil {
-		return errno.ToKitexError(err)
+) (resp *identity_srv.UpdateUserRoleAssignmentResponse, err error) {
+	if err := s.logic.UpdateUserRoleAssignment(ctx, req); err != nil {
+		return nil, errno.ToKitexError(err)
 	}
 
-	return nil
+	return &identity_srv.UpdateUserRoleAssignmentResponse{}, nil
 }
 
 // RevokeRoleFromUser implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) RevokeRoleFromUser(
 	ctx context.Context,
 	req *identity_srv.RevokeRoleFromUserRequest,
-) (err error) {
-	err = s.logic.RevokeRoleFromUser(ctx, req)
-	if err != nil {
-		return errno.ToKitexError(err)
+) (resp *identity_srv.RevokeRoleFromUserResponse, err error) {
+	if err := s.logic.RevokeRoleFromUser(ctx, req); err != nil {
+		return nil, errno.ToKitexError(err)
 	}
 
-	return nil
+	return &identity_srv.RevokeRoleFromUserResponse{}, nil
 }
 
 // GetLastUserRoleAssignment implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) GetLastUserRoleAssignment(
 	ctx context.Context,
-	userID core.UUID,
-) (resp *identity_srv.UserRoleAssignment, err error) {
-	resp, err = s.logic.GetLastUserRoleAssignment(ctx, userID)
+	req *identity_srv.GetLastUserRoleAssignmentRequest,
+) (resp *identity_srv.GetLastUserRoleAssignmentResponse, err error) {
+	assignment, err := s.logic.GetLastUserRoleAssignment(ctx, req.GetUserID())
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
 
-	return resp, nil
+	return &identity_srv.GetLastUserRoleAssignmentResponse{UserRoleAssignment: assignment}, nil
 }
 
 // ListUserRoleAssignments implements the IdentityServiceImpl interface.
@@ -635,18 +621,18 @@ func (s *IdentityServiceImpl) BatchGetUserRoles(
 func (s *IdentityServiceImpl) UploadMenu(
 	ctx context.Context,
 	req *identity_srv.UploadMenuRequest,
-) (err error) {
-	err = s.logic.UploadMenu(ctx, req)
-	if err != nil {
-		return errno.ToKitexError(err)
+) (resp *identity_srv.UploadMenuResponse, err error) {
+	if err := s.logic.UploadMenu(ctx, req); err != nil {
+		return nil, errno.ToKitexError(err)
 	}
 
-	return nil
+	return &identity_srv.UploadMenuResponse{}, nil
 }
 
 // GetMenuTree implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) GetMenuTree(
 	ctx context.Context,
+	_ *identity_srv.GetMenuTreeRequest,
 ) (resp *identity_srv.GetMenuTreeResponse, err error) {
 	resp, err = s.logic.GetMenuTree(ctx)
 	if err != nil {
@@ -771,7 +757,10 @@ func (s *IdentityServiceImpl) CheckPermission(
 }
 
 // SyncPolicies implements the IdentityServiceImpl interface.
-func (s *IdentityServiceImpl) SyncPolicies(ctx context.Context) (resp *identity_srv.SyncPoliciesResponse, err error) {
+func (s *IdentityServiceImpl) SyncPolicies(
+	ctx context.Context,
+	_ *identity_srv.SyncPoliciesRequest,
+) (resp *identity_srv.SyncPoliciesResponse, err error) {
 	result, err := s.logic.SyncPolicies(ctx)
 	if err != nil {
 		return nil, errno.ToKitexError(err)
@@ -824,13 +813,15 @@ func (s *IdentityServiceImpl) GetUserDataScope(
 }
 
 // CreateAuditLog implements the IdentityServiceImpl interface.
-func (s *IdentityServiceImpl) CreateAuditLog(ctx context.Context, req *identity_srv.CreateAuditLogRequest) (err error) {
-	err = s.logic.CreateAuditLog(ctx, req)
-	if err != nil {
-		return errno.ToKitexError(err)
+func (s *IdentityServiceImpl) CreateAuditLog(
+	ctx context.Context,
+	req *identity_srv.CreateAuditLogRequest,
+) (resp *identity_srv.CreateAuditLogResponse, err error) {
+	if err := s.logic.CreateAuditLog(ctx, req); err != nil {
+		return nil, errno.ToKitexError(err)
 	}
 
-	return nil
+	return &identity_srv.CreateAuditLogResponse{}, nil
 }
 
 // ListAuditLogs implements the IdentityServiceImpl interface.

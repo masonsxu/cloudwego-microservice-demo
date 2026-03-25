@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package http_base;
+
+option go_package = "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/http_base";
+
+import "api.proto";
+import "base/enums.proto";
+
+message JWTClaimsDTO {
+  optional string userProfileID = 1;
+  optional core.UserStatus status = 3;
+  repeated string roleIDs = 4;
+  optional string organizationID = 5;
+  repeated string departmentIDs = 6;
+  optional string permission = 7;
+  optional int64 exp = 8;
+  optional int64 iat = 9;
+  optional string dataScope = 10;
+  optional string username = 2;
+}
+
+message TokenInfoDTO {
+  optional string accessToken = 1;
+  optional int64 expiresIn = 2;
+  optional string tokenType = 3;
+}
+
+message BaseResponseDTO {
+  optional int32 code = 1;
+  optional string message = 2;
+}
+
+message OperationStatusResponseDTO {
+  optional BaseResponseDTO baseResp = 1;
+}
+
+message PageRequestDTO {
+  optional int32 page = 1 [(api.query) = "page", (api.vd) = "!isset(FetchAll) || *(FetchAll)$ || $>0"];
+  optional int32 limit = 2 [(api.query) = "limit", (api.vd) = "!isset(FetchAll) || *(FetchAll)$ || ($>0 && $<=200)"];
+  optional string search = 3 [(api.query) = "search"];
+  map<string, string> filter = 4 [(api.query) = "filter"];
+  optional string sort = 5 [(api.query) = "sort"];
+  repeated string fields = 6 [(api.query) = "fields"];
+  optional bool includeTotal = 7 [(api.query) = "include_total"];
+  optional bool fetchAll = 8 [(api.query) = "fetch_all"];
+}
+
+message PageResponseDTO {
+  optional int32 total = 1;
+  optional int32 page = 2;
+  optional int32 limit = 3;
+  optional int32 totalPages = 4;
+  optional bool hasNext = 5;
+  optional bool hasPrev = 6;
+}

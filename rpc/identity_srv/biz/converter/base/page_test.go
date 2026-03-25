@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/base"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/rpc_base"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/models"
 )
@@ -159,8 +160,8 @@ func TestConverterImpl_PageRequestToQueryOptions(t *testing.T) {
 		page := int32(2)
 		limit := int32(15)
 		req := &rpc_base.PageRequest{
-			Page:  page,
-			Limit: limit,
+			Page:  &page,
+			Limit: &limit,
 		}
 
 		result := converter.PageRequestToQueryOptions(req)
@@ -277,7 +278,7 @@ func TestConverterImpl_PageRequestToQueryOptions(t *testing.T) {
 			"type":   "user",
 		}
 		req := &rpc_base.PageRequest{
-			Filter: filter,
+			Filter: &core.StringMapValue{Entries: filter},
 		}
 
 		result := converter.PageRequestToQueryOptions(req)
@@ -296,7 +297,7 @@ func TestConverterImpl_PageRequestToQueryOptions(t *testing.T) {
 			"name":   "test",
 		}
 		req := &rpc_base.PageRequest{
-			Filter: filter,
+			Filter: &core.StringMapValue{Entries: filter},
 		}
 
 		result := converter.PageRequestToQueryOptions(req)
@@ -312,7 +313,7 @@ func TestConverterImpl_PageRequestToQueryOptions(t *testing.T) {
 	t.Run("空过滤条件处理", func(t *testing.T) {
 		filter := map[string]string{}
 		req := &rpc_base.PageRequest{
-			Filter: filter,
+			Filter: &core.StringMapValue{Entries: filter},
 		}
 
 		result := converter.PageRequestToQueryOptions(req)
@@ -357,11 +358,11 @@ func TestConverterImpl_PageRequestToQueryOptions(t *testing.T) {
 		fetchAll := false
 
 		req := &rpc_base.PageRequest{
-			Page:     page,
-			Limit:    limit,
+			Page:     &page,
+			Limit:    &limit,
 			Search:   &search,
 			Sort:     &sort,
-			Filter:   filter,
+			Filter:   &core.StringMapValue{Entries: filter},
 			FetchAll: &fetchAll,
 		}
 
@@ -412,8 +413,8 @@ func TestConverterImpl_PageRequestToQueryOptions_TableDriven(t *testing.T) {
 				limit := int32(10)
 
 				return &rpc_base.PageRequest{
-					Page:  page,
-					Limit: limit,
+					Page:  &page,
+					Limit: &limit,
 				}
 			}(),
 			expected: func() *base.QueryOptions {
@@ -467,11 +468,11 @@ func BenchmarkConverterImpl_PageRequestToQueryOptions(b *testing.B) {
 	fetchAll := false
 
 	req := &rpc_base.PageRequest{
-		Page:     page,
-		Limit:    limit,
+		Page:     &page,
+		Limit:    &limit,
 		Search:   &search,
 		Sort:     &sort,
-		Filter:   filter,
+		Filter:   &core.StringMapValue{Entries: filter},
 		FetchAll: &fetchAll,
 	}
 

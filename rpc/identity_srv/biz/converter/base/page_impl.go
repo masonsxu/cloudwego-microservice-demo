@@ -51,9 +51,17 @@ func (c *ConverterImpl) PageRequestToQueryOptions(
 		return opts
 	}
 
-	// 设置分页参数
+	// 设置分页参数（兼容 thrift 时代默认值）
 	page := req.GetPage()
+	if page <= 0 {
+		page = 1
+	}
+
 	limit := req.GetLimit()
+	if limit <= 0 {
+		limit = 20
+	}
+
 	opts.WithPage(page, limit)
 
 	// 设置搜索关键词
@@ -77,11 +85,9 @@ func (c *ConverterImpl) PageRequestToQueryOptions(
 	}
 
 	// 处理过滤条件
-	if req.Filter != nil {
-		for key, value := range req.Filter {
-			if strings.TrimSpace(value) != "" {
-				opts.WithFilter(key, strings.TrimSpace(value))
-			}
+	for key, value := range req.GetFilter().GetEntries() {
+		if strings.TrimSpace(value) != "" {
+			opts.WithFilter(key, strings.TrimSpace(value))
 		}
 	}
 

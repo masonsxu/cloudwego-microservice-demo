@@ -306,7 +306,7 @@ func (l *LogicImpl) BatchBindUsersToRole(
 	}
 
 	roleID := *req.RoleID
-	userIDs := req.UserIDs
+	userIDs := req.GetUserIDs().GetItems()
 
 	operatorID := ""
 	if req.OperatorID != nil {

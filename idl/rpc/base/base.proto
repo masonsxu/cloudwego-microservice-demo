@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package rpc_base;
+
+option go_package = "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/rpc_base";
+
+import "base/core.proto";
+
+// PageRequest defines pagination and query options.
+message PageRequest {
+  optional int32 page = 1;
+  optional int32 limit = 2;
+  optional string search = 3;
+  optional core.StringMapValue filter = 4;
+  optional string sort = 5;
+  optional core.StringListValue fields = 6;
+  optional bool includeTotal = 7;
+  optional bool fetchAll = 8;
+}
+
+// PageResponse defines pagination metadata.
+message PageResponse {
+  optional int32 total = 1;
+  optional int32 page = 2;
+  optional int32 limit = 3;
+  optional int32 totalPages = 4;
+  optional bool hasNext = 5;
+  optional bool hasPrev = 6;
+}

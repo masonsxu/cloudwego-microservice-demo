@@ -1,0 +1,145 @@
+syntax = "proto3";
+
+package identity;
+
+option go_package = "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/identity";
+
+import "api.proto";
+import "http/base/base.proto";
+import "http/identity/identity_model.proto";
+
+service IdentityService {
+  rpc Login(LoginRequestDTO) returns (LoginResponseDTO) {
+    option (api.post) = "/api/v1/identity/auth/login";
+  }
+
+  rpc Logout(LogoutRequestDTO) returns (http_base.OperationStatusResponseDTO) {
+    option (api.post) = "/api/v1/identity/auth/logout";
+  }
+
+  rpc ChangePassword(ChangePasswordRequestDTO) returns (http_base.OperationStatusResponseDTO) {
+    option (api.put) = "/api/v1/identity/auth/password";
+  }
+
+  rpc ResetPassword(ResetPasswordRequestDTO) returns (http_base.OperationStatusResponseDTO) {
+    option (api.post) = "/api/v1/identity/auth/password/reset";
+  }
+
+  rpc ForcePasswordChange(ForcePasswordChangeRequestDTO) returns (http_base.OperationStatusResponseDTO) {
+    option (api.put) = "/api/v1/identity/auth/password/force-change";
+  }
+
+  rpc RefreshToken(RefreshTokenRequestDTO) returns (RefreshTokenResponseDTO) {
+    option (api.post) = "/api/v1/identity/auth/refresh";
+  }
+
+  rpc CreateUser(CreateUserRequestDTO) returns (UserProfileResponseDTO) {
+    option (api.post) = "/api/v1/identity/users";
+  }
+
+  rpc GetUser(GetUserRequestDTO) returns (UserProfileResponseDTO) {
+    option (api.get) = "/api/v1/identity/users/:userID";
+  }
+
+  rpc GetMe(GetMeRequestDTO) returns (UserProfileResponseDTO) {
+    option (api.get) = "/api/v1/identity/users/me";
+  }
+
+  rpc UpdateUser(UpdateUserRequestDTO) returns (UserProfileResponseDTO) {
+    option (api.put) = "/api/v1/identity/users/:userID";
+  }
+
+  rpc UpdateMe(UpdateMeRequestDTO) returns (UserProfileResponseDTO) {
+    option (api.put) = "/api/v1/identity/users/me";
+  }
+
+  rpc DeleteUser(DeleteUserRequestDTO) returns (http_base.OperationStatusResponseDTO) {
+    option (api.delete) = "/api/v1/identity/users/:userID";
+  }
+
+  rpc ListUsers(ListUsersRequestDTO) returns (ListUsersResponseDTO) {
+    option (api.get) = "/api/v1/identity/users";
+  }
+
+  rpc SearchUsers(SearchUsersRequestDTO) returns (SearchUsersResponseDTO) {
+    option (api.get) = "/api/v1/identity/users/search";
+  }
+
+  rpc ChangeUserStatus(ChangeUserStatusRequestDTO) returns (http_base.OperationStatusResponseDTO) {
+    option (api.put) = "/api/v1/identity/users/:userID/status";
+  }
+
+  rpc UnlockUser(UnlockUserRequestDTO) returns (http_base.OperationStatusResponseDTO) {
+    option (api.put) = "/api/v1/identity/users/:userID/unlock";
+  }
+
+  rpc GetUserMemberships(GetUserMembershipsRequestDTO) returns (GetUserMembershipsResponseDTO) {
+    option (api.get) = "/api/v1/identity/users/:userID/memberships";
+  }
+
+  rpc GetPrimaryMembership(GetPrimaryMembershipRequestDTO) returns (UserMembershipResponseDTO) {
+    option (api.get) = "/api/v1/identity/users/:userID/primary-membership";
+  }
+
+  rpc CheckMembership(CheckMembershipRequestDTO) returns (http_base.OperationStatusResponseDTO) {}
+
+  rpc CreateOrganization(CreateOrganizationRequestDTO) returns (OrganizationResponseDTO) {
+    option (api.post) = "/api/v1/identity/organizations";
+  }
+
+  rpc GetOrganization(GetOrganizationRequestDTO) returns (OrganizationResponseDTO) {
+    option (api.get) = "/api/v1/identity/organizations/:organizationID";
+  }
+
+  rpc UpdateOrganization(UpdateOrganizationRequestDTO) returns (OrganizationResponseDTO) {
+    option (api.put) = "/api/v1/identity/organizations/:organizationID";
+  }
+
+  rpc DeleteOrganization(DeleteOrganizationRequestDTO) returns (http_base.OperationStatusResponseDTO) {
+    option (api.delete) = "/api/v1/identity/organizations/:organizationID";
+  }
+
+  rpc ListOrganizations(ListOrganizationsRequestDTO) returns (ListOrganizationsResponseDTO) {
+    option (api.get) = "/api/v1/identity/organizations";
+  }
+
+  rpc CreateDepartment(CreateDepartmentRequestDTO) returns (DepartmentResponseDTO) {
+    option (api.post) = "/api/v1/identity/departments";
+  }
+
+  rpc GetDepartment(GetDepartmentRequestDTO) returns (DepartmentResponseDTO) {
+    option (api.get) = "/api/v1/identity/departments/:departmentID";
+  }
+
+  rpc UpdateDepartment(UpdateDepartmentRequestDTO) returns (DepartmentResponseDTO) {
+    option (api.put) = "/api/v1/identity/departments/:departmentID";
+  }
+
+  rpc DeleteDepartment(DeleteDepartmentRequestDTO) returns (http_base.OperationStatusResponseDTO) {
+    option (api.delete) = "/api/v1/identity/departments/:departmentID";
+  }
+
+  rpc GetOrganizationDepartments(GetOrganizationDepartmentsRequestDTO) returns (GetOrganizationDepartmentsResponseDTO) {
+    option (api.get) = "/api/v1/identity/organizations/:organizationID/departments";
+  }
+
+  rpc UploadTemporaryLogo(UploadTemporaryLogoRequestDTO) returns (OrganizationLogoResponseDTO) {
+    option (api.post) = "/api/v1/identity/organization-logos/temporary";
+  }
+
+  rpc GetOrganizationLogo(GetOrganizationLogoRequestDTO) returns (OrganizationLogoResponseDTO) {
+    option (api.get) = "/api/v1/identity/organization-logos/:logoID";
+  }
+
+  rpc DeleteOrganizationLogo(DeleteOrganizationLogoRequestDTO) returns (http_base.OperationStatusResponseDTO) {
+    option (api.delete) = "/api/v1/identity/organization-logos/:logoID";
+  }
+
+  rpc BindLogoToOrganization(BindLogoToOrganizationRequestDTO) returns (OrganizationResponseDTO) {
+    option (api.put) = "/api/v1/identity/organizations/:organizationID/logo";
+  }
+
+  rpc ListAuditLogs(ListAuditLogsRequestDTO) returns (ListAuditLogsResponseDTO) {
+    option (api.get) = "/api/v1/identity/audit-logs";
+  }
+}

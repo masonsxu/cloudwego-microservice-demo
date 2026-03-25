@@ -48,7 +48,7 @@ func TestConverterImpl_ModelDepartmentToThrift(t *testing.T) {
 		result := converter.ModelDepartmentToThrift(model)
 
 		require.NotNil(t, result)
-		assert.Equal(t, deptID.String(), *result.ID)
+		assert.Equal(t, deptID.String(), *result.Id)
 		assert.Equal(t, "Engineering", *result.Name)
 		assert.Equal(t, orgID.String(), *result.OrganizationID)
 		assert.Equal(t, "Technical", *result.DepartmentType)
@@ -81,7 +81,7 @@ func TestConverterImpl_ModelDepartmentToThrift(t *testing.T) {
 		result := converter.ModelDepartmentToThrift(model)
 
 		require.NotNil(t, result)
-		assert.Equal(t, deptID.String(), *result.ID)
+		assert.Equal(t, deptID.String(), *result.Id)
 		assert.Equal(t, "HR", *result.Name)
 		assert.Equal(t, orgID.String(), *result.OrganizationID)
 		assert.Nil(t, result.DepartmentType) // 空字符串应该转换为nil
@@ -111,7 +111,7 @@ func TestConverterImpl_ModelDepartmentToThrift(t *testing.T) {
 		result := converter.ModelDepartmentToThrift(model)
 
 		require.NotNil(t, result)
-		assert.Equal(t, deptID.String(), *result.ID)
+		assert.Equal(t, deptID.String(), *result.Id)
 		assert.Equal(t, "Finance", *result.Name)
 		assert.Equal(t, orgID.String(), *result.OrganizationID)
 		assert.Equal(t, "Administrative", *result.DepartmentType)
@@ -141,7 +141,7 @@ func TestConverterImpl_ModelDepartmentToThrift(t *testing.T) {
 		result := converter.ModelDepartmentToThrift(model)
 
 		require.NotNil(t, result)
-		assert.Equal(t, deptID.String(), *result.ID)
+		assert.Equal(t, deptID.String(), *result.Id)
 		assert.Equal(t, "Marketing", *result.Name)
 		assert.Equal(t, orgID.String(), *result.OrganizationID)
 		assert.Equal(t, "Business", *result.DepartmentType)
@@ -171,7 +171,7 @@ func TestConverterImpl_ModelDepartmentToThrift(t *testing.T) {
 		result := converter.ModelDepartmentToThrift(model)
 
 		require.NotNil(t, result)
-		assert.Equal(t, deptID.String(), *result.ID)
+		assert.Equal(t, deptID.String(), *result.Id)
 		assert.Equal(t, "Lab", *result.Name)
 		assert.Equal(t, orgID.String(), *result.OrganizationID)
 		assert.Equal(t, "Research", *result.DepartmentType)
@@ -235,7 +235,7 @@ func TestConverterImpl_ModelDepartmentsToThrift(t *testing.T) {
 
 		// 验证第一个部门
 		dept1 := result[0]
-		assert.Equal(t, deptID1.String(), *dept1.ID)
+		assert.Equal(t, deptID1.String(), *dept1.Id)
 		assert.Equal(t, "Engineering", *dept1.Name)
 		assert.Equal(t, orgID1.String(), *dept1.OrganizationID)
 		assert.Equal(t, "Technical", *dept1.DepartmentType)
@@ -244,7 +244,7 @@ func TestConverterImpl_ModelDepartmentsToThrift(t *testing.T) {
 
 		// 验证第二个部门
 		dept2 := result[1]
-		assert.Equal(t, deptID2.String(), *dept2.ID)
+		assert.Equal(t, deptID2.String(), *dept2.Id)
 		assert.Equal(t, "HR", *dept2.Name)
 		assert.Equal(t, orgID2.String(), *dept2.OrganizationID)
 		assert.Equal(t, "Administrative", *dept2.DepartmentType)
@@ -277,7 +277,7 @@ func TestConverterImpl_ModelDepartmentsToThrift(t *testing.T) {
 		require.Len(t, result, 1) // 只有非nil的部门被转换
 
 		dept := result[0]
-		assert.Equal(t, deptID.String(), *dept.ID)
+		assert.Equal(t, deptID.String(), *dept.Id)
 		assert.Equal(t, "Engineering", *dept.Name)
 		assert.Equal(t, orgID.String(), *dept.OrganizationID)
 	})
@@ -305,7 +305,7 @@ func TestConverterImpl_ModelToThrift(t *testing.T) {
 		result := converter.ModelToThrift(model)
 
 		require.NotNil(t, result)
-		assert.Equal(t, deptID.String(), *result.ID)
+		assert.Equal(t, deptID.String(), *result.Id)
 		assert.Equal(t, "Test", *result.Name)
 		assert.Equal(t, orgID.String(), *result.OrganizationID)
 	})

@@ -100,7 +100,7 @@ func (l *LogicImpl) CreateUser(
 		// 记录警告但不影响主要结果
 		tracelog.Ctx(ctx).Warn().
 			Err(err).
-			Str("user_id", *userProfileDTO.ID).
+			Str("user_id", *userProfileDTO.Id).
 			Msg("填充用户关联信息失败")
 	}
 
@@ -360,7 +360,7 @@ func (l *LogicImpl) ChangeUserStatus(
 	ctx context.Context,
 	req *identity_srv.ChangeUserStatusRequest,
 ) error {
-	_, err := l.updateUserStatus(ctx, *req.UserID, models.UserStatus(*req.NewStatus_))
+	_, err := l.updateUserStatus(ctx, *req.UserID, models.UserStatus(*req.NewStatus))
 	return err
 }
 
@@ -483,12 +483,12 @@ func (l *LogicImpl) enrichUserProfileWithRelations(
 	ctx context.Context,
 	profile *identity_srv.UserProfile,
 ) error {
-	if profile == nil || profile.ID == nil {
+	if profile == nil || profile.Id == nil {
 		return nil
 	}
 
 	// 查询用户的主成员关系
-	primaryMembership, err := l.dal.UserMembership().GetPrimaryMembership(ctx, *profile.ID)
+	primaryMembership, err := l.dal.UserMembership().GetPrimaryMembership(ctx, *profile.Id)
 	if err != nil {
 		// 如果没有主成员关系，不返回错误（用户可能还未分配组织）
 		if errno.IsRecordNotFound(err) {
@@ -526,8 +526,8 @@ func (l *LogicImpl) enrichUserProfilesWithRelationsBatch(
 	// 1. 提取所有用户ID
 	userIDs := make([]string, 0, len(profiles))
 	for _, profile := range profiles {
-		if profile != nil && profile.ID != nil {
-			userIDs = append(userIDs, *profile.ID)
+		if profile != nil && profile.Id != nil {
+			userIDs = append(userIDs, *profile.Id)
 		}
 	}
 
@@ -543,11 +543,11 @@ func (l *LogicImpl) enrichUserProfilesWithRelationsBatch(
 
 	// 3. 填充每个用户的组织/部门信息
 	for _, profile := range profiles {
-		if profile == nil || profile.ID == nil {
+		if profile == nil || profile.Id == nil {
 			continue
 		}
 
-		membership, exists := membershipsMap[*profile.ID]
+		membership, exists := membershipsMap[*profile.Id]
 		if !exists {
 			// 用户没有主成员关系，跳过
 			continue

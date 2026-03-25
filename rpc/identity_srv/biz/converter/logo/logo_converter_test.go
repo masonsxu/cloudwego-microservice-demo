@@ -52,9 +52,9 @@ func TestConverterImpl_ModelToThrift(t *testing.T) {
 		result := converter.ModelToThrift(model)
 
 		require.NotNil(t, result)
-		assert.Equal(t, logoID.String(), *result.ID)
+		assert.Equal(t, logoID.String(), *result.Id)
 		assert.Equal(t, "organization-logos/test.png", *result.FileID)
-		assert.Equal(t, identity_srv.OrganizationLogoStatus_TEMPORARY, *result.Status)
+		assert.Equal(t, identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_UNSPECIFIED, *result.Status)
 		assert.Equal(t, "test.png", *result.FileName)
 		assert.Equal(t, int64(1024000), *result.FileSize)
 		assert.Equal(t, "image/png", *result.MimeType)
@@ -91,9 +91,9 @@ func TestConverterImpl_ModelToThrift(t *testing.T) {
 		result := converter.ModelToThrift(model)
 
 		require.NotNil(t, result)
-		assert.Equal(t, logoID.String(), *result.ID)
+		assert.Equal(t, logoID.String(), *result.Id)
 		assert.Equal(t, "organization-logos/bound.jpg", *result.FileID)
-		assert.Equal(t, identity_srv.OrganizationLogoStatus_BOUND, *result.Status)
+		assert.Equal(t, identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_BOUND, *result.Status)
 		assert.Equal(t, "bound.jpg", *result.FileName)
 		assert.Equal(t, int64(2048000), *result.FileSize)
 		assert.Equal(t, "image/jpeg", *result.MimeType)
@@ -130,9 +130,9 @@ func TestConverterImpl_ModelToThrift(t *testing.T) {
 		result := converter.ModelToThrift(model)
 
 		require.NotNil(t, result)
-		assert.Equal(t, logoID.String(), *result.ID)
+		assert.Equal(t, logoID.String(), *result.Id)
 		assert.Equal(t, "organization-logos/deleted.gif", *result.FileID)
-		assert.Equal(t, identity_srv.OrganizationLogoStatus_DELETED, *result.Status)
+		assert.Equal(t, identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_DELETED, *result.Status)
 		assert.Equal(t, "deleted.gif", *result.FileName)
 		assert.Equal(t, int64(512000), *result.FileSize)
 		assert.Equal(t, "image/gif", *result.MimeType)
@@ -303,22 +303,22 @@ func TestConverterImpl_StatusModelToThrift(t *testing.T) {
 
 	t.Run("临时状态转换", func(t *testing.T) {
 		result := converter.StatusModelToThrift(models.LogoStatusTemporary)
-		assert.Equal(t, identity_srv.OrganizationLogoStatus_TEMPORARY, result)
+		assert.Equal(t, identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_UNSPECIFIED, result)
 	})
 
 	t.Run("已绑定状态转换", func(t *testing.T) {
 		result := converter.StatusModelToThrift(models.LogoStatusBound)
-		assert.Equal(t, identity_srv.OrganizationLogoStatus_BOUND, result)
+		assert.Equal(t, identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_BOUND, result)
 	})
 
 	t.Run("已删除状态转换", func(t *testing.T) {
 		result := converter.StatusModelToThrift(models.LogoStatusDeleted)
-		assert.Equal(t, identity_srv.OrganizationLogoStatus_DELETED, result)
+		assert.Equal(t, identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_DELETED, result)
 	})
 
 	t.Run("未知状态转换", func(t *testing.T) {
 		result := converter.StatusModelToThrift(models.OrganizationLogoStatus(99))
-		assert.Equal(t, identity_srv.OrganizationLogoStatus_TEMPORARY, result) // 默认值
+		assert.Equal(t, identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_UNSPECIFIED, result) // 默认值
 	})
 }
 
@@ -326,17 +326,17 @@ func TestConverterImpl_StatusThriftToModel(t *testing.T) {
 	converter := &ConverterImpl{}
 
 	t.Run("临时状态转换", func(t *testing.T) {
-		result := converter.StatusThriftToModel(identity_srv.OrganizationLogoStatus_TEMPORARY)
+		result := converter.StatusThriftToModel(identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_UNSPECIFIED)
 		assert.Equal(t, models.LogoStatusTemporary, result)
 	})
 
 	t.Run("已绑定状态转换", func(t *testing.T) {
-		result := converter.StatusThriftToModel(identity_srv.OrganizationLogoStatus_BOUND)
+		result := converter.StatusThriftToModel(identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_BOUND)
 		assert.Equal(t, models.LogoStatusBound, result)
 	})
 
 	t.Run("已删除状态转换", func(t *testing.T) {
-		result := converter.StatusThriftToModel(identity_srv.OrganizationLogoStatus_DELETED)
+		result := converter.StatusThriftToModel(identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_DELETED)
 		assert.Equal(t, models.LogoStatusDeleted, result)
 	})
 
@@ -359,19 +359,19 @@ func TestConverterImpl_Status_RoundTrip(t *testing.T) {
 		{
 			name:     "临时状态往返转换",
 			model:    models.LogoStatusTemporary,
-			thrift:   identity_srv.OrganizationLogoStatus_TEMPORARY,
+			thrift:   identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_UNSPECIFIED,
 			expected: models.LogoStatusTemporary,
 		},
 		{
 			name:     "已绑定状态往返转换",
 			model:    models.LogoStatusBound,
-			thrift:   identity_srv.OrganizationLogoStatus_BOUND,
+			thrift:   identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_BOUND,
 			expected: models.LogoStatusBound,
 		},
 		{
 			name:     "已删除状态往返转换",
 			model:    models.LogoStatusDeleted,
-			thrift:   identity_srv.OrganizationLogoStatus_DELETED,
+			thrift:   identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_DELETED,
 			expected: models.LogoStatusDeleted,
 		},
 	}
@@ -421,8 +421,8 @@ func TestConverterImpl_CompleteRoundTrip(t *testing.T) {
 		require.NotNil(t, thriftLogo)
 
 		// 验证关键字段
-		assert.Equal(t, logoID.String(), *thriftLogo.ID)
-		assert.Equal(t, identity_srv.OrganizationLogoStatus_TEMPORARY, *thriftLogo.Status)
+		assert.Equal(t, logoID.String(), *thriftLogo.Id)
+		assert.Equal(t, identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_UNSPECIFIED, *thriftLogo.Status)
 		assert.Equal(t, "test.png", *thriftLogo.FileName)
 		assert.Equal(t, int64(1024), *thriftLogo.FileSize)
 		assert.Equal(t, "image/png", *thriftLogo.MimeType)
@@ -459,8 +459,8 @@ func TestConverterImpl_CompleteRoundTrip(t *testing.T) {
 		require.NotNil(t, thriftLogo)
 
 		// 验证关键字段
-		assert.Equal(t, logoID.String(), *thriftLogo.ID)
-		assert.Equal(t, identity_srv.OrganizationLogoStatus_BOUND, *thriftLogo.Status)
+		assert.Equal(t, logoID.String(), *thriftLogo.Id)
+		assert.Equal(t, identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_BOUND, *thriftLogo.Status)
 		assert.Equal(t, "bound.jpg", *thriftLogo.FileName)
 		assert.Equal(t, int64(2048), *thriftLogo.FileSize)
 		assert.Equal(t, "image/jpeg", *thriftLogo.MimeType)
@@ -489,7 +489,7 @@ func TestConverterImpl_EdgeCases(t *testing.T) {
 
 	t.Run("状态默认值处理", func(t *testing.T) {
 		thriftResult := converter.StatusModelToThrift(models.OrganizationLogoStatus(-1))
-		assert.Equal(t, identity_srv.OrganizationLogoStatus_TEMPORARY, thriftResult)
+		assert.Equal(t, identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_UNSPECIFIED, thriftResult)
 
 		modelResult := converter.StatusThriftToModel(identity_srv.OrganizationLogoStatus(-1))
 		assert.Equal(t, models.LogoStatusTemporary, modelResult)

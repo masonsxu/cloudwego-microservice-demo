@@ -36,7 +36,7 @@ func (c *ConverterImpl) ModelUserMembershipsToThrift(
 
 			// 转换基础字段
 			thriftMembership := &identity_srv.UserMembership{
-				ID:             &id,
+				Id:             &id,
 				UserID:         &userID,
 				OrganizationID: &orgID,
 				CreatedAt:      &membership.CreatedAt,

@@ -58,13 +58,14 @@ func TestLogicImpl_CreateRoleDefinition(t *testing.T) {
 		logic, mocks := setupTest(t)
 		ctx := context.Background()
 
+		isSystemRole := false
 		req := &identity_srv.RoleDefinitionCreateRequest{
 			Name:        &roleName,
 			Description: &roleDesc,
 			Permissions: []*identity_srv.Permission{
 				{Resource: &resource, Action: &action, Description: &permDesc},
 			},
-			IsSystemRole: false,
+			IsSystemRole: &isSystemRole,
 		}
 
 		mocks.DefinitionRepo.EXPECT().CheckNameExists(ctx, roleName).Return(false, nil)
@@ -160,10 +161,11 @@ func TestLogicImpl_CreateRoleDefinition(t *testing.T) {
 		logic, mocks := setupTest(t)
 		ctx := context.Background()
 
+		isSystemRole := true
 		req := &identity_srv.RoleDefinitionCreateRequest{
 			Name:         &roleName,
 			Description:  &roleDesc,
-			IsSystemRole: true,
+			IsSystemRole: &isSystemRole,
 		}
 
 		mocks.DefinitionRepo.EXPECT().CheckNameExists(ctx, roleName).Return(false, nil)
@@ -366,9 +368,9 @@ func TestLogicImpl_UpdateRoleDefinition(t *testing.T) {
 
 		req := &identity_srv.RoleDefinitionUpdateRequest{
 			RoleDefinitionID: &roleID,
-			Permissions: []*identity_srv.Permission{
+			Permissions: &identity_srv.PermissionListValue{Items: []*identity_srv.Permission{
 				{Resource: &newResource, Action: &newAction},
-			},
+			}},
 		}
 
 		mocks.DefinitionRepo.EXPECT().GetByID(ctx, roleID).Return(existingRole, nil)
@@ -772,8 +774,10 @@ func TestLogicImpl_ListRoleDefinitions(t *testing.T) {
 		logic, mocks := setupTest(t)
 		ctx := context.Background()
 
+		page := int32(2)
+		limit := int32(10)
 		req := &identity_srv.RoleDefinitionQueryRequest{
-			Page: &rpc_base.PageRequest{Page: 2, Limit: 10},
+			Page: &rpc_base.PageRequest{Page: &page, Limit: &limit},
 		}
 
 		mocks.DefinitionRepo.EXPECT().

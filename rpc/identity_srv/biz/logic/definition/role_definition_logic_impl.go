@@ -42,8 +42,9 @@ func (l *LogicImpl) CreateRoleDefinition(
 	}
 
 	// 转换权限列表
-	identitys := make(models.Permissions, 0, len(req.Permissions))
-	for _, p := range req.Permissions {
+	permissions := req.GetPermissions()
+	identitys := make(models.Permissions, 0, len(permissions))
+	for _, p := range permissions {
 		description := ""
 		if p.Description != nil {
 			description = *p.Description
@@ -61,8 +62,10 @@ func (l *LogicImpl) CreateRoleDefinition(
 		Name:         *req.Name,
 		Description:  *req.Description,
 		Status:       models.RoleStatusInactive, // 默认未激活状态
-		Permissions:  identitys,
-		IsSystemRole: req.IsSystemRole,
+		Permissions: identitys,
+	}
+	if req.IsSystemRole != nil {
+		roleDefinition.IsSystemRole = *req.IsSystemRole
 	}
 
 	// 保存到数据库
@@ -127,8 +130,9 @@ func (l *LogicImpl) UpdateRoleDefinition(
 	}
 
 	if req.Permissions != nil {
-		identitys := make(models.Permissions, 0, len(req.Permissions))
-		for _, p := range req.Permissions {
+		permissions := req.Permissions.GetItems()
+		identitys := make(models.Permissions, 0, len(permissions))
+		for _, p := range permissions {
 			description := ""
 			if p.Description != nil {
 				description = *p.Description
