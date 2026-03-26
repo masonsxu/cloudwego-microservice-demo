@@ -208,8 +208,8 @@ func extractBasicUserInfo(
 	}
 
 	// 提取用户ID，确保非空才添加到映射中
-	if user.ID != nil {
-		userData[IdentityKey] = *user.ID
+	if user.Id != nil {
+		userData[IdentityKey] = *user.Id
 	}
 
 	// 提取用户名，确保非空才添加到映射中

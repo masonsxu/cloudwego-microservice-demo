@@ -51,8 +51,8 @@ func (a *authAssembler) ToRPCChangePasswordRequest(
 	}
 
 	return &identity_srv.ChangePasswordRequest{
-		OldPassword:  dto.OldPassword,
-		NewPassword_: dto.NewPassword,
+		OldPassword: dto.OldPassword,
+		NewPassword: dto.NewPassword,
 	}
 }
 
@@ -65,8 +65,8 @@ func (a *authAssembler) ToRPCResetPasswordRequest(
 	}
 
 	return &identity_srv.ResetPasswordRequest{
-		UserID:       dto.UserID,
-		NewPassword_: dto.NewPassword,
+		UserID:      dto.UserID,
+		NewPassword: dto.NewPassword,
 	}
 }
 
@@ -112,7 +112,7 @@ func (a *authAssembler) convertMenuNode(rpcNode *identity_srv.MenuNode) *permiss
 
 	httpNode := &permission.MenuNodeDTO{
 		Name:      common.CopyStringPtr(rpcNode.Name),
-		ID:        common.CopyStringPtr(rpcNode.Id),
+		Id:        common.CopyStringPtr(rpcNode.Id),
 		Path:      common.CopyStringPtr(rpcNode.Path),
 		Icon:      common.CopyStringPtr(rpcNode.Icon),
 		Component: common.CopyStringPtr(rpcNode.Component),
@@ -172,7 +172,7 @@ func (a *authAssembler) ToHTTPRoleInfos(
 	for _, rpcRole := range rpcRoles {
 		if rpcRole != nil {
 			httpRole := &identity.RoleInfoDTO{
-				ID:   common.CopyStringPtr(rpcRole.Id),
+				Id:   common.CopyStringPtr(rpcRole.Id),
 				Code: common.CopyStringPtr(rpcRole.RoleCode),
 				Name: common.CopyStringPtr(rpcRole.Name),
 			}

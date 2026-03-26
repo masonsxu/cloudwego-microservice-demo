@@ -91,7 +91,8 @@ func (s *roleDefinitionServiceImpl) DeleteRoleDefinition(
 ) (*http_base.OperationStatusResponseDTO, error) {
 	err := s.ProcessRPCVoidCall(ctx, "删除角色定义",
 		func(ctx context.Context) error {
-			return s.identityClient.DeleteRoleDefinition(ctx, roleID)
+			_, err := s.identityClient.DeleteRoleDefinition(ctx, &identity_srv.DeleteRoleDefinitionRequest{RoleID: &roleID})
+			return err
 		},
 		"roleID", roleID,
 	)
@@ -108,7 +109,7 @@ func (s *roleDefinitionServiceImpl) GetRoleDefinition(
 ) (*permission.RoleDefinitionGetResponseDTO, error) {
 	result, err := s.ProcessRPCCall(ctx, "获取角色定义",
 		func(ctx context.Context) (interface{}, error) {
-			return s.identityClient.GetRoleDefinition(ctx, *req.RoleID)
+			return s.identityClient.GetRoleDefinition(ctx, &identity_srv.GetRoleDefinitionRequest{RoleID: req.RoleID})
 		},
 		"roleID", *req.RoleID,
 	)

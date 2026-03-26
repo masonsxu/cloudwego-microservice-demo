@@ -41,11 +41,6 @@ func setDefaults(v *viper.Viper) {
 	// 注意：使用 withCredentials 时不能设置为 *，必须指定具体的 origin
 	v.SetDefault("middleware.cors.allow_origins", []string{
 		"http://localhost:5173",
-		"http://localhost:5174",
-		"http://localhost:5175",
-		"http://192.168.20.66:5173",
-		"http://192.168.20.66:5174",
-		"http://192.168.20.66:5175",
 	})
 	v.SetDefault(
 		"middleware.cors.allow_methods",
@@ -61,7 +56,7 @@ func setDefaults(v *viper.Viper) {
 
 	v.SetDefault("middleware.rate_limit.enabled", false)
 	v.SetDefault("middleware.jwt.enabled", true)
-	v.SetDefault("middleware.jwt.signing_key", "OVdQu4vxUBokCin2Lqazs5FgdnjF3G3D+TTICNOL7yU=")
+	v.SetDefault("middleware.jwt.signing_key", "")
 	v.SetDefault("middleware.jwt.timeout", 30*time.Minute)
 	v.SetDefault("middleware.jwt.max_refresh", 7*24*time.Hour)
 	v.SetDefault("middleware.jwt.identity_key", "identity")

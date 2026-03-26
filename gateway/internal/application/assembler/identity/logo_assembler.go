@@ -23,7 +23,7 @@ func (a *logoAssembler) ToHTTPOrganizationLogo(
 
 	dto := &identity.OrganizationLogoDTO{
 		// 核心字段
-		ID:     common.CopyStringPtr(rpc.ID),
+		Id:     common.CopyStringPtr(rpc.Id),
 		FileID: common.CopyStringPtr(rpc.FileID),
 
 		// 绑定信息

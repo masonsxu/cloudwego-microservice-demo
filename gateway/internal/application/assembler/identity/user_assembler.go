@@ -23,7 +23,7 @@ func (a *userAssembler) ToHTTPUserProfile(
 
 	return &identityModel.UserProfileDTO{
 		// 核心必填字段
-		ID:       rpc.ID,
+		Id:       rpc.Id,
 		Username: rpc.Username,
 		Status:   common.ConvertIdentityUserStatusPtrToHTTP(rpc.Status),
 
@@ -38,9 +38,9 @@ func (a *userAssembler) ToHTTPUserProfile(
 		EmployeeID:        common.CopyStringPtr(rpc.EmployeeID),
 
 		// 状态与安全字段
-		MustChangePassword: &rpc.MustChangePassword,
+		MustChangePassword: common.CopyBoolPtr(rpc.MustChangePassword),
 		AccountExpiry:      common.CopyInt64Ptr(rpc.AccountExpiry),
-		LoginAttempts:      common.CopyInt32Ptr(&rpc.LoginAttempts),
+		LoginAttempts:      common.CopyInt32Ptr(rpc.LoginAttempts),
 
 		// 审计字段
 		CreatedAt:     common.CopyInt64Ptr(rpc.CreatedAt),
@@ -85,25 +85,36 @@ func (a *userAssembler) ToRPCCreateUserRequest(
 		Password: dto.Password,
 	}
 
-	// 使用 ApplyIfSet 处理所有可选字段
-	common.ApplyIfSet(dto.IsSetEmail, dto.Email, func(v *string) { req.Email = v })
-	common.ApplyIfSet(dto.IsSetPhone, dto.Phone, func(v *string) { req.Phone = v })
-	common.ApplyIfSet(dto.IsSetFirstName, dto.FirstName, func(v *string) { req.FirstName = v })
-	common.ApplyIfSet(dto.IsSetLastName, dto.LastName, func(v *string) { req.LastName = v })
-	common.ApplyIfSet(dto.IsSetRealName, dto.RealName, func(v *string) { req.RealName = v })
-	common.ApplyIfSet(dto.IsSetGender, dto.Gender, func(v *int32) {
-		req.Gender = common.ConvertGenderToRPCPtr(*v)
-	})
-	common.ApplyIfSet(dto.IsSetProfessionalTitle, dto.ProfessionalTitle, func(v *string) {
-		req.ProfessionalTitle = v
-	})
-	common.ApplyIfSet(dto.IsSetEmployeeID, dto.EmployeeID, func(v *string) { req.EmployeeID = v })
-	common.ApplyIfSet(dto.IsSetMustChangePassword, dto.MustChangePassword, func(v *bool) {
-		req.MustChangePassword = v
-	})
-	common.ApplyIfSet(dto.IsSetAccountExpiry, dto.AccountExpiry, func(v *int64) {
-		req.AccountExpiry = v
-	})
+	if dto.Email != nil {
+		req.Email = dto.Email
+	}
+	if dto.Phone != nil {
+		req.Phone = dto.Phone
+	}
+	if dto.FirstName != nil {
+		req.FirstName = dto.FirstName
+	}
+	if dto.LastName != nil {
+		req.LastName = dto.LastName
+	}
+	if dto.RealName != nil {
+		req.RealName = dto.RealName
+	}
+	if dto.Gender != nil {
+		req.Gender = common.ConvertGenderToRPCPtr(*dto.Gender)
+	}
+	if dto.ProfessionalTitle != nil {
+		req.ProfessionalTitle = dto.ProfessionalTitle
+	}
+	if dto.EmployeeID != nil {
+		req.EmployeeID = dto.EmployeeID
+	}
+	if dto.MustChangePassword != nil {
+		req.MustChangePassword = dto.MustChangePassword
+	}
+	if dto.AccountExpiry != nil {
+		req.AccountExpiry = dto.AccountExpiry
+	}
 
 	return req
 }
@@ -132,23 +143,33 @@ func (a *userAssembler) ToRPCUpdateUserRequest(
 		UserID: dto.UserID,
 	}
 
-	// 使用 ApplyIfSet 处理所有可选字段
-	common.ApplyIfSet(dto.IsSetEmail, dto.Email, func(v *string) { req.Email = v })
-	common.ApplyIfSet(dto.IsSetPhone, dto.Phone, func(v *string) { req.Phone = v })
-	common.ApplyIfSet(dto.IsSetFirstName, dto.FirstName, func(v *string) { req.FirstName = v })
-	common.ApplyIfSet(dto.IsSetLastName, dto.LastName, func(v *string) { req.LastName = v })
-	common.ApplyIfSet(dto.IsSetRealName, dto.RealName, func(v *string) { req.RealName = v })
-	common.ApplyIfSet(dto.IsSetGender, dto.Gender, func(v *int32) {
-		req.Gender = common.ConvertGenderToRPCPtr(*v)
-	})
-	common.ApplyIfSet(dto.IsSetProfessionalTitle, dto.ProfessionalTitle, func(v *string) {
-		req.ProfessionalTitle = v
-	})
-	common.ApplyIfSet(dto.IsSetEmployeeID, dto.EmployeeID, func(v *string) { req.EmployeeID = v })
-	common.ApplyIfSet(dto.IsSetAccountExpiry, dto.AccountExpiry, func(v *int64) {
-		req.AccountExpiry = v
-	})
-
+	if dto.Email != nil {
+		req.Email = dto.Email
+	}
+	if dto.Phone != nil {
+		req.Phone = dto.Phone
+	}
+	if dto.FirstName != nil {
+		req.FirstName = dto.FirstName
+	}
+	if dto.LastName != nil {
+		req.LastName = dto.LastName
+	}
+	if dto.RealName != nil {
+		req.RealName = dto.RealName
+	}
+	if dto.Gender != nil {
+		req.Gender = common.ConvertGenderToRPCPtr(*dto.Gender)
+	}
+	if dto.ProfessionalTitle != nil {
+		req.ProfessionalTitle = dto.ProfessionalTitle
+	}
+	if dto.EmployeeID != nil {
+		req.EmployeeID = dto.EmployeeID
+	}
+	if dto.AccountExpiry != nil {
+		req.AccountExpiry = dto.AccountExpiry
+	}
 	return req
 }
 
@@ -165,22 +186,33 @@ func (a *userAssembler) ToRPCUpdateMeRequest(
 		// UserID 将在 handler 层从上下文中获取并设置
 	}
 
-	// 使用 ApplyIfSet 处理所有可选字段
-	common.ApplyIfSet(dto.IsSetEmail, dto.Email, func(v *string) { req.Email = v })
-	common.ApplyIfSet(dto.IsSetPhone, dto.Phone, func(v *string) { req.Phone = v })
-	common.ApplyIfSet(dto.IsSetFirstName, dto.FirstName, func(v *string) { req.FirstName = v })
-	common.ApplyIfSet(dto.IsSetLastName, dto.LastName, func(v *string) { req.LastName = v })
-	common.ApplyIfSet(dto.IsSetRealName, dto.RealName, func(v *string) { req.RealName = v })
-	common.ApplyIfSet(dto.IsSetGender, dto.Gender, func(v *int32) {
-		req.Gender = common.ConvertGenderToRPCPtr(*v)
-	})
-	common.ApplyIfSet(dto.IsSetProfessionalTitle, dto.ProfessionalTitle, func(v *string) {
-		req.ProfessionalTitle = v
-	})
-	common.ApplyIfSet(dto.IsSetEmployeeID, dto.EmployeeID, func(v *string) { req.EmployeeID = v })
-	common.ApplyIfSet(dto.IsSetAccountExpiry, dto.AccountExpiry, func(v *int64) {
-		req.AccountExpiry = v
-	})
+	if dto.Email != nil {
+		req.Email = dto.Email
+	}
+	if dto.Phone != nil {
+		req.Phone = dto.Phone
+	}
+	if dto.FirstName != nil {
+		req.FirstName = dto.FirstName
+	}
+	if dto.LastName != nil {
+		req.LastName = dto.LastName
+	}
+	if dto.RealName != nil {
+		req.RealName = dto.RealName
+	}
+	if dto.Gender != nil {
+		req.Gender = common.ConvertGenderToRPCPtr(*dto.Gender)
+	}
+	if dto.ProfessionalTitle != nil {
+		req.ProfessionalTitle = dto.ProfessionalTitle
+	}
+	if dto.EmployeeID != nil {
+		req.EmployeeID = dto.EmployeeID
+	}
+	if dto.AccountExpiry != nil {
+		req.AccountExpiry = dto.AccountExpiry
+	}
 
 	return req
 }
@@ -260,8 +292,8 @@ func (a *userAssembler) ToRPCChangeUserStatusRequest(
 	}
 
 	return &identity_srv.ChangeUserStatusRequest{
-		UserID:     http.UserID,
-		NewStatus_: common.ConvertIdentityUserStatusToRPCPtr(*http.NewStatus),
+		UserID:    http.UserID,
+		NewStatus: common.ConvertIdentityUserStatusToRPCPtr(*http.NewStatus),
 	}
 }
 

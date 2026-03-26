@@ -49,7 +49,8 @@ func (s *menuServiceImpl) UploadMenu(
 			}
 
 			// 调用RPC服务
-			return s.identityClient.UploadMenu(ctx, rpcReq)
+			_, err := s.identityClient.UploadMenu(ctx, rpcReq)
+			return err
 		},
 		"yaml_size", len(req.MenuFile),
 	)
@@ -69,7 +70,7 @@ func (s *menuServiceImpl) GetMenuTree(
 	result, err := s.ProcessRPCCall(ctx, "获取菜单树",
 		func(ctx context.Context) (interface{}, error) {
 			// 调用RPC服务
-			return s.identityClient.GetMenuTree(ctx)
+			return s.identityClient.GetMenuTree(ctx, &identity_srv.GetMenuTreeRequest{})
 		},
 	)
 	if err != nil {
@@ -113,7 +114,7 @@ func (s *menuServiceImpl) ConfigureRoleMenus(
 			return s.identityClient.ConfigureRoleMenus(ctx, rpcReq)
 		},
 		"role_id", *req.RoleID,
-		"menu_configs_count", len(req.MenuConfigs),
+		"menu_configs_count", len(req.MenuConfigs.GetValues()),
 	)
 	if err != nil {
 		return nil, err

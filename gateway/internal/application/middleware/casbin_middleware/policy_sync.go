@@ -8,6 +8,7 @@ import (
 	"github.com/rs/zerolog"
 
 	identitycli "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/client/identity_cli"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 )
 
 // PolicySyncService 策略同步服务
@@ -100,7 +101,7 @@ func (s *PolicySyncService) SyncPolicies(ctx context.Context) error {
 	s.logger.Info().Msg("Starting policy sync from RPC service")
 
 	// 调用 RPC 服务获取策略
-	resp, err := s.identityClient.SyncPolicies(ctx)
+	resp, err := s.identityClient.SyncPolicies(ctx, &identity_srv.SyncPoliciesRequest{})
 	if err != nil {
 		s.logger.Error().Err(err).Msg("Failed to call SyncPolicies RPC")
 		return err

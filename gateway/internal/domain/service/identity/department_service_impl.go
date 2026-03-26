@@ -57,8 +57,8 @@ func (s *departmentServiceImpl) CreateDepartment(
 	}
 
 	// 转换RPC响应到HTTP响应
-	rpcDept := result.(*identity_srv.Department)
-	httpDept := s.assembler.Department().ToHTTPDepartment(rpcDept)
+	rpcResp := result.(*identity_srv.CreateDepartmentResponse)
+	httpDept := s.assembler.Department().ToHTTPDepartment(rpcResp.Department)
 
 	// 设置成功的基础响应
 	httpResp := &identity.DepartmentResponseDTO{
@@ -89,8 +89,8 @@ func (s *departmentServiceImpl) GetDepartment(
 	}
 
 	// 转换RPC响应到HTTP响应
-	rpcDept := result.(*identity_srv.Department)
-	httpDept := s.assembler.Department().ToHTTPDepartment(rpcDept)
+	rpcResp := result.(*identity_srv.GetDepartmentResponse)
+	httpDept := s.assembler.Department().ToHTTPDepartment(rpcResp.Department)
 
 	// 设置成功的基础响应
 	httpResp := &identity.DepartmentResponseDTO{
@@ -121,8 +121,8 @@ func (s *departmentServiceImpl) UpdateDepartment(
 	}
 
 	// 转换RPC响应到HTTP响应
-	rpcDept := result.(*identity_srv.Department)
-	httpDept := s.assembler.Department().ToHTTPDepartment(rpcDept)
+	rpcResp := result.(*identity_srv.UpdateDepartmentResponse)
+	httpDept := s.assembler.Department().ToHTTPDepartment(rpcResp.Department)
 
 	// 设置成功的基础响应
 	httpResp := &identity.DepartmentResponseDTO{
@@ -141,7 +141,10 @@ func (s *departmentServiceImpl) DeleteDepartment(
 	err := s.ProcessRPCVoidCall(ctx, "删除部门",
 		func(ctx context.Context) error {
 			// 调用RPC服务
-			return s.identityClient.DeleteDepartment(ctx, *req.DepartmentID)
+			_, err := s.identityClient.DeleteDepartment(ctx, &identity_srv.DeleteDepartmentRequest{
+				DepartmentID: req.DepartmentID,
+			})
+			return err
 		},
 		"department_id", req.DepartmentID,
 	)

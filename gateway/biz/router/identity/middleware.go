@@ -26,6 +26,11 @@ func _identityMw() []app.HandlerFunc {
 	return nil
 }
 
+func _listauditlogsMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
 func _departmentsMw() []app.HandlerFunc {
 	// your code...
 	return nil
@@ -232,11 +237,6 @@ func _getorganizationlogoMw() []app.HandlerFunc {
 }
 
 func _uploadtemporarylogoMw() []app.HandlerFunc {
-	// your code...
-	return nil
-}
-
-func _listauditlogsMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }

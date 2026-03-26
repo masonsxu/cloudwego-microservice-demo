@@ -20,9 +20,12 @@ func NewResponseBuilder() *ResponseBuilder {
 // - timestamp 已从响应体移除，改用标准 HTTP Date 响应头
 // - Date 响应头由 ResponseHeaderMiddleware 自动添加
 func (rb *ResponseBuilder) BuildSuccessResponse() *http_base.BaseResponseDTO {
+	code := errors.ErrSuccess.Code()
+	message := errors.ErrSuccess.Message()
+
 	return &http_base.BaseResponseDTO{
-		Code:    errors.ErrSuccess.Code(),
-		Message: errors.ErrSuccess.Message(),
+		Code:    &code,
+		Message: &message,
 	}
 }
 

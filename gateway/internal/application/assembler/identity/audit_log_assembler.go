@@ -21,7 +21,7 @@ func (a *auditLogAssembler) ToHTTPAuditLog(rpc *identity_srv.AuditLog) *identity
 	}
 
 	dto := &identityModel.AuditLogDTO{
-		ID:             common.CopyStringPtr(rpc.Id),
+		Id:             common.CopyStringPtr(rpc.Id),
 		RequestID:      common.CopyStringPtr(rpc.RequestID),
 		TraceID:        common.CopyStringPtr(rpc.TraceID),
 		UserID:         common.CopyStringPtr(rpc.UserID),

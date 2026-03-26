@@ -23,7 +23,7 @@ func (a *membershipAssembler) ToHTTPUserMembership(
 
 	return &identity.UserMembershipDTO{
 		// 核心必填字段
-		ID:             rpc.ID,
+		Id:             rpc.Id,
 		UserID:         rpc.UserID,
 		OrganizationID: rpc.OrganizationID,
 

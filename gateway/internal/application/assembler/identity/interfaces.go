@@ -1,6 +1,7 @@
 package identity
 
 import (
+	core "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/http_base"
 	identityModel "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/identity"
 	permissionModel "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/permission"
@@ -164,14 +165,22 @@ func ToRPCPageRequest(http *http_base.PageRequestDTO) *rpc_base.PageRequest {
 		return nil
 	}
 
-	return &rpc_base.PageRequest{
+	req := &rpc_base.PageRequest{
 		Page:         http.Page,
 		Limit:        http.Limit,
 		Search:       http.Search,
-		Filter:       http.Filter,
 		Sort:         http.Sort,
-		Fields:       http.Fields,
 		IncludeTotal: http.IncludeTotal,
 		FetchAll:     http.FetchAll,
 	}
+
+	if len(http.Filter) > 0 {
+		req.Filter = &core.StringMapValue{Entries: http.Filter}
+	}
+
+	if len(http.Fields) > 0 {
+		req.Fields = &core.StringListValue{Items: http.Fields}
+	}
+
+	return req
 }

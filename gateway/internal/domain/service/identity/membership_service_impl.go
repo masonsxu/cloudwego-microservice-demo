@@ -65,7 +65,9 @@ func (s *membershipServiceImpl) GetPrimaryMembership(
 ) (*identity.UserMembershipResponseDTO, error) {
 	result, err := s.ProcessRPCCall(ctx, "获取用户主成员关系",
 		func(ctx context.Context) (interface{}, error) {
-			return s.identityClient.GetPrimaryMembership(ctx, *req.UserID)
+			return s.identityClient.GetPrimaryMembership(ctx, &identity_srv.GetPrimaryMembershipRequest{
+				UserID: req.UserID,
+			})
 		},
 		"user_id", req.UserID,
 	)
@@ -73,8 +75,8 @@ func (s *membershipServiceImpl) GetPrimaryMembership(
 		return nil, err
 	}
 
-	rpcUserMembership := result.(*identity_srv.UserMembership)
-	httpUserMembership := s.assembler.Membership().ToHTTPUserMembership(rpcUserMembership)
+	rpcResp := result.(*identity_srv.GetPrimaryMembershipResponse)
+	httpUserMembership := s.assembler.Membership().ToHTTPUserMembership(rpcResp.Membership)
 
 	httpResp := &identity.UserMembershipResponseDTO{
 		BaseResp:   s.ResponseBuilder().BuildSuccessResponse(),

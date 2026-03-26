@@ -4,6 +4,7 @@ import (
 	permissionModel "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/permission"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/common"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 // =============================================================================
@@ -50,7 +51,7 @@ func (a *menuAssembler) ToHTTPMenuNode(
 
 	httpNode := &permissionModel.MenuNodeDTO{
 		Name:            rpcNode.Name,
-		ID:              rpcNode.Id,
+		Id:              rpcNode.Id,
 		Path:            rpcNode.Path,
 		Icon:            common.CopyStringPtr(rpcNode.Icon),
 		Component:       common.CopyStringPtr(rpcNode.Component),
@@ -97,7 +98,7 @@ func (a *menuAssembler) ToRPCMenuNode(dto *permissionModel.MenuNodeDTO) *identit
 
 	rpcNode := &identity_srv.MenuNode{
 		Name:            dto.Name,
-		Id:              dto.ID,
+		Id:              dto.Id,
 		Path:            dto.Path,
 		Icon:            dto.Icon,
 		Component:       dto.Component,
@@ -239,6 +240,42 @@ func (a *menuAssembler) ToRPCMenuConfigs(
 	return result
 }
 
+func (a *menuAssembler) ToRPCMenuConfigsFromListValue(
+	list *structpb.ListValue,
+) []*identity_srv.MenuConfig {
+	if list == nil {
+		return nil
+	}
+
+	result := make([]*identity_srv.MenuConfig, 0, len(list.GetValues()))
+	for _, value := range list.GetValues() {
+		structValue := value.GetStructValue()
+		if structValue == nil {
+			continue
+		}
+
+		fields := structValue.GetFields()
+		menuIDValue, ok := fields["menuID"]
+		if !ok {
+			continue
+		}
+		menuID := menuIDValue.GetStringValue()
+		if menuID == "" {
+			continue
+		}
+
+		config := &identity_srv.MenuConfig{MenuID: &menuID}
+		if permissionValue, ok := fields["permission"]; ok {
+			permission := identity_srv.PermissionLevel(int32(permissionValue.GetNumberValue()))
+			config.Permission = &permission
+		}
+
+		result = append(result, config)
+	}
+
+	return result
+}
+
 // ToHTTPMenuPermission converts RPC MenuPermission to HTTP MenuPermissionDTO.
 func (a *menuAssembler) ToHTTPMenuPermission(
 	rpcPermission *identity_srv.MenuPermission,
@@ -282,7 +319,7 @@ func (a *menuAssembler) ToRPCConfigureRoleMenusRequest(
 
 	rpcReq := &identity_srv.ConfigureRoleMenusRequest{
 		RoleID:      dto.RoleID,
-		MenuConfigs: a.ToRPCMenuConfigs(dto.MenuConfigs),
+		MenuConfigs: a.ToRPCMenuConfigsFromListValue(dto.MenuConfigs),
 	}
 
 	if operatorID != "" {

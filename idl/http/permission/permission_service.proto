@@ -4,7 +4,7 @@ package permission;
 
 option go_package = "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/permission";
 
-import "api.proto";
+import "base/api.proto";
 import "http/base/base.proto";
 import "http/permission/permission_model.proto";
 

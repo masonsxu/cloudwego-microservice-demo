@@ -4,7 +4,7 @@ package identity;
 
 option go_package = "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/identity";
 
-import "api.proto";
+import "base/api.proto";
 import "google/protobuf/struct.proto";
 import "http/base/base.proto";
 import "http/permission/permission_model.proto";

@@ -52,9 +52,11 @@ func loginResponseHandler(
 	}
 
 	// 如果没有找到登录响应,返回空的成功响应
+	code := errors.ErrSuccess.Code()
+	message := errors.ErrSuccess.Message()
 	c.JSON(http.StatusOK, &http_base.BaseResponseDTO{
-		Code:    errors.ErrSuccess.Code(),
-		Message: errors.ErrSuccess.Message(),
+		Code:    &code,
+		Message: &message,
 	})
 }
 
@@ -67,8 +69,8 @@ func logoutResponseHandler(
 	// 构造统一的登出响应
 	response := &http_base.OperationStatusResponseDTO{
 		BaseResp: &http_base.BaseResponseDTO{
-			Code:    errors.ErrSuccess.Code(),
-			Message: errors.ErrSuccess.Message(),
+			Code:    func() *int32 { v := errors.ErrSuccess.Code(); return &v }(),
+			Message: func() *string { v := errors.ErrSuccess.Message(); return &v }(),
 		},
 	}
 
@@ -89,8 +91,8 @@ func refreshResponseHandler(
 	// 构造刷新Token响应
 	response := &identity.RefreshTokenResponseDTO{
 		BaseResp: &http_base.BaseResponseDTO{
-			Code:    errors.ErrSuccess.Code(),
-			Message: errors.ErrSuccess.Message(),
+			Code:    func() *int32 { v := errors.ErrSuccess.Code(); return &v }(),
+			Message: func() *string { v := errors.ErrSuccess.Message(); return &v }(),
 		},
 		TokenInfo: tokenInfo,
 	}
@@ -162,10 +164,12 @@ func customHTTPStatusMessageFunc(
 	// 生成标准化的错误响应
 	httpStatus := errors.GetHTTPStatus(apiError.Code())
 
+	code := apiError.Code()
+	message := apiError.Message()
 	response := &http_base.OperationStatusResponseDTO{
 		BaseResp: &http_base.BaseResponseDTO{
-			Code:    apiError.Code(),
-			Message: apiError.Message(),
+			Code:    &code,
+			Message: &message,
 		},
 	}
 

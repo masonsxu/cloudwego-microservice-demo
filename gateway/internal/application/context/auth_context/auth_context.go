@@ -3,7 +3,7 @@ package auth_context
 import (
 	"github.com/cloudwego/hertz/pkg/app"
 
-	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/core"
+	core "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/core"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/http_base"
 )
 

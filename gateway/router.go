@@ -5,15 +5,12 @@ package main
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/hertz-contrib/swagger"
-	handler "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/handler"
 	_ "github.com/masonsxu/cloudwego-microservice-demo/gateway/docs"
 	swaggerFiles "github.com/swaggo/files"
 )
 
 // customizeRegister registers customize routers.
 func customizedRegister(r *server.Hertz) {
-	r.GET("/ping", handler.Ping)
-
 	// Swagger API 文档
 	// 从配置中获取服务地址，避免使用固定的localhost
 	url := swagger.URL("doc.json")

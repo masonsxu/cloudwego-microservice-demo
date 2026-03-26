@@ -3,6 +3,7 @@ package permission
 import (
 	permissionModel "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/permission"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/common"
+	core "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 )
 
@@ -23,7 +24,7 @@ func (a *userRoleAssembler) ToHTTPUserRoleAssignment(
 	}
 
 	return &permissionModel.UserRoleAssignmentDTO{
-		ID:        rpc.Id,
+		Id:        rpc.Id,
 		UserID:    rpc.UserID,
 		RoleID:    rpc.RoleID,
 		CreatedBy: common.CopyStringPtr(rpc.CreatedBy),
@@ -58,7 +59,7 @@ func (a *userRoleAssembler) ToRPCUserRoleAssignment(
 	}
 
 	return &identity_srv.UserRoleAssignment{
-		Id:        http.ID,
+		Id:        http.Id,
 		UserID:    http.UserID,
 		RoleID:    http.RoleID,
 		CreatedBy: http.CreatedBy,
@@ -83,10 +84,14 @@ func (a *userRoleAssembler) ToHTTPAssignRoleToUserResponse(
 
 // ToHTTPGetLastUserRoleAssignmentResponse 将RPC用户角色分配转换为HTTP最后分配响应
 func (a *userRoleAssembler) ToHTTPGetLastUserRoleAssignmentResponse(
-	rpc *identity_srv.UserRoleAssignment,
+	rpc *identity_srv.GetLastUserRoleAssignmentResponse,
 ) *permissionModel.GetLastUserRoleAssignmentResponseDTO {
+	if rpc == nil {
+		return nil
+	}
+
 	return &permissionModel.GetLastUserRoleAssignmentResponseDTO{
-		Assignment: a.ToHTTPUserRoleAssignment(rpc),
+		Assignment: a.ToHTTPUserRoleAssignment(rpc.UserRoleAssignment),
 	}
 }
 
@@ -155,9 +160,22 @@ func (a *userRoleAssembler) ToRPCBatchBindUsersToRoleRequest(
 		return nil
 	}
 
+	var userIDs *core.StringListValue
+	if http.UserIDs != nil {
+		items := make([]string, 0, len(http.UserIDs.GetValues()))
+		for _, value := range http.UserIDs.GetValues() {
+			if userID := value.GetStringValue(); userID != "" {
+				items = append(items, userID)
+			}
+		}
+		if len(items) > 0 {
+			userIDs = &core.StringListValue{Items: items}
+		}
+	}
+
 	return &identity_srv.BatchBindUsersToRoleRequest{
 		RoleID:     http.RoleID,
-		UserIDs:    http.UserIDs,
+		UserIDs:    userIDs,
 		OperatorID: &operatorID,
 	}
 }

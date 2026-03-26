@@ -3,8 +3,10 @@ package permission
 import (
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/http_base"
 	permissionModel "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/permission"
+	core "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/rpc_base"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 // Assembler 权限管理聚合组装器接口 - 统一暴露给Service层
@@ -41,6 +43,7 @@ type IMenuAssembler interface {
 	ToHTTPMenuConfigs([]*identity_srv.MenuConfig) []*permissionModel.MenuConfigDTO
 	ToRPCMenuConfig(*permissionModel.MenuConfigDTO) *identity_srv.MenuConfig
 	ToRPCMenuConfigs([]*permissionModel.MenuConfigDTO) []*identity_srv.MenuConfig
+	ToRPCMenuConfigsFromListValue(*structpb.ListValue) []*identity_srv.MenuConfig
 
 	// 菜单权限转换
 	ToHTTPMenuPermission(*identity_srv.MenuPermission) *permissionModel.MenuPermissionDTO
@@ -95,6 +98,8 @@ type IPermissionAssembler interface {
 	ToHTTPPermissions([]*identity_srv.Permission) []*permissionModel.PermissionDTO
 	ToRPCPermission(*permissionModel.PermissionDTO) *identity_srv.Permission
 	ToRPCPermissions([]*permissionModel.PermissionDTO) []*identity_srv.Permission
+	ToRPCPermissionsFromListValue(*structpb.ListValue) []*identity_srv.Permission
+	ToRPCPermissionListValue(*structpb.ListValue) *identity_srv.PermissionListValue
 }
 
 // IRoleAssembler 角色定义相关组装器接口
@@ -152,7 +157,7 @@ type IUserRoleAssembler interface {
 
 	// 获取用户最后角色分配转换
 	ToHTTPGetLastUserRoleAssignmentResponse(
-		*identity_srv.UserRoleAssignment,
+		*identity_srv.GetLastUserRoleAssignmentResponse,
 	) *permissionModel.GetLastUserRoleAssignmentResponseDTO
 
 	// 查询用户角色分配转换
@@ -203,14 +208,22 @@ func ToRPCPageRequest(http *http_base.PageRequestDTO) *rpc_base.PageRequest {
 		return nil
 	}
 
-	return &rpc_base.PageRequest{
+	req := &rpc_base.PageRequest{
 		Page:         http.Page,
 		Limit:        http.Limit,
 		Search:       http.Search,
-		Filter:       http.Filter,
 		Sort:         http.Sort,
-		Fields:       http.Fields,
 		IncludeTotal: http.IncludeTotal,
 		FetchAll:     http.FetchAll,
 	}
+
+	if len(http.Filter) > 0 {
+		req.Filter = &core.StringMapValue{Entries: http.Filter}
+	}
+
+	if len(http.Fields) > 0 {
+		req.Fields = &core.StringListValue{Items: http.Fields}
+	}
+
+	return req
 }

@@ -55,12 +55,12 @@ func (s *logoServiceImpl) UploadTemporaryLogo(
 		return nil, err
 	}
 
-	rpcResp := result.(*identity_srv.OrganizationLogo)
+	rpcResp := result.(*identity_srv.UploadTemporaryLogoResponse)
 
 	// 转换响应
 	httpResp := &identity.OrganizationLogoResponseDTO{
 		BaseResp: s.ResponseBuilder().BuildSuccessResponse(),
-		Logo:     s.assembler.Logo().ToHTTPOrganizationLogo(rpcResp),
+		Logo:     s.assembler.Logo().ToHTTPOrganizationLogo(rpcResp.OrganizationLogo),
 	}
 
 	return httpResp, nil
@@ -83,12 +83,12 @@ func (s *logoServiceImpl) GetOrganizationLogo(
 		return nil, err
 	}
 
-	rpcResp := result.(*identity_srv.OrganizationLogo)
+	rpcResp := result.(*identity_srv.GetOrganizationLogoResponse)
 
 	// 转换响应
 	httpResp := &identity.OrganizationLogoResponseDTO{
 		BaseResp: s.ResponseBuilder().BuildSuccessResponse(),
-		Logo:     s.assembler.Logo().ToHTTPOrganizationLogo(rpcResp),
+		Logo:     s.assembler.Logo().ToHTTPOrganizationLogo(rpcResp.OrganizationLogo),
 	}
 
 	return httpResp, nil
@@ -102,9 +102,10 @@ func (s *logoServiceImpl) DeleteOrganizationLogo(
 	rpcReq := s.assembler.Logo().ToRPCDeleteOrganizationLogoRequest(req)
 
 	// 调用RPC服务
-	_, err := s.ProcessRPCCall(ctx, "删除Logo",
-		func(ctx context.Context) (interface{}, error) {
-			return nil, s.identityClient.DeleteOrganizationLogo(ctx, rpcReq)
+	err := s.ProcessRPCVoidCall(ctx, "删除Logo",
+		func(ctx context.Context) error {
+			_, err := s.identityClient.DeleteOrganizationLogo(ctx, rpcReq)
+			return err
 		},
 	)
 	if err != nil {
@@ -136,7 +137,8 @@ func (s *logoServiceImpl) BindLogoToOrganization(
 		return nil, err
 	}
 
-	rpcLogo := result.(*identity_srv.OrganizationLogo)
+	rpcLogoResp := result.(*identity_srv.BindLogoToOrganizationResponse)
+	rpcLogo := rpcLogoResp.OrganizationLogo
 
 	// 如果绑定成功，获取更新后的组织信息
 	orgResult, err := s.ProcessRPCCall(ctx, "获取组织信息",

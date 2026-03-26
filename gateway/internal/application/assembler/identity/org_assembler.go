@@ -3,6 +3,7 @@ package identity
 import (
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/identity"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/common"
+	core "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 )
 
@@ -23,7 +24,7 @@ func (a *orgAssembler) ToHTTPOrganization(
 
 	return &identity.OrganizationDTO{
 		// 核心必填字段
-		ID:   rpc.ID,
+		Id:   rpc.Id,
 		Name: rpc.Name,
 
 		// 可选字段
@@ -68,19 +69,18 @@ func (a *orgAssembler) ToRPCCreateOrgRequest(
 		Name: dto.Name,
 	}
 
-	// 使用 ApplyIfSet 处理所有可选字段
-	common.ApplyIfSet(dto.IsSetParentID, dto.ParentID, func(v *string) {
-		req.ParentID = v
-	})
-	common.ApplyIfSet(dto.IsSetFacilityType, dto.FacilityType, func(v *string) {
-		req.FacilityType = v
-	})
-	common.ApplyIfSet(dto.IsSetAccreditationStatus, dto.AccreditationStatus, func(v *string) {
-		req.AccreditationStatus = v
-	})
-	common.ApplyIfSetSlice(dto.IsSetProvinceCity, dto.ProvinceCity, func(v []string) {
-		req.ProvinceCity = v
-	})
+	if dto.ParentID != nil {
+		req.ParentID = dto.ParentID
+	}
+	if dto.FacilityType != nil {
+		req.FacilityType = dto.FacilityType
+	}
+	if dto.AccreditationStatus != nil {
+		req.AccreditationStatus = dto.AccreditationStatus
+	}
+	if len(dto.ProvinceCity) > 0 {
+		req.ProvinceCity = &core.StringListValue{Items: dto.ProvinceCity}
+	}
 
 	return req
 }
@@ -108,22 +108,29 @@ func (a *orgAssembler) ToRPCUpdateOrgRequest(
 		OrganizationID: dto.OrganizationID,
 	}
 
-	// 使用 ApplyIfSet 处理所有可选字段
-	common.ApplyIfSet(dto.IsSetName, dto.Name, func(v *string) {
-		req.Name = v
-	})
-	common.ApplyIfSet(dto.IsSetParentID, dto.ParentID, func(v *string) {
-		req.ParentID = v
-	})
-	common.ApplyIfSet(dto.IsSetFacilityType, dto.FacilityType, func(v *string) {
-		req.FacilityType = v
-	})
-	common.ApplyIfSet(dto.IsSetAccreditationStatus, dto.AccreditationStatus, func(v *string) {
-		req.AccreditationStatus = v
-	})
-	common.ApplyIfSetSlice(dto.IsSetProvinceCity, dto.ProvinceCity, func(v []string) {
-		req.ProvinceCity = v
-	})
+	if dto.Name != nil {
+		req.Name = dto.Name
+	}
+	if dto.ParentID != nil {
+		req.ParentID = dto.ParentID
+	}
+	if dto.FacilityType != nil {
+		req.FacilityType = dto.FacilityType
+	}
+	if dto.AccreditationStatus != nil {
+		req.AccreditationStatus = dto.AccreditationStatus
+	}
+	if dto.ProvinceCity != nil {
+		items := make([]string, 0, len(dto.ProvinceCity.GetValues()))
+		for _, value := range dto.ProvinceCity.GetValues() {
+			if str := value.GetStringValue(); str != "" {
+				items = append(items, str)
+			}
+		}
+		if len(items) > 0 {
+			req.ProvinceCity = &core.StringListValue{Items: items}
+		}
+	}
 
 	return req
 }

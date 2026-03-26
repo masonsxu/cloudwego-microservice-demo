@@ -179,7 +179,7 @@ func (am *AuditMiddlewareImpl) sendAuditLog(req *identity_srv.CreateAuditLogRequ
 	// 使用独立的 context 避免父 context 取消影响审计日志写入
 	ctx := context.Background()
 
-	if err := am.identityClient.CreateAuditLog(ctx, req); err != nil {
+	if _, err := am.identityClient.CreateAuditLog(ctx, req); err != nil {
 		am.logger.Warn().
 			Err(err).
 			Str("resource", req.GetResource()).
@@ -193,25 +193,25 @@ func resolveAction(method, path string) identity_srv.AuditAction {
 	// 特殊路径处理
 	switch {
 	case strings.Contains(path, "/auth/login"):
-		return identity_srv.AuditAction_LOGIN
+		return identity_srv.AuditAction_AUDIT_ACTION_LOGIN
 	case strings.Contains(path, "/auth/refresh"):
-		return identity_srv.AuditAction_LOGIN
+		return identity_srv.AuditAction_AUDIT_ACTION_LOGIN
 	case strings.Contains(path, "/auth/logout"):
-		return identity_srv.AuditAction_LOGOUT
+		return identity_srv.AuditAction_AUDIT_ACTION_LOGOUT
 	case strings.Contains(path, "/password"):
-		return identity_srv.AuditAction_PASSWORD_CHANGE
+		return identity_srv.AuditAction_AUDIT_ACTION_PASSWORD_CHANGE
 	}
 
 	// 通用 HTTP 方法映射
 	switch method {
 	case "POST":
-		return identity_srv.AuditAction_CREATE
+		return identity_srv.AuditAction_AUDIT_ACTION_CREATE
 	case "PUT", "PATCH":
-		return identity_srv.AuditAction_UPDATE
+		return identity_srv.AuditAction_AUDIT_ACTION_UPDATE
 	case "DELETE":
-		return identity_srv.AuditAction_DELETE
+		return identity_srv.AuditAction_AUDIT_ACTION_DELETE
 	default:
-		return identity_srv.AuditAction_CREATE
+		return identity_srv.AuditAction_AUDIT_ACTION_CREATE
 	}
 }
 

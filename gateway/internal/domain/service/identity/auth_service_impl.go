@@ -123,7 +123,8 @@ func (s *authServiceImpl) ChangePassword(
 			rpcReq.UserID = &userID
 
 			// 调用RPC服务
-			return s.identityClient.ChangePassword(ctx, rpcReq)
+			_, err := s.identityClient.ChangePassword(ctx, rpcReq)
+			return err
 		},
 		"user_id", userID,
 	)
@@ -146,7 +147,8 @@ func (s *authServiceImpl) ResetPassword(
 			rpcReq := s.assembler.Auth().ToRPCResetPasswordRequest(req)
 
 			// 调用RPC服务
-			return s.identityClient.ResetPassword(ctx, rpcReq)
+			_, err := s.identityClient.ResetPassword(ctx, rpcReq)
+			return err
 		},
 		"user_id", req.UserID,
 	)
@@ -169,7 +171,8 @@ func (s *authServiceImpl) ForcePasswordChange(
 			rpcReq := s.assembler.Auth().ToRPCForcePasswordChangeRequest(req)
 
 			// 调用RPC服务
-			return s.identityClient.ForcePasswordChange(ctx, rpcReq)
+			_, err := s.identityClient.ForcePasswordChange(ctx, rpcReq)
+			return err
 		},
 		"user_id", req.UserID, "reason", req.Reason,
 	)

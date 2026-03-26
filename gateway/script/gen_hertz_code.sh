@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 脚本功能：Hertz代码生成工具
-# 根据IDL定义生成Hertz项目代码
+# 根据Protobuf IDL定义生成Hertz项目代码
 # 使用方法:
 #   ./gen_hertz_code.sh                 # 生成所有服务代码（详细模式）
 #   ./gen_hertz_code.sh identity        # 仅生成identity服务代码（详细模式）
@@ -45,6 +45,20 @@ check_hz() {
     fi
 }
 
+# 检查 protobuf 代码生成工具是否存在
+check_protobuf_tools() {
+    if ! command -v protoc >/dev/null 2>&1; then
+        print_error "未找到protoc命令，请先安装Protocol Buffers编译器"
+        exit 1
+    fi
+
+    if ! command -v protoc-gen-go >/dev/null 2>&1; then
+        print_error "未找到protoc-gen-go命令，请先安装protobuf Go插件"
+        print_info "安装方法: go install google.golang.org/protobuf/cmd/protoc-gen-go@latest"
+        exit 1
+    fi
+}
+
 # 解析命令行参数
 parse_args() {
     if [[ $# -gt 0 ]]; then
@@ -55,7 +69,7 @@ parse_args() {
 # 生成单个服务的代码
 generate_service() {
     local service_name=$1
-    local idl_file="$HTTP_IDL_ROOT/$service_name/${service_name}_service.thrift"
+    local idl_file="$HTTP_IDL_ROOT/$service_name/${service_name}_service.proto"
 
     # 检查IDL文件是否存在
     if [ ! -f "$idl_file" ]; then
@@ -68,8 +82,12 @@ generate_service() {
         print_info "正在生成 $service_name 服务代码..."
     fi
 
-    # 使用verbose模式执行hz命令
-    hz $VERBOSE_FLAG update -I "$IDL_ROOT" -idl "$idl_file"
+    # 使用 verbose 模式执行 hz 命令（hz 通过 IDL 文件扩展名自动识别协议类型）
+    # 覆盖共享 proto 的 go_package，避免在 gateway/biz/model 下生成 biz/model/github.com/... 嵌套路径
+    hz $VERBOSE_FLAG update \
+        -I "$IDL_ROOT" \
+        --option_package "base/enums.proto=github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/core" \
+        -idl "$idl_file"
 
     if [ $? -eq 0 ]; then
         print_info "$service_name 服务代码生成完成"
@@ -88,7 +106,7 @@ generate_all() {
     local services=("identity" "permission")
 
     for service in "${services[@]}"; do
-        local idl_file="$HTTP_IDL_ROOT/$service/${service}_service.thrift"
+        local idl_file="$HTTP_IDL_ROOT/$service/${service}_service.proto"
         if [ ! -f "$idl_file" ]; then
             print_error "IDL文件不存在: $idl_file"
             print_info "当前工作目录: $(pwd)"
@@ -107,7 +125,9 @@ generate_all() {
 
 # 主逻辑
 main() {
+    # 检查依赖工具
     check_hz
+    check_protobuf_tools
 
     # 解析命令行参数
     parse_args "$@"

@@ -57,10 +57,12 @@ func AbortWithError(c *app.RequestContext, err APIError) {
 	httpStatus := GetHTTPStatus(err.Code())
 
 	// 使用 OperationStatusResponseDTO 结构
+	code := err.Code()
+	message := err.Message()
 	response := &http_base.OperationStatusResponseDTO{
 		BaseResp: &http_base.BaseResponseDTO{
-			Code:    err.Code(),
-			Message: err.Message(),
+			Code:    &code,
+			Message: &message,
 		},
 	}
 
@@ -76,10 +78,11 @@ func AbortWithErrorMessage(c *app.RequestContext, err APIError, message string) 
 	httpStatus := GetHTTPStatus(err.Code())
 
 	// 使用 OperationStatusResponseDTO 结构
+	code := err.Code()
 	response := &http_base.OperationStatusResponseDTO{
 		BaseResp: &http_base.BaseResponseDTO{
-			Code:    err.Code(),
-			Message: message,
+			Code:    &code,
+			Message: &message,
 		},
 	}
 

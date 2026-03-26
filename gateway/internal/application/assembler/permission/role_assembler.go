@@ -27,17 +27,17 @@ func (a *roleAssembler) ToHTTPRoleDefinition(
 	}
 
 	return &permissionModel.RoleDefinitionDTO{
-		ID:           rpc.Id,
+		Id:           rpc.Id,
 		Name:         rpc.Name,
 		Description:  common.CopyStringPtr(rpc.Description),
 		Status:       common.ConvertRoleStatusPtrToHTTPPtr(rpc.Status),
 		Permissions:  a.permissionAssembler.ToHTTPPermissions(rpc.Permissions),
-		IsSystemRole: common.CopyBoolPtr(&rpc.IsSystemRole),
+		IsSystemRole: common.CopyBoolPtr(rpc.IsSystemRole),
 		CreatedBy:    common.CopyStringPtr(rpc.CreatedBy),
 		UpdatedBy:    common.CopyStringPtr(rpc.UpdatedBy),
 		CreatedAt:    common.CopyInt64Ptr(rpc.CreatedAt),
 		UpdatedAt:    common.CopyInt64Ptr(rpc.UpdatedAt),
-		UserCount:    common.CopyInt64Ptr(rpc.UserCount), // 新增：用户数量
+		UserCount:    common.CopyInt64Ptr(rpc.UserCount),
 	}
 }
 
@@ -65,17 +65,21 @@ func (a *roleAssembler) ToRPCRoleDefinition(
 		return nil
 	}
 
-	return &identity_srv.RoleDefinition{
-		Id:           http.ID,
-		Name:         http.Name,
-		Description:  http.Description,
-		Permissions:  a.permissionAssembler.ToRPCPermissions(http.Permissions),
-		IsSystemRole: *http.IsSystemRole,
-		CreatedBy:    http.CreatedBy,
-		UpdatedBy:    http.UpdatedBy,
-		CreatedAt:    http.CreatedAt,
-		UpdatedAt:    http.UpdatedAt,
+	rpc := &identity_srv.RoleDefinition{
+		Id:          http.Id,
+		Name:        http.Name,
+		Description: http.Description,
+		Permissions: a.permissionAssembler.ToRPCPermissions(http.Permissions),
+		CreatedBy:   http.CreatedBy,
+		UpdatedBy:   http.UpdatedBy,
+		CreatedAt:   http.CreatedAt,
+		UpdatedAt:   http.UpdatedAt,
 	}
+	if http.IsSystemRole != nil {
+		rpc.IsSystemRole = http.IsSystemRole
+	}
+
+	return rpc
 }
 
 // ToRPCRoleDefinitionCreateRequest 将HTTP角色定义创建请求转换为RPC请求
@@ -87,16 +91,13 @@ func (a *roleAssembler) ToRPCRoleDefinitionCreateRequest(
 	}
 
 	req := &identity_srv.RoleDefinitionCreateRequest{
-		Name:         http.Name,
-		Description:  http.Description,
-		Permissions:  a.permissionAssembler.ToRPCPermissions(http.Permissions),
-		IsSystemRole: false, // 默认值
+		Name:        http.Name,
+		Description: http.Description,
+		Permissions: a.permissionAssembler.ToRPCPermissions(http.Permissions),
 	}
-
-	// 使用 ApplyIfSet 处理可选的 IsSystemRole 字段
-	common.ApplyIfSet(http.IsSetIsSystemRole, http.IsSystemRole, func(v *bool) {
-		req.IsSystemRole = *v
-	})
+	if http.IsSystemRole != nil {
+		req.IsSystemRole = http.IsSystemRole
+	}
 
 	return req
 }
@@ -122,8 +123,8 @@ func (a *roleAssembler) ToRPCRoleDefinitionUpdateRequest(
 		RoleDefinitionID: http.RoleDefinitionID,
 		Description:      http.Description,
 		Status:           common.ConvertRoleStatusPtrToRPCPtr(http.Status),
-		Permissions:      a.permissionAssembler.ToRPCPermissions(http.Permissions),
-		Name:             http.Name, // 支持更新角色名称
+		Permissions:      a.permissionAssembler.ToRPCPermissionListValue(http.Permissions),
+		Name:             http.Name,
 	}
 }
 

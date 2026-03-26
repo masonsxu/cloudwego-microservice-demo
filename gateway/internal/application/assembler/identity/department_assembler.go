@@ -23,7 +23,7 @@ func (a *departmentAssembler) ToHTTPDepartment(
 
 	return &identity.DepartmentDTO{
 		// 核心必填字段
-		ID:             rpc.ID,
+		Id:             rpc.Id,
 		Name:           rpc.Name,
 		OrganizationID: rpc.OrganizationID,
 
@@ -68,10 +68,9 @@ func (a *departmentAssembler) ToRPCCreateDeptRequest(
 		Name:           dto.Name,
 	}
 
-	// 使用 ApplyIfSet 处理可选字段
-	common.ApplyIfSet(dto.IsSetDepartmentType, dto.DepartmentType, func(v *string) {
-		req.DepartmentType = v
-	})
+	if dto.DepartmentType != nil {
+		req.DepartmentType = dto.DepartmentType
+	}
 
 	return req
 }
@@ -87,13 +86,12 @@ func (a *departmentAssembler) ToRPCUpdateDeptRequest(
 		DepartmentID: dto.DepartmentID,
 	}
 
-	// 使用 ApplyIfSet 处理所有可选字段
-	common.ApplyIfSet(dto.IsSetName, dto.Name, func(v *string) {
-		req.Name = v
-	})
-	common.ApplyIfSet(dto.IsSetDepartmentType, dto.DepartmentType, func(v *string) {
-		req.DepartmentType = v
-	})
+	if dto.Name != nil {
+		req.Name = dto.Name
+	}
+	if dto.DepartmentType != nil {
+		req.DepartmentType = dto.DepartmentType
+	}
 
 	return req
 }

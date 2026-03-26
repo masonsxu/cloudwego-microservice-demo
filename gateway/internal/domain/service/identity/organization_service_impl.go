@@ -52,8 +52,8 @@ func (s *organizationServiceImpl) CreateOrganization(
 		return nil, err
 	}
 
-	rpcOrg := result.(*identity_srv.Organization)
-	httpOrg := s.assembler.Organization().ToHTTPOrganization(rpcOrg)
+	rpcResp := result.(*identity_srv.CreateOrganizationResponse)
+	httpOrg := s.assembler.Organization().ToHTTPOrganization(rpcResp.Organization)
 
 	httpResp := &identity.OrganizationResponseDTO{
 		BaseResp:     s.ResponseBuilder().BuildSuccessResponse(),
@@ -78,8 +78,8 @@ func (s *organizationServiceImpl) GetOrganization(
 		return nil, err
 	}
 
-	rpcOrg := result.(*identity_srv.Organization)
-	httpOrg := s.assembler.Organization().ToHTTPOrganization(rpcOrg)
+	rpcResp := result.(*identity_srv.GetOrganizationResponse)
+	httpOrg := s.assembler.Organization().ToHTTPOrganization(rpcResp.Organization)
 
 	httpResp := &identity.OrganizationResponseDTO{
 		BaseResp:     s.ResponseBuilder().BuildSuccessResponse(),
@@ -104,8 +104,8 @@ func (s *organizationServiceImpl) UpdateOrganization(
 		return nil, err
 	}
 
-	rpcOrg := result.(*identity_srv.Organization)
-	httpOrg := s.assembler.Organization().ToHTTPOrganization(rpcOrg)
+	rpcResp := result.(*identity_srv.UpdateOrganizationResponse)
+	httpOrg := s.assembler.Organization().ToHTTPOrganization(rpcResp.Organization)
 
 	httpResp := &identity.OrganizationResponseDTO{
 		BaseResp:     s.ResponseBuilder().BuildSuccessResponse(),
@@ -121,7 +121,10 @@ func (s *organizationServiceImpl) DeleteOrganization(
 ) (*http_base.OperationStatusResponseDTO, error) {
 	err := s.ProcessRPCVoidCall(ctx, "删除组织",
 		func(ctx context.Context) error {
-			return s.identityClient.DeleteOrganization(ctx, *req.OrganizationID)
+			_, err := s.identityClient.DeleteOrganization(ctx, &identity_srv.DeleteOrganizationRequest{
+				OrganizationID: req.OrganizationID,
+			})
+			return err
 		},
 		"organization_id", req.OrganizationID,
 	)

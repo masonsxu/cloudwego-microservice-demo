@@ -56,21 +56,22 @@ func (s *userManagementServiceImpl) CreateUser(
 		return nil, err
 	}
 
-	rpcUserProfile := result.(*identity_srv.UserProfile)
+	rpcResp := result.(*identity_srv.CreateUserResponse)
+	rpcUserProfile := rpcResp.UserProfile
 	httpUserProfile := s.assembler.User().ToHTTPUserProfile(rpcUserProfile)
 
 	// 用户创建成功后，处理组织关系和角色分配
-	if rpcUserProfile.ID != nil {
+	if rpcUserProfile != nil && rpcUserProfile.Id != nil {
 		// 1. 如果指定了组织ID，创建主成员关系
 		if req.OrganizationID != nil && *req.OrganizationID != "" {
 			httpUserProfile.PrimaryOrganizationID = req.OrganizationID
-			s.assignOrganizationMembership(ctx, rpcUserProfile.ID, req.OrganizationID, operatorID)
+			s.assignOrganizationMembership(ctx, rpcUserProfile.Id, req.OrganizationID, operatorID)
 		}
 
 		// 2. 如果指定了角色ID列表，批量分配角色
 		if len(req.RoleIDs) > 0 {
 			httpUserProfile.RoleIDs = req.RoleIDs
-			s.assignRolesToUser(ctx, rpcUserProfile.ID, req.RoleIDs, operatorID)
+			s.assignRolesToUser(ctx, rpcUserProfile.Id, req.RoleIDs, operatorID)
 		}
 	}
 
@@ -97,8 +98,8 @@ func (s *userManagementServiceImpl) GetUser(
 		return nil, err
 	}
 
-	rpcUserProfile := result.(*identity_srv.UserProfile)
-	httpUserProfile := s.assembler.User().ToHTTPUserProfile(rpcUserProfile)
+	rpcResp := result.(*identity_srv.GetUserResponse)
+	httpUserProfile := s.assembler.User().ToHTTPUserProfile(rpcResp.UserProfile)
 
 	// 填充用户角色ID列表
 	s.enrichUserProfileWithRoles(ctx, httpUserProfile)
@@ -128,8 +129,8 @@ func (s *userManagementServiceImpl) GetMe(
 		return nil, err
 	}
 
-	rpcUserProfile := result.(*identity_srv.UserProfile)
-	httpUserProfile := s.assembler.User().ToHTTPUserProfile(rpcUserProfile)
+	rpcResp := result.(*identity_srv.GetUserResponse)
+	httpUserProfile := s.assembler.User().ToHTTPUserProfile(rpcResp.UserProfile)
 
 	// 填充用户角色ID列表
 	s.enrichUserProfileWithRoles(ctx, httpUserProfile)
@@ -158,8 +159,8 @@ func (s *userManagementServiceImpl) UpdateUser(
 		return nil, err
 	}
 
-	rpcUserProfile := result.(*identity_srv.UserProfile)
-	httpUserProfile := s.assembler.User().ToHTTPUserProfile(rpcUserProfile)
+	rpcResp := result.(*identity_srv.UpdateUserResponse)
+	httpUserProfile := s.assembler.User().ToHTTPUserProfile(rpcResp.UserProfile)
 
 	// 用户更新成功后，处理组织关系和角色更新
 	if req.UserID != nil {
@@ -172,8 +173,14 @@ func (s *userManagementServiceImpl) UpdateUser(
 		// 2. 如果指定了角色ID列表，更新角色分配
 		// 使用 req.RoleIDs != nil 来判断字段是否被提供，支持清空所有角色
 		if req.RoleIDs != nil {
-			httpUserProfile.RoleIDs = req.RoleIDs
-			if err := s.updateUserRoles(ctx, req.UserID, req.RoleIDs, operatorID); err != nil {
+			roleIDs := make([]string, 0, len(req.RoleIDs.GetValues()))
+			for _, value := range req.RoleIDs.GetValues() {
+				if roleID := value.GetStringValue(); roleID != "" {
+					roleIDs = append(roleIDs, roleID)
+				}
+			}
+			httpUserProfile.RoleIDs = roleIDs
+			if err := s.updateUserRoles(ctx, req.UserID, roleIDs, operatorID); err != nil {
 				// 角色更新失败，记录错误并返回
 				s.Log(ctx).Error().Err(err).Str("user_id", *req.UserID).Msg("更新用户角色失败")
 
@@ -209,8 +216,8 @@ func (s *userManagementServiceImpl) UpdateMe(
 		return nil, err
 	}
 
-	rpcUserProfile := result.(*identity_srv.UserProfile)
-	httpUserProfile := s.assembler.User().ToHTTPUserProfile(rpcUserProfile)
+	rpcResp := result.(*identity_srv.UpdateUserResponse)
+	httpUserProfile := s.assembler.User().ToHTTPUserProfile(rpcResp.UserProfile)
 
 	httpResp := &identity.UserProfileResponseDTO{
 		BaseResp: s.ResponseBuilder().BuildSuccessResponse(),
@@ -227,7 +234,8 @@ func (s *userManagementServiceImpl) DeleteUser(
 	err := s.ProcessRPCVoidCall(ctx, "删除用户",
 		func(ctx context.Context) error {
 			rpcReq := s.assembler.User().ToRPCDeleteUserRequest(req)
-			return s.identityClient.DeleteUser(ctx, rpcReq)
+			_, err := s.identityClient.DeleteUser(ctx, rpcReq)
+			return err
 		},
 		"user_id", req.UserID,
 	)
@@ -298,7 +306,8 @@ func (s *userManagementServiceImpl) ChangeUserStatus(
 	err := s.ProcessRPCVoidCall(ctx, "变更用户状态",
 		func(ctx context.Context) error {
 			rpcReq := s.assembler.User().ToRPCChangeUserStatusRequest(req)
-			return s.identityClient.ChangeUserStatus(ctx, rpcReq)
+			_, err := s.identityClient.ChangeUserStatus(ctx, rpcReq)
+			return err
 		},
 		"user_id", req.UserID, "status", req.NewStatus,
 	)
@@ -316,7 +325,8 @@ func (s *userManagementServiceImpl) UnlockUser(
 	err := s.ProcessRPCVoidCall(ctx, "解锁用户",
 		func(ctx context.Context) error {
 			rpcReq := s.assembler.User().ToRPCUnlockUserRequest(req)
-			return s.identityClient.UnlockUser(ctx, rpcReq)
+			_, err := s.identityClient.UnlockUser(ctx, rpcReq)
+			return err
 		},
 		"user_id", req.UserID,
 	)
@@ -338,7 +348,7 @@ func (s *userManagementServiceImpl) enrichUserProfileWithRoles(
 	userProfile *identity.UserProfileDTO,
 ) {
 	// 如果用户ID为空，直接返回
-	if userProfile == nil || userProfile.ID == nil {
+	if userProfile == nil || userProfile.Id == nil {
 		return
 	}
 
@@ -346,12 +356,12 @@ func (s *userManagementServiceImpl) enrichUserProfileWithRoles(
 	roleResp, err := s.identityClient.ListUserRoleAssignments(
 		ctx,
 		&identity_srv.UserRoleQueryRequest{
-			UserID: userProfile.ID,
+			UserID: userProfile.Id,
 		},
 	)
 	if err != nil {
 		// 角色获取失败不影响主流程，仅记录警告
-		s.Log(ctx).Warn().Err(err).Str("user_id", *userProfile.ID).Msg("获取用户角色失败")
+		s.Log(ctx).Warn().Err(err).Str("user_id", *userProfile.Id).Msg("获取用户角色失败")
 
 		return
 	}
@@ -383,8 +393,8 @@ func (s *userManagementServiceImpl) enrichUserProfilesWithRolesBatch(
 	// 1. 提取所有用户ID
 	userIDs := make([]string, 0, len(userProfiles))
 	for _, profile := range userProfiles {
-		if profile != nil && profile.ID != nil {
-			userIDs = append(userIDs, *profile.ID)
+		if profile != nil && profile.Id != nil {
+			userIDs = append(userIDs, *profile.Id)
 		}
 	}
 
@@ -416,8 +426,8 @@ func (s *userManagementServiceImpl) enrichUserProfilesWithRolesBatch(
 
 	// 4. 为每个用户填充角色信息
 	for _, profile := range userProfiles {
-		if profile != nil && profile.ID != nil {
-			if roleIDs, exists := rolesMap[*profile.ID]; exists {
+		if profile != nil && profile.Id != nil {
+			if roleIDs, exists := rolesMap[*profile.Id]; exists {
 				profile.RoleIDs = roleIDs
 			}
 		}
@@ -441,7 +451,7 @@ func (s *userManagementServiceImpl) assignOrganizationMembership(
 	_, err := s.identityClient.AddMembership(ctx, &identity_srv.AddMembershipRequest{
 		UserID:         userID,
 		OrganizationID: organizationID,
-		IsPrimary:      isPrimary,
+		IsPrimary:      &isPrimary,
 	})
 	if err != nil {
 		// 成员关系创建失败不影响主流程，仅记录警告
@@ -511,7 +521,10 @@ func (s *userManagementServiceImpl) updateOrganizationMembership(
 	}
 
 	// 获取用户的主成员关系
-	primaryMembership, err := s.identityClient.GetPrimaryMembership(ctx, *userID)
+	primaryMembershipResp, err := s.identityClient.GetPrimaryMembership(ctx, &identity_srv.GetPrimaryMembershipRequest{
+		UserID: userID,
+	})
+	primaryMembership := primaryMembershipResp.GetMembership()
 	if err != nil || primaryMembership == nil {
 		// 如果没有主成员关系，创建一个新的
 		s.assignOrganizationMembership(ctx, userID, organizationID, operatorID)
@@ -524,20 +537,20 @@ func (s *userManagementServiceImpl) updateOrganizationMembership(
 		isPrimary := true
 
 		_, err := s.identityClient.UpdateMembership(ctx, &identity_srv.UpdateMembershipRequest{
-			MembershipID:   primaryMembership.ID,
+			MembershipID:   primaryMembership.Id,
 			OrganizationID: organizationID,
 			IsPrimary:      &isPrimary,
 		})
 		if err != nil {
 			s.Log(ctx).Warn().Err(err).
 				Str("user_id", *userID).
-				Str("membership_id", *primaryMembership.ID).
+				Str("membership_id", *primaryMembership.Id).
 				Str("new_organization_id", *organizationID).
 				Msg("更新主成员关系失败")
 		} else {
 			s.Log(ctx).Info().
 				Str("user_id", *userID).
-				Str("membership_id", *primaryMembership.ID).
+				Str("membership_id", *primaryMembership.Id).
 				Str("new_organization_id", *organizationID).
 				Msg("成功更新主成员关系")
 		}
@@ -662,7 +675,7 @@ func (s *userManagementServiceImpl) removeRolesWithRollback(
 	revokedRoles := make([]string, 0, len(rolesToRemove)) // 记录已成功撤销的角色，用于可能的回滚
 
 	for _, roleID := range rolesToRemove {
-		err := s.identityClient.RevokeRoleFromUser(
+		_, err := s.identityClient.RevokeRoleFromUser(
 			ctx,
 			&identity_srv.RevokeRoleFromUserRequest{
 				UserID:    userID,

@@ -4,6 +4,7 @@ import (
 	permissionModel "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/permission"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/common"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 // permissionAssembler 权限转换器实现
@@ -74,4 +75,64 @@ func (a *permissionAssembler) ToRPCPermissions(
 	}
 
 	return result
+}
+
+func (a *permissionAssembler) ToRPCPermissionsFromListValue(
+	list *structpb.ListValue,
+) []*identity_srv.Permission {
+	if list == nil {
+		return nil
+	}
+
+	result := make([]*identity_srv.Permission, 0, len(list.GetValues()))
+	for _, value := range list.GetValues() {
+		structValue := value.GetStructValue()
+		if structValue == nil {
+			continue
+		}
+
+		fields := structValue.GetFields()
+		resourceValue, ok := fields["resource"]
+		if !ok {
+			continue
+		}
+		resource := resourceValue.GetStringValue()
+		if resource == "" {
+			continue
+		}
+
+		actionValue, ok := fields["action"]
+		if !ok {
+			continue
+		}
+		action := actionValue.GetStringValue()
+		if action == "" {
+			continue
+		}
+
+		permission := &identity_srv.Permission{
+			Resource: &resource,
+			Action:   &action,
+		}
+		if descriptionValue, ok := fields["description"]; ok {
+			if description := descriptionValue.GetStringValue(); description != "" {
+				permission.Description = &description
+			}
+		}
+
+		result = append(result, permission)
+	}
+
+	return result
+}
+
+func (a *permissionAssembler) ToRPCPermissionListValue(
+	list *structpb.ListValue,
+) *identity_srv.PermissionListValue {
+	permissions := a.ToRPCPermissionsFromListValue(list)
+	if permissions == nil {
+		return nil
+	}
+
+	return &identity_srv.PermissionListValue{Items: permissions}
 }

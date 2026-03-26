@@ -6,7 +6,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/jwt"
 
-	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/core"
+	core "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/core"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/http_base"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/identity"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/context/auth_context"
@@ -83,7 +83,7 @@ func checkUserStatusFromClaims(ctx context.Context, c *app.RequestContext) bool 
 	claims := jwt.ExtractClaims(ctx, c)
 	if claims != nil {
 		if statusInt, ok := extractIntClaim(claims, Status); ok {
-			return core.UserStatus(statusInt) == core.UserStatus_ACTIVE
+			return core.UserStatus(statusInt) == core.UserStatus_USER_STATUS_ACTIVE
 		}
 	}
 

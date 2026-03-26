@@ -9,10 +9,6 @@ import (
 	hertztracing "github.com/hertz-contrib/obs-opentelemetry/tracing"
 	"github.com/hertz-contrib/requestid"
 
-	identityHandler "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/handler/identity"
-	permissionHandler "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/handler/permission"
-	identityService "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/identity"
-	permissionService "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/permission"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/otel"
 )
@@ -43,12 +39,10 @@ func ProvideServerFactory(cfg *config.Configuration, tracer *otel.Tracer, provid
 // HandlerRegistry Handler 注册器
 // 负责将依赖注入到 Handler 层并注册中间件
 type HandlerRegistry struct {
-	server            *server.Hertz
-	tracer            *otel.Tracer
-	middlewares       *MiddlewareContainer
-	identityService   identityService.Service
-	permissionService permissionService.Service
-	logger            *hertzZerolog.Logger
+	server      *server.Hertz
+	tracer      *otel.Tracer
+	middlewares *MiddlewareContainer
+	logger      *hertzZerolog.Logger
 }
 
 // ProvideHandlerRegistry 提供 Handler 注册器
@@ -56,16 +50,14 @@ func ProvideHandlerRegistry(
 	factory *otel.ServerFactory,
 	tracer *otel.Tracer,
 	middlewares *MiddlewareContainer,
-	services *ServiceContainer,
+	_ *ServiceContainer,
 	logger *hertzZerolog.Logger,
 ) *HandlerRegistry {
 	return &HandlerRegistry{
-		server:            factory.Server(),
-		tracer:            tracer,
-		middlewares:       middlewares,
-		identityService:   services.IdentityService,
-		permissionService: services.PermissionService,
-		logger:            logger,
+		server:      factory.Server(),
+		tracer:      tracer,
+		middlewares: middlewares,
+		logger:      logger,
 	}
 }
 
@@ -90,12 +82,10 @@ func (r *HandlerRegistry) RegisterMiddlewares() {
 
 // RegisterHandlers 注册 Handler 依赖
 func (r *HandlerRegistry) RegisterHandlers() {
-	// 设置 Handler 层的服务依赖
-	identityHandler.SetIdentityService(r.identityService, r.middlewares.JWTMiddleware)
-	permissionHandler.SetPermissionService(r.permissionService)
-
+	// 当前 biz/handler 由 hz 重新生成，已不再暴露旧的 service setter 注入点。
+	// 保留该生命周期钩子，后续若恢复手写 handler glue，可在这里重新接入。
 	zl := r.logger.Unwrap()
-	zl.Info().Msg("Handler dependencies registered successfully")
+	zl.Info().Msg("Handler registration skipped: generated handlers have no service injection hooks")
 }
 
 // Server 返回 Hertz 服务器实例
