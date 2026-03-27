@@ -3,8 +3,11 @@ package casbin_middleware
 import (
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/rs/zerolog"
+
+	identitycli "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/client/identity_cli"
 )
 
 // Config Casbin 配置
@@ -17,6 +20,8 @@ type Config struct {
 	LogEnabled bool
 	// SyncInterval 策略同步间隔（秒）
 	SyncInterval int
+	// SkipPaths 跳过权限检查的路径列表
+	SkipPaths []string
 }
 
 // DefaultConfig 默认配置
@@ -26,6 +31,12 @@ func DefaultConfig() *Config {
 		Enabled:      true,
 		LogEnabled:   false,
 		SyncInterval: 300, // 5分钟同步一次
+		SkipPaths: []string{
+			"/health",
+			"/metrics",
+			"/swagger",
+			"/api/v1/identity/auth/login",
+		},
 	}
 }
 
@@ -45,7 +56,25 @@ func LoadConfigFromEnv() *Config {
 		config.LogEnabled = true
 	}
 
+	if skipPaths := os.Getenv("CASBIN_SKIP_PATHS"); skipPaths != "" {
+		config.SkipPaths = splitAndTrim(skipPaths, ",")
+	}
+
 	return config
+}
+
+func splitAndTrim(value string, sep string) []string {
+	parts := strings.Split(value, sep)
+	result := make([]string, 0, len(parts))
+
+	for _, part := range parts {
+		trimmed := strings.TrimSpace(part)
+		if trimmed != "" {
+			result = append(result, trimmed)
+		}
+	}
+
+	return result
 }
 
 // ProvideCasbinConfig 提供 Casbin 配置
@@ -108,8 +137,13 @@ func ProvideCasbinMiddleware(config *Config, logger *zerolog.Logger) *CasbinMidd
 		}
 	}
 
-	logger.Info().Msg("Casbin middleware created successfully")
-	return NewCasbinMiddleware(enforcer, logger)
+	middleware := NewCasbinMiddleware(enforcer, logger)
+	if len(config.SkipPaths) > 0 {
+		middleware.SetSkipPaths(config.SkipPaths)
+	}
+
+	logger.Info().Strs("skip_paths", middleware.skipPaths).Msg("Casbin middleware created successfully")
+	return middleware
 }
 
 // ProvideNoOpMiddleware 提供无操作的中间件（用于禁用 Casbin 时）
@@ -120,4 +154,19 @@ func ProvideNoOpMiddleware(logger *zerolog.Logger) *CasbinMiddleware {
 		skipPaths:   []string{},
 		pathMapping: make(map[string]string),
 	}
+}
+
+// ProvidePolicySyncService 提供策略同步服务
+func ProvidePolicySyncService(
+	config *Config,
+	middleware *CasbinMiddleware,
+	identityClient identitycli.IdentityClient,
+	logger *zerolog.Logger,
+) *PolicySyncService {
+	if middleware == nil || middleware.enforcer == nil {
+		logger.Warn().Msg("Casbin middleware or enforcer is nil, policy sync service disabled")
+		return nil
+	}
+
+	return NewPolicySyncService(middleware.enforcer, identityClient, logger, config.SyncInterval)
 }

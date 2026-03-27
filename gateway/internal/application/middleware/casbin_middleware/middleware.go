@@ -26,7 +26,7 @@ func NewCasbinMiddleware(enforcer *CasbinEnforcer, logger *zerolog.Logger) *Casb
 		enforcer:    enforcer,
 		logger:      logger,
 		skipPaths:   defaultSkipPaths(),
-		pathMapping: make(map[string]string),
+		pathMapping: defaultPathMapping(),
 	}
 }
 
@@ -37,6 +37,24 @@ func defaultSkipPaths() []string {
 		"/metrics",
 		"/swagger",
 		"/api/v1/identity/auth/login",
+	}
+}
+
+// defaultPathMapping 默认 API 路径到 Casbin 资源映射
+func defaultPathMapping() map[string]string {
+	return map[string]string{
+		"/api/v1/permission/roles":                    "menu:role_permissions",
+		"/api/v1/permission/roles/*":                  "menu:role_permissions",
+		"/api/v1/identity/users":                      "menu:account_management",
+		"/api/v1/identity/users/*":                    "menu:account_management",
+		"/api/v1/identity/organizations":              "menu:organization_management",
+		"/api/v1/identity/organizations/*":            "menu:organization_management",
+		"/api/v1/identity/departments":                "menu:organization_management",
+		"/api/v1/identity/departments/*":              "menu:organization_management",
+		"/api/v1/identity/organization-logos":         "menu:organization_management",
+		"/api/v1/identity/organization-logos/*":       "menu:organization_management",
+		"/api/v1/identity/users/*/memberships":        "menu:organization_management",
+		"/api/v1/identity/users/*/primary-membership": "menu:organization_management",
 	}
 }
 
@@ -57,7 +75,14 @@ func (m *CasbinMiddleware) MiddlewareFunc() app.HandlerFunc {
 		method := string(c.Request.Method())
 
 		// 检查是否跳过权限检查
-		if m.shouldSkip(path) {
+		shouldSkip := m.shouldSkip(path)
+		tracelog.Event(ctx, m.logger.Debug()).
+			Str("component", "casbin_middleware").
+			Str("path", path).
+			Strs("skip_paths", m.skipPaths).
+			Bool("should_skip", shouldSkip).
+			Msg("Casbin skip decision")
+		if shouldSkip {
 			c.Next(ctx)
 			return
 		}
@@ -71,15 +96,26 @@ func (m *CasbinMiddleware) MiddlewareFunc() app.HandlerFunc {
 		// 获取认证上下文
 		authCtx, exists := auth_context.GetAuthContext(c)
 		if !exists || authCtx == nil {
-			tracelog.Event(ctx, m.logger.Warn()).Str("path", path).Msg("No auth context found")
+			tracelog.Event(ctx, m.logger.Warn()).
+				Str("path", path).
+				Str("method", method).
+				Msg("No auth context found")
 			abortWithUnauthorized(c, "Authentication required")
 			return
 		}
 
+		tracelog.Event(ctx, m.logger.Debug()).
+			Str("path", path).
+			Str("method", method).
+			Msg("Auth context found")
+
 		// 获取用户信息
 		userID, ok := auth_context.GetCurrentUserProfileID(c)
 		if !ok {
-			tracelog.Event(ctx, m.logger.Warn()).Str("path", path).Msg("No user ID found in auth context")
+			tracelog.Event(ctx, m.logger.Warn()).
+				Str("path", path).
+				Str("method", method).
+				Msg("No user ID found in auth context")
 			abortWithUnauthorized(c, "User not authenticated")
 			return
 		}
@@ -87,19 +123,40 @@ func (m *CasbinMiddleware) MiddlewareFunc() app.HandlerFunc {
 		// 获取角色ID列表（多角色模式）
 		roleIDs := auth_context.GetCurrentRoleIDs(c)
 		if len(roleIDs) == 0 {
-			tracelog.Event(ctx, m.logger.Warn()).Str("path", path).Str("user_id", userID).Msg("No roles found for user")
+			tracelog.Event(ctx, m.logger.Warn()).
+				Str("path", path).
+				Str("method", method).
+				Str("user_id", userID).
+				Msg("No roles found for user")
 			abortWithPermissionDenied(c, "No roles assigned")
 			return
 		}
 
 		// 获取部门ID列表
 		deptIDs := auth_context.GetCurrentDepartmentIDs(c)
+		tracelog.Event(ctx, m.logger.Debug()).
+			Str("path", path).
+			Str("method", method).
+			Str("user_id", userID).
+			Strs("role_ids", roleIDs).
+			Strs("department_ids", deptIDs).
+			Msg("Casbin auth context extracted")
 
 		// 将HTTP方法转换为操作类型
 		action := methodToAction(method)
 
 		// 获取权限资源（优先使用路径映射，其次使用API路径）
 		resource := m.getResource(path)
+
+		tracelog.Event(ctx, m.logger.Debug()).
+			Str("path", path).
+			Str("method", method).
+			Str("user_id", userID).
+			Strs("role_ids", roleIDs).
+			Strs("department_ids", deptIDs).
+			Str("resource", resource).
+			Str("action", action).
+			Msg("Starting Casbin permission evaluation")
 
 		// 执行权限检查（多角色取并集）
 		allowed, dataScope, err := m.checkMultiRolePermission(ctx, userID, roleIDs, deptIDs, resource, action)
@@ -231,13 +288,40 @@ func (m *CasbinMiddleware) checkMultiRolePermission(
 ) (bool, string, error) {
 	maxDataScope := ""
 
-	// 为每个角色和部门组合检查权限
+	// 构建有效角色主体集合：JWT 角色ID + Casbin g 关系解析出的角色编码
+	effectiveRoleSubjects := make(map[string]struct{}, len(roleIDs)+4)
 	for _, roleID := range roleIDs {
+		effectiveRoleSubjects["role:"+roleID] = struct{}{}
+	}
+
+	userSub := "user:" + userID
+	for _, resolvedRole := range m.enforcer.GetRolesForUserInDomain(userSub, "*") {
+		effectiveRoleSubjects[resolvedRole] = struct{}{}
+	}
+	for _, deptID := range deptIDs {
+		domain := "dept:" + deptID
+		for _, resolvedRole := range m.enforcer.GetRolesForUserInDomain(userSub, domain) {
+			effectiveRoleSubjects[resolvedRole] = struct{}{}
+		}
+	}
+
+	// 为每个角色和部门组合检查权限
+	for sub := range effectiveRoleSubjects {
 		// 先检查全局权限（域为 *）
-		allowed, dataScope, err := m.enforcer.EnforceWithDataScope("role:"+roleID, "*", resource, action)
+		allowed, dataScope, err := m.enforcer.EnforceWithDataScope(sub, "*", resource, action)
 		if err != nil {
 			return false, "", err
 		}
+
+		tracelog.Event(ctx, m.logger.Debug()).
+			Str("subject", sub).
+			Str("domain", "*").
+			Str("resource", resource).
+			Str("action", action).
+			Bool("allowed", allowed).
+			Str("data_scope", dataScope).
+			Msg("Casbin role global-domain evaluation")
+
 		if allowed {
 			if compareDataScope(dataScope, maxDataScope) > 0 {
 				maxDataScope = dataScope
@@ -246,10 +330,21 @@ func (m *CasbinMiddleware) checkMultiRolePermission(
 
 		// 再检查每个部门的权限
 		for _, deptID := range deptIDs {
-			allowed, dataScope, err := m.enforcer.EnforceWithDataScope("role:"+roleID, "dept:"+deptID, resource, action)
+			domain := "dept:" + deptID
+			allowed, dataScope, err := m.enforcer.EnforceWithDataScope(sub, domain, resource, action)
 			if err != nil {
 				return false, "", err
 			}
+
+			tracelog.Event(ctx, m.logger.Debug()).
+				Str("subject", sub).
+				Str("domain", domain).
+				Str("resource", resource).
+				Str("action", action).
+				Bool("allowed", allowed).
+				Str("data_scope", dataScope).
+				Msg("Casbin role dept-domain evaluation")
+
 			if allowed {
 				if compareDataScope(dataScope, maxDataScope) > 0 {
 					maxDataScope = dataScope
@@ -258,17 +353,60 @@ func (m *CasbinMiddleware) checkMultiRolePermission(
 		}
 	}
 
-	// 也检查用户直接授予的权限
+	// 检查用户主体权限（可通过 g 关系间接命中角色策略）
+	// 先检查全局域
+	allowed, dataScope, err := m.enforcer.EnforceWithDataScope(userSub, "*", resource, action)
+	if err != nil {
+		return false, "", err
+	}
+
+	tracelog.Event(ctx, m.logger.Debug()).
+		Str("subject", userSub).
+		Str("domain", "*").
+		Str("resource", resource).
+		Str("action", action).
+		Bool("allowed", allowed).
+		Str("data_scope", dataScope).
+		Msg("Casbin user global-domain evaluation")
+
+	if allowed {
+		if compareDataScope(dataScope, maxDataScope) > 0 {
+			maxDataScope = dataScope
+		}
+	}
+
+	// 再检查部门域
 	for _, deptID := range deptIDs {
-		allowed, dataScope, err := m.enforcer.EnforceWithDataScope("user:"+userID, "dept:"+deptID, resource, action)
+		domain := "dept:" + deptID
+		allowed, dataScope, err := m.enforcer.EnforceWithDataScope(userSub, domain, resource, action)
 		if err != nil {
 			return false, "", err
 		}
+
+		tracelog.Event(ctx, m.logger.Debug()).
+			Str("subject", userSub).
+			Str("domain", domain).
+			Str("resource", resource).
+			Str("action", action).
+			Bool("allowed", allowed).
+			Str("data_scope", dataScope).
+			Msg("Casbin direct-user evaluation")
+
 		if allowed {
 			if compareDataScope(dataScope, maxDataScope) > 0 {
 				maxDataScope = dataScope
 			}
 		}
+	}
+
+	if maxDataScope == "" {
+		tracelog.Event(ctx, m.logger.Warn()).
+			Str("user_id", userID).
+			Strs("role_ids", roleIDs).
+			Strs("department_ids", deptIDs).
+			Str("resource", resource).
+			Str("action", action).
+			Msg("Casbin denied: no matching policy found")
 	}
 
 	return maxDataScope != "", maxDataScope, nil

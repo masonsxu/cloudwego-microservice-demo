@@ -630,12 +630,19 @@ message CheckPermissionResponse {
 
 message SyncPoliciesRequest {}
 
+message CasbinPolicyRule {
+  repeated string values = 1;
+}
+
 message SyncPoliciesResponse {
   optional bool success = 1;
   optional int32 rolePolicyCount = 2;
   optional int32 userRoleBindingCount = 3;
   optional int32 roleInheritanceCount = 4;
   optional string message = 5;
+  repeated CasbinPolicyRule policies = 6;
+  repeated CasbinPolicyRule groupingPolicies = 7;
+  repeated CasbinPolicyRule roleInheritancePolicies = 8;
 }
 
 message GetUserDataScopeRequest {

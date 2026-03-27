@@ -28,11 +28,14 @@ type Service interface {
 
 // SyncResult 策略同步结果
 type SyncResult struct {
-	Success              bool
-	RolePolicyCount      int32
-	UserRoleBindingCount int32
-	RoleInheritanceCount int32
-	Message              string
+	Success                 bool
+	RolePolicyCount         int32
+	UserRoleBindingCount    int32
+	RoleInheritanceCount    int32
+	Message                 string
+	Policies                [][]string
+	GroupingPolicies        [][]string
+	RoleInheritancePolicies [][]string
 }
 
 // CheckResult 权限检查结果
@@ -75,6 +78,7 @@ func (s *ServiceImpl) SyncPolicies(ctx context.Context) (*SyncResult, error) {
 	enforcer := s.policySyncRepo.GetEnforcer()
 	if enforcer != nil {
 		policies, _ := enforcer.GetPolicy()
+		result.Policies = policies
 		result.RolePolicyCount = int32(len(policies))
 	}
 
@@ -88,6 +92,7 @@ func (s *ServiceImpl) SyncPolicies(ctx context.Context) (*SyncResult, error) {
 	// 获取用户角色绑定数量
 	if enforcer != nil {
 		groupingPolicies, _ := enforcer.GetGroupingPolicy()
+		result.GroupingPolicies = groupingPolicies
 		result.UserRoleBindingCount = int32(len(groupingPolicies))
 	}
 
@@ -101,6 +106,7 @@ func (s *ServiceImpl) SyncPolicies(ctx context.Context) (*SyncResult, error) {
 	// 获取角色继承数量
 	if enforcer != nil {
 		g2Policies, _ := enforcer.GetNamedGroupingPolicy("g2")
+		result.RoleInheritancePolicies = g2Policies
 		result.RoleInheritanceCount = int32(len(g2Policies))
 	}
 

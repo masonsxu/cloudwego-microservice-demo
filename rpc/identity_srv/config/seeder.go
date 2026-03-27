@@ -50,6 +50,12 @@ func SeedDatabase(db *gorm.DB, logger *zerolog.Logger, cfg *DatabaseConfig) erro
 		// 不阻止服务启动
 	}
 
+	// 4. 为 superadmin 初始化全量菜单权限（幂等覆盖）
+	if err := seedSuperAdminMenuPermissions(db, logger); err != nil {
+		logger.Warn().Err(err).Msg("⚠️  superadmin 菜单权限种子初始化失败")
+		// 不阻止服务启动
+	}
+
 	logger.Info().
 		Str("default_org_id", orgID.String()).
 		Str("superadmin_user_id", userID.String()).
@@ -319,6 +325,83 @@ func seedSuperAdminRoleAssignment(db *gorm.DB, cfg *DatabaseConfig) error {
 
 // querySuperAdminUserID 从 identity_srv 数据库查询超级管理员用户 ID
 // 建立临时数据库连接来跨数据库查询
+func seedSuperAdminMenuPermissions(db *gorm.DB, logger *zerolog.Logger) error {
+	logger.Info().Msg("正在初始化 superadmin 全量菜单权限...")
+
+	var superadminRole models.RoleDefinition
+	if err := db.Where("name = ?", "superadmin").First(&superadminRole).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			logger.Warn().Msg("未找到 superadmin 角色，跳过菜单权限初始化")
+			return nil
+		}
+
+		return fmt.Errorf("查询 superadmin 角色失败: %w", err)
+	}
+
+	var latestVersion int
+	if err := db.Model(&models.Menu{}).
+		Where("product_line = ?", "default").
+		Select("COALESCE(MAX(version), 0)").
+		Scan(&latestVersion).Error; err != nil {
+		return fmt.Errorf("查询菜单最新版本失败: %w", err)
+	}
+
+	if latestVersion == 0 {
+		logger.Warn().Msg("菜单数据为空，跳过 superadmin 菜单权限初始化")
+		return nil
+	}
+
+	var menus []models.Menu
+	if err := db.Where("product_line = ? AND version = ?", "default", latestVersion).Find(&menus).Error; err != nil {
+		return fmt.Errorf("查询菜单数据失败: %w", err)
+	}
+
+	if len(menus) == 0 {
+		logger.Warn().Msg("最新版本菜单数据为空，跳过 superadmin 菜单权限初始化")
+		return nil
+	}
+
+	permissions := make([]*models.RoleMenuPermission, 0, len(menus))
+	for i := range menus {
+		menuID := menus[i].SemanticID
+		if menuID == "" {
+			continue
+		}
+
+		permissions = append(permissions, &models.RoleMenuPermission{
+			RoleID:         superadminRole.ID,
+			MenuID:         menuID,
+			PermissionType: models.PermissionFull,
+			DataScope:      models.DataScopeAllOrgs,
+		})
+	}
+
+	if err := db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Unscoped().Delete(&models.RoleMenuPermission{}, "role_id = ?", superadminRole.ID).Error; err != nil {
+			return fmt.Errorf("删除 superadmin 旧菜单权限失败: %w", err)
+		}
+
+		if len(permissions) == 0 {
+			return nil
+		}
+
+		if err := tx.CreateInBatches(permissions, 100).Error; err != nil {
+			return fmt.Errorf("创建 superadmin 菜单权限失败: %w", err)
+		}
+
+		return nil
+	}); err != nil {
+		return err
+	}
+
+	logger.Info().
+		Str("role_id", superadminRole.ID.String()).
+		Int("permission_count", len(permissions)).
+		Msg("✅ superadmin 全量菜单权限初始化完成")
+
+	return nil
+}
+
 func querySuperAdminUserID(cfg *DatabaseConfig) (uuid.UUID, error) {
 	// 构建 identity_srv 数据库连接 DSN
 	identityDSN := fmt.Sprintf(

@@ -89,9 +89,6 @@ func (s *PolicySyncService) runSyncLoop(ctx context.Context) {
 
 // SyncPolicies 从 RPC 服务同步策略
 func (s *PolicySyncService) SyncPolicies(ctx context.Context) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
 	if s.enforcer == nil {
 		s.logger.Warn().Msg("Enforcer is nil, skipping policy sync")
 		return nil
@@ -107,37 +104,58 @@ func (s *PolicySyncService) SyncPolicies(ctx context.Context) error {
 		return err
 	}
 
-	// 清空现有策略
-	s.enforcer.ClearPolicy()
-
-	var policyCount, groupingCount, inheritanceCount int
-
-	// 从响应中获取统计信息
-	if resp != nil {
-		if resp.Success != nil && *resp.Success {
-			if resp.RolePolicyCount != nil {
-				policyCount = int(*resp.RolePolicyCount)
-			}
-			if resp.UserRoleBindingCount != nil {
-				groupingCount = int(*resp.UserRoleBindingCount)
-			}
-			if resp.RoleInheritanceCount != nil {
-				inheritanceCount = int(*resp.RoleInheritanceCount)
-			}
-		}
-		if resp.Message != nil {
-			s.logger.Debug().Str("message", *resp.Message).Msg("RPC response message")
-		}
+	if resp == nil {
+		s.logger.Warn().Msg("SyncPolicies RPC returned nil response")
+		return nil
 	}
 
-	s.lastSyncTime = time.Now()
-	s.syncCount++
+	if resp.Success == nil || !*resp.Success {
+		message := "sync failed"
+		if resp.Message != nil {
+			message = *resp.Message
+		}
+		s.logger.Warn().Str("message", message).Msg("SyncPolicies RPC reported failure")
+		return nil
+	}
+
+	policies := make([][]string, 0, len(resp.Policies))
+	for _, rule := range resp.Policies {
+		if rule == nil || len(rule.Values) == 0 {
+			continue
+		}
+		policies = append(policies, rule.Values)
+	}
+
+	groupingPolicies := make([][]string, 0, len(resp.GroupingPolicies))
+	for _, rule := range resp.GroupingPolicies {
+		if rule == nil || len(rule.Values) == 0 {
+			continue
+		}
+		groupingPolicies = append(groupingPolicies, rule.Values)
+	}
+
+	roleInheritance := make([][]string, 0, len(resp.RoleInheritancePolicies))
+	for _, rule := range resp.RoleInheritancePolicies {
+		if rule == nil || len(rule.Values) == 0 {
+			continue
+		}
+		roleInheritance = append(roleInheritance, rule.Values)
+	}
+
+	if err := s.LoadPoliciesFromData(policies, groupingPolicies, roleInheritance); err != nil {
+		s.logger.Error().Err(err).Msg("Failed to load policies from SyncPolicies RPC response")
+		return err
+	}
+
+	if resp.Message != nil {
+		s.logger.Debug().Str("message", *resp.Message).Msg("RPC response message")
+	}
 
 	duration := time.Since(startTime)
 	s.logger.Info().
-		Int("policy_count", policyCount).
-		Int("grouping_count", groupingCount).
-		Int("inheritance_count", inheritanceCount).
+		Int("policy_count", len(policies)).
+		Int("grouping_count", len(groupingPolicies)).
+		Int("inheritance_count", len(roleInheritance)).
 		Dur("duration", duration).
 		Int64("total_syncs", s.syncCount).
 		Msg("Policy sync completed")

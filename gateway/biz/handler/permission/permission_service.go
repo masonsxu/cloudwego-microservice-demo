@@ -7,262 +7,614 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	http_base "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/http_base"
+
+	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/http_base"
 	permission "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/permission"
+	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/context/auth_context"
+	permissionservice "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/permission"
+	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/errors"
 )
 
+// 全局权限服务实例（通过Wire注入）
+var permissionService permissionservice.Service
+
+// 用于解决 http_base 包导入但未使用的问题
+var _ http_base.OperationStatusResponseDTO
+
+// SetPermissionService 设置权限服务实例（由Wire在启动时调用）
+func SetPermissionService(service permissionservice.Service) {
+	permissionService = service
+}
+
 // CreateRoleDefinition .
-// @router /api/v1/permission/roles [POST]
+// @Summary 创建角色定义
+// @Description 创建一个新的角色定义
+// @Tags 权限管理
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param req body permission.RoleDefinitionCreateRequestDTO true "请求体"
+// @Success 200 {object} permission.RoleDefinitionCreateResponseDTO "成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /api/v1/permission/roles [POST]
 func CreateRoleDefinition(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req permission.RoleDefinitionCreateRequestDTO
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		// 参数绑定和验证错误，使用统一错误处理
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage(err.Error()))
 		return
 	}
 
-	resp := new(permission.RoleDefinitionCreateResponseDTO)
+	// 调用业务服务层
+	resp, err := permissionService.CreateRoleDefinition(ctx, &req)
+	if err != nil {
+		errors.HandleServiceError(c, err, "创建角色定义失败")
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	// 返回响应（自动填充追踪字段）
+	errors.JSON(c, consts.StatusOK, resp)
 }
 
 // UpdateRoleDefinition .
-// @router /api/v1/permission/roles/:roleDefinitionID [PUT]
+// @Summary 更新角色定义
+// @Description 更新指定角色定义的信息
+// @Tags 权限管理
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param roleDefinitionID path string true "角色定义ID"
+// @Param req body permission.RoleDefinitionUpdateRequestDTO true "请求体"
+// @Success 200 {object} permission.RoleDefinitionUpdateResponseDTO "成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /api/v1/permission/roles/{roleDefinitionID} [PUT]
 func UpdateRoleDefinition(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req permission.RoleDefinitionUpdateRequestDTO
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		// 参数绑定和验证错误，使用统一错误处理
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage(err.Error()))
 		return
 	}
 
-	resp := new(permission.RoleDefinitionUpdateResponseDTO)
+	// 调用业务服务层
+	resp, err := permissionService.UpdateRoleDefinition(ctx, &req)
+	if err != nil {
+		errors.HandleServiceError(c, err, "更新角色定义失败")
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	// 返回响应（自动填充追踪字段）
+	errors.JSON(c, consts.StatusOK, resp)
 }
 
 // DeleteRoleDefinition .
-// @router /api/v1/permission/roles/:roleID [DELETE]
+// @Summary 删除角色定义
+// @Description 删除一个角色定义
+// @Tags 权限管理
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param roleID path string true "角色ID"
+// @Success 200 {object} http_base.OperationStatusResponseDTO "成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "角色未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /api/v1/permission/roles/{roleID} [DELETE]
 func DeleteRoleDefinition(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req permission.RoleDefinitionDeleteRequestDTO
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		// 参数绑定和验证错误，使用统一错误处理
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage(err.Error()))
 		return
 	}
 
-	resp := new(http_base.OperationStatusResponseDTO)
+	// 调用业务服务层
+	resp, err := permissionService.DeleteRoleDefinition(ctx, *req.RoleID)
+	if err != nil {
+		errors.HandleServiceError(c, err, "删除角色定义失败")
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	// 返回响应（自动填充追踪字段）
+	errors.JSON(c, consts.StatusOK, resp)
 }
 
 // GetRoleDefinition .
-// @router /api/v1/permission/roles/:roleID [GET]
+// @Summary 获取角色定义
+// @Description 根据ID获取角色定义
+// @Tags 权限管理
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param roleID path string true "角色ID"
+// @Success 200 {object} permission.RoleDefinitionGetResponseDTO "成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "角色未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /api/v1/permission/roles/{roleID} [GET]
 func GetRoleDefinition(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req permission.RoleDefinitionGetRequestDTO
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		// 参数绑定和验证错误，使用统一错误处理
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage(err.Error()))
 		return
 	}
 
-	resp := new(permission.RoleDefinitionGetResponseDTO)
+	// 调用业务服务层
+	resp, err := permissionService.GetRoleDefinition(ctx, &req)
+	if err != nil {
+		errors.HandleServiceError(c, err, "获取角色定义失败")
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	// 返回响应（自动填充追踪字段）
+	errors.JSON(c, consts.StatusOK, resp)
 }
 
 // ListRoleDefinitions .
+// @Summary 列出角色定义
+// @Description 分页列出角色定义
+// @Tags 权限管理
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param page query int false "页码" default(1)
+// @Param limit query int false "每页数量" default(20)
+// @Param search query string false "搜索关键词"
+// @Param filter query string false "字段级过滤"
+// @Param sort query string false "排序规则"
+// @Param fields query string false "指定返回字段"
+// @Param include_total query bool false "是否返回总数" default(false)
+// @Param name query string false "角色名称"
+// @Param status query string false "角色状态"
+// @Param is_system_role query bool false "是否为系统角色"
+// @Param fetch_all query bool false "是否获取所有数据（不分页）" default(false)
+// @Success 200 {object} permission.RoleDefinitionListResponseDTO "成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
 // @router /api/v1/permission/roles [GET]
 func ListRoleDefinitions(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req permission.RoleDefinitionQueryRequestDTO
+
+	// 绑定查询参数
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage(err.Error()))
 		return
 	}
 
-	resp := new(permission.RoleDefinitionListResponseDTO)
+	// 调用业务服务层
+	resp, err := permissionService.ListRoleDefinitions(ctx, &req)
+	if err != nil {
+		errors.HandleServiceError(c, err, "列出角色定义失败")
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	// 返回响应（自动填充追踪字段）
+	errors.JSON(c, consts.StatusOK, resp)
 }
 
 // GetLastUserRoleAssignment .
-// @router /api/v1/permission/users/:userID/roles/latest [GET]
+// @Summary 获取用户最后一次角色分配
+// @Description 获取用户最后一次角色分配
+// @Tags 权限管理
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param userID path string true "用户ID"
+// @Success 200 {object} permission.AssignRoleToUserResponseDTO "成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "分配未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /api/v1/permission/users/{userID}/roles/latest [GET]
 func GetLastUserRoleAssignment(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req permission.GetLastUserRoleAssignmentRequestDTO
+
+	// 绑定请求体
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage(err.Error()))
 		return
 	}
 
-	resp := new(permission.GetLastUserRoleAssignmentResponseDTO)
+	// 调用业务服务层
+	resp, err := permissionService.GetLastUserRoleAssignment(ctx, *req.UserID)
+	if err != nil {
+		errors.HandleServiceError(c, err, "获取用户最后一次角色分配失败")
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	// 返回响应（自动填充追踪字段）
+	errors.JSON(c, consts.StatusOK, resp)
 }
 
 // ListUserRoleAssignments .
-// @router /api/v1/permission/user-roles [GET]
+// @Summary 列出用户的角色分配记录
+// @Description 分页列出用户的角色分配记录
+// @Tags 权限管理
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param page query int false "页码" default(1)
+// @Param limit query int false "每页数量" default(20)
+// @Param search query string false "搜索关键词"
+// @Param filter query string false "字段级过滤"
+// @Param sort query string false "排序规则"
+// @Param fields query string false "指定返回字段"
+// @Param include_total query bool false "是否返回总数" default(false)
+// @Param user_id query string false "用户ID"
+// @Param role_id query string false "角色ID"
+// @Success 200 {object} permission.UserRoleListResponseDTO "成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /api/v1/permission/user-roles [GET]
 func ListUserRoleAssignments(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req permission.UserRoleQueryRequestDTO
+
+	// 绑定查询参数
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage(err.Error()))
 		return
 	}
 
-	resp := new(permission.UserRoleListResponseDTO)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
-// GetUsersByRole .
-// @router /api/v1/permission/roles/:roleID/users [GET]
-func GetUsersByRole(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req permission.GetUsersByRoleRequestDTO
-	err = c.BindAndValidate(&req)
+	// 调用业务服务层
+	resp, err := permissionService.ListUserRoleAssignments(ctx, &req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		errors.HandleServiceError(c, err, "列出用户角色分配失败")
 		return
 	}
 
-	resp := new(permission.GetUsersByRoleResponseDTO)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
-// BatchBindUsersToRole .
-// @router /api/v1/permission/roles/:roleID/users/batch-bind [POST]
-func BatchBindUsersToRole(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req permission.BatchBindUsersToRoleRequestDTO
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(permission.BatchBindUsersToRoleResponseDTO)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
-// UploadMenu .
-// @router /api/v1/permission/menu/upload [POST]
-func UploadMenu(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req permission.UploadMenuRequestDTO
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(http_base.OperationStatusResponseDTO)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
-// GetMenuTree .
-// @router /api/v1/permission/menu/tree [GET]
-func GetMenuTree(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req permission.GetMenuTreeRequestDTO
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(permission.GetMenuTreeResponseDTO)
-
-	c.JSON(consts.StatusOK, resp)
+	// 返回响应（自动填充追踪字段）
+	errors.JSON(c, consts.StatusOK, resp)
 }
 
 // ConfigureRoleMenus .
-// @router /api/v1/permission/roles/:roleID/menus [POST]
+// @Summary 配置角色的菜单权限
+// @Description 为指定角色配置菜单权限，会清除角色的旧菜单映射，然后添加新的映射
+// @Tags 菜单权限管理
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param roleID path string true "角色ID"
+// @Param req body permission.ConfigureRoleMenusRequestDTO true "请求体"
+// @Success 200 {object} permission.ConfigureRoleMenusResponseDTO "成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /api/v1/permission/roles/{roleID}/menus [POST]
 func ConfigureRoleMenus(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req permission.ConfigureRoleMenusRequestDTO
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage(err.Error()))
 		return
 	}
 
-	resp := new(permission.ConfigureRoleMenusResponseDTO)
+	// 获取当前用户ID
+	userID, authErr := auth_context.GetCurrentUserProfileID(c)
+	if !authErr {
+		errors.AbortWithError(c, errors.ErrJWTValidationFail)
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	// 调用业务服务层
+	resp, err := permissionService.ConfigureRoleMenus(ctx, userID, &req)
+	if err != nil {
+		errors.HandleServiceError(c, err, "配置角色菜单权限失败")
+		return
+	}
+
+	// 返回响应（自动填充追踪字段）
+	errors.JSON(c, consts.StatusOK, resp)
 }
 
 // GetRoleMenuTree .
-// @router /api/v1/permission/roles/:roleID/menu-tree [GET]
+// @Summary 获取角色的菜单树
+// @Description 根据角色的权限配置，返回该角色可访问的菜单树结构
+// @Tags 菜单权限管理
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param roleID path string true "角色ID"
+// @Success 200 {object} permission.GetRoleMenuTreeResponseDTO "成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /api/v1/permission/roles/{roleID}/menu-tree [GET]
 func GetRoleMenuTree(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req permission.GetRoleMenuTreeRequestDTO
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage(err.Error()))
 		return
 	}
 
-	resp := new(permission.GetRoleMenuTreeResponseDTO)
+	// 调用业务服务层
+	resp, err := permissionService.GetRoleMenuTree(ctx, &req)
+	if err != nil {
+		errors.HandleServiceError(c, err, "获取角色菜单树失败")
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	// 返回响应（自动填充追踪字段）
+	errors.JSON(c, consts.StatusOK, resp)
 }
 
 // GetUserMenuTree .
-// @router /api/v1/permission/users/:userID/menu-tree [GET]
+// @Summary 获取用户的菜单树
+// @Description 根据用户的最新角色绑定，返回该用户可访问的菜单树结构
+// @Tags 菜单权限管理
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param userID path string true "用户ID"
+// @Success 200 {object} permission.GetUserMenuTreeResponseDTO "成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /api/v1/permission/users/{userID}/menu-tree [GET]
 func GetUserMenuTree(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req permission.GetUserMenuTreeRequestDTO
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage(err.Error()))
 		return
 	}
 
-	resp := new(permission.GetUserMenuTreeResponseDTO)
+	// 调用业务服务层
+	resp, err := permissionService.GetUserMenuTree(ctx, &req)
+	if err != nil {
+		errors.HandleServiceError(c, err, "获取用户菜单树失败")
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	// 返回响应（自动填充追踪字段）
+	errors.JSON(c, consts.StatusOK, resp)
 }
 
 // GetRoleMenuPermissions .
-// @router /api/v1/permission/roles/:roleID/menu-permissions [GET]
+// @Summary 获取角色的菜单权限列表
+// @Description 获取指定角色的所有菜单权限配置列表
+// @Tags 菜单权限管理
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param roleID path string true "角色ID"
+// @Success 200 {object} permission.GetRoleMenuPermissionsResponseDTO "成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /api/v1/permission/roles/{roleID}/menu-permissions [GET]
 func GetRoleMenuPermissions(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req permission.GetRoleMenuPermissionsRequestDTO
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage(err.Error()))
 		return
 	}
 
-	resp := new(permission.GetRoleMenuPermissionsResponseDTO)
+	// 调用业务服务层
+	resp, err := permissionService.GetRoleMenuPermissions(ctx, &req)
+	if err != nil {
+		errors.HandleServiceError(c, err, "获取角色菜单权限列表失败")
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	// 返回响应（自动填充追踪字段）
+	errors.JSON(c, consts.StatusOK, resp)
 }
 
 // HasMenuPermission .
-// @router /api/v1/permission/roles/:roleID/check-menu-permission [POST]
+// @Summary 检查角色是否具有指定菜单权限
+// @Description 检查指定角色是否具有对指定菜单的特定权限
+// @Tags 菜单权限管理
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param roleID path string true "角色ID"
+// @Param req body permission.HasMenuPermissionRequestDTO true "请求体"
+// @Success 200 {object} permission.HasMenuPermissionResponseDTO "成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /api/v1/permission/roles/{roleID}/check-menu-permission [POST]
 func HasMenuPermission(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req permission.HasMenuPermissionRequestDTO
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage(err.Error()))
 		return
 	}
 
-	resp := new(permission.HasMenuPermissionResponseDTO)
+	// 调用业务服务层
+	resp, err := permissionService.HasMenuPermission(ctx, &req)
+	if err != nil {
+		errors.HandleServiceError(c, err, "检查角色菜单权限失败")
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	// 返回响应（自动填充追踪字段）
+	errors.JSON(c, consts.StatusOK, resp)
+}
+
+// UploadMenu .
+// @Summary 上传菜单配置文件
+// @Description 上传YAML格式的菜单配置文件，用于更新系统菜单
+// @Tags 菜单权限管理
+// @Accept multipart/form-data
+// @Produce json
+// @Security ApiKeyAuth
+// @Param menu_file formData file true "YAML格式的菜单配置文件"
+// @Success 200 {object} permission.GetMenuTreeResponseDTO "菜单上传成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /api/v1/permission/menu/upload [POST]
+func UploadMenu(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req permission.UploadMenuRequestDTO
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		// 参数绑定和验证错误，使用统一错误处理
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage(err.Error()))
+		return
+	}
+
+	menuFile, err := c.FormFile("menu_file")
+	if err != nil {
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage("菜单文件不能为空"))
+		return
+	}
+	file, err := menuFile.Open()
+	if err != nil {
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage("无法打开上传的菜单文件"))
+		return
+	}
+	defer file.Close()
+
+	fileContent := make([]byte, menuFile.Size)
+	_, err = file.Read(fileContent)
+	if err != nil {
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage("读取上传的菜单文件失败"))
+		return
+	}
+	req.MenuFile = fileContent
+
+	// 调用业务服务层
+	resp, err := permissionService.UploadMenu(ctx, &req)
+	if err != nil {
+		errors.HandleServiceError(c, err, "列出用户角色分配失败")
+		return
+	}
+
+	// 返回响应（自动填充追踪字段）
+	errors.JSON(c, consts.StatusOK, resp)
+}
+
+// GetMenuTree .
+// @Summary 获取菜单树结构
+// @Description 获取完整的菜单树结构，用于前端展示导航菜单预览
+// @Tags 菜单权限管理
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Success 200 {object} permission.GetMenuTreeResponseDTO "成功返回菜单树结构"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /api/v1/permission/menu/tree [GET]
+func GetMenuTree(ctx context.Context, c *app.RequestContext) {
+	var err error
+
+	// 调用业务服务层
+	resp, err := permissionService.GetMenuTree(ctx)
+	if err != nil {
+		errors.HandleServiceError(c, err, "获取菜单树失败")
+		return
+	}
+
+	// 返回响应（自动填充追踪字段）
+	errors.JSON(c, consts.StatusOK, resp)
+}
+
+// GetUsersByRole .
+// @Summary 根据角色ID获取所有用户
+// @Description 获取指定角色下所有用户的ID列表（不分页）
+// @Tags 权限管理
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param roleID path string true "角色ID"
+// @Success 200 {object} permission.GetUsersByRoleResponseDTO "成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "角色未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /api/v1/permission/roles/{roleID}/users [GET]
+func GetUsersByRole(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req permission.GetUsersByRoleRequestDTO
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage(err.Error()))
+		return
+	}
+
+	// 调用业务服务层
+	resp, err := permissionService.GetUsersByRole(ctx, &req)
+	if err != nil {
+		errors.HandleServiceError(c, err, "获取角色用户列表失败")
+		return
+	}
+
+	// 返回响应（自动填充追踪字段）
+	errors.JSON(c, consts.StatusOK, resp)
+}
+
+// BatchBindUsersToRole .
+// @Summary 批量绑定用户到角色
+// @Description 批量为角色绑定用户，覆盖旧的绑定关系
+// @Tags 权限管理
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param roleID path string true "角色ID"
+// @Param req body permission.BatchBindUsersToRoleRequestDTO true "请求体"
+// @Success 200 {object} permission.BatchBindUsersToRoleResponseDTO "成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 404 {object} http_base.OperationStatusResponseDTO "角色未找到"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /api/v1/permission/roles/{roleID}/users/batch-bind [POST]
+func BatchBindUsersToRole(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req permission.BatchBindUsersToRoleRequestDTO
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage(err.Error()))
+		return
+	}
+
+	// 获取当前用户ID
+	userID, authErr := auth_context.GetCurrentUserProfileID(c)
+	if !authErr {
+		errors.AbortWithError(c, errors.ErrJWTValidationFail)
+		return
+	}
+
+	// 调用业务服务层
+	resp, err := permissionService.BatchBindUsersToRole(ctx, userID, &req)
+	if err != nil {
+		errors.HandleServiceError(c, err, "批量绑定用户到角色失败")
+		return
+	}
+
+	// 返回响应（自动填充追踪字段）
+	errors.JSON(c, consts.StatusOK, resp)
 }

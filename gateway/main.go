@@ -23,6 +23,9 @@ func main() {
 
 	// 初始化中间件和 Handler 依赖
 	container.HandlerRegistry.Initialize()
+	if container.Middlewares != nil && container.Middlewares.PolicySyncService != nil {
+		defer container.Middlewares.PolicySyncService.Stop()
+	}
 
 	// 注册路由并启动服务器
 	h := container.HandlerRegistry.Server()

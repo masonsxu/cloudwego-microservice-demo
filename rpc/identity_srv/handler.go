@@ -766,12 +766,30 @@ func (s *IdentityServiceImpl) SyncPolicies(
 		return nil, errno.ToKitexError(err)
 	}
 
+	policyRules := make([]*identity_srv.CasbinPolicyRule, 0, len(result.Policies))
+	for _, rule := range result.Policies {
+		policyRules = append(policyRules, &identity_srv.CasbinPolicyRule{Values: rule})
+	}
+
+	groupingRules := make([]*identity_srv.CasbinPolicyRule, 0, len(result.GroupingPolicies))
+	for _, rule := range result.GroupingPolicies {
+		groupingRules = append(groupingRules, &identity_srv.CasbinPolicyRule{Values: rule})
+	}
+
+	inheritanceRules := make([]*identity_srv.CasbinPolicyRule, 0, len(result.RoleInheritancePolicies))
+	for _, rule := range result.RoleInheritancePolicies {
+		inheritanceRules = append(inheritanceRules, &identity_srv.CasbinPolicyRule{Values: rule})
+	}
+
 	resp = &identity_srv.SyncPoliciesResponse{
-		Success:              &result.Success,
-		RolePolicyCount:      &result.RolePolicyCount,
-		UserRoleBindingCount: &result.UserRoleBindingCount,
-		RoleInheritanceCount: &result.RoleInheritanceCount,
-		Message:              &result.Message,
+		Success:                 &result.Success,
+		RolePolicyCount:         &result.RolePolicyCount,
+		UserRoleBindingCount:    &result.UserRoleBindingCount,
+		RoleInheritanceCount:    &result.RoleInheritanceCount,
+		Message:                 &result.Message,
+		Policies:                policyRules,
+		GroupingPolicies:        groupingRules,
+		RoleInheritancePolicies: inheritanceRules,
 	}
 
 	return resp, nil

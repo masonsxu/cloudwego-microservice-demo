@@ -1,6 +1,7 @@
 package common
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -13,10 +14,17 @@ func ShouldSkip(c *app.RequestContext, skipPaths []string) bool {
 
 	for _, pattern := range skipPaths {
 		if matchSkip(pattern, method, path) {
+			fmt.Printf(
+				"[skip-debug] method=%s path=%s matched_pattern=%s\n",
+				method,
+				path,
+				pattern,
+			)
 			return true // 继续下一个 handler，不再走鉴权
 		}
 	}
 
+	fmt.Printf("[skip-debug] method=%s path=%s matched_pattern=<none>\n", method, path)
 	return false
 }
 

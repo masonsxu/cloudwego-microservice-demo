@@ -29,7 +29,15 @@ type JWTMiddlewareImpl struct {
 func (m *JWTMiddlewareImpl) MiddlewareFunc() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
 		// 检查是否需要跳过认证
-		if common.ShouldSkip(c, m.jwtConfig.SkipPaths) {
+		shouldSkip := common.ShouldSkip(c, m.jwtConfig.SkipPaths)
+		tracelog.Event(ctx, m.logger.Debug()).
+			Str("component", "jwt_middleware").
+			Str("method", string(c.Request.Method())).
+			Str("path", string(c.Request.URI().Path())).
+			Strs("skip_paths", m.jwtConfig.SkipPaths).
+			Bool("should_skip", shouldSkip).
+			Msg("JWT skip decision")
+		if shouldSkip {
 			c.Next(ctx)
 			return
 		}

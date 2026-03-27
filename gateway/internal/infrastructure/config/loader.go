@@ -33,6 +33,15 @@ func loadConfig() (*Configuration, error) {
 		return nil, fmt.Errorf("配置解析失败: %w", err)
 	}
 
+	// 调试日志：确认环境变量是否成功映射到最终配置
+	jwtEnabled, _ := v.Get("middleware.jwt.enabled").(bool)
+	fmt.Printf(
+		"[config-debug] JWT_SKIP_PATHS env=%q, jwt.enabled=%t, jwt.skip_paths=%v\n",
+		os.Getenv("JWT_SKIP_PATHS"),
+		jwtEnabled,
+		config.Middleware.JWT.SkipPaths,
+	)
+
 	// 后处理配置
 	postProcessConfig(&config)
 

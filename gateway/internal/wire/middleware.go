@@ -28,6 +28,7 @@ var MiddlewareSet = wire.NewSet(
 	ProvideResponseHeaderMiddleware,
 	ProvideCasbinConfig,
 	ProvideCasbinMiddleware,
+	ProvidePolicySyncService,
 	ProvideAuditMiddleware,
 	NewMiddlewareContainer,
 )
@@ -41,6 +42,7 @@ type MiddlewareContainer struct {
 	JWTMiddleware            jwtmdw.JWTMiddlewareService
 	ResponseHeaderMiddleware respmw.ResponseHeaderMiddlewareService
 	CasbinMiddleware         *casbnmw.CasbinMiddleware
+	PolicySyncService        *casbnmw.PolicySyncService
 	AuditMiddleware          auditmdw.AuditMiddlewareService
 }
 
@@ -52,6 +54,7 @@ func NewMiddlewareContainer(
 	jwtMiddleware jwtmdw.JWTMiddlewareService,
 	responseHeaderMiddleware respmw.ResponseHeaderMiddlewareService,
 	casbinMiddleware *casbnmw.CasbinMiddleware,
+	policySyncService *casbnmw.PolicySyncService,
 	auditMiddleware auditmdw.AuditMiddlewareService,
 ) *MiddlewareContainer {
 	return &MiddlewareContainer{
@@ -61,6 +64,7 @@ func NewMiddlewareContainer(
 		JWTMiddleware:            jwtMiddleware,
 		ResponseHeaderMiddleware: responseHeaderMiddleware,
 		CasbinMiddleware:         casbinMiddleware,
+		PolicySyncService:        policySyncService,
 		AuditMiddleware:          auditMiddleware,
 	}
 }
@@ -148,6 +152,17 @@ func ProvideCasbinMiddleware(
 	zl.Info().Msg("Casbin middleware created successfully (memory adapter)")
 
 	return middleware
+}
+
+// ProvidePolicySyncService 提供 Casbin 策略同步服务
+func ProvidePolicySyncService(
+	casbinConfig *casbnmw.Config,
+	casbinMiddleware *casbnmw.CasbinMiddleware,
+	identityClient identitycli.IdentityClient,
+	logger *hertzZerolog.Logger,
+) *casbnmw.PolicySyncService {
+	zlogger := logger.Unwrap()
+	return casbnmw.ProvidePolicySyncService(casbinConfig, casbinMiddleware, identityClient, &zlogger)
 }
 
 // ProvideAuditMiddleware 提供审计日志中间件

@@ -111,20 +111,56 @@ func (e *CasbinEnforcer) EnforceWithDataScope(sub, dom, obj, act string) (bool, 
 	e.mu.RLock()
 	defer e.mu.RUnlock()
 
-	// 获取所有匹配的策略
-	policies, err := e.enforcer.GetFilteredPolicy(0, sub, dom, obj, act)
+	// 获取所有匹配的策略（同时匹配精确 action 与通配符 action=*）
+	fetchPolicies := func(domain string) ([][]string, error) {
+		exactPolicies, err := e.enforcer.GetFilteredPolicy(0, sub, domain, obj, act)
+		if err != nil {
+			return nil, err
+		}
+
+		wildcardPolicies, err := e.enforcer.GetFilteredPolicy(0, sub, domain, obj, "*")
+		if err != nil {
+			return nil, err
+		}
+
+		return append(exactPolicies, wildcardPolicies...), nil
+	}
+
+	policies, err := fetchPolicies(dom)
 	if err != nil {
+		e.logger.Error().Err(err).
+			Str("sub", sub).
+			Str("dom", dom).
+			Str("obj", obj).
+			Str("act", act).
+			Msg("Casbin filtered policy query failed")
 		return false, "", err
 	}
+
+	usedWildcardDomain := false
 	if len(policies) == 0 {
 		// 尝试使用通配符域匹配
-		policies, err = e.enforcer.GetFilteredPolicy(0, sub, "*", obj, act)
+		policies, err = fetchPolicies("*")
 		if err != nil {
+			e.logger.Error().Err(err).
+				Str("sub", sub).
+				Str("dom", "*").
+				Str("obj", obj).
+				Str("act", act).
+				Msg("Casbin wildcard-domain policy query failed")
 			return false, "", err
 		}
+		usedWildcardDomain = true
 	}
 
 	if len(policies) == 0 {
+		e.logger.Debug().
+			Str("sub", sub).
+			Str("dom", dom).
+			Str("obj", obj).
+			Str("act", act).
+			Bool("used_wildcard_domain", usedWildcardDomain).
+			Msg("Casbin no matching policy")
 		return false, "", nil
 	}
 
@@ -138,6 +174,17 @@ func (e *CasbinEnforcer) EnforceWithDataScope(sub, dom, obj, act string) (bool, 
 			}
 		}
 	}
+
+	e.logger.Debug().
+		Str("sub", sub).
+		Str("dom", dom).
+		Str("obj", obj).
+		Str("act", act).
+		Bool("used_wildcard_domain", usedWildcardDomain).
+		Int("matched_policy_count", len(policies)).
+		Interface("matched_policies", policies).
+		Str("max_data_scope", maxScope).
+		Msg("Casbin matched policies")
 
 	return true, maxScope, nil
 }

@@ -2987,12 +2987,32 @@ func (x *SyncPoliciesRequest) Marshal(in []byte) ([]byte, error) { return prutal
 
 func (x *SyncPoliciesRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
 
+type CasbinPolicyRule struct {
+	Values []string `protobuf:"bytes,1,rep,name=values" json:"values,omitempty"`
+}
+
+func (x *CasbinPolicyRule) Reset() { *x = CasbinPolicyRule{} }
+
+func (x *CasbinPolicyRule) Marshal(in []byte) ([]byte, error) { return prutal.MarshalAppend(in, x) }
+
+func (x *CasbinPolicyRule) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *CasbinPolicyRule) GetValues() []string {
+	if x != nil {
+		return x.Values
+	}
+	return nil
+}
+
 type SyncPoliciesResponse struct {
-	Success              *bool   `protobuf:"varint,1,opt,name=success" json:"success,omitempty"`
-	RolePolicyCount      *int32  `protobuf:"varint,2,opt,name=rolePolicyCount" json:"rolePolicyCount,omitempty"`
-	UserRoleBindingCount *int32  `protobuf:"varint,3,opt,name=userRoleBindingCount" json:"userRoleBindingCount,omitempty"`
-	RoleInheritanceCount *int32  `protobuf:"varint,4,opt,name=roleInheritanceCount" json:"roleInheritanceCount,omitempty"`
-	Message              *string `protobuf:"bytes,5,opt,name=message" json:"message,omitempty"`
+	Success                 *bool               `protobuf:"varint,1,opt,name=success" json:"success,omitempty"`
+	RolePolicyCount         *int32              `protobuf:"varint,2,opt,name=rolePolicyCount" json:"rolePolicyCount,omitempty"`
+	UserRoleBindingCount    *int32              `protobuf:"varint,3,opt,name=userRoleBindingCount" json:"userRoleBindingCount,omitempty"`
+	RoleInheritanceCount    *int32              `protobuf:"varint,4,opt,name=roleInheritanceCount" json:"roleInheritanceCount,omitempty"`
+	Message                 *string             `protobuf:"bytes,5,opt,name=message" json:"message,omitempty"`
+	Policies                []*CasbinPolicyRule `protobuf:"bytes,6,rep,name=policies" json:"policies,omitempty"`
+	GroupingPolicies        []*CasbinPolicyRule `protobuf:"bytes,7,rep,name=groupingPolicies" json:"groupingPolicies,omitempty"`
+	RoleInheritancePolicies []*CasbinPolicyRule `protobuf:"bytes,8,rep,name=roleInheritancePolicies" json:"roleInheritancePolicies,omitempty"`
 }
 
 func (x *SyncPoliciesResponse) Reset() { *x = SyncPoliciesResponse{} }
@@ -3034,6 +3054,27 @@ func (x *SyncPoliciesResponse) GetMessage() string {
 		return *x.Message
 	}
 	return ""
+}
+
+func (x *SyncPoliciesResponse) GetPolicies() []*CasbinPolicyRule {
+	if x != nil {
+		return x.Policies
+	}
+	return nil
+}
+
+func (x *SyncPoliciesResponse) GetGroupingPolicies() []*CasbinPolicyRule {
+	if x != nil {
+		return x.GroupingPolicies
+	}
+	return nil
+}
+
+func (x *SyncPoliciesResponse) GetRoleInheritancePolicies() []*CasbinPolicyRule {
+	if x != nil {
+		return x.RoleInheritancePolicies
+	}
+	return nil
 }
 
 type GetUserDataScopeRequest struct {
