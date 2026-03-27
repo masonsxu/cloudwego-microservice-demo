@@ -2,8 +2,10 @@ package middleware
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"time"
+	"unicode"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/jwt"
@@ -30,6 +32,65 @@ func createTokenInfo(token string, expire time.Time) *http_base.TokenInfoDTO {
 	}
 }
 
+func camelToSnake(s string) string {
+	if s == "" {
+		return s
+	}
+
+	buf := make([]rune, 0, len(s)+4)
+	runes := []rune(s)
+	for i, r := range runes {
+		if unicode.IsUpper(r) {
+			if i > 0 {
+				prev := runes[i-1]
+				nextIsLower := i+1 < len(runes) && unicode.IsLower(runes[i+1])
+				prevPrevIsLower := i > 1 && unicode.IsLower(runes[i-2])
+				shouldSplitAcronymBoundary := nextIsLower && !prevPrevIsLower
+				if unicode.IsLower(prev) || unicode.IsDigit(prev) || shouldSplitAcronymBoundary {
+					buf = append(buf, '_')
+				}
+			}
+			buf = append(buf, unicode.ToLower(r))
+			continue
+		}
+		buf = append(buf, r)
+	}
+
+	return string(buf)
+}
+
+func toSnakeCaseValue(v interface{}) interface{} {
+	switch val := v.(type) {
+	case map[string]interface{}:
+		out := make(map[string]interface{}, len(val))
+		for k, item := range val {
+			out[camelToSnake(k)] = toSnakeCaseValue(item)
+		}
+		return out
+	case []interface{}:
+		for i := range val {
+			val[i] = toSnakeCaseValue(val[i])
+		}
+		return val
+	default:
+		return v
+	}
+}
+
+func toSnakeCasePayload(v interface{}) (interface{}, error) {
+	raw, err := json.Marshal(v)
+	if err != nil {
+		return nil, err
+	}
+
+	var decoded interface{}
+	if err = json.Unmarshal(raw, &decoded); err != nil {
+		return nil, err
+	}
+
+	return toSnakeCaseValue(decoded), nil
+}
+
 // loginResponseHandler 登录响应处理函数
 func loginResponseHandler(
 	_ context.Context,
@@ -45,7 +106,12 @@ func loginResponseHandler(
 	if userVal, exists := c.Get(LoginUserContextKey); exists {
 		if loginResp, ok := userVal.(*identity.LoginResponseDTO); ok {
 			loginResp.TokenInfo = tokenInfo
-			c.JSON(http.StatusOK, loginResp)
+
+			if payload, err := toSnakeCasePayload(loginResp); err == nil {
+				c.JSON(http.StatusOK, payload)
+			} else {
+				c.JSON(http.StatusOK, loginResp)
+			}
 
 			return
 		}

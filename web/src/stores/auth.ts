@@ -55,15 +55,21 @@ export const useAuthStore = defineStore('auth', () => {
 
       // Cookie 方案：后端自动设置 HttpOnly Cookie，前端不处理 token
       isLoggedIn.value = true
-      user.value = response.user_profile as unknown as UserProfile
-      menuTree.value = (response.menu_tree || []) as unknown as MenuItem[]
-      menuPermissions.value = response.permissions || []
-      roles.value = response.roles || []
+
+      const userProfile = (response.user_profile ?? null) as UserProfile | null
+      const menuTreeData = (response.menu_tree ?? []) as MenuItem[]
+      const permissionsData = (response.permissions ?? []) as MenuPermission[]
+      const rolesData = (response.roles ?? []) as Role[]
+
+      user.value = userProfile
+      menuTree.value = menuTreeData
+      menuPermissions.value = permissionsData
+      roles.value = rolesData
 
       // 保存用户相关信息到本地存储（token 存在 Cookie 中）
-      localStorage.setItem('user', JSON.stringify(user.value))
-      localStorage.setItem('menuTree', JSON.stringify(response.menu_tree))
-      localStorage.setItem('menuPermissions', JSON.stringify(response.permissions))
+      localStorage.setItem('user', JSON.stringify(userProfile))
+      localStorage.setItem('menuTree', JSON.stringify(menuTreeData))
+      localStorage.setItem('menuPermissions', JSON.stringify(permissionsData))
 
       return response
     } catch (error) {
