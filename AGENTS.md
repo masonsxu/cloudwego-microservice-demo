@@ -233,6 +233,32 @@ internal/
 
 **中间件执行顺序**：OpenTelemetry → RequestID → ResponseHeader → Trace → CORS → ErrorHandler → JWT → Casbin → ETag
 
+### Casbin 权限排障与实现约定（新增）
+
+为避免再次出现“白名单外全部 403 / superadmin 被拒绝”，涉及 Casbin 的改动需遵循以下约定：
+
+1. **同步必须是闭环**
+   - `SyncPolicies` 不能只返回计数，必须可回传并装载 `p/g/g2` 明细。
+   - gateway 同步必须执行：`ClearPolicy` + `AddPolicies` + `AddGroupingPolicies` + `AddNamedGroupingPolicies("g2")`。
+
+2. **生命周期必须接线**
+   - `PolicySyncService` 必须接入 wire 注入链。
+   - 服务启动时执行 `Start`，进程退出时执行 `Stop`。
+
+3. **资源标识必须对齐**
+   - gateway 鉴权资源优先使用 `path -> menu:<id>` 映射，不直接依赖原始 path。
+   - 新增受保护 API 时，必须同步补充映射或确保已有通配映射覆盖。
+
+4. **动作与主体必须兼容历史策略**
+   - action 匹配需兼容 `p.act = "*"`。
+   - 主体检查需同时覆盖 `role:<uuid>` 与通过 g 关系解析出的 `role:<code>`。
+
+5. **排障顺序固定为四步**
+   - 先看同步是否加载 p/g/g2；
+   - 再看 resource 是否映射为 `menu:*`；
+   - 再看 action 是否命中 `*`；
+   - 最后看 subject 是否覆盖 uuid/code 双通道。
+
 ### IDL-First 开发流程
 
 1. 修改 `idl/` 下的 Thrift 文件
