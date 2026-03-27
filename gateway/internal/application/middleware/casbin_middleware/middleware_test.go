@@ -175,6 +175,16 @@ func TestCasbinMiddleware_AddPathMapping(t *testing.T) {
 		t.Errorf("getResource('/api/v1/users/123') = %s, want user:view", resource)
 	}
 
+	resource = m.getResource("/api/v1/identity/audit-logs")
+	if resource != "menu:audit_logs" {
+		t.Errorf("getResource('/api/v1/identity/audit-logs') = %s, want menu:audit_logs", resource)
+	}
+
+	resource = m.getResource("/api/v1/identity/audit-logs/123")
+	if resource != "menu:audit_logs" {
+		t.Errorf("getResource('/api/v1/identity/audit-logs/123') = %s, want menu:audit_logs", resource)
+	}
+
 	resource = m.getResource("/api/v1/unknown")
 	if resource != "/api/v1/unknown" {
 		t.Errorf("getResource('/api/v1/unknown') = %s, want /api/v1/unknown", resource)

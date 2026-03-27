@@ -8,49 +8,49 @@ import "base/api.proto";
 import "base/enums.proto";
 
 message JWTClaimsDTO {
-  optional string userProfileID = 1;
-  optional core.UserStatus status = 3;
-  repeated string roleIDs = 4;
-  optional string organizationID = 5;
-  repeated string departmentIDs = 6;
-  optional string permission = 7;
-  optional int64 exp = 8;
-  optional int64 iat = 9;
-  optional string dataScope = 10;
-  optional string username = 2;
+  optional string userProfileID = 1 [(api.go_tag) = "json:\"user_profile_id,omitempty\" form:\"user_profile_id\" query:\"user_profile_id\""];
+  optional core.UserStatus status = 3 [(api.go_tag) = "json:\"status,omitempty\" form:\"status\" query:\"status\""];
+  repeated string roleIDs = 4 [(api.go_tag) = "json:\"role_ids,omitempty\" form:\"role_ids\" query:\"role_ids\""];
+  optional string organizationID = 5 [(api.go_tag) = "json:\"organization_id,omitempty\" form:\"organization_id\" query:\"organization_id\""];
+  repeated string departmentIDs = 6 [(api.go_tag) = "json:\"department_ids,omitempty\" form:\"department_ids\" query:\"department_ids\""];
+  optional string permission = 7 [(api.go_tag) = "json:\"permission,omitempty\" form:\"permission\" query:\"permission\""];
+  optional int64 exp = 8 [(api.go_tag) = "json:\"exp,omitempty\" form:\"exp\" query:\"exp\""];
+  optional int64 iat = 9 [(api.go_tag) = "json:\"iat,omitempty\" form:\"iat\" query:\"iat\""];
+  optional string dataScope = 10 [(api.go_tag) = "json:\"data_scope,omitempty\" form:\"data_scope\" query:\"data_scope\""];
+  optional string username = 2 [(api.go_tag) = "json:\"username,omitempty\" form:\"username\" query:\"username\""];
 }
 
 message TokenInfoDTO {
-  optional string accessToken = 1;
-  optional int64 expiresIn = 2;
-  optional string tokenType = 3;
+  optional string accessToken = 1 [(api.go_tag) = "json:\"access_token,omitempty\" form:\"access_token\" query:\"access_token\""];
+  optional int64 expiresIn = 2 [(api.go_tag) = "json:\"expires_in,omitempty\" form:\"expires_in\" query:\"expires_in\""];
+  optional string tokenType = 3 [(api.go_tag) = "json:\"token_type,omitempty\" form:\"token_type\" query:\"token_type\""];
 }
 
 message BaseResponseDTO {
-  optional int32 code = 1;
-  optional string message = 2;
+  optional int32 code = 1 [(api.go_tag) = "json:\"code\""];
+  optional string message = 2 [(api.go_tag) = "json:\"message\""];
 }
 
 message OperationStatusResponseDTO {
-  optional BaseResponseDTO baseResp = 1;
+  optional BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
 }
 
 message PageRequestDTO {
-  optional int32 page = 1 [(api.query) = "page", (api.vd) = "!isset(FetchAll) || *(FetchAll)$ || $>0"];
-  optional int32 limit = 2 [(api.query) = "limit", (api.vd) = "!isset(FetchAll) || *(FetchAll)$ || ($>0 && $<=200)"];
-  optional string search = 3 [(api.query) = "search"];
-  map<string, string> filter = 4 [(api.query) = "filter"];
-  optional string sort = 5 [(api.query) = "sort"];
-  repeated string fields = 6 [(api.query) = "fields"];
-  optional bool includeTotal = 7 [(api.query) = "include_total"];
-  optional bool fetchAll = 8 [(api.query) = "fetch_all"];
+  optional int32 page = 1 [(api.query) = "page", (api.vd) = "!isset(FetchAll) || *(FetchAll)$ || $>0", (api.go_tag) = "json:\"page,omitempty\" form:\"page\" query:\"page\""];
+  optional int32 limit = 2 [(api.query) = "limit", (api.vd) = "!isset(FetchAll) || *(FetchAll)$ || ($>0 && $<=200)", (api.go_tag) = "json:\"limit,omitempty\" form:\"limit\" query:\"limit\""];
+  optional string search = 3 [(api.query) = "search", (api.go_tag) = "json:\"search,omitempty\" form:\"search\" query:\"search\""];
+  map<string, string> filter = 4 [(api.query) = "filter", (api.go_tag) = "json:\"filter,omitempty\" form:\"filter\" query:\"filter\""];
+  optional string sort = 5 [(api.query) = "sort", (api.go_tag) = "json:\"sort,omitempty\" form:\"sort\" query:\"sort\""];
+  repeated string fields = 6 [(api.query) = "fields", (api.go_tag) = "json:\"fields,omitempty\" form:\"fields\" query:\"fields\""];
+  optional bool includeTotal = 7 [(api.query) = "include_total", (api.go_tag) = "json:\"include_total,omitempty\" form:\"include_total\" query:\"include_total\""];
+  optional bool fetchAll = 8 [(api.query) = "fetch_all", (api.go_tag) = "json:\"fetch_all,omitempty\" form:\"fetch_all\" query:\"fetch_all\""];
 }
 
 message PageResponseDTO {
-  optional int32 total = 1;
-  optional int32 page = 2;
-  optional int32 limit = 3;
-  optional int32 totalPages = 4;
-  optional bool hasNext = 5;
-  optional bool hasPrev = 6;
+  optional int32 total = 1 [(api.go_tag) = "json:\"total,omitempty\""];
+  optional int32 page = 2 [(api.go_tag) = "json:\"page,omitempty\""];
+  optional int32 limit = 3 [(api.go_tag) = "json:\"limit,omitempty\""];
+  optional int32 totalPages = 4 [(api.go_tag) = "json:\"total_pages,omitempty\""];
+  optional bool hasNext = 5 [(api.go_tag) = "json:\"has_next,omitempty\""];
+  optional bool hasPrev = 6 [(api.go_tag) = "json:\"has_prev,omitempty\""];
 }

@@ -19,219 +19,219 @@ enum PermissionLevel {
 }
 
 message PermissionDTO {
-  optional string resource = 1;
-  optional string action = 2;
-  optional string description = 3;
+  optional string resource = 1 [(api.go_tag) = "json:\"resource\""];
+  optional string action = 2 [(api.go_tag) = "json:\"action\""];
+  optional string description = 3 [(api.go_tag) = "json:\"description,omitempty\""];
 }
 
 message RoleDefinitionDTO {
-  optional string id = 1;
-  optional string name = 2;
-  optional string description = 3;
-  optional int32 status = 4;
-  repeated PermissionDTO permissions = 5;
-  optional bool isSystemRole = 6;
-  optional string createdBy = 7;
-  optional string updatedBy = 8;
-  optional int64 createdAt = 9;
-  optional int64 updatedAt = 10;
-  optional int64 userCount = 11;
+  optional string id = 1 [(api.go_tag) = "json:\"id\""];
+  optional string name = 2 [(api.go_tag) = "json:\"name\""];
+  optional string description = 3 [(api.go_tag) = "json:\"description\""];
+  optional int32 status = 4 [(api.go_tag) = "json:\"status\""];
+  repeated PermissionDTO permissions = 5 [(api.go_tag) = "json:\"permissions\""];
+  optional bool isSystemRole = 6 [(api.go_tag) = "json:\"is_system_role,omitempty\""];
+  optional string createdBy = 7 [(api.go_tag) = "json:\"created_by,omitempty\""];
+  optional string updatedBy = 8 [(api.go_tag) = "json:\"updated_by,omitempty\""];
+  optional int64 createdAt = 9 [(api.go_tag) = "json:\"created_at\""];
+  optional int64 updatedAt = 10 [(api.go_tag) = "json:\"updated_at\""];
+  optional int64 userCount = 11 [(api.go_tag) = "json:\"user_count,omitempty\""];
 }
 
 message UserRoleAssignmentDTO {
-  optional string id = 1;
-  optional string userID = 2;
-  optional string roleID = 3;
-  optional string createdBy = 4;
-  optional string updatedBy = 5;
-  optional int64 createdAt = 6;
-  optional int64 updatedAt = 7;
+  optional string id = 1 [(api.go_tag) = "json:\"id\""];
+  optional string userID = 2 [(api.go_tag) = "json:\"user_id\""];
+  optional string roleID = 3 [(api.go_tag) = "json:\"role_id\""];
+  optional string createdBy = 4 [(api.go_tag) = "json:\"created_by,omitempty\""];
+  optional string updatedBy = 5 [(api.go_tag) = "json:\"updated_by,omitempty\""];
+  optional int64 createdAt = 6 [(api.go_tag) = "json:\"created_at\""];
+  optional int64 updatedAt = 7 [(api.go_tag) = "json:\"updated_at\""];
 }
 
 message RoleDefinitionCreateRequestDTO {
-  optional string name = 1 [(api.body) = "name", (api.vd) = "@:len($) > 0; msg:'角色名称不能为空'"];
-  optional string description = 2 [(api.body) = "description"];
-  repeated PermissionDTO permissions = 3 [(api.body) = "permissions"];
-  optional bool isSystemRole = 4 [(api.body) = "is_system_role"];
+  optional string name = 1 [(api.body) = "name", (api.vd) = "@:len($) > 0; msg:'角色名称不能为空'", (api.go_tag) = "json:\"name\""];
+  optional string description = 2 [(api.body) = "description", (api.go_tag) = "json:\"description\""];
+  repeated PermissionDTO permissions = 3 [(api.body) = "permissions", (api.go_tag) = "json:\"permissions\""];
+  optional bool isSystemRole = 4 [(api.body) = "is_system_role", (api.go_tag) = "json:\"is_system_role,omitempty\""];
 }
 
 message RoleDefinitionCreateResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  optional RoleDefinitionDTO role = 2;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional RoleDefinitionDTO role = 2 [(api.go_tag) = "json:\"role\""];
 }
 
 message RoleDefinitionUpdateRequestDTO {
-  optional string roleDefinitionID = 1 [(api.path) = "roleDefinitionID", (api.vd) = "@:len($) > 0; msg:'角色定义ID不能为空'", (api.none) = "true"];
-  optional string description = 2 [(api.body) = "description"];
-  optional int32 status = 3 [(api.body) = "status"];
-  optional google.protobuf.ListValue permissions = 4 [(api.body) = "permissions"];
-  optional string name = 5 [(api.body) = "name"];
+  optional string roleDefinitionID = 1 [(api.path) = "roleDefinitionID", (api.vd) = "@:len($) > 0; msg:'角色定义ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional string description = 2 [(api.body) = "description", (api.go_tag) = "json:\"description,omitempty\""];
+  optional int32 status = 3 [(api.body) = "status", (api.go_tag) = "json:\"status,omitempty\""];
+  optional google.protobuf.ListValue permissions = 4 [(api.body) = "permissions", (api.go_tag) = "json:\"permissions,omitempty\""];
+  optional string name = 5 [(api.body) = "name", (api.go_tag) = "json:\"name,omitempty\""];
 }
 
 message RoleDefinitionUpdateResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  optional RoleDefinitionDTO role = 2;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional RoleDefinitionDTO role = 2 [(api.go_tag) = "json:\"role\""];
 }
 
 message RoleDefinitionDeleteRequestDTO {
-  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true"];
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
 }
 
 message RoleDefinitionGetRequestDTO {
-  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true"];
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
 }
 
 message RoleDefinitionGetResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  optional RoleDefinitionDTO role = 2;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional RoleDefinitionDTO role = 2 [(api.go_tag) = "json:\"role\""];
 }
 
 message RoleDefinitionQueryRequestDTO {
-  optional string name = 1 [(api.query) = "name"];
-  optional int32 status = 2 [(api.query) = "status"];
-  optional bool isSystemRole = 3 [(api.query) = "isSystemRole"];
-  optional http_base.PageRequestDTO page = 4 [(api.none) = "true"];
+  optional string name = 1 [(api.query) = "name", (api.go_tag) = "json:\"name,omitempty\""];
+  optional int32 status = 2 [(api.query) = "status", (api.go_tag) = "json:\"status,omitempty\""];
+  optional bool isSystemRole = 3 [(api.query) = "isSystemRole", (api.go_tag) = "json:\"is_system_role,omitempty\""];
+  optional http_base.PageRequestDTO page = 4 [(api.none) = "true", (api.go_tag) = "json:\"page,omitempty\""];
 }
 
 message RoleDefinitionListResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  repeated RoleDefinitionDTO roles = 2;
-  optional http_base.PageResponseDTO page = 3;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  repeated RoleDefinitionDTO roles = 2 [(api.go_tag) = "json:\"roles\""];
+  optional http_base.PageResponseDTO page = 3 [(api.go_tag) = "json:\"page\""];
 }
 
 message AssignRoleToUserResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  optional string assignmentID = 2;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional string assignmentID = 2 [(api.go_tag) = "json:\"assignment_id\""];
 }
 
 message GetLastUserRoleAssignmentRequestDTO {
-  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($) > 0; msg:'用户ID不能为空'", (api.none) = "true"];
+  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($) > 0; msg:'用户ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"user_id\""];
 }
 
 message GetLastUserRoleAssignmentResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  optional UserRoleAssignmentDTO assignment = 2;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional UserRoleAssignmentDTO assignment = 2 [(api.go_tag) = "json:\"assignment\""];
 }
 
 message UserRoleQueryRequestDTO {
-  optional string userID = 1 [(api.query) = "userID"];
-  optional string roleID = 2 [(api.query) = "roleID"];
-  optional http_base.PageRequestDTO page = 3 [(api.none) = "true"];
+  optional string userID = 1 [(api.query) = "userID", (api.go_tag) = "json:\"user_id,omitempty\""];
+  optional string roleID = 2 [(api.query) = "roleID", (api.go_tag) = "json:\"role_id,omitempty\""];
+  optional http_base.PageRequestDTO page = 3 [(api.none) = "true", (api.go_tag) = "json:\"page,omitempty\""];
 }
 
 message UserRoleListResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  repeated UserRoleAssignmentDTO assignments = 2;
-  optional http_base.PageResponseDTO page = 3;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  repeated UserRoleAssignmentDTO assignments = 2 [(api.go_tag) = "json:\"assignments\""];
+  optional http_base.PageResponseDTO page = 3 [(api.go_tag) = "json:\"page\""];
 }
 
 message GetUsersByRoleRequestDTO {
-  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true"];
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
 }
 
 message GetUsersByRoleResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  optional string roleID = 2;
-  repeated string userIDs = 3;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional string roleID = 2 [(api.go_tag) = "json:\"role_id\""];
+  repeated string userIDs = 3 [(api.go_tag) = "json:\"user_ids\""];
 }
 
 message BatchBindUsersToRoleRequestDTO {
-  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true"];
-  optional google.protobuf.ListValue userIDs = 2 [(api.body) = "userIDs", (api.vd) = "@:len($) > 0; msg:'用户ID列表不能为空'"];
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional google.protobuf.ListValue userIDs = 2 [(api.body) = "userIDs", (api.vd) = "@:len($) > 0; msg:'用户ID列表不能为空'", (api.go_tag) = "json:\"user_ids\""];
 }
 
 message BatchBindUsersToRoleResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  optional bool success = 2;
-  optional int32 successCount = 3;
-  optional string message = 4;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional bool success = 2 [(api.go_tag) = "json:\"success\""];
+  optional int32 successCount = 3 [(api.go_tag) = "json:\"success_count\""];
+  optional string message = 4 [(api.go_tag) = "json:\"message,omitempty\""];
 }
 
 message UploadMenuRequestDTO {
-  optional bytes menuFile = 1 [(api.form) = "menu_file"];
+  optional bytes menuFile = 1 [(api.form) = "menu_file", (api.go_tag) = "form:\"menu_file\""];
 }
 
 message MenuNodeDTO {
-  optional string name = 1;
-  optional string id = 2;
-  optional string path = 3;
-  optional string icon = 4;
-  optional string component = 5;
-  repeated MenuNodeDTO children = 6;
-  optional bool hasPermission = 7;
-  optional PermissionLevel permissionLevel = 8;
+  optional string name = 1 [(api.go_tag) = "json:\"name\""];
+  optional string id = 2 [(api.go_tag) = "json:\"id\""];
+  optional string path = 3 [(api.go_tag) = "json:\"path\""];
+  optional string icon = 4 [(api.go_tag) = "json:\"icon,omitempty\""];
+  optional string component = 5 [(api.go_tag) = "json:\"component,omitempty\""];
+  repeated MenuNodeDTO children = 6 [(api.go_tag) = "json:\"children,omitempty\""];
+  optional bool hasPermission = 7 [(api.go_tag) = "json:\"has_permission,omitempty\""];
+  optional PermissionLevel permissionLevel = 8 [(api.go_tag) = "json:\"permission_level,omitempty\""];
 }
 
 message GetMenuTreeResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  repeated MenuNodeDTO menuTree = 2;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  repeated MenuNodeDTO menuTree = 2 [(api.go_tag) = "json:\"menu_tree\""];
 }
 
 message MenuConfigDTO {
-  optional string menuID = 1;
-  optional PermissionLevel permission = 2;
+  optional string menuID = 1 [(api.go_tag) = "json:\"menu_id\""];
+  optional PermissionLevel permission = 2 [(api.go_tag) = "json:\"permission\""];
 }
 
 message MenuPermissionDTO {
-  optional string menuID = 1;
-  optional PermissionLevel permission = 2;
+  optional string menuID = 1 [(api.go_tag) = "json:\"menu_id\""];
+  optional PermissionLevel permission = 2 [(api.go_tag) = "json:\"permission\""];
 }
 
 message ConfigureRoleMenusRequestDTO {
-  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true"];
-  optional google.protobuf.ListValue menuConfigs = 2 [(api.body) = "menuConfigs", (api.vd) = "@:len($) > 0; msg:'菜单配置列表不能为空'"];
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional google.protobuf.ListValue menuConfigs = 2 [(api.body) = "menuConfigs", (api.vd) = "@:len($) > 0; msg:'菜单配置列表不能为空'", (api.go_tag) = "json:\"menu_configs\""];
 }
 
 message ConfigureRoleMenusResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  optional bool success = 2;
-  optional string message = 3;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional bool success = 2 [(api.go_tag) = "json:\"success\""];
+  optional string message = 3 [(api.go_tag) = "json:\"message,omitempty\""];
 }
 
 message GetRoleMenuTreeRequestDTO {
-  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true"];
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
 }
 
 message GetRoleMenuTreeResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  repeated MenuNodeDTO menuTree = 2;
-  optional string roleID = 3;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  repeated MenuNodeDTO menuTree = 2 [(api.go_tag) = "json:\"menu_tree\""];
+  optional string roleID = 3 [(api.go_tag) = "json:\"role_id\""];
 }
 
 message GetUserMenuTreeRequestDTO {
-  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($) > 0; msg:'用户ID不能为空'", (api.none) = "true"];
+  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($) > 0; msg:'用户ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
 }
 
 message GetUserMenuTreeResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  repeated MenuNodeDTO menuTree = 2;
-  optional string userID = 3;
-  repeated string roleIDs = 4;
-  repeated MenuPermissionDTO permissions = 5;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  repeated MenuNodeDTO menuTree = 2 [(api.go_tag) = "json:\"menu_tree\""];
+  optional string userID = 3 [(api.go_tag) = "json:\"user_id\""];
+  repeated string roleIDs = 4 [(api.go_tag) = "json:\"role_ids\""];
+  repeated MenuPermissionDTO permissions = 5 [(api.go_tag) = "json:\"permissions,omitempty\""];
 }
 
 message GetRoleMenuPermissionsRequestDTO {
-  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true"];
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
 }
 
 message GetRoleMenuPermissionsResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  repeated MenuPermissionDTO permissions = 2;
-  optional string roleID = 3;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  repeated MenuPermissionDTO permissions = 2 [(api.go_tag) = "json:\"permissions\""];
+  optional string roleID = 3 [(api.go_tag) = "json:\"role_id\""];
 }
 
 message HasMenuPermissionRequestDTO {
-  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true"];
-  optional string menuID = 2 [(api.query) = "menuID", (api.vd) = "@:len($) > 0; msg:'菜单ID不能为空'"];
-  optional PermissionLevel permission = 3 [(api.query) = "permission"];
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional string menuID = 2 [(api.query) = "menuID", (api.vd) = "@:len($) > 0; msg:'菜单ID不能为空'", (api.go_tag) = "json:\"menu_id\""];
+  optional PermissionLevel permission = 3 [(api.query) = "permission", (api.go_tag) = "json:\"permission\""];
 }
 
 message HasMenuPermissionResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  optional bool hasPermission = 2;
-  optional string roleID = 3;
-  optional string menuID = 4;
-  optional PermissionLevel permission = 5;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional bool hasPermission = 2 [(api.go_tag) = "json:\"has_permission\""];
+  optional string roleID = 3 [(api.go_tag) = "json:\"role_id\""];
+  optional string menuID = 4 [(api.go_tag) = "json:\"menu_id\""];
+  optional PermissionLevel permission = 5 [(api.go_tag) = "json:\"permission\""];
 }
 
 message GetMenuTreeRequestDTO {}

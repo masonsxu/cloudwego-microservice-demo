@@ -55,6 +55,8 @@ func defaultPathMapping() map[string]string {
 		"/api/v1/identity/organization-logos/*":       "menu:organization_management",
 		"/api/v1/identity/users/*/memberships":        "menu:organization_management",
 		"/api/v1/identity/users/*/primary-membership": "menu:organization_management",
+		"/api/v1/identity/audit-logs":                 "menu:audit_logs",
+		"/api/v1/identity/audit-logs/*":               "menu:audit_logs",
 	}
 }
 

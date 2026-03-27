@@ -10,398 +10,398 @@ import "http/base/base.proto";
 import "http/permission/permission_model.proto";
 
 message LoginRequestDTO {
-  optional string username = 1 [(api.body) = "username", (api.vd) = "@:len($) > 0; msg:'用户名不能为空'"];
-  optional string password = 2 [(api.body) = "password", (api.vd) = "@:len($) > 0; msg:'密码不能为空'"];
+  optional string username = 1 [(api.body) = "username", (api.vd) = "@:len($) > 0; msg:'用户名不能为空'", (api.go_tag) = "json:\"username\""];
+  optional string password = 2 [(api.body) = "password", (api.vd) = "@:len($) > 0; msg:'密码不能为空'", (api.go_tag) = "json:\"password\""];
 }
 
 message RoleInfoDTO {
-  optional string id = 1;
-  optional string code = 2;
-  optional string name = 3;
-  optional int32 dataScope = 4;
+  optional string id = 1 [(api.go_tag) = "json:\"id\""];
+  optional string code = 2 [(api.go_tag) = "json:\"code\""];
+  optional string name = 3 [(api.go_tag) = "json:\"name\""];
+  optional int32 dataScope = 4 [(api.go_tag) = "json:\"data_scope\""];
 }
 
 message LoginResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  optional UserProfileDTO userProfile = 2;
-  repeated permission.MenuNodeDTO menuTree = 3;
-  optional http_base.TokenInfoDTO tokenInfo = 4;
-  repeated UserMembershipDTO memberships = 5;
-  repeated string roleIDs = 6;
-  repeated permission.MenuPermissionDTO permissions = 7;
-  repeated RoleInfoDTO roles = 8;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional UserProfileDTO userProfile = 2 [(api.go_tag) = "json:\"user_profile\""];
+  repeated permission.MenuNodeDTO menuTree = 3 [(api.go_tag) = "json:\"menu_tree\""];
+  optional http_base.TokenInfoDTO tokenInfo = 4 [(api.go_tag) = "json:\"token_info\""];
+  repeated UserMembershipDTO memberships = 5 [(api.go_tag) = "json:\"memberships,omitempty\""];
+  repeated string roleIDs = 6 [(api.go_tag) = "json:\"role_ids,omitempty\""];
+  repeated permission.MenuPermissionDTO permissions = 7 [(api.go_tag) = "json:\"permissions,omitempty\""];
+  repeated RoleInfoDTO roles = 8 [(api.go_tag) = "json:\"roles,omitempty\""];
 }
 
 message LogoutRequestDTO {
-  optional string refreshToken = 1 [(api.body) = "refresh_token", (api.vd) = "@:len($) > 0; msg:'刷新令牌不能为空'"];
+  optional string refreshToken = 1 [(api.body) = "refresh_token", (api.vd) = "@:len($) > 0; msg:'刷新令牌不能为空'", (api.go_tag) = "json:\"refresh_token\""];
 }
 
 message ChangePasswordRequestDTO {
-  optional string oldPassword = 1 [(api.body) = "old_password", (api.vd) = "@:len($)>0; msg:'当前密码不能为空'"];
-  optional string newPassword = 2 [(api.body) = "new_password", (api.vd) = "@:len($)>0 && len($)>=6; msg:'新密码不能为空且长度至少为6位'"];
+  optional string oldPassword = 1 [(api.body) = "old_password", (api.vd) = "@:len($)>0; msg:'当前密码不能为空'", (api.go_tag) = "json:\"old_password\""];
+  optional string newPassword = 2 [(api.body) = "new_password", (api.vd) = "@:len($)>0 && len($)>=6; msg:'新密码不能为空且长度至少为6位'", (api.go_tag) = "json:\"new_password\""];
 }
 
 message ResetPasswordRequestDTO {
-  optional string userID = 1 [(api.body) = "user_id", (api.vd) = "@:len($)==36; msg:'用户ID格式不正确'"];
-  optional string newPassword = 2 [(api.body) = "new_password", (api.vd) = "@:len($)==0 || len($)>=6; msg:'新密码长度至少为6位'"];
-  optional string resetReason = 3 [(api.body) = "reset_reason", (api.vd) = "@:len($)<=200; msg:'重置原因不能超过200个字符'"];
+  optional string userID = 1 [(api.body) = "user_id", (api.vd) = "@:len($)==36; msg:'用户ID格式不正确'", (api.go_tag) = "json:\"user_id\""];
+  optional string newPassword = 2 [(api.body) = "new_password", (api.vd) = "@:len($)==0 || len($)>=6; msg:'新密码长度至少为6位'", (api.go_tag) = "json:\"new_password,omitempty\""];
+  optional string resetReason = 3 [(api.body) = "reset_reason", (api.vd) = "@:len($)<=200; msg:'重置原因不能超过200个字符'", (api.go_tag) = "json:\"reset_reason,omitempty\""];
 }
 
 message ForcePasswordChangeRequestDTO {
-  optional string userID = 1 [(api.body) = "user_id", (api.vd) = "@:len($)==36; msg:'用户ID格式不正确'"];
-  optional string reason = 2 [(api.body) = "reason", (api.vd) = "@:len($)<=200; msg:'原因不能超过200个字符'"];
+  optional string userID = 1 [(api.body) = "user_id", (api.vd) = "@:len($)==36; msg:'用户ID格式不正确'", (api.go_tag) = "json:\"user_id\""];
+  optional string reason = 2 [(api.body) = "reason", (api.vd) = "@:len($)<=200; msg:'原因不能超过200个字符'", (api.go_tag) = "json:\"reason,omitempty\""];
 }
 
 message RefreshTokenRequestDTO {
-  optional string refreshToken = 1 [(api.body) = "refresh_token", (api.vd) = "@:len($)>0; msg:'刷新令牌不能为空'"];
+  optional string refreshToken = 1 [(api.body) = "refresh_token", (api.vd) = "@:len($)>0; msg:'刷新令牌不能为空'", (api.go_tag) = "json:\"refresh_token\""];
 }
 
 message RefreshTokenResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  optional http_base.TokenInfoDTO tokenInfo = 2;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional http_base.TokenInfoDTO tokenInfo = 2 [(api.go_tag) = "json:\"token_info,omitempty\""];
 }
 
 message UserProfileDTO {
-  optional string id = 1;
-  optional string username = 2;
-  optional string email = 3;
-  optional string phone = 4;
-  optional string firstName = 5;
-  optional string lastName = 6;
-  optional string realName = 7;
-  optional string professionalTitle = 8;
-  optional string employeeID = 9;
-  optional int32 status = 10;
-  optional bool mustChangePassword = 11;
-  optional int64 accountExpiry = 12;
-  optional int32 gender = 13;
-  optional int64 createdAt = 14;
-  optional int64 updatedAt = 15;
-  optional int64 lastLoginTime = 16;
-  optional int32 loginAttempts = 17;
-  optional string createdBy = 18;
-  optional string updatedBy = 19;
-  repeated string roleIDs = 20;
-  optional string primaryOrganizationID = 21;
-  optional string primaryDepartmentID = 22;
+  optional string id = 1 [(api.go_tag) = "json:\"id\""];
+  optional string username = 2 [(api.go_tag) = "json:\"username\""];
+  optional string email = 3 [(api.go_tag) = "json:\"email,omitempty\""];
+  optional string phone = 4 [(api.go_tag) = "json:\"phone,omitempty\""];
+  optional string firstName = 5 [(api.go_tag) = "json:\"first_name,omitempty\""];
+  optional string lastName = 6 [(api.go_tag) = "json:\"last_name,omitempty\""];
+  optional string realName = 7 [(api.go_tag) = "json:\"real_name,omitempty\""];
+  optional string professionalTitle = 8 [(api.go_tag) = "json:\"professional_title,omitempty\""];
+  optional string employeeID = 9 [(api.go_tag) = "json:\"employee_id,omitempty\""];
+  optional int32 status = 10 [(api.go_tag) = "json:\"status\""];
+  optional bool mustChangePassword = 11 [(api.go_tag) = "json:\"must_change_password,omitempty\""];
+  optional int64 accountExpiry = 12 [(api.go_tag) = "json:\"account_expiry,omitempty\""];
+  optional int32 gender = 13 [(api.go_tag) = "json:\"gender,omitempty\""];
+  optional int64 createdAt = 14 [(api.go_tag) = "json:\"created_at\""];
+  optional int64 updatedAt = 15 [(api.go_tag) = "json:\"updated_at\""];
+  optional int64 lastLoginTime = 16 [(api.go_tag) = "json:\"last_login_time,omitempty\""];
+  optional int32 loginAttempts = 17 [(api.go_tag) = "json:\"login_attempts,omitempty\""];
+  optional string createdBy = 18 [(api.go_tag) = "json:\"created_by,omitempty\""];
+  optional string updatedBy = 19 [(api.go_tag) = "json:\"updated_by,omitempty\""];
+  repeated string roleIDs = 20 [(api.go_tag) = "json:\"role_ids,omitempty\""];
+  optional string primaryOrganizationID = 21 [(api.go_tag) = "json:\"primary_organization_id,omitempty\""];
+  optional string primaryDepartmentID = 22 [(api.go_tag) = "json:\"primary_department_id,omitempty\""];
 }
 
 message UserProfileResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  optional UserProfileDTO user = 2;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional UserProfileDTO user = 2 [(api.go_tag) = "json:\"user,omitempty\""];
 }
 
 message CreateUserRequestDTO {
-  optional string username = 1 [(api.body) = "username", (api.vd) = "@:len($)>0 && len($)>=3 && len($)<=20 && regexp('^[a-zA-Z0-9_-]+$',$); msg:'用户名必须是3-20位字母、数字、下划线或短横线'"];
-  optional string password = 2 [(api.body) = "password", (api.vd) = "@:len($)>0 && len($)>=6; msg:'密码不能为空且长度至少为6位'"];
-  optional string email = 3 [(api.body) = "email", (api.vd) = "@:len($)==0 || email($); msg:'邮箱格式不正确'"];
-  optional string phone = 4 [(api.body) = "phone", (api.vd) = "@:len($)==0 || phone($); msg:'手机号格式不正确'"];
-  optional string firstName = 5 [(api.body) = "first_name", (api.vd) = "@:len($)<=50; msg:'名字长度不能超过50个字符'"];
-  optional string lastName = 6 [(api.body) = "last_name", (api.vd) = "@:len($)<=50; msg:'姓氏长度不能超过50个字符'"];
-  optional string realName = 7 [(api.body) = "real_name", (api.vd) = "@:len($)<=100; msg:'真实姓名长度不能超过100个字符'"];
-  optional string professionalTitle = 8 [(api.body) = "professional_title", (api.vd) = "@:len($)<=100; msg:'职业头衔长度不能超过100个字符'"];
-  optional string employeeID = 9 [(api.body) = "employee_id", (api.vd) = "@:len($)<=50; msg:'员工工号长度不能超过50个字符'"];
-  optional bool mustChangePassword = 10 [(api.body) = "must_change_password"];
-  optional int64 accountExpiry = 11 [(api.body) = "account_expiry"];
-  optional int32 gender = 12 [(api.body) = "gender", (api.vd) = "@:$ == null || ($ >= 0 && $ <= 2); msg:'性别值必须为null或在0-2之间'"];
-  repeated string roleIDs = 13 [(api.body) = "role_ids"];
-  optional string organizationID = 14 [(api.body) = "organization_id", (api.vd) = "@:len($)==0 || len($)==36; msg:'组织ID格式不正确'"];
+  optional string username = 1 [(api.body) = "username", (api.vd) = "@:len($)>0 && len($)>=3 && len($)<=20 && regexp('^[a-zA-Z0-9_-]+$',$); msg:'用户名必须是3-20位字母、数字、下划线或短横线'", (api.go_tag) = "json:\"username\""];
+  optional string password = 2 [(api.body) = "password", (api.vd) = "@:len($)>0 && len($)>=6; msg:'密码不能为空且长度至少为6位'", (api.go_tag) = "json:\"password\""];
+  optional string email = 3 [(api.body) = "email", (api.vd) = "@:len($)==0 || email($); msg:'邮箱格式不正确'", (api.go_tag) = "json:\"email,omitempty\""];
+  optional string phone = 4 [(api.body) = "phone", (api.vd) = "@:len($)==0 || phone($); msg:'手机号格式不正确'", (api.go_tag) = "json:\"phone,omitempty\""];
+  optional string firstName = 5 [(api.body) = "first_name", (api.vd) = "@:len($)<=50; msg:'名字长度不能超过50个字符'", (api.go_tag) = "json:\"first_name,omitempty\""];
+  optional string lastName = 6 [(api.body) = "last_name", (api.vd) = "@:len($)<=50; msg:'姓氏长度不能超过50个字符'", (api.go_tag) = "json:\"last_name,omitempty\""];
+  optional string realName = 7 [(api.body) = "real_name", (api.vd) = "@:len($)<=100; msg:'真实姓名长度不能超过100个字符'", (api.go_tag) = "json:\"real_name,omitempty\""];
+  optional string professionalTitle = 8 [(api.body) = "professional_title", (api.vd) = "@:len($)<=100; msg:'职业头衔长度不能超过100个字符'", (api.go_tag) = "json:\"professional_title,omitempty\""];
+  optional string employeeID = 9 [(api.body) = "employee_id", (api.vd) = "@:len($)<=50; msg:'员工工号长度不能超过50个字符'", (api.go_tag) = "json:\"employee_id,omitempty\""];
+  optional bool mustChangePassword = 10 [(api.body) = "must_change_password", (api.go_tag) = "json:\"must_change_password,omitempty\""];
+  optional int64 accountExpiry = 11 [(api.body) = "account_expiry", (api.go_tag) = "json:\"account_expiry,omitempty\""];
+  optional int32 gender = 12 [(api.body) = "gender", (api.vd) = "@:$ == null || ($ >= 0 && $ <= 2); msg:'性别值必须为null或在0-2之间'", (api.go_tag) = "json:\"gender,omitempty\""];
+  repeated string roleIDs = 13 [(api.body) = "role_ids", (api.go_tag) = "json:\"role_ids,omitempty\""];
+  optional string organizationID = 14 [(api.body) = "organization_id", (api.vd) = "@:len($)==0 || len($)==36; msg:'组织ID格式不正确'", (api.go_tag) = "json:\"organization_id,omitempty\""];
 }
 
 message GetUserRequestDTO {
-  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($)==36; msg:'用户ID格式不正确'", (api.none) = "true"];
+  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($)==36; msg:'用户ID格式不正确'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
 }
 
 message UpdateUserRequestDTO {
-  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($)==36; msg:'用户ID格式不正确'", (api.none) = "true"];
-  optional string email = 2 [(api.body) = "email", (api.vd) = "@:len($)==0 || email($); msg:'邮箱格式不正确'"];
-  optional string phone = 3 [(api.body) = "phone", (api.vd) = "@:len($)==0 || phone($); msg:'手机号格式不正确'"];
-  optional string firstName = 4 [(api.body) = "first_name", (api.vd) = "@:len($)<=50; msg:'名字长度不能超过50个字符'"];
-  optional string lastName = 5 [(api.body) = "last_name", (api.vd) = "@:len($)<=50; msg:'姓氏长度不能超过50个字符'"];
-  optional string realName = 6 [(api.body) = "real_name", (api.vd) = "@:len($)<=100; msg:'真实姓名长度不能超过100个字符'"];
-  optional string professionalTitle = 7 [(api.body) = "professional_title", (api.vd) = "@:len($)<=100; msg:'职业头衔长度不能超过100个字符'"];
-  optional string employeeID = 8 [(api.body) = "employee_id", (api.vd) = "@:len($)<=50; msg:'员工工号长度不能超过50个字符'"];
-  optional int64 accountExpiry = 9 [(api.body) = "account_expiry"];
-  optional int32 gender = 10 [(api.body) = "gender", (api.vd) = "@:$ == null || ($ >= 0 && $ <= 2); msg:'性别值必须为null或在0-2之间'"];
-  optional google.protobuf.ListValue roleIDs = 11 [(api.body) = "role_ids"];
-  optional string organizationID = 12 [(api.body) = "organization_id", (api.vd) = "@:len($)==0 || len($)==36; msg:'组织ID格式不正确'"];
+  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($)==36; msg:'用户ID格式不正确'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional string email = 2 [(api.body) = "email", (api.vd) = "@:len($)==0 || email($); msg:'邮箱格式不正确'", (api.go_tag) = "json:\"email,omitempty\""];
+  optional string phone = 3 [(api.body) = "phone", (api.vd) = "@:len($)==0 || phone($); msg:'手机号格式不正确'", (api.go_tag) = "json:\"phone,omitempty\""];
+  optional string firstName = 4 [(api.body) = "first_name", (api.vd) = "@:len($)<=50; msg:'名字长度不能超过50个字符'", (api.go_tag) = "json:\"first_name,omitempty\""];
+  optional string lastName = 5 [(api.body) = "last_name", (api.vd) = "@:len($)<=50; msg:'姓氏长度不能超过50个字符'", (api.go_tag) = "json:\"last_name,omitempty\""];
+  optional string realName = 6 [(api.body) = "real_name", (api.vd) = "@:len($)<=100; msg:'真实姓名长度不能超过100个字符'", (api.go_tag) = "json:\"real_name,omitempty\""];
+  optional string professionalTitle = 7 [(api.body) = "professional_title", (api.vd) = "@:len($)<=100; msg:'职业头衔长度不能超过100个字符'", (api.go_tag) = "json:\"professional_title,omitempty\""];
+  optional string employeeID = 8 [(api.body) = "employee_id", (api.vd) = "@:len($)<=50; msg:'员工工号长度不能超过50个字符'", (api.go_tag) = "json:\"employee_id,omitempty\""];
+  optional int64 accountExpiry = 9 [(api.body) = "account_expiry", (api.go_tag) = "json:\"account_expiry,omitempty\""];
+  optional int32 gender = 10 [(api.body) = "gender", (api.vd) = "@:$ == null || ($ >= 0 && $ <= 2); msg:'性别值必须为null或在0-2之间'", (api.go_tag) = "json:\"gender,omitempty\""];
+  optional google.protobuf.ListValue roleIDs = 11 [(api.body) = "role_ids", (api.go_tag) = "json:\"role_ids,omitempty\""];
+  optional string organizationID = 12 [(api.body) = "organization_id", (api.vd) = "@:len($)==0 || len($)==36; msg:'组织ID格式不正确'", (api.go_tag) = "json:\"organization_id,omitempty\""];
 }
 
 message UpdateMeRequestDTO {
-  optional string email = 1 [(api.body) = "email", (api.vd) = "@:len($)==0 || email($); msg:'邮箱格式不正确'"];
-  optional string phone = 2 [(api.body) = "phone", (api.vd) = "@:len($)==0 || phone($); msg:'手机号格式不正确'"];
-  optional string firstName = 3 [(api.body) = "first_name", (api.vd) = "@:len($)<=50; msg:'名字长度不能超过50个字符'"];
-  optional string lastName = 4 [(api.body) = "last_name", (api.vd) = "@:len($)<=50; msg:'姓氏长度不能超过50个字符'"];
-  optional string realName = 5 [(api.body) = "real_name", (api.vd) = "@:len($)<=100; msg:'真实姓名长度不能超过100个字符'"];
-  optional string professionalTitle = 6 [(api.body) = "professional_title", (api.vd) = "@:len($)<=100; msg:'职业头衔长度不能超过100个字符'"];
-  optional string employeeID = 7 [(api.body) = "employee_id", (api.vd) = "@:len($)<=50; msg:'员工工号长度不能超过50个字符'"];
-  optional int64 accountExpiry = 8 [(api.body) = "account_expiry"];
-  optional int32 gender = 9 [(api.body) = "gender", (api.vd) = "@:$ == null || ($ >= 0 && $ <= 2); msg:'性别值必须为null或在0-2之间'"];
+  optional string email = 1 [(api.body) = "email", (api.vd) = "@:len($)==0 || email($); msg:'邮箱格式不正确'", (api.go_tag) = "json:\"email,omitempty\""];
+  optional string phone = 2 [(api.body) = "phone", (api.vd) = "@:len($)==0 || phone($); msg:'手机号格式不正确'", (api.go_tag) = "json:\"phone,omitempty\""];
+  optional string firstName = 3 [(api.body) = "first_name", (api.vd) = "@:len($)<=50; msg:'名字长度不能超过50个字符'", (api.go_tag) = "json:\"first_name,omitempty\""];
+  optional string lastName = 4 [(api.body) = "last_name", (api.vd) = "@:len($)<=50; msg:'姓氏长度不能超过50个字符'", (api.go_tag) = "json:\"last_name,omitempty\""];
+  optional string realName = 5 [(api.body) = "real_name", (api.vd) = "@:len($)<=100; msg:'真实姓名长度不能超过100个字符'", (api.go_tag) = "json:\"real_name,omitempty\""];
+  optional string professionalTitle = 6 [(api.body) = "professional_title", (api.vd) = "@:len($)<=100; msg:'职业头衔长度不能超过100个字符'", (api.go_tag) = "json:\"professional_title,omitempty\""];
+  optional string employeeID = 7 [(api.body) = "employee_id", (api.vd) = "@:len($)<=50; msg:'员工工号长度不能超过50个字符'", (api.go_tag) = "json:\"employee_id,omitempty\""];
+  optional int64 accountExpiry = 8 [(api.body) = "account_expiry", (api.go_tag) = "json:\"account_expiry,omitempty\""];
+  optional int32 gender = 9 [(api.body) = "gender", (api.vd) = "@:$ == null || ($ >= 0 && $ <= 2); msg:'性别值必须为null或在0-2之间'", (api.go_tag) = "json:\"gender,omitempty\""];
 }
 
 message DeleteUserRequestDTO {
-  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($)==36; msg:'用户ID格式不正确'", (api.none) = "true"];
-  optional string reason = 2 [(api.body) = "reason", (api.vd) = "@:len($)<=200; msg:'删除原因不能超过200个字符'"];
+  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($)==36; msg:'用户ID格式不正确'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional string reason = 2 [(api.body) = "reason", (api.vd) = "@:len($)<=200; msg:'删除原因不能超过200个字符'", (api.go_tag) = "json:\"reason,omitempty\""];
 }
 
 message ListUsersRequestDTO {
-  optional http_base.PageRequestDTO page = 1 [(api.none) = "true"];
-  optional string organizationID = 2 [(api.query) = "organization_id"];
-  optional int32 status = 3 [(api.query) = "status"];
+  optional http_base.PageRequestDTO page = 1 [(api.none) = "true", (api.go_tag) = "json:\"page,omitempty\""];
+  optional string organizationID = 2 [(api.query) = "organization_id", (api.go_tag) = "json:\"organization_id,omitempty\""];
+  optional int32 status = 3 [(api.query) = "status", (api.go_tag) = "json:\"status,omitempty\""];
 }
 
 message ListUsersResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  repeated UserProfileDTO users = 2;
-  optional http_base.PageResponseDTO page = 3;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  repeated UserProfileDTO users = 2 [(api.go_tag) = "json:\"users,omitempty\""];
+  optional http_base.PageResponseDTO page = 3 [(api.go_tag) = "json:\"page,omitempty\""];
 }
 
 message SearchUsersRequestDTO {
-  optional http_base.PageRequestDTO page = 1 [(api.none) = "true"];
-  optional string organizationID = 2 [(api.query) = "organization_id"];
+  optional http_base.PageRequestDTO page = 1 [(api.none) = "true", (api.go_tag) = "json:\"page,omitempty\""];
+  optional string organizationID = 2 [(api.query) = "organization_id", (api.go_tag) = "json:\"organization_id,omitempty\""];
 }
 
 message SearchUsersResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  repeated UserProfileDTO users = 2;
-  optional http_base.PageResponseDTO page = 3;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  repeated UserProfileDTO users = 2 [(api.go_tag) = "json:\"users,omitempty\""];
+  optional http_base.PageResponseDTO page = 3 [(api.go_tag) = "json:\"page,omitempty\""];
 }
 
 message ChangeUserStatusRequestDTO {
-  optional string userID = 1 [(api.path) = "userID", (api.none) = "true"];
-  optional int32 newStatus = 2 [(api.body) = "new_status"];
-  optional string reason = 3 [(api.body) = "reason"];
+  optional string userID = 1 [(api.path) = "userID", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional int32 newStatus = 2 [(api.body) = "new_status", (api.go_tag) = "json:\"new_status\""];
+  optional string reason = 3 [(api.body) = "reason", (api.go_tag) = "json:\"reason,omitempty\""];
 }
 
 message UnlockUserRequestDTO {
-  optional string userID = 1 [(api.path) = "userID", (api.none) = "true"];
+  optional string userID = 1 [(api.path) = "userID", (api.none) = "true", (api.go_tag) = "json:\"-\""];
 }
 
 message UserMembershipDTO {
-  optional string id = 1;
-  optional string userID = 2;
-  optional string organizationID = 3;
-  optional string departmentID = 4;
-  optional bool isPrimary = 5;
-  optional int64 createdAt = 6;
-  optional int64 updatedAt = 7;
-  optional OrganizationDTO organization = 8;
-  optional DepartmentDTO department = 9;
+  optional string id = 1 [(api.go_tag) = "json:\"id\""];
+  optional string userID = 2 [(api.go_tag) = "json:\"user_id\""];
+  optional string organizationID = 3 [(api.go_tag) = "json:\"organization_id\""];
+  optional string departmentID = 4 [(api.go_tag) = "json:\"department_id,omitempty\""];
+  optional bool isPrimary = 5 [(api.go_tag) = "json:\"is_primary,omitempty\""];
+  optional int64 createdAt = 6 [(api.go_tag) = "json:\"created_at\""];
+  optional int64 updatedAt = 7 [(api.go_tag) = "json:\"updated_at\""];
+  optional OrganizationDTO organization = 8 [(api.go_tag) = "json:\"organization,omitempty\""];
+  optional DepartmentDTO department = 9 [(api.go_tag) = "json:\"department,omitempty\""];
 }
 
 message UserMembershipResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  optional UserMembershipDTO membership = 2;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional UserMembershipDTO membership = 2 [(api.go_tag) = "json:\"membership,omitempty\""];
 }
 
 message GetUserMembershipsRequestDTO {
-  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($)==36; msg:'用户ID格式不正确'", (api.none) = "true"];
-  optional http_base.PageRequestDTO page = 2 [(api.none) = "true"];
+  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($)==36; msg:'用户ID格式不正确'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional http_base.PageRequestDTO page = 2 [(api.none) = "true", (api.go_tag) = "json:\"page,omitempty\""];
 }
 
 message GetUserMembershipsResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  repeated UserMembershipDTO memberships = 2;
-  optional http_base.PageResponseDTO page = 3;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  repeated UserMembershipDTO memberships = 2 [(api.go_tag) = "json:\"memberships,omitempty\""];
+  optional http_base.PageResponseDTO page = 3 [(api.go_tag) = "json:\"page,omitempty\""];
 }
 
 message GetPrimaryMembershipRequestDTO {
-  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($)==36; msg:'用户ID格式不正确'", (api.none) = "true"];
+  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($)==36; msg:'用户ID格式不正确'", (api.none) = "true", (api.go_tag) = "json:\"user_id,omitempty\""];
 }
 
 message CheckMembershipRequestDTO {
-  optional string userID = 1 [(api.query) = "user_id", (api.vd) = "@:len($)==36; msg:'用户ID格式不正确'"];
-  optional string organizationID = 2 [(api.query) = "organization_id", (api.vd) = "@:len($)==36; msg:'组织ID格式不正确'"];
-  optional string departmentID = 3 [(api.query) = "department_id", (api.vd) = "@:len($)==0 || len($)==36; msg:'部门ID格式不正确'"];
+  optional string userID = 1 [(api.query) = "user_id", (api.vd) = "@:len($)==36; msg:'用户ID格式不正确'", (api.go_tag) = "json:\"user_id,omitempty\""];
+  optional string organizationID = 2 [(api.query) = "organization_id", (api.vd) = "@:len($)==36; msg:'组织ID格式不正确'", (api.go_tag) = "json:\"organization_id,omitempty\""];
+  optional string departmentID = 3 [(api.query) = "department_id", (api.vd) = "@:len($)==0 || len($)==36; msg:'部门ID格式不正确'", (api.go_tag) = "json:\"department_id,omitempty\""];
 }
 
 message OrganizationDTO {
-  optional string id = 1;
-  optional string code = 2;
-  optional string name = 3;
-  optional string parentID = 4;
-  optional string facilityType = 5;
-  optional string accreditationStatus = 6;
-  optional string logo = 7;
-  repeated string provinceCity = 8;
-  optional int64 createdAt = 9;
-  optional int64 updatedAt = 10;
-  optional OrganizationDTO parent = 11;
-  repeated OrganizationDTO children = 12;
-  optional int32 memberCount = 13;
-  optional int32 departmentCount = 14;
-  optional string logoID = 15;
+  optional string id = 1 [(api.go_tag) = "json:\"id\""];
+  optional string code = 2 [(api.go_tag) = "json:\"code,omitempty\""];
+  optional string name = 3 [(api.go_tag) = "json:\"name\""];
+  optional string parentID = 4 [(api.go_tag) = "json:\"parent_id,omitempty\""];
+  optional string facilityType = 5 [(api.go_tag) = "json:\"facility_type,omitempty\""];
+  optional string accreditationStatus = 6 [(api.go_tag) = "json:\"accreditation_status,omitempty\""];
+  optional string logo = 7 [(api.go_tag) = "json:\"logo,omitempty\""];
+  repeated string provinceCity = 8 [(api.go_tag) = "json:\"province_city,omitempty\""];
+  optional int64 createdAt = 9 [(api.go_tag) = "json:\"created_at\""];
+  optional int64 updatedAt = 10 [(api.go_tag) = "json:\"updated_at\""];
+  optional OrganizationDTO parent = 11 [(api.go_tag) = "json:\"parent,omitempty\""];
+  repeated OrganizationDTO children = 12 [(api.go_tag) = "json:\"children,omitempty\""];
+  optional int32 memberCount = 13 [(api.go_tag) = "json:\"member_count,omitempty\""];
+  optional int32 departmentCount = 14 [(api.go_tag) = "json:\"department_count,omitempty\""];
+  optional string logoID = 15 [(api.go_tag) = "json:\"logo_id,omitempty\""];
 }
 
 message OrganizationResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  optional OrganizationDTO organization = 2;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional OrganizationDTO organization = 2 [(api.go_tag) = "json:\"organization,omitempty\""];
 }
 
 message CreateOrganizationRequestDTO {
-  optional string name = 1 [(api.body) = "name", (api.vd) = "@:len($)>0 && len($)>=2 && len($)<=100; msg:'组织名称长度必须在2-100个字符之间'"];
-  optional string parentID = 2 [(api.body) = "parent_id", (api.vd) = "@:len($)==0 || len($)==36; msg:'父组织ID格式不正确'"];
-  optional string facilityType = 3 [(api.body) = "facility_type", (api.vd) = "@:len($)<=100; msg:'机构类型长度不能超过100个字符'"];
-  optional string accreditationStatus = 4 [(api.body) = "accreditation_status", (api.vd) = "@:len($)<=100; msg:'认证状态长度不能超过100个字符'"];
-  repeated string provinceCity = 5 [(api.body) = "province_city"];
+  optional string name = 1 [(api.body) = "name", (api.vd) = "@:len($)>0 && len($)>=2 && len($)<=100; msg:'组织名称长度必须在2-100个字符之间'", (api.go_tag) = "json:\"name\""];
+  optional string parentID = 2 [(api.body) = "parent_id", (api.vd) = "@:len($)==0 || len($)==36; msg:'父组织ID格式不正确'", (api.go_tag) = "json:\"parent_id,omitempty\""];
+  optional string facilityType = 3 [(api.body) = "facility_type", (api.vd) = "@:len($)<=100; msg:'机构类型长度不能超过100个字符'", (api.go_tag) = "json:\"facility_type,omitempty\""];
+  optional string accreditationStatus = 4 [(api.body) = "accreditation_status", (api.vd) = "@:len($)<=100; msg:'认证状态长度不能超过100个字符'", (api.go_tag) = "json:\"accreditation_status,omitempty\""];
+  repeated string provinceCity = 5 [(api.body) = "province_city", (api.go_tag) = "json:\"province_city,omitempty\""];
 }
 
 message GetOrganizationRequestDTO {
-  optional string organizationID = 1 [(api.path) = "organizationID", (api.vd) = "@:len($)==36; msg:'组织ID格式不正确'", (api.none) = "true"];
+  optional string organizationID = 1 [(api.path) = "organizationID", (api.vd) = "@:len($)==36; msg:'组织ID格式不正确'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
 }
 
 message UpdateOrganizationRequestDTO {
-  optional string organizationID = 1 [(api.path) = "organizationID", (api.vd) = "@:len($)==36; msg:'组织ID格式不正确'", (api.none) = "true"];
-  optional string name = 2 [(api.body) = "name", (api.vd) = "@:len($)==0 || (len($)>=2 && len($)<=100); msg:'名称长度必须在2-100个字符之间'"];
-  optional string parentID = 3 [(api.body) = "parent_id", (api.vd) = "@:len($)==0 || len($)==36; msg:'父组织ID格式不正确'"];
-  optional string facilityType = 4 [(api.body) = "facility_type", (api.vd) = "@:len($)<=100; msg:'机构类型长度不能超过100个字符'"];
-  optional string accreditationStatus = 5 [(api.body) = "accreditation_status", (api.vd) = "@:len($)<=100; msg:'认证状态长度不能超过100个字符'"];
-  optional google.protobuf.ListValue provinceCity = 6 [(api.body) = "province_city"];
+  optional string organizationID = 1 [(api.path) = "organizationID", (api.vd) = "@:len($)==36; msg:'组织ID格式不正确'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional string name = 2 [(api.body) = "name", (api.vd) = "@:len($)==0 || (len($)>=2 && len($)<=100); msg:'名称长度必须在2-100个字符之间'", (api.go_tag) = "json:\"name,omitempty\""];
+  optional string parentID = 3 [(api.body) = "parent_id", (api.vd) = "@:len($)==0 || len($)==36; msg:'父组织ID格式不正确'", (api.go_tag) = "json:\"parent_id,omitempty\""];
+  optional string facilityType = 4 [(api.body) = "facility_type", (api.vd) = "@:len($)<=100; msg:'机构类型长度不能超过100个字符'", (api.go_tag) = "json:\"facility_type,omitempty\""];
+  optional string accreditationStatus = 5 [(api.body) = "accreditation_status", (api.vd) = "@:len($)<=100; msg:'认证状态长度不能超过100个字符'", (api.go_tag) = "json:\"accreditation_status,omitempty\""];
+  optional google.protobuf.ListValue provinceCity = 6 [(api.body) = "province_city", (api.go_tag) = "json:\"province_city,omitempty\""];
 }
 
 message DeleteOrganizationRequestDTO {
-  optional string organizationID = 1 [(api.path) = "organizationID", (api.vd) = "@:len($)==36; msg:'组织ID格式不正确'", (api.none) = "true"];
+  optional string organizationID = 1 [(api.path) = "organizationID", (api.vd) = "@:len($)==36; msg:'组织ID格式不正确'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
 }
 
 message ListOrganizationsRequestDTO {
-  optional string parentID = 1 [(api.query) = "parent_id"];
-  optional http_base.PageRequestDTO page = 2 [(api.none) = "true"];
+  optional string parentID = 1 [(api.query) = "parent_id", (api.go_tag) = "query:\"parent_id\""];
+  optional http_base.PageRequestDTO page = 2 [(api.none) = "true", (api.go_tag) = "json:\"page,omitempty\""];
 }
 
 message ListOrganizationsResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  repeated OrganizationDTO organizations = 2;
-  optional http_base.PageResponseDTO page = 3;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  repeated OrganizationDTO organizations = 2 [(api.go_tag) = "json:\"organizations,omitempty\""];
+  optional http_base.PageResponseDTO page = 3 [(api.go_tag) = "json:\"page,omitempty\""];
 }
 
 message DepartmentDTO {
-  optional string id = 1;
-  optional string code = 2;
-  optional string name = 3;
-  optional string organizationID = 4;
-  optional string departmentType = 5;
-  repeated string availableEquipment = 6;
-  optional int64 createdAt = 7;
-  optional int64 updatedAt = 8;
-  optional OrganizationDTO organization = 9;
-  optional int32 memberCount = 10;
+  optional string id = 1 [(api.go_tag) = "json:\"id\""];
+  optional string code = 2 [(api.go_tag) = "json:\"code,omitempty\""];
+  optional string name = 3 [(api.go_tag) = "json:\"name\""];
+  optional string organizationID = 4 [(api.go_tag) = "json:\"organization_id\""];
+  optional string departmentType = 5 [(api.go_tag) = "json:\"department_type,omitempty\""];
+  repeated string availableEquipment = 6 [(api.go_tag) = "json:\"available_equipment,omitempty\""];
+  optional int64 createdAt = 7 [(api.go_tag) = "json:\"created_at\""];
+  optional int64 updatedAt = 8 [(api.go_tag) = "json:\"updated_at\""];
+  optional OrganizationDTO organization = 9 [(api.go_tag) = "json:\"organization,omitempty\""];
+  optional int32 memberCount = 10 [(api.go_tag) = "json:\"member_count,omitempty\""];
 }
 
 message DepartmentResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  optional DepartmentDTO department = 2;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional DepartmentDTO department = 2 [(api.go_tag) = "json:\"department,omitempty\""];
 }
 
 message CreateDepartmentRequestDTO {
-  optional string organizationID = 1 [(api.body) = "organization_id", (api.vd) = "@:len($)==36; msg:'组织ID格式不正确'"];
-  optional string name = 2 [(api.body) = "name", (api.vd) = "@:len($)>0 && len($)>=2 && len($)<=100; msg:'部门名称长度必须在2-100个字符之间'"];
-  optional string departmentType = 3 [(api.body) = "department_type", (api.vd) = "@:len($)<=50; msg:'部门类型长度不能超过50个字符'"];
+  optional string organizationID = 1 [(api.body) = "organization_id", (api.vd) = "@:len($)==36; msg:'组织ID格式不正确'", (api.go_tag) = "json:\"organization_id\""];
+  optional string name = 2 [(api.body) = "name", (api.vd) = "@:len($)>0 && len($)>=2 && len($)<=100; msg:'部门名称长度必须在2-100个字符之间'", (api.go_tag) = "json:\"name\""];
+  optional string departmentType = 3 [(api.body) = "department_type", (api.vd) = "@:len($)<=50; msg:'部门类型长度不能超过50个字符'", (api.go_tag) = "json:\"department_type,omitempty\""];
 }
 
 message GetDepartmentRequestDTO {
-  optional string departmentID = 1 [(api.path) = "departmentID", (api.vd) = "@:len($)==36; msg:'部门ID格式不正确'", (api.none) = "true"];
+  optional string departmentID = 1 [(api.path) = "departmentID", (api.vd) = "@:len($)==36; msg:'部门ID格式不正确'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
 }
 
 message UpdateDepartmentRequestDTO {
-  optional string departmentID = 1 [(api.path) = "departmentID", (api.vd) = "@:len($)==36; msg:'部门ID格式不正确'", (api.none) = "true"];
-  optional string name = 2 [(api.body) = "name", (api.vd) = "@:len($)==0 || (len($)>=2 && len($)<=100); msg:'名称长度必须在2-100个字符之间'"];
-  optional string departmentType = 3 [(api.body) = "department_type", (api.vd) = "@:len($)<=50; msg:'部门类型长度不能超过50个字符'"];
+  optional string departmentID = 1 [(api.path) = "departmentID", (api.vd) = "@:len($)==36; msg:'部门ID格式不正确'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional string name = 2 [(api.body) = "name", (api.vd) = "@:len($)==0 || (len($)>=2 && len($)<=100); msg:'名称长度必须在2-100个字符之间'", (api.go_tag) = "json:\"name,omitempty\""];
+  optional string departmentType = 3 [(api.body) = "department_type", (api.vd) = "@:len($)<=50; msg:'部门类型长度不能超过50个字符'", (api.go_tag) = "json:\"department_type,omitempty\""];
 }
 
 message DeleteDepartmentRequestDTO {
-  optional string departmentID = 1 [(api.path) = "departmentID", (api.vd) = "@:len($)==36; msg:'部门ID格式不正确'", (api.none) = "true"];
+  optional string departmentID = 1 [(api.path) = "departmentID", (api.vd) = "@:len($)==36; msg:'部门ID格式不正确'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
 }
 
 message GetOrganizationDepartmentsRequestDTO {
-  optional string organizationID = 1 [(api.path) = "organizationID", (api.vd) = "@:len($)==36; msg:'组织ID格式不正确'", (api.none) = "true"];
-  optional http_base.PageRequestDTO page = 2 [(api.none) = "true"];
+  optional string organizationID = 1 [(api.path) = "organizationID", (api.vd) = "@:len($)==36; msg:'组织ID格式不正确'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional http_base.PageRequestDTO page = 2 [(api.none) = "true", (api.go_tag) = "json:\"page,omitempty\""];
 }
 
 message GetOrganizationDepartmentsResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  repeated DepartmentDTO departments = 2;
-  optional http_base.PageResponseDTO page = 3;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  repeated DepartmentDTO departments = 2 [(api.go_tag) = "json:\"departments,omitempty\""];
+  optional http_base.PageResponseDTO page = 3 [(api.go_tag) = "json:\"page,omitempty\""];
 }
 
 message OrganizationLogoDTO {
-  optional string id = 1;
-  optional string status = 2;
-  optional string boundOrganizationID = 3;
-  optional string fileID = 4;
-  optional string fileName = 5;
-  optional int64 fileSize = 6;
-  optional string mimeType = 7;
-  optional int64 expiresAt = 8;
-  optional string downloadUrl = 9;
-  optional string uploadedBy = 10;
-  optional int64 createdAt = 11;
-  optional int64 updatedAt = 12;
+  optional string id = 1 [(api.go_tag) = "json:\"id\""];
+  optional string status = 2 [(api.go_tag) = "json:\"status\""];
+  optional string boundOrganizationID = 3 [(api.go_tag) = "json:\"bound_organization_id,omitempty\""];
+  optional string fileID = 4 [(api.go_tag) = "json:\"file_id\""];
+  optional string fileName = 5 [(api.go_tag) = "json:\"file_name\""];
+  optional int64 fileSize = 6 [(api.go_tag) = "json:\"file_size\""];
+  optional string mimeType = 7 [(api.go_tag) = "json:\"mime_type\""];
+  optional int64 expiresAt = 8 [(api.go_tag) = "json:\"expires_at,omitempty\""];
+  optional string downloadUrl = 9 [(api.go_tag) = "json:\"download_url,omitempty\""];
+  optional string uploadedBy = 10 [(api.go_tag) = "json:\"uploaded_by\""];
+  optional int64 createdAt = 11 [(api.go_tag) = "json:\"created_at\""];
+  optional int64 updatedAt = 12 [(api.go_tag) = "json:\"updated_at\""];
 }
 
 message OrganizationLogoResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  optional OrganizationLogoDTO logo = 2;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional OrganizationLogoDTO logo = 2 [(api.go_tag) = "json:\"logo,omitempty\""];
 }
 
 message UploadTemporaryLogoRequestDTO {
-  optional string fileName = 1 [(api.body) = "file_name", (api.vd) = "@:len($)>0; msg:'文件名不能为空'"];
-  optional bytes fileContent = 2 [(api.body) = "file_content"];
-  optional string mimeType = 3 [(api.body) = "mime_type"];
+  optional string fileName = 1 [(api.body) = "file_name", (api.vd) = "@:len($)>0; msg:'文件名不能为空'", (api.go_tag) = "json:\"file_name\""];
+  optional bytes fileContent = 2 [(api.body) = "file_content", (api.go_tag) = "json:\"file_content\""];
+  optional string mimeType = 3 [(api.body) = "mime_type", (api.go_tag) = "json:\"mime_type,omitempty\""];
 }
 
 message GetOrganizationLogoRequestDTO {
-  optional string logoID = 1 [(api.path) = "logoID", (api.vd) = "@:len($)==36; msg:'Logo ID格式不正确'", (api.none) = "true"];
+  optional string logoID = 1 [(api.path) = "logoID", (api.vd) = "@:len($)==36; msg:'Logo ID格式不正确'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
 }
 
 message DeleteOrganizationLogoRequestDTO {
-  optional string logoID = 1 [(api.path) = "logoID", (api.vd) = "@:len($)==36; msg:'Logo ID格式不正确'", (api.none) = "true"];
+  optional string logoID = 1 [(api.path) = "logoID", (api.vd) = "@:len($)==36; msg:'Logo ID格式不正确'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
 }
 
 message BindLogoToOrganizationRequestDTO {
-  optional string organizationID = 1 [(api.path) = "organizationID", (api.vd) = "@:len($)==36; msg:'组织ID格式不正确'", (api.none) = "true"];
-  optional string logoID = 2 [(api.body) = "logo_id", (api.vd) = "@:len($)==36; msg:'Logo ID格式不正确'"];
+  optional string organizationID = 1 [(api.path) = "organizationID", (api.vd) = "@:len($)==36; msg:'组织ID格式不正确'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional string logoID = 2 [(api.body) = "logo_id", (api.vd) = "@:len($)==36; msg:'Logo ID格式不正确'", (api.go_tag) = "json:\"logo_id\""];
 }
 
 message AuditLogDTO {
-  optional string id = 1;
-  optional string requestID = 2;
-  optional string traceID = 3;
-  optional string userID = 4;
-  optional string username = 5;
-  optional string organizationID = 6;
-  optional int32 action = 7;
-  optional string resource = 8;
-  optional string resourceID = 9;
-  optional int32 statusCode = 10;
-  optional bool success = 11;
-  optional string clientIP = 12;
-  optional string userAgent = 13;
-  optional string requestBody = 14;
-  optional int32 durationMs = 15;
-  optional int64 createdAt = 16;
+  optional string id = 1 [(api.go_tag) = "json:\"id\""];
+  optional string requestID = 2 [(api.go_tag) = "json:\"request_id\""];
+  optional string traceID = 3 [(api.go_tag) = "json:\"trace_id\""];
+  optional string userID = 4 [(api.go_tag) = "json:\"user_id,omitempty\""];
+  optional string username = 5 [(api.go_tag) = "json:\"username,omitempty\""];
+  optional string organizationID = 6 [(api.go_tag) = "json:\"organization_id,omitempty\""];
+  optional int32 action = 7 [(api.go_tag) = "json:\"action\""];
+  optional string resource = 8 [(api.go_tag) = "json:\"resource\""];
+  optional string resourceID = 9 [(api.go_tag) = "json:\"resource_id,omitempty\""];
+  optional int32 statusCode = 10 [(api.go_tag) = "json:\"status_code\""];
+  optional bool success = 11 [(api.go_tag) = "json:\"success\""];
+  optional string clientIP = 12 [(api.go_tag) = "json:\"client_ip\""];
+  optional string userAgent = 13 [(api.go_tag) = "json:\"user_agent,omitempty\""];
+  optional string requestBody = 14 [(api.go_tag) = "json:\"request_body,omitempty\""];
+  optional int32 durationMs = 15 [(api.go_tag) = "json:\"duration_ms\""];
+  optional int64 createdAt = 16 [(api.go_tag) = "json:\"created_at\""];
 }
 
 message ListAuditLogsRequestDTO {
-  optional http_base.PageRequestDTO page = 1 [(api.none) = "true"];
-  optional string userID = 2 [(api.query) = "user_id"];
-  optional int32 action = 3 [(api.query) = "action"];
-  optional string resource = 4 [(api.query) = "resource"];
-  optional bool success = 5 [(api.query) = "success"];
-  optional int64 startTime = 6 [(api.query) = "start_time"];
-  optional int64 endTime = 7 [(api.query) = "end_time"];
+  optional http_base.PageRequestDTO page = 1 [(api.none) = "true", (api.go_tag) = "json:\"page,omitempty\""];
+  optional string userID = 2 [(api.query) = "user_id", (api.go_tag) = "json:\"user_id,omitempty\""];
+  optional int32 action = 3 [(api.query) = "action", (api.go_tag) = "json:\"action,omitempty\""];
+  optional string resource = 4 [(api.query) = "resource", (api.go_tag) = "json:\"resource,omitempty\""];
+  optional bool success = 5 [(api.query) = "success", (api.go_tag) = "json:\"success,omitempty\""];
+  optional int64 startTime = 6 [(api.query) = "start_time", (api.go_tag) = "json:\"start_time,omitempty\""];
+  optional int64 endTime = 7 [(api.query) = "end_time", (api.go_tag) = "json:\"end_time,omitempty\""];
 }
 
 message AuditLogStatsDTO {
-  optional int64 totalCount = 1;
-  optional int64 successCount = 2;
-  optional int32 avgDurationMs = 3;
+  optional int64 totalCount = 1 [(api.go_tag) = "json:\"total_count\""];
+  optional int64 successCount = 2 [(api.go_tag) = "json:\"success_count\""];
+  optional int32 avgDurationMs = 3 [(api.go_tag) = "json:\"avg_duration_ms\""];
 }
 
 message ListAuditLogsResponseDTO {
-  optional http_base.BaseResponseDTO baseResp = 1;
-  repeated AuditLogDTO auditLogs = 2;
-  optional http_base.PageResponseDTO page = 3;
-  optional AuditLogStatsDTO stats = 4;
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  repeated AuditLogDTO auditLogs = 2 [(api.go_tag) = "json:\"audit_logs,omitempty\""];
+  optional http_base.PageResponseDTO page = 3 [(api.go_tag) = "json:\"page,omitempty\""];
+  optional AuditLogStatsDTO stats = 4 [(api.go_tag) = "json:\"stats,omitempty\""];
 }
 
 message GetMeRequestDTO {}
