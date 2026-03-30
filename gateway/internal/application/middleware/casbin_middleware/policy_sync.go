@@ -2,6 +2,7 @@ package casbin_middleware
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"time"
 
@@ -10,6 +11,8 @@ import (
 	identitycli "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/client/identity_cli"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 )
+
+const defaultInitialSyncRetryInterval = 3 * time.Second
 
 // PolicySyncService 策略同步服务
 // 负责从 RPC 服务同步策略到本地 Casbin Enforcer
@@ -22,6 +25,7 @@ type PolicySyncService struct {
 	mu             sync.Mutex
 	lastSyncTime   time.Time
 	syncCount      int64
+	initialRetry   time.Duration
 }
 
 // NewPolicySyncService 创建策略同步服务
@@ -42,6 +46,7 @@ func NewPolicySyncService(
 		logger:         logger,
 		syncInterval:   interval,
 		stopCh:         make(chan struct{}),
+		initialRetry:   defaultInitialSyncRetryInterval,
 	}
 }
 
@@ -49,7 +54,10 @@ func NewPolicySyncService(
 func (s *PolicySyncService) Start(ctx context.Context) error {
 	// 启动时立即同步一次
 	if err := s.SyncPolicies(ctx); err != nil {
-		s.logger.Warn().Err(err).Msg("Initial policy sync failed, will retry on next interval")
+		s.logger.Warn().
+			Err(err).
+			Dur("retry_interval", s.initialRetry).
+			Msg("Initial policy sync failed, will retry with fast bootstrap interval")
 	}
 
 	// 启动定时同步
@@ -70,15 +78,29 @@ func (s *PolicySyncService) Stop() {
 
 // runSyncLoop 定时同步循环
 func (s *PolicySyncService) runSyncLoop(ctx context.Context) {
-	ticker := time.NewTicker(s.syncInterval)
-	defer ticker.Stop()
+	periodicTicker := time.NewTicker(s.syncInterval)
+	defer periodicTicker.Stop()
+
+	initialRetryTicker := time.NewTicker(s.initialRetry)
+	defer initialRetryTicker.Stop()
 
 	for {
 		select {
-		case <-ticker.C:
+		case <-periodicTicker.C:
 			if err := s.SyncPolicies(ctx); err != nil {
 				s.logger.Error().Err(err).Msg("Periodic policy sync failed")
 			}
+		case <-initialRetryTicker.C:
+			if s.GetSyncCount() > 0 {
+				continue
+			}
+
+			if err := s.SyncPolicies(ctx); err != nil {
+				s.logger.Warn().Err(err).Msg("Initial policy sync retry failed")
+				continue
+			}
+
+			s.logger.Info().Msg("Initial policy sync retry succeeded")
 		case <-s.stopCh:
 			return
 		case <-ctx.Done():
@@ -106,7 +128,7 @@ func (s *PolicySyncService) SyncPolicies(ctx context.Context) error {
 
 	if resp == nil {
 		s.logger.Warn().Msg("SyncPolicies RPC returned nil response")
-		return nil
+		return fmt.Errorf("sync policies rpc returned nil response")
 	}
 
 	if resp.Success == nil || !*resp.Success {
@@ -115,7 +137,7 @@ func (s *PolicySyncService) SyncPolicies(ctx context.Context) error {
 			message = *resp.Message
 		}
 		s.logger.Warn().Str("message", message).Msg("SyncPolicies RPC reported failure")
-		return nil
+		return fmt.Errorf("sync policies rpc reported failure: %s", message)
 	}
 
 	policies := make([][]string, 0, len(resp.Policies))

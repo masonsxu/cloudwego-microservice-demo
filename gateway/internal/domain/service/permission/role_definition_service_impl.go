@@ -2,6 +2,7 @@ package permission
 
 import (
 	"context"
+	"fmt"
 
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
 
@@ -47,9 +48,12 @@ func (s *roleDefinitionServiceImpl) CreateRoleDefinition(
 		return nil, err
 	}
 
-	rpcResp := result.(*identity_srv.RoleDefinition)
+	rpcResp := result.(*identity_srv.CreateRoleDefinitionResponse)
+	if rpcResp == nil || rpcResp.RoleDefinition == nil {
+		return nil, fmt.Errorf("创建角色定义响应为空")
+	}
 
-	httpRoleDefinition := s.assembler.Role().ToHTTPRoleDefinition(rpcResp)
+	httpRoleDefinition := s.assembler.Role().ToHTTPRoleDefinition(rpcResp.RoleDefinition)
 
 	httpResp := &permission.RoleDefinitionCreateResponseDTO{
 		BaseResp: s.ResponseBuilder().BuildSuccessResponse(),
@@ -73,9 +77,12 @@ func (s *roleDefinitionServiceImpl) UpdateRoleDefinition(
 		return nil, err
 	}
 
-	rpcResp := result.(*identity_srv.RoleDefinition)
+	rpcResp := result.(*identity_srv.UpdateRoleDefinitionResponse)
+	if rpcResp == nil || rpcResp.RoleDefinition == nil {
+		return nil, fmt.Errorf("更新角色定义响应为空")
+	}
 
-	httpRoleDefinition := s.assembler.Role().ToHTTPRoleDefinition(rpcResp)
+	httpRoleDefinition := s.assembler.Role().ToHTTPRoleDefinition(rpcResp.RoleDefinition)
 
 	httpResp := &permission.RoleDefinitionUpdateResponseDTO{
 		BaseResp: s.ResponseBuilder().BuildSuccessResponse(),
@@ -117,9 +124,12 @@ func (s *roleDefinitionServiceImpl) GetRoleDefinition(
 		return nil, err
 	}
 
-	rpcResp := result.(*identity_srv.RoleDefinition)
+	rpcResp := result.(*identity_srv.GetRoleDefinitionResponse)
+	if rpcResp == nil || rpcResp.RoleDefinition == nil {
+		return nil, fmt.Errorf("获取角色定义响应为空")
+	}
 
-	httpRoleDefinition := s.assembler.Role().ToHTTPRoleDefinition(rpcResp)
+	httpRoleDefinition := s.assembler.Role().ToHTTPRoleDefinition(rpcResp.RoleDefinition)
 
 	httpResp := &permission.RoleDefinitionGetResponseDTO{
 		BaseResp: s.ResponseBuilder().BuildSuccessResponse(),

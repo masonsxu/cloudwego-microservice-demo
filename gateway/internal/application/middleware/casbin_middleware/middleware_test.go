@@ -1,6 +1,7 @@
 package casbin_middleware
 
 import (
+	"context"
 	"testing"
 
 	"github.com/rs/zerolog"
@@ -110,6 +111,33 @@ func TestDefaultSkipPaths(t *testing.T) {
 	}
 }
 
+func TestDefaultSuperAdminSubjects(t *testing.T) {
+	subjects := defaultSuperAdminSubjects()
+	if len(subjects) == 0 {
+		t.Fatal("defaultSuperAdminSubjects() returned empty slice")
+	}
+
+	foundRole := false
+	foundUsername := false
+	for _, subject := range subjects {
+		if subject == "role:superadmin" {
+			foundRole = true
+		}
+
+		if subject == "username:superadmin" {
+			foundUsername = true
+		}
+	}
+
+	if !foundRole {
+		t.Error("defaultSuperAdminSubjects() should contain role:superadmin")
+	}
+
+	if !foundUsername {
+		t.Error("defaultSuperAdminSubjects() should contain username:superadmin")
+	}
+}
+
 func TestCasbinMiddleware_ShouldSkip(t *testing.T) {
 	logger := zerolog.Nop()
 	m := NewCasbinMiddleware(nil, &logger)
@@ -155,6 +183,51 @@ func TestCasbinMiddleware_SetSkipPaths(t *testing.T) {
 
 	if m.shouldSkip("/login") {
 		t.Error("Expected /login to NOT be skipped after SetSkipPaths with custom paths")
+	}
+}
+
+func TestCasbinMiddleware_SetSuperAdminBypassConfig(t *testing.T) {
+	logger := zerolog.Nop()
+	m := NewCasbinMiddleware(nil, &logger)
+
+	m.SetSuperAdminBypassConfig(false, []string{"role:superadmin", " role:platform_admin "})
+	if m.superAdminBypassEnabled {
+		t.Error("superAdminBypassEnabled should be false")
+	}
+
+	if _, ok := m.superAdminSubjectAllowSet["role:superadmin"]; !ok {
+		t.Error("expected role:superadmin in superAdminSubjectAllowSet")
+	}
+
+	if _, ok := m.superAdminSubjectAllowSet["role:platform_admin"]; !ok {
+		t.Error("expected role:platform_admin in superAdminSubjectAllowSet")
+	}
+
+	m.SetSuperAdminBypassConfig(true, nil)
+	if !m.superAdminBypassEnabled {
+		t.Error("superAdminBypassEnabled should be true")
+	}
+
+	if _, ok := m.superAdminSubjectAllowSet["role:superadmin"]; !ok {
+		t.Error("expected default role:superadmin when subjects is empty")
+	}
+
+	if _, ok := m.superAdminSubjectAllowSet["username:superadmin"]; !ok {
+		t.Error("expected default username:superadmin when subjects is empty")
+	}
+}
+
+func TestCasbinMiddleware_ShouldBypassForSuperAdmin_Username(t *testing.T) {
+	logger := zerolog.Nop()
+	m := NewCasbinMiddleware(nil, &logger)
+	m.SetSuperAdminBypassConfig(true, []string{"username:superadmin"})
+
+	if !m.shouldBypassForSuperAdmin(context.Background(), "user-1", "superadmin", nil, nil) {
+		t.Error("expected superadmin username to bypass casbin checks")
+	}
+
+	if m.shouldBypassForSuperAdmin(context.Background(), "user-1", "normal_user", nil, nil) {
+		t.Error("expected non-superadmin username to not bypass casbin checks")
 	}
 }
 

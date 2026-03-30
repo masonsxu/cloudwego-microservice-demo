@@ -22,6 +22,10 @@ type Config struct {
 	SyncInterval int
 	// SkipPaths 跳过权限检查的路径列表
 	SkipPaths []string
+	// SuperAdminBypassEnabled 是否启用超管兜底放行
+	SuperAdminBypassEnabled bool
+	// SuperAdminSubjects 超管主体列表（匹配 Casbin subject，例如 role:superadmin）
+	SuperAdminSubjects []string
 }
 
 // DefaultConfig 默认配置
@@ -37,6 +41,8 @@ func DefaultConfig() *Config {
 			"/swagger",
 			"/api/v1/identity/auth/login",
 		},
+		SuperAdminBypassEnabled: true,
+		SuperAdminSubjects:      defaultSuperAdminSubjects(),
 	}
 }
 
@@ -58,6 +64,14 @@ func LoadConfigFromEnv() *Config {
 
 	if skipPaths := os.Getenv("CASBIN_SKIP_PATHS"); skipPaths != "" {
 		config.SkipPaths = splitAndTrim(skipPaths, ",")
+	}
+
+	if superAdminBypassEnabled := os.Getenv("CASBIN_SUPERADMIN_BYPASS_ENABLED"); superAdminBypassEnabled == "false" {
+		config.SuperAdminBypassEnabled = false
+	}
+
+	if superAdminSubjects := os.Getenv("CASBIN_SUPERADMIN_SUBJECTS"); superAdminSubjects != "" {
+		config.SuperAdminSubjects = splitAndTrim(superAdminSubjects, ",")
 	}
 
 	return config
@@ -141,8 +155,13 @@ func ProvideCasbinMiddleware(config *Config, logger *zerolog.Logger) *CasbinMidd
 	if len(config.SkipPaths) > 0 {
 		middleware.SetSkipPaths(config.SkipPaths)
 	}
+	middleware.SetSuperAdminBypassConfig(config.SuperAdminBypassEnabled, config.SuperAdminSubjects)
 
-	logger.Info().Strs("skip_paths", middleware.skipPaths).Msg("Casbin middleware created successfully")
+	logger.Info().
+		Strs("skip_paths", middleware.skipPaths).
+		Bool("superadmin_bypass_enabled", config.SuperAdminBypassEnabled).
+		Strs("superadmin_subjects", config.SuperAdminSubjects).
+		Msg("Casbin middleware created successfully")
 	return middleware
 }
 

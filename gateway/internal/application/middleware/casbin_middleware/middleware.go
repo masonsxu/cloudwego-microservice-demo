@@ -14,19 +14,23 @@ import (
 
 // CasbinMiddleware Casbin权限中间件实现
 type CasbinMiddleware struct {
-	enforcer    *CasbinEnforcer
-	logger      *zerolog.Logger
-	skipPaths   []string
-	pathMapping map[string]string // API路径到权限编码的映射
+	enforcer                  *CasbinEnforcer
+	logger                    *zerolog.Logger
+	skipPaths                 []string
+	pathMapping               map[string]string // API路径到权限编码的映射
+	superAdminBypassEnabled   bool
+	superAdminSubjectAllowSet map[string]struct{}
 }
 
 // NewCasbinMiddleware 创建新的 Casbin 中间件
 func NewCasbinMiddleware(enforcer *CasbinEnforcer, logger *zerolog.Logger) *CasbinMiddleware {
 	return &CasbinMiddleware{
-		enforcer:    enforcer,
-		logger:      logger,
-		skipPaths:   defaultSkipPaths(),
-		pathMapping: defaultPathMapping(),
+		enforcer:                  enforcer,
+		logger:                    logger,
+		skipPaths:                 defaultSkipPaths(),
+		pathMapping:               defaultPathMapping(),
+		superAdminBypassEnabled:   true,
+		superAdminSubjectAllowSet: toLookupSet(defaultSuperAdminSubjects()),
 	}
 }
 
@@ -60,6 +64,13 @@ func defaultPathMapping() map[string]string {
 	}
 }
 
+func defaultSuperAdminSubjects() []string {
+	return []string{
+		"role:superadmin",
+		"username:superadmin",
+	}
+}
+
 // SetSkipPaths 设置跳过权限检查的路径
 func (m *CasbinMiddleware) SetSkipPaths(paths []string) {
 	m.skipPaths = paths
@@ -68,6 +79,17 @@ func (m *CasbinMiddleware) SetSkipPaths(paths []string) {
 // AddPathMapping 添加路径到权限编码的映射
 func (m *CasbinMiddleware) AddPathMapping(path, permCode string) {
 	m.pathMapping[path] = permCode
+}
+
+// SetSuperAdminBypassConfig 设置超级管理员兜底放行配置
+func (m *CasbinMiddleware) SetSuperAdminBypassConfig(enabled bool, subjects []string) {
+	m.superAdminBypassEnabled = enabled
+
+	if len(subjects) == 0 {
+		subjects = defaultSuperAdminSubjects()
+	}
+
+	m.superAdminSubjectAllowSet = toLookupSet(subjects)
 }
 
 // MiddlewareFunc 返回权限校验中间件
@@ -122,8 +144,26 @@ func (m *CasbinMiddleware) MiddlewareFunc() app.HandlerFunc {
 			return
 		}
 
-		// 获取角色ID列表（多角色模式）
+		// 获取部门ID列表
+		deptIDs := auth_context.GetCurrentDepartmentIDs(c)
 		roleIDs := auth_context.GetCurrentRoleIDs(c)
+		username, _ := auth_context.GetCurrentUsername(c)
+		tracelog.Event(ctx, m.logger.Debug()).
+			Str("path", path).
+			Str("method", method).
+			Str("user_id", userID).
+			Str("username", username).
+			Strs("role_ids", roleIDs).
+			Strs("department_ids", deptIDs).
+			Msg("Casbin auth context extracted")
+
+		if m.shouldBypassForSuperAdmin(ctx, userID, username, roleIDs, deptIDs) {
+			auth_context.SetDataScope(c, "org")
+			c.Next(ctx)
+			return
+		}
+
+		// 获取角色ID列表（多角色模式）
 		if len(roleIDs) == 0 {
 			tracelog.Event(ctx, m.logger.Warn()).
 				Str("path", path).
@@ -133,16 +173,6 @@ func (m *CasbinMiddleware) MiddlewareFunc() app.HandlerFunc {
 			abortWithPermissionDenied(c, "No roles assigned")
 			return
 		}
-
-		// 获取部门ID列表
-		deptIDs := auth_context.GetCurrentDepartmentIDs(c)
-		tracelog.Event(ctx, m.logger.Debug()).
-			Str("path", path).
-			Str("method", method).
-			Str("user_id", userID).
-			Strs("role_ids", roleIDs).
-			Strs("department_ids", deptIDs).
-			Msg("Casbin auth context extracted")
 
 		// 将HTTP方法转换为操作类型
 		action := methodToAction(method)
@@ -279,6 +309,96 @@ func methodToAction(method string) string {
 	}
 }
 
+func toLookupSet(values []string) map[string]struct{} {
+	result := make(map[string]struct{}, len(values))
+	for _, value := range values {
+		trimmed := strings.TrimSpace(value)
+		if trimmed == "" {
+			continue
+		}
+
+		result[trimmed] = struct{}{}
+	}
+
+	return result
+}
+
+func (m *CasbinMiddleware) shouldBypassForSuperAdmin(
+	ctx context.Context,
+	userID string,
+	username string,
+	roleIDs []string,
+	deptIDs []string,
+) bool {
+	if !m.superAdminBypassEnabled {
+		return false
+	}
+
+	subjects := m.buildBypassSubjects(userID, username, roleIDs, deptIDs)
+	for subject := range subjects {
+		if _, ok := m.superAdminSubjectAllowSet[subject]; ok {
+			tracelog.Event(ctx, m.logger.Debug()).
+				Str("user_id", userID).
+				Str("username", username).
+				Str("subject", subject).
+				Msg("Casbin bypass: superadmin subject matched")
+			return true
+		}
+	}
+
+	return false
+}
+
+func (m *CasbinMiddleware) buildBypassSubjects(
+	userID string,
+	username string,
+	roleIDs []string,
+	deptIDs []string,
+) map[string]struct{} {
+	subjects := m.buildEffectiveRoleSubjects(userID, roleIDs, deptIDs)
+
+	if userID != "" {
+		subjects["user:"+userID] = struct{}{}
+	}
+
+	trimmedName := strings.TrimSpace(username)
+	if trimmedName != "" {
+		subjects["username:"+trimmedName] = struct{}{}
+		subjects["username:"+strings.ToLower(trimmedName)] = struct{}{}
+	}
+
+	return subjects
+}
+
+func (m *CasbinMiddleware) buildEffectiveRoleSubjects(
+	userID string,
+	roleIDs []string,
+	deptIDs []string,
+) map[string]struct{} {
+	effectiveRoleSubjects := make(map[string]struct{}, len(roleIDs)+4)
+	for _, roleID := range roleIDs {
+		effectiveRoleSubjects["role:"+roleID] = struct{}{}
+	}
+
+	if m.enforcer == nil {
+		return effectiveRoleSubjects
+	}
+
+	userSub := "user:" + userID
+	for _, resolvedRole := range m.enforcer.GetRolesForUserInDomain(userSub, "*") {
+		effectiveRoleSubjects[resolvedRole] = struct{}{}
+	}
+
+	for _, deptID := range deptIDs {
+		domain := "dept:" + deptID
+		for _, resolvedRole := range m.enforcer.GetRolesForUserInDomain(userSub, domain) {
+			effectiveRoleSubjects[resolvedRole] = struct{}{}
+		}
+	}
+
+	return effectiveRoleSubjects
+}
+
 // checkMultiRolePermission 多角色权限检查（取并集）
 func (m *CasbinMiddleware) checkMultiRolePermission(
 	ctx context.Context,
@@ -291,21 +411,8 @@ func (m *CasbinMiddleware) checkMultiRolePermission(
 	maxDataScope := ""
 
 	// 构建有效角色主体集合：JWT 角色ID + Casbin g 关系解析出的角色编码
-	effectiveRoleSubjects := make(map[string]struct{}, len(roleIDs)+4)
-	for _, roleID := range roleIDs {
-		effectiveRoleSubjects["role:"+roleID] = struct{}{}
-	}
-
+	effectiveRoleSubjects := m.buildEffectiveRoleSubjects(userID, roleIDs, deptIDs)
 	userSub := "user:" + userID
-	for _, resolvedRole := range m.enforcer.GetRolesForUserInDomain(userSub, "*") {
-		effectiveRoleSubjects[resolvedRole] = struct{}{}
-	}
-	for _, deptID := range deptIDs {
-		domain := "dept:" + deptID
-		for _, resolvedRole := range m.enforcer.GetRolesForUserInDomain(userSub, domain) {
-			effectiveRoleSubjects[resolvedRole] = struct{}{}
-		}
-	}
 
 	// 为每个角色和部门组合检查权限
 	for sub := range effectiveRoleSubjects {
