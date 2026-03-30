@@ -3,6 +3,7 @@ module github.com/masonsxu/cloudwego-microservice-demo/gateway
 go 1.25.0
 
 require (
+	github.com/apache/thrift v0.16.0
 	github.com/bytedance/gopkg v0.1.3
 	github.com/casbin/casbin/v2 v2.135.0
 	github.com/cloudwego/hertz v0.10.4
@@ -18,6 +19,7 @@ require (
 	github.com/kitex-contrib/obs-opentelemetry v0.3.0
 	github.com/kitex-contrib/registry-etcd v0.3.0
 	github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv v0.0.0-00010101000000-000000000000
+	github.com/ory/fosite v0.49.0
 	github.com/redis/go-redis/v9 v9.18.0
 	github.com/rs/zerolog v1.34.0
 	github.com/spf13/viper v1.21.0
@@ -100,7 +102,6 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/openzipkin/zipkin-go v0.4.2 // indirect
-	github.com/ory/fosite v0.49.0 // indirect
 	github.com/ory/go-acc v0.2.9-0.20230103102148-6b1c9a70dbbe // indirect
 	github.com/ory/go-convenience v0.1.0 // indirect
 	github.com/ory/x v0.0.665 // indirect

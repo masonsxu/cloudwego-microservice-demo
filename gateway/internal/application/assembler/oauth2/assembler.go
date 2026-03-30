@@ -65,7 +65,7 @@ func (a *assemblerImpl) ToHTTPClient(rpcClient *rpc.OAuth2Client) *identity_srv.
 	}
 
 	return &identity_srv.OAuth2ClientDTO{
-		ID:                   common.CopyStringPtr(rpcClient.Id),
+		Id:                   common.CopyStringPtr(rpcClient.Id),
 		ClientID:             common.CopyStringPtr(rpcClient.ClientID),
 		ClientName:           common.CopyStringPtr(rpcClient.ClientName),
 		Description:          common.CopyStringPtr(rpcClient.Description),
@@ -101,7 +101,7 @@ func (a *assemblerImpl) ToHTTPScope(rpcScope *rpc.OAuth2Scope) *identity_srv.OAu
 	}
 
 	return &identity_srv.OAuth2ScopeDTO{
-		ID:          common.CopyStringPtr(rpcScope.Id),
+		Id:          common.CopyStringPtr(rpcScope.Id),
 		Name:        common.CopyStringPtr(rpcScope.Name),
 		DisplayName: common.CopyStringPtr(rpcScope.DisplayName),
 		Description: common.CopyStringPtr(rpcScope.Description),
@@ -127,7 +127,7 @@ func (a *assemblerImpl) ToHTTPConsent(rpcConsent *rpc.OAuth2Consent) *identity_s
 	}
 
 	return &identity_srv.OAuth2ConsentDTO{
-		ID:         common.CopyStringPtr(rpcConsent.Id),
+		Id:         common.CopyStringPtr(rpcConsent.Id),
 		ClientID:   common.CopyStringPtr(rpcConsent.ClientID),
 		ClientName: common.CopyStringPtr(rpcConsent.ClientName),
 		Scopes:     rpcConsent.Scopes,

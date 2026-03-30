@@ -71,7 +71,7 @@ func GetOAuth2Client(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp, err := oauth2MgmtService.GetClient(ctx, *req.ID)
+	resp, err := oauth2MgmtService.GetClient(ctx, *req.Id)
 	if err != nil {
 		errors.HandleServiceError(c, err, "获取 OAuth2 客户端失败")
 		return
@@ -102,7 +102,7 @@ func UpdateOAuth2Client(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp, err := oauth2MgmtService.UpdateClient(ctx, *req.ID, &req)
+	resp, err := oauth2MgmtService.UpdateClient(ctx, *req.Id, &req)
 	if err != nil {
 		errors.HandleServiceError(c, err, "更新 OAuth2 客户端失败")
 		return
@@ -132,7 +132,7 @@ func DeleteOAuth2Client(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp, err := oauth2MgmtService.DeleteClient(ctx, *req.ID)
+	resp, err := oauth2MgmtService.DeleteClient(ctx, *req.Id)
 	if err != nil {
 		errors.HandleServiceError(c, err, "删除 OAuth2 客户端失败")
 		return
@@ -191,7 +191,7 @@ func RotateOAuth2ClientSecret(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp, err := oauth2MgmtService.RotateClientSecret(ctx, *req.ID)
+	resp, err := oauth2MgmtService.RotateClientSecret(ctx, *req.Id)
 	if err != nil {
 		errors.HandleServiceError(c, err, "轮换客户端密钥失败")
 		return

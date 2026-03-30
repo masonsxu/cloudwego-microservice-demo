@@ -152,8 +152,7 @@ func (s *oauth2ManagementServiceImpl) DeleteClient(
 ) (*httpBase.OperationStatusResponseDTO, error) {
 	_, err := s.ProcessRPCCall(ctx, "删除 OAuth2 客户端",
 		func(ctx context.Context) (interface{}, error) {
-			err := s.identityClient.DeleteOAuth2Client(ctx, &identity_srv.DeleteOAuth2ClientRequest{Id: &clientID})
-			return nil, err
+			return s.identityClient.DeleteOAuth2Client(ctx, &identity_srv.DeleteOAuth2ClientRequest{Id: &clientID})
 		},
 	)
 	if err != nil {
@@ -258,14 +257,11 @@ func (s *oauth2ManagementServiceImpl) RevokeMyConsent(
 	ctx context.Context,
 	userID, clientID string,
 ) (*httpBase.OperationStatusResponseDTO, error) {
-	err := errors.ProcessRPCError(
-		s.identityClient.RevokeOAuth2Consent(ctx, &identity_srv.RevokeOAuth2ConsentRequest{
-			UserID:   &userID,
-			ClientID: &clientID,
-		}),
-		"撤销授权同意失败",
-	)
-	if err != nil {
+	_, rpcErr := s.identityClient.RevokeOAuth2Consent(ctx, &identity_srv.RevokeOAuth2ConsentRequest{
+		UserID:   &userID,
+		ClientID: &clientID,
+	})
+	if err := errors.ProcessRPCError(rpcErr, "撤销授权同意失败"); err != nil {
 		return nil, err
 	}
 

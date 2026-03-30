@@ -1,0 +1,132 @@
+syntax = "proto3";
+
+package oauth2;
+
+option go_package = "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/oauth2";
+
+import "base/api.proto";
+import "http/base/base.proto";
+
+message OAuth2ClientDTO {
+  optional string id = 1 [(api.go_tag) = "json:\"id\""];
+  optional string clientID = 2 [(api.go_tag) = "json:\"client_id\""];
+  optional string clientName = 3 [(api.go_tag) = "json:\"client_name\""];
+  optional string description = 4 [(api.go_tag) = "json:\"description,omitempty\""];
+  optional string clientType = 5 [(api.go_tag) = "json:\"client_type\""];
+  repeated string grantTypes = 6 [(api.go_tag) = "json:\"grant_types\""];
+  repeated string redirectURIs = 7 [(api.go_tag) = "json:\"redirect_uris,omitempty\""];
+  repeated string scopes = 8 [(api.go_tag) = "json:\"scopes,omitempty\""];
+  optional string logoURI = 9 [(api.go_tag) = "json:\"logo_uri,omitempty\""];
+  optional string clientURI = 10 [(api.go_tag) = "json:\"client_uri,omitempty\""];
+  optional int32 accessTokenLifespan = 11 [(api.go_tag) = "json:\"access_token_lifespan\""];
+  optional int32 refreshTokenLifespan = 12 [(api.go_tag) = "json:\"refresh_token_lifespan\""];
+  optional bool isActive = 13 [(api.go_tag) = "json:\"is_active\""];
+  optional string ownerID = 14 [(api.go_tag) = "json:\"owner_id,omitempty\""];
+  optional int64 createdAt = 15 [(api.go_tag) = "json:\"created_at\""];
+  optional int64 updatedAt = 16 [(api.go_tag) = "json:\"updated_at\""];
+}
+
+message CreateOAuth2ClientRequestDTO {
+  optional string clientName = 1 [(api.body) = "client_name", (api.vd) = "@:len($) > 0 && len($) <= 128; msg:'客户端名称不能为空且不超过128字符'", (api.go_tag) = "json:\"client_name\""];
+  optional string description = 2 [(api.body) = "description", (api.vd) = "@:len($) <= 512; msg:'描述不超过512字符'", (api.go_tag) = "json:\"description,omitempty\""];
+  optional string clientType = 3 [(api.body) = "client_type", (api.vd) = "@:$ == 'confidential' || $ == 'public'; msg:'客户端类型必须为 confidential 或 public'", (api.go_tag) = "json:\"client_type\""];
+  repeated string grantTypes = 4 [(api.body) = "grant_types", (api.go_tag) = "json:\"grant_types\""];
+  repeated string redirectURIs = 5 [(api.body) = "redirect_uris", (api.go_tag) = "json:\"redirect_uris,omitempty\""];
+  repeated string scopes = 6 [(api.body) = "scopes", (api.go_tag) = "json:\"scopes,omitempty\""];
+  optional string logoURI = 7 [(api.body) = "logo_uri", (api.go_tag) = "json:\"logo_uri,omitempty\""];
+  optional string clientURI = 8 [(api.body) = "client_uri", (api.go_tag) = "json:\"client_uri,omitempty\""];
+  optional int32 accessTokenLifespan = 9 [(api.body) = "access_token_lifespan", (api.go_tag) = "json:\"access_token_lifespan,omitempty\""];
+  optional int32 refreshTokenLifespan = 10 [(api.body) = "refresh_token_lifespan", (api.go_tag) = "json:\"refresh_token_lifespan,omitempty\""];
+}
+
+message CreateOAuth2ClientResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional OAuth2ClientDTO client = 2 [(api.go_tag) = "json:\"client,omitempty\""];
+  optional string clientSecret = 3 [(api.go_tag) = "json:\"client_secret,omitempty\""];
+}
+
+message GetOAuth2ClientRequestDTO {
+  optional string id = 1 [(api.path) = "id", (api.vd) = "@:len($)==36; msg:'客户端ID格式不正确'", (api.go_tag) = "json:\"-\""];
+}
+
+message OAuth2ClientResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional OAuth2ClientDTO client = 2 [(api.go_tag) = "json:\"client,omitempty\""];
+}
+
+message UpdateOAuth2ClientRequestDTO {
+  optional string id = 1 [(api.path) = "id", (api.vd) = "@:len($)==36; msg:'客户端ID格式不正确'", (api.go_tag) = "json:\"-\""];
+  optional string clientName = 2 [(api.body) = "client_name", (api.vd) = "@:len($) == 0 || len($) <= 128; msg:'客户端名称不超过128字符'", (api.go_tag) = "json:\"client_name,omitempty\""];
+  optional string description = 3 [(api.body) = "description", (api.vd) = "@:len($) <= 512; msg:'描述不超过512字符'", (api.go_tag) = "json:\"description,omitempty\""];
+  repeated string grantTypes = 4 [(api.body) = "grant_types", (api.go_tag) = "json:\"grant_types,omitempty\""];
+  repeated string redirectURIs = 5 [(api.body) = "redirect_uris", (api.go_tag) = "json:\"redirect_uris,omitempty\""];
+  repeated string scopes = 6 [(api.body) = "scopes", (api.go_tag) = "json:\"scopes,omitempty\""];
+  optional string logoURI = 7 [(api.body) = "logo_uri", (api.go_tag) = "json:\"logo_uri,omitempty\""];
+  optional string clientURI = 8 [(api.body) = "client_uri", (api.go_tag) = "json:\"client_uri,omitempty\""];
+  optional int32 accessTokenLifespan = 9 [(api.body) = "access_token_lifespan", (api.go_tag) = "json:\"access_token_lifespan,omitempty\""];
+  optional int32 refreshTokenLifespan = 10 [(api.body) = "refresh_token_lifespan", (api.go_tag) = "json:\"refresh_token_lifespan,omitempty\""];
+  optional bool isActive = 11 [(api.body) = "is_active", (api.go_tag) = "json:\"is_active,omitempty\""];
+}
+
+message DeleteOAuth2ClientRequestDTO {
+  optional string id = 1 [(api.path) = "id", (api.vd) = "@:len($)==36; msg:'客户端ID格式不正确'", (api.go_tag) = "json:\"-\""];
+}
+
+message ListOAuth2ClientsRequestDTO {
+  optional http_base.PageRequestDTO page = 1 [(api.none) = "true", (api.go_tag) = "json:\"page,omitempty\""];
+  optional bool isActive = 2 [(api.query) = "is_active", (api.go_tag) = "json:\"is_active,omitempty\""];
+}
+
+message ListOAuth2ClientsResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  repeated OAuth2ClientDTO clients = 2 [(api.go_tag) = "json:\"clients,omitempty\""];
+  optional http_base.PageResponseDTO page = 3 [(api.go_tag) = "json:\"page,omitempty\""];
+}
+
+message RotateOAuth2ClientSecretRequestDTO {
+  optional string id = 1 [(api.path) = "id", (api.vd) = "@:len($)==36; msg:'客户端ID格式不正确'", (api.go_tag) = "json:\"-\""];
+}
+
+message RotateOAuth2ClientSecretResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional string clientSecret = 2 [(api.go_tag) = "json:\"client_secret\""];
+}
+
+message OAuth2ScopeDTO {
+  optional string id = 1 [(api.go_tag) = "json:\"id\""];
+  optional string name = 2 [(api.go_tag) = "json:\"name\""];
+  optional string displayName = 3 [(api.go_tag) = "json:\"display_name\""];
+  optional string description = 4 [(api.go_tag) = "json:\"description,omitempty\""];
+  optional bool isDefault = 5 [(api.go_tag) = "json:\"is_default\""];
+  optional bool isSystem = 6 [(api.go_tag) = "json:\"is_system\""];
+}
+
+message ListOAuth2ScopesRequestDTO {}
+
+message ListOAuth2ScopesResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  repeated OAuth2ScopeDTO scopes = 2 [(api.go_tag) = "json:\"scopes,omitempty\""];
+}
+
+message OAuth2ConsentDTO {
+  optional string id = 1 [(api.go_tag) = "json:\"id\""];
+  optional string clientID = 2 [(api.go_tag) = "json:\"client_id\""];
+  optional string clientName = 3 [(api.go_tag) = "json:\"client_name\""];
+  repeated string scopes = 4 [(api.go_tag) = "json:\"scopes\""];
+  optional int64 grantedAt = 5 [(api.go_tag) = "json:\"granted_at\""];
+  optional bool isRevoked = 6 [(api.go_tag) = "json:\"is_revoked\""];
+}
+
+message ListMyOAuth2ConsentsRequestDTO {
+  optional http_base.PageRequestDTO page = 1 [(api.none) = "true", (api.go_tag) = "json:\"page,omitempty\""];
+}
+
+message ListOAuth2ConsentsResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  repeated OAuth2ConsentDTO consents = 2 [(api.go_tag) = "json:\"consents,omitempty\""];
+  optional http_base.PageResponseDTO page = 3 [(api.go_tag) = "json:\"page,omitempty\""];
+}
+
+message RevokeMyOAuth2ConsentRequestDTO {
+  optional string clientID = 1 [(api.path) = "clientID", (api.vd) = "@:len($) > 0 && len($) <= 64; msg:'客户端标识符格式不正确'", (api.go_tag) = "json:\"-\""];
+}

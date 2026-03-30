@@ -898,13 +898,13 @@ func (s *IdentityServiceImpl) UpdateOAuth2Client(
 func (s *IdentityServiceImpl) DeleteOAuth2Client(
 	ctx context.Context,
 	req *identity_srv.DeleteOAuth2ClientRequest,
-) (err error) {
+) (resp *identity_srv.DeleteOAuth2ClientResponse, err error) {
 	err = s.logic.DeleteOAuth2Client(ctx, req)
 	if err != nil {
-		return errno.ToKitexError(err)
+		return nil, errno.ToKitexError(err)
 	}
 
-	return nil
+	return &identity_srv.DeleteOAuth2ClientResponse{}, nil
 }
 
 // ListOAuth2Clients implements the IdentityServiceImpl interface.
@@ -936,9 +936,9 @@ func (s *IdentityServiceImpl) RotateOAuth2ClientSecret(
 // GetOAuth2ClientForAuth implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) GetOAuth2ClientForAuth(
 	ctx context.Context,
-	clientID string,
+	req *identity_srv.GetOAuth2ClientForAuthRequest,
 ) (resp *identity_srv.GetOAuth2ClientForAuthResponse, err error) {
-	resp, err = s.logic.GetOAuth2ClientForAuth(ctx, clientID)
+	resp, err = s.logic.GetOAuth2ClientForAuth(ctx, req.GetClientID())
 	if err != nil {
 		return nil, errno.ToKitexError(err)
 	}
@@ -963,13 +963,13 @@ func (s *IdentityServiceImpl) ListOAuth2Scopes(
 func (s *IdentityServiceImpl) SaveOAuth2Consent(
 	ctx context.Context,
 	req *identity_srv.SaveOAuth2ConsentRequest,
-) (err error) {
+) (resp *identity_srv.SaveOAuth2ConsentResponse, err error) {
 	err = s.logic.SaveOAuth2Consent(ctx, req)
 	if err != nil {
-		return errno.ToKitexError(err)
+		return nil, errno.ToKitexError(err)
 	}
 
-	return nil
+	return &identity_srv.SaveOAuth2ConsentResponse{}, nil
 }
 
 // GetOAuth2Consent implements the IdentityServiceImpl interface.
@@ -1002,13 +1002,13 @@ func (s *IdentityServiceImpl) ListOAuth2Consents(
 func (s *IdentityServiceImpl) RevokeOAuth2Consent(
 	ctx context.Context,
 	req *identity_srv.RevokeOAuth2ConsentRequest,
-) (err error) {
+) (resp *identity_srv.RevokeOAuth2ConsentResponse, err error) {
 	err = s.logic.RevokeOAuth2Consent(ctx, req)
 	if err != nil {
-		return errno.ToKitexError(err)
+		return nil, errno.ToKitexError(err)
 	}
 
-	return nil
+	return &identity_srv.RevokeOAuth2ConsentResponse{}, nil
 }
 
 // ===========================================================================
@@ -1019,93 +1019,136 @@ func (s *IdentityServiceImpl) RevokeOAuth2Consent(
 func (s *IdentityServiceImpl) CreateOAuth2AuthorizeCodeSession(
 	ctx context.Context,
 	req *identity_srv.OAuth2TokenSession,
-) (err error) {
+) (resp *identity_srv.CreateOAuth2AuthorizeCodeSessionResponse, err error) {
 	// TODO: 实现 Token 存储 RPC 接口（阶段三：fosite 存储持久化）
-	return nil
+	return &identity_srv.CreateOAuth2AuthorizeCodeSessionResponse{}, nil
 }
 
 // GetOAuth2AuthorizeCodeSession implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) GetOAuth2AuthorizeCodeSession(
 	ctx context.Context,
-	signature string,
+	req *identity_srv.GetOAuth2AuthorizeCodeSessionRequest,
 ) (resp *identity_srv.OAuth2TokenSession, err error) {
+	_ = req
 	return nil, nil
 }
 
 // InvalidateOAuth2AuthorizeCodeSession implements the IdentityServiceImpl interface.
-func (s *IdentityServiceImpl) InvalidateOAuth2AuthorizeCodeSession(ctx context.Context, signature string) (err error) {
-	return nil
+func (s *IdentityServiceImpl) InvalidateOAuth2AuthorizeCodeSession(
+	ctx context.Context,
+	req *identity_srv.InvalidateOAuth2AuthorizeCodeSessionRequest,
+) (resp *identity_srv.InvalidateOAuth2AuthorizeCodeSessionResponse, err error) {
+	_ = ctx
+	_ = req
+	return &identity_srv.InvalidateOAuth2AuthorizeCodeSessionResponse{}, nil
 }
 
 // CreateOAuth2AccessTokenSession implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) CreateOAuth2AccessTokenSession(
 	ctx context.Context,
 	req *identity_srv.OAuth2TokenSession,
-) (err error) {
-	return nil
+) (resp *identity_srv.CreateOAuth2AccessTokenSessionResponse, err error) {
+	_ = ctx
+	_ = req
+	return &identity_srv.CreateOAuth2AccessTokenSessionResponse{}, nil
 }
 
 // GetOAuth2AccessTokenSession implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) GetOAuth2AccessTokenSession(
 	ctx context.Context,
-	signature string,
+	req *identity_srv.GetOAuth2AccessTokenSessionRequest,
 ) (resp *identity_srv.OAuth2TokenSession, err error) {
+	_ = req
+	_ = ctx
 	return nil, nil
 }
 
 // DeleteOAuth2AccessTokenSession implements the IdentityServiceImpl interface.
-func (s *IdentityServiceImpl) DeleteOAuth2AccessTokenSession(ctx context.Context, signature string) (err error) {
-	return nil
+func (s *IdentityServiceImpl) DeleteOAuth2AccessTokenSession(
+	ctx context.Context,
+	req *identity_srv.DeleteOAuth2AccessTokenSessionRequest,
+) (resp *identity_srv.DeleteOAuth2AccessTokenSessionResponse, err error) {
+	_ = ctx
+	_ = req
+	return &identity_srv.DeleteOAuth2AccessTokenSessionResponse{}, nil
 }
 
 // RevokeOAuth2AccessToken implements the IdentityServiceImpl interface.
-func (s *IdentityServiceImpl) RevokeOAuth2AccessToken(ctx context.Context, requestID string) (err error) {
-	return nil
+func (s *IdentityServiceImpl) RevokeOAuth2AccessToken(
+	ctx context.Context,
+	req *identity_srv.RevokeOAuth2AccessTokenRequest,
+) (resp *identity_srv.RevokeOAuth2AccessTokenResponse, err error) {
+	_ = ctx
+	_ = req
+	return &identity_srv.RevokeOAuth2AccessTokenResponse{}, nil
 }
 
 // CreateOAuth2RefreshTokenSession implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) CreateOAuth2RefreshTokenSession(
 	ctx context.Context,
 	req *identity_srv.OAuth2TokenSession,
-) (err error) {
-	return nil
+) (resp *identity_srv.CreateOAuth2RefreshTokenSessionResponse, err error) {
+	_ = ctx
+	_ = req
+	return &identity_srv.CreateOAuth2RefreshTokenSessionResponse{}, nil
 }
 
 // GetOAuth2RefreshTokenSession implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) GetOAuth2RefreshTokenSession(
 	ctx context.Context,
-	signature string,
+	req *identity_srv.GetOAuth2RefreshTokenSessionRequest,
 ) (resp *identity_srv.OAuth2TokenSession, err error) {
+	_ = ctx
+	_ = req
 	return nil, nil
 }
 
 // DeleteOAuth2RefreshTokenSession implements the IdentityServiceImpl interface.
-func (s *IdentityServiceImpl) DeleteOAuth2RefreshTokenSession(ctx context.Context, signature string) (err error) {
-	return nil
+func (s *IdentityServiceImpl) DeleteOAuth2RefreshTokenSession(
+	ctx context.Context,
+	req *identity_srv.DeleteOAuth2RefreshTokenSessionRequest,
+) (resp *identity_srv.DeleteOAuth2RefreshTokenSessionResponse, err error) {
+	_ = ctx
+	_ = req
+	return &identity_srv.DeleteOAuth2RefreshTokenSessionResponse{}, nil
 }
 
 // RevokeOAuth2RefreshToken implements the IdentityServiceImpl interface.
-func (s *IdentityServiceImpl) RevokeOAuth2RefreshToken(ctx context.Context, requestID string) (err error) {
-	return nil
+func (s *IdentityServiceImpl) RevokeOAuth2RefreshToken(
+	ctx context.Context,
+	req *identity_srv.RevokeOAuth2RefreshTokenRequest,
+) (resp *identity_srv.RevokeOAuth2RefreshTokenResponse, err error) {
+	_ = ctx
+	_ = req
+	return &identity_srv.RevokeOAuth2RefreshTokenResponse{}, nil
 }
 
 // CreateOAuth2PKCESession implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) CreateOAuth2PKCESession(
 	ctx context.Context,
 	req *identity_srv.OAuth2TokenSession,
-) (err error) {
-	return nil
+) (resp *identity_srv.CreateOAuth2PKCESessionResponse, err error) {
+	_ = ctx
+	_ = req
+	return &identity_srv.CreateOAuth2PKCESessionResponse{}, nil
 }
 
 // GetOAuth2PKCESession implements the IdentityServiceImpl interface.
 func (s *IdentityServiceImpl) GetOAuth2PKCESession(
 	ctx context.Context,
-	signature string,
+	req *identity_srv.GetOAuth2PKCESessionRequest,
 ) (resp *identity_srv.OAuth2TokenSession, err error) {
+	_ = ctx
+	_ = req
 	return nil, nil
 }
 
 // DeleteOAuth2PKCESession implements the IdentityServiceImpl interface.
-func (s *IdentityServiceImpl) DeleteOAuth2PKCESession(ctx context.Context, signature string) (err error) {
-	return nil
+func (s *IdentityServiceImpl) DeleteOAuth2PKCESession(
+	ctx context.Context,
+	req *identity_srv.DeleteOAuth2PKCESessionRequest,
+) (resp *identity_srv.DeleteOAuth2PKCESessionResponse, err error) {
+	_ = ctx
+	_ = req
+	return &identity_srv.DeleteOAuth2PKCESessionResponse{}, nil
 }
