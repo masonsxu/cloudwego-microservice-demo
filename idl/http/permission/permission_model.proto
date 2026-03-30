@@ -61,7 +61,7 @@ message RoleDefinitionCreateResponseDTO {
 }
 
 message RoleDefinitionUpdateRequestDTO {
-  optional string roleDefinitionID = 1 [(api.path) = "roleDefinitionID", (api.vd) = "@:len($) > 0; msg:'角色定义ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional string roleDefinitionID = 1 [(api.path) = "roleDefinitionID", (api.vd) = "@:len($) > 0; msg:'角色定义ID不能为空'", (api.go_tag) = "json:\"-\""];
   optional string description = 2 [(api.body) = "description", (api.go_tag) = "json:\"description,omitempty\""];
   optional int32 status = 3 [(api.body) = "status", (api.go_tag) = "json:\"status,omitempty\""];
   optional google.protobuf.ListValue permissions = 4 [(api.body) = "permissions", (api.go_tag) = "json:\"permissions,omitempty\""];
@@ -74,11 +74,11 @@ message RoleDefinitionUpdateResponseDTO {
 }
 
 message RoleDefinitionDeleteRequestDTO {
-  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.go_tag) = "json:\"-\""];
 }
 
 message RoleDefinitionGetRequestDTO {
-  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.go_tag) = "json:\"-\""];
 }
 
 message RoleDefinitionGetResponseDTO {
@@ -105,7 +105,7 @@ message AssignRoleToUserResponseDTO {
 }
 
 message GetLastUserRoleAssignmentRequestDTO {
-  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($) > 0; msg:'用户ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"user_id\""];
+  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($) > 0; msg:'用户ID不能为空'", (api.go_tag) = "json:\"-\""];
 }
 
 message GetLastUserRoleAssignmentResponseDTO {
@@ -126,7 +126,7 @@ message UserRoleListResponseDTO {
 }
 
 message GetUsersByRoleRequestDTO {
-  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.go_tag) = "json:\"-\""];
 }
 
 message GetUsersByRoleResponseDTO {
@@ -136,7 +136,7 @@ message GetUsersByRoleResponseDTO {
 }
 
 message BatchBindUsersToRoleRequestDTO {
-  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.go_tag) = "json:\"-\""];
   optional google.protobuf.ListValue userIDs = 2 [(api.body) = "userIDs", (api.vd) = "@:len($) > 0; msg:'用户ID列表不能为空'", (api.go_tag) = "json:\"user_ids\""];
 }
 
@@ -178,7 +178,7 @@ message MenuPermissionDTO {
 }
 
 message ConfigureRoleMenusRequestDTO {
-  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.go_tag) = "json:\"-\""];
   optional google.protobuf.ListValue menuConfigs = 2 [(api.body) = "menuConfigs", (api.vd) = "@:len($) > 0; msg:'菜单配置列表不能为空'", (api.go_tag) = "json:\"menu_configs\""];
 }
 
@@ -189,7 +189,7 @@ message ConfigureRoleMenusResponseDTO {
 }
 
 message GetRoleMenuTreeRequestDTO {
-  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.go_tag) = "json:\"-\""];
 }
 
 message GetRoleMenuTreeResponseDTO {
@@ -199,7 +199,7 @@ message GetRoleMenuTreeResponseDTO {
 }
 
 message GetUserMenuTreeRequestDTO {
-  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($) > 0; msg:'用户ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional string userID = 1 [(api.path) = "userID", (api.vd) = "@:len($) > 0; msg:'用户ID不能为空'", (api.go_tag) = "json:\"-\""];
 }
 
 message GetUserMenuTreeResponseDTO {
@@ -211,7 +211,7 @@ message GetUserMenuTreeResponseDTO {
 }
 
 message GetRoleMenuPermissionsRequestDTO {
-  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.go_tag) = "json:\"-\""];
 }
 
 message GetRoleMenuPermissionsResponseDTO {
@@ -221,7 +221,7 @@ message GetRoleMenuPermissionsResponseDTO {
 }
 
 message HasMenuPermissionRequestDTO {
-  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.none) = "true", (api.go_tag) = "json:\"-\""];
+  optional string roleID = 1 [(api.path) = "roleID", (api.vd) = "@:len($) > 0; msg:'角色ID不能为空'", (api.go_tag) = "json:\"-\""];
   optional string menuID = 2 [(api.query) = "menuID", (api.vd) = "@:len($) > 0; msg:'菜单ID不能为空'", (api.go_tag) = "json:\"menu_id\""];
   optional PermissionLevel permission = 3 [(api.query) = "permission", (api.go_tag) = "json:\"permission\""];
 }
