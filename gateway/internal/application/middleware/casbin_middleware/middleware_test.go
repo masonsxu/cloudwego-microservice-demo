@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/rs/zerolog"
 )
 
@@ -84,33 +85,6 @@ func TestCompareDataScope(t *testing.T) {
 	}
 }
 
-func TestDefaultSkipPaths(t *testing.T) {
-	paths := defaultSkipPaths()
-	if len(paths) == 0 {
-		t.Error("defaultSkipPaths() returned empty slice")
-	}
-
-	expectedPaths := []string{
-		"/health",
-		"/metrics",
-		"/swagger",
-		"/api/v1/identity/auth/login",
-	}
-
-	for _, expected := range expectedPaths {
-		found := false
-		for _, path := range paths {
-			if path == expected {
-				found = true
-				break
-			}
-		}
-		if !found {
-			t.Errorf("Expected path %s not found in defaultSkipPaths()", expected)
-		}
-	}
-}
-
 func TestDefaultSuperAdminSubjects(t *testing.T) {
 	subjects := defaultSuperAdminSubjects()
 	if len(subjects) == 0 {
@@ -138,51 +112,19 @@ func TestDefaultSuperAdminSubjects(t *testing.T) {
 	}
 }
 
-func TestCasbinMiddleware_ShouldSkip(t *testing.T) {
-	logger := zerolog.Nop()
-	m := NewCasbinMiddleware(nil, &logger)
-
-	tests := []struct {
-		path     string
-		expected bool
-	}{
-		{"/health", true},
-		{"/health/check", true},
-		{"/metrics", true},
-		{"/swagger/index.html", true},
-		{"/api/v1/identity/auth/login", true},
-		{"/api/v1/users", false},
-		{"/api/v1/roles", false},
-		{"/login", false},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.path, func(t *testing.T) {
-			result := m.shouldSkip(tt.path)
-			if result != tt.expected {
-				t.Errorf("shouldSkip(%s) = %v, want %v", tt.path, result, tt.expected)
-			}
-		})
-	}
-}
-
 func TestCasbinMiddleware_SetSkipPaths(t *testing.T) {
 	logger := zerolog.Nop()
 	m := NewCasbinMiddleware(nil, &logger)
 
-	customPaths := []string{"/custom", "/test"}
+	customPaths := []string{"/custom", "GET:/health", "/swagger/*"}
 	m.SetSkipPaths(customPaths)
 
-	if !m.shouldSkip("/custom") {
-		t.Error("Expected /custom to be skipped after SetSkipPaths")
+	if len(m.skipPaths) != 3 {
+		t.Fatalf("expected 3 skip paths, got %d", len(m.skipPaths))
 	}
 
-	if !m.shouldSkip("/test") {
-		t.Error("Expected /test to be skipped after SetSkipPaths")
-	}
-
-	if m.shouldSkip("/login") {
-		t.Error("Expected /login to NOT be skipped after SetSkipPaths with custom paths")
+	if m.skipPaths[0] != "/custom" || m.skipPaths[1] != "GET:/health" || m.skipPaths[2] != "/swagger/*" {
+		t.Fatalf("unexpected skip paths: %v", m.skipPaths)
 	}
 }
 
@@ -248,16 +190,6 @@ func TestCasbinMiddleware_AddPathMapping(t *testing.T) {
 		t.Errorf("getResource('/api/v1/users/123') = %s, want user:view", resource)
 	}
 
-	resource = m.getResource("/api/v1/identity/audit-logs")
-	if resource != "menu:audit_logs" {
-		t.Errorf("getResource('/api/v1/identity/audit-logs') = %s, want menu:audit_logs", resource)
-	}
-
-	resource = m.getResource("/api/v1/identity/audit-logs/123")
-	if resource != "menu:audit_logs" {
-		t.Errorf("getResource('/api/v1/identity/audit-logs/123') = %s, want menu:audit_logs", resource)
-	}
-
 	resource = m.getResource("/api/v1/unknown")
 	if resource != "/api/v1/unknown" {
 		t.Errorf("getResource('/api/v1/unknown') = %s, want /api/v1/unknown", resource)
@@ -277,11 +209,18 @@ func TestCasbinMiddleware_GetResource(t *testing.T) {
 func TestCasbinMiddleware_MiddlewareFunc_NilEnforcer(t *testing.T) {
 	logger := zerolog.Nop()
 	m := NewCasbinMiddleware(nil, &logger)
+	m.SetSkipPaths([]string{"GET:/health"})
 
 	handler := m.MiddlewareFunc()
 	if handler == nil {
 		t.Error("MiddlewareFunc() returned nil")
 	}
+
+	// 仅验证可调用且 skip 规则通过 common.ShouldSkip 可解析。
+	c := app.NewContext(0)
+	c.Request.SetRequestURI("/health")
+	c.Request.Header.SetMethod("GET")
+	handler(context.Background(), c)
 }
 
 // TestCasbinMiddleware_CheckPermission_NilEnforcer 测试当 enforcer 为 nil 时的行为

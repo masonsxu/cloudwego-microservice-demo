@@ -5,6 +5,7 @@ package oauth2;
 option go_package = "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/oauth2";
 
 import "base/api.proto";
+import "google/protobuf/empty.proto";
 import "http/base/base.proto";
 import "http/oauth2/oauth2_model.proto";
 
@@ -35,6 +36,10 @@ service OAuth2ManagementService {
 
   rpc ListOAuth2Scopes(ListOAuth2ScopesRequestDTO) returns (ListOAuth2ScopesResponseDTO) {
     option (api.get) = "/api/v1/oauth2/scopes";
+  }
+
+  rpc GetOAuth2Config(google.protobuf.Empty) returns (GetOAuth2ConfigResponseDTO) {
+    option (api.get) = "/api/v1/oauth2/config";
   }
 
   rpc ListMyOAuth2Consents(ListMyOAuth2ConsentsRequestDTO) returns (ListOAuth2ConsentsResponseDTO) {

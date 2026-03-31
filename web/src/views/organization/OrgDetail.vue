@@ -371,7 +371,7 @@ onMounted(async () => {
 
 async function fetchOrganizationTree() {
   try {
-    const response = await organizationApi.listOrganizations({ page: 1, pageSize: 1000 })
+    const response = await organizationApi.listOrganizations({ page: 1, limit: 1000 })
     const orgs = response.organizations || []
     organizationTree.value = buildTree(orgs as OrganizationDTO[])
   } catch (error) {

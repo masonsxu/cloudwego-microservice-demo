@@ -44,13 +44,19 @@ func SeedDatabase(db *gorm.DB, logger *zerolog.Logger, cfg *DatabaseConfig) erro
 		return fmt.Errorf("分配超级管理员角色失败: %w", err)
 	}
 
-	// 3. 初始化默认菜单数据
+	// 3. 初始化默认 OAuth2 Scope 数据
+	if err := seedOAuth2Scopes(db, logger); err != nil {
+		logger.Warn().Err(err).Msg("⚠️  OAuth2 scope 种子初始化失败")
+		// 不阻止服务启动
+	}
+
+	// 4. 初始化默认菜单数据
 	if err := seedDefaultMenus(db); err != nil {
 		log.Printf("初始化默认菜单数据失败: %v", err)
 		// 不阻止服务启动
 	}
 
-	// 4. 为 superadmin 初始化全量菜单权限（幂等覆盖）
+	// 5. 为 superadmin 初始化全量菜单权限（幂等覆盖）
 	if err := seedSuperAdminMenuPermissions(db, logger); err != nil {
 		logger.Warn().Err(err).Msg("⚠️  superadmin 菜单权限种子初始化失败")
 		// 不阻止服务启动
@@ -325,6 +331,61 @@ func seedSuperAdminRoleAssignment(db *gorm.DB, cfg *DatabaseConfig) error {
 
 // querySuperAdminUserID 从 identity_srv 数据库查询超级管理员用户 ID
 // 建立临时数据库连接来跨数据库查询
+func seedOAuth2Scopes(db *gorm.DB, logger *zerolog.Logger) error {
+	logger.Info().Msg("正在初始化默认 OAuth2 scopes...")
+
+	defaultScopes := []models.OAuth2Scope{
+		{
+			Name:        "openid",
+			DisplayName: "OpenID",
+			Description: "OpenID Connect 标识作用域",
+			IsDefault:   true,
+			IsSystem:    true,
+		},
+		{
+			Name:        "profile",
+			DisplayName: "Profile",
+			Description: "访问用户基础资料",
+			IsDefault:   true,
+			IsSystem:    true,
+		},
+		{
+			Name:        "email",
+			DisplayName: "Email",
+			Description: "访问用户邮箱信息",
+			IsDefault:   true,
+			IsSystem:    true,
+		},
+	}
+
+	createdCount := 0
+	skippedCount := 0
+
+	for i := range defaultScopes {
+		scope := defaultScopes[i]
+		result := db.Where("name = ?", scope.Name).
+			Attrs(&models.OAuth2Scope{
+				DisplayName: scope.DisplayName,
+				Description: scope.Description,
+				IsDefault:   scope.IsDefault,
+				IsSystem:    scope.IsSystem,
+			}).
+			FirstOrCreate(&models.OAuth2Scope{}, &models.OAuth2Scope{Name: scope.Name})
+		if result.Error != nil {
+			return fmt.Errorf("初始化 OAuth2 scope %s 失败: %w", scope.Name, result.Error)
+		}
+		if result.RowsAffected > 0 {
+			createdCount++
+		} else {
+			skippedCount++
+		}
+	}
+
+	logger.Info().Int("created", createdCount).Int("skipped", skippedCount).Msg("✅ 默认 OAuth2 scopes 初始化完成")
+
+	return nil
+}
+
 func seedSuperAdminMenuPermissions(db *gorm.DB, logger *zerolog.Logger) error {
 	logger.Info().Msg("正在初始化 superadmin 全量菜单权限...")
 

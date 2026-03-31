@@ -56,6 +56,14 @@ func setDefaults(v *viper.Viper) {
 
 	v.SetDefault("middleware.rate_limit.enabled", false)
 	v.SetDefault("middleware.jwt.enabled", true)
+	v.SetDefault("middleware.casbin.enabled", true)
+	v.SetDefault("middleware.casbin.model_path", "./config/casbin_model.conf")
+	v.SetDefault("middleware.casbin.log_enabled", false)
+	v.SetDefault("middleware.casbin.sync_interval", 300)
+	v.SetDefault("middleware.casbin.skip_extra_paths", []string{})
+	v.SetDefault("middleware.casbin.superadmin_bypass_enabled", true)
+	v.SetDefault("middleware.casbin.superadmin_subjects", []string{"role:superadmin", "username:superadmin"})
+	v.SetDefault("middleware.casbin.menu_mapping_file", "menu.yaml")
 	v.SetDefault("middleware.jwt.signing_key", "")
 	v.SetDefault("middleware.jwt.timeout", 30*time.Minute)
 	v.SetDefault("middleware.jwt.max_refresh", 7*24*time.Hour)
@@ -74,10 +82,7 @@ func setDefaults(v *viper.Viper) {
 		"/ping",
 		"/api/v1/identity/auth/login",
 		"/api/v1/identity/auth/refresh",
-		"/oauth2/authorize",
 		"/oauth2/token",
-		"/oauth2/revoke",
-		"/oauth2/introspect",
 	})
 
 	// Cookie默认值

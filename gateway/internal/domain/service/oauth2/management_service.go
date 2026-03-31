@@ -2,6 +2,7 @@ package oauth2
 
 import (
 	"context"
+	"time"
 
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
 
@@ -10,6 +11,7 @@ import (
 	oauth2asm "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/oauth2"
 	domaincommon "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/common"
 	identitycli "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/client/identity_cli"
+	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/errors"
 	identity_srv "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 )
@@ -33,6 +35,7 @@ type OAuth2ManagementService interface {
 	) (*oauth2model.ListOAuth2ClientsResponseDTO, error)
 	RotateClientSecret(ctx context.Context, clientID string) (*oauth2model.RotateOAuth2ClientSecretResponseDTO, error)
 	ListScopes(ctx context.Context) (*oauth2model.ListOAuth2ScopesResponseDTO, error)
+	GetConfig(ctx context.Context) (*oauth2model.GetOAuth2ConfigResponseDTO, error)
 	ListMyConsents(
 		ctx context.Context,
 		userID string,
@@ -229,6 +232,49 @@ func (s *oauth2ManagementServiceImpl) ListScopes(
 		BaseResp: s.ResponseBuilder().BuildSuccessResponse(),
 		Scopes:   s.assembler.ToHTTPScopes(rpcResp.Scopes),
 	}, nil
+}
+
+func (s *oauth2ManagementServiceImpl) GetConfig(
+	_ context.Context,
+) (*oauth2model.GetOAuth2ConfigResponseDTO, error) {
+	cfg := getEffectiveOAuth2Config()
+
+	enabled := cfg.Enabled
+	issuer := cfg.Issuer
+	accessTokenLifespan := int64(cfg.AccessTokenLifespan / time.Second)
+	refreshTokenLifespan := int64(cfg.RefreshTokenLifespan / time.Second)
+	authCodeLifespan := int64(cfg.AuthCodeLifespan / time.Second)
+	enforcePKCE := cfg.EnforcePKCE
+	consentPageURL := cfg.ConsentPageURL
+
+	return &oauth2model.GetOAuth2ConfigResponseDTO{
+		BaseResp: s.ResponseBuilder().BuildSuccessResponse(),
+		Config: &oauth2model.OAuth2ConfigDTO{
+			Enabled:              &enabled,
+			Issuer:               &issuer,
+			AccessTokenLifespan:  &accessTokenLifespan,
+			RefreshTokenLifespan: &refreshTokenLifespan,
+			AuthCodeLifespan:     &authCodeLifespan,
+			EnforcePKCE:          &enforcePKCE,
+			ConsentPageURL:       &consentPageURL,
+		},
+	}, nil
+}
+
+func getEffectiveOAuth2Config() config.OAuth2Config {
+	if config.Config != nil {
+		return config.Config.OAuth2
+	}
+
+	return config.OAuth2Config{
+		Enabled:              true,
+		Issuer:               "http://localhost:8080",
+		AccessTokenLifespan:  time.Hour,
+		RefreshTokenLifespan: 30 * 24 * time.Hour,
+		AuthCodeLifespan:     10 * time.Minute,
+		EnforcePKCE:          true,
+		ConsentPageURL:       "/oauth2/consent",
+	}
 }
 
 func (s *oauth2ManagementServiceImpl) ListMyConsents(

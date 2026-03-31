@@ -4,8 +4,6 @@
 // 端点：
 //   - GET  /oauth2/authorize   - 授权端点
 //   - POST /oauth2/token       - 令牌端点
-//   - POST /oauth2/revoke      - 令牌吊销 (RFC 7009)
-//   - POST /oauth2/introspect  - 令牌自省 (RFC 7662)
 package oauth2
 
 import (
@@ -15,6 +13,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/ory/fosite"
 
+	authcontext "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/context/auth_context"
 	oauth2svc "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/oauth2"
 )
 
@@ -59,15 +58,16 @@ func (h *Handler) AuthorizeEndpoint(_ context.Context, ctx *app.RequestContext) 
 		return
 	}
 
-	// TODO: 集成用户认证和授权同意流程
-	// 当前简化实现：如果用户已登录（通过 JWT cookie），直接授权
-	// 生产环境需要：
-	// 1. 检查用户是否已登录，未登录则重定向到登录页
-	// 2. 检查是否已有授权同意记录
-	// 3. 没有则展示授权同意页面
-	// 4. 用户确认后调用 h.provider.NewAuthorizeResponse
+	userID, ok := authcontext.GetCurrentUserProfileID(ctx)
+	if !ok || userID == "" {
+		err = fosite.ErrAccessDenied.WithDescription("用户未登录")
+		h.provider.WriteAuthorizeError(r.Context(), rw, ar, err)
+		flushResponse(ctx, rw)
 
-	session := oauth2svc.NewDefaultSession("user") // TODO: 从认证上下文获取
+		return
+	}
+
+	session := oauth2svc.NewDefaultSession(userID)
 
 	for _, scope := range ar.GetRequestedScopes() {
 		ar.GrantScope(scope)
@@ -87,14 +87,14 @@ func (h *Handler) AuthorizeEndpoint(_ context.Context, ctx *app.RequestContext) 
 }
 
 // TokenEndpoint 处理 POST /oauth2/token 请求。
-// 支持的 grant_type：authorization_code, client_credentials, refresh_token。
+// 支持的 grant_type：authorization_code, refresh_token。
 //
 //	@Summary		OAuth2 令牌端点
-//	@Description	通过授权码、客户端凭证或刷新令牌获取访问令牌
+//	@Description	通过授权码或刷新令牌获取访问令牌
 //	@Tags			OAuth2 协议
 //	@Accept			x-www-form-urlencoded
 //	@Produce		json
-//	@Param			grant_type		formData	string	true	"授权类型"	Enums(authorization_code, client_credentials, refresh_token)
+//	@Param			grant_type		formData	string	true	"授权类型"	Enums(authorization_code, refresh_token)
 //	@Param			code			formData	string	false	"授权码（authorization_code 模式必填）"
 //	@Param			redirect_uri	formData	string	false	"重定向URI（authorization_code 模式必填）"
 //	@Param			client_id		formData	string	false	"客户端ID（未使用 Basic Auth 时必填）"
@@ -120,13 +120,6 @@ func (h *Handler) TokenEndpoint(_ context.Context, ctx *app.RequestContext) {
 		return
 	}
 
-	// Client Credentials: 授予所有请求的 scope
-	if ar.GetGrantTypes().ExactOne("client_credentials") {
-		for _, scope := range ar.GetRequestedScopes() {
-			ar.GrantScope(scope)
-		}
-	}
-
 	response, err := h.provider.NewAccessResponse(r.Context(), ar)
 	if err != nil {
 		log.Printf("[OAuth2] access response error: %v", err)
@@ -137,57 +130,5 @@ func (h *Handler) TokenEndpoint(_ context.Context, ctx *app.RequestContext) {
 	}
 
 	h.provider.WriteAccessResponse(r.Context(), rw, ar, response)
-	flushResponse(ctx, rw)
-}
-
-// RevokeEndpoint 处理 POST /oauth2/revoke 请求 (RFC 7009)。
-//
-//	@Summary		OAuth2 令牌吊销端点
-//	@Description	吊销已颁发的访问令牌或刷新令牌 (RFC 7009)
-//	@Tags			OAuth2 协议
-//	@Accept			x-www-form-urlencoded
-//	@Produce		json
-//	@Param			token			formData	string	true	"要吊销的令牌"
-//	@Param			token_type_hint	formData	string	false	"令牌类型提示"	Enums(access_token, refresh_token)
-//	@Success		200				"吊销成功"
-//	@Failure		401				{object}	object	"客户端认证失败"
-//	@Router			/oauth2/revoke [POST]
-func (h *Handler) RevokeEndpoint(_ context.Context, ctx *app.RequestContext) {
-	rw := newHertzResponseWriter(ctx)
-	r := hertzToHTTPRequest(ctx)
-
-	err := h.provider.NewRevocationRequest(r.Context(), r)
-	h.provider.WriteRevocationResponse(r.Context(), rw, err)
-	flushResponse(ctx, rw)
-}
-
-// IntrospectEndpoint 处理 POST /oauth2/introspect 请求 (RFC 7662)。
-//
-//	@Summary		OAuth2 令牌自省端点
-//	@Description	查询令牌的当前状态和元信息 (RFC 7662)
-//	@Tags			OAuth2 协议
-//	@Accept			x-www-form-urlencoded
-//	@Produce		json
-//	@Param			token			formData	string	true	"要自省的令牌"
-//	@Param			token_type_hint	formData	string	false	"令牌类型提示"	Enums(access_token, refresh_token)
-//	@Success		200				{object}	object	"返回 active、scope、client_id、exp 等"
-//	@Failure		401				{object}	object	"客户端认证失败"
-//	@Router			/oauth2/introspect [POST]
-func (h *Handler) IntrospectEndpoint(_ context.Context, ctx *app.RequestContext) {
-	rw := newHertzResponseWriter(ctx)
-	r := hertzToHTTPRequest(ctx)
-
-	session := oauth2svc.NewDefaultSession("")
-
-	ir, err := h.provider.NewIntrospectionRequest(r.Context(), r, session)
-	if err != nil {
-		log.Printf("[OAuth2] introspect error: %v", err)
-		h.provider.WriteIntrospectionError(r.Context(), rw, err)
-		flushResponse(ctx, rw)
-
-		return
-	}
-
-	h.provider.WriteIntrospectionResponse(r.Context(), rw, ir)
 	flushResponse(ctx, rw)
 }

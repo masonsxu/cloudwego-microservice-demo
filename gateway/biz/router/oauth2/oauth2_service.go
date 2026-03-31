@@ -34,6 +34,7 @@ func Register(r *server.Hertz) {
 				_clients0.DELETE("/:id", append(_deleteoauth2clientMw(), oauth2.DeleteOAuth2Client)...)
 				_clients0.GET("/:id", append(_getoauth2clientMw(), oauth2.GetOAuth2Client)...)
 				_clients0.PUT("/:id", append(_updateoauth2clientMw(), oauth2.UpdateOAuth2Client)...)
+				_oauth2.GET("/config", append(_getoauth2configMw(), oauth2.GetOAuth2Config)...)
 				_oauth2.GET("/consents", append(_listmyoauth2consentsMw(), oauth2.ListMyOAuth2Consents)...)
 				_consents := _oauth2.Group("/consents", _consentsMw()...)
 				_consents.DELETE("/:clientID", append(_revokemyoauth2consentMw(), oauth2.RevokeMyOAuth2Consent)...)

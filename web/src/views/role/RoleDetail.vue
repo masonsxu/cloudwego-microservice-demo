@@ -222,7 +222,7 @@
                   v-model="menuPermMap[data.id]"
                   size="small"
                   class="perm-select"
-                  :class="{ 'has-perm': menuPermMap[data.id] > 0 }"
+                  :class="{ 'has-perm': (menuPermMap[data.id] ?? 0) > 0 }"
                 >
                   <el-option :value="0" label="无权限" />
                   <el-option :value="1" label="只读" />
@@ -398,8 +398,9 @@ const loadRoleUserDetails = async (userIds: string[]) => {
   const results = await Promise.allSettled(userIds.map(id => getUserDetail(id)))
   const map: Record<string, UserProfile> = {}
   results.forEach((result, i) => {
-    if (result.status === 'fulfilled') {
-      map[userIds[i]] = result.value.user
+    const userId = userIds[i]
+    if (result.status === 'fulfilled' && userId) {
+      map[userId] = result.value.user
     }
   })
   userDetailMap.value = map

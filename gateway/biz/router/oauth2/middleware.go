@@ -95,3 +95,8 @@ func _idMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _getoauth2configMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

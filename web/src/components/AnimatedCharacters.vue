@@ -92,7 +92,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref, watch, type ComponentPublicInstance } from 'vue'
 
 type ForceLook = { x: number; y: number } | null
 
@@ -173,9 +173,9 @@ watch(
 )
 
 watch(
-  () => [props.passwordLength, props.showPassword],
+  () => [props.passwordLength ?? 0, props.showPassword ?? false] as const,
   ([len, show]) => {
-    if ((len || 0) > 0 && show) {
+    if (len > 0 && show) {
       const schedulePeek = () => {
         peekTimer = setTimeout(() => {
           isPurplePeeking.value = true
@@ -231,9 +231,12 @@ const yellowForce = computed<ForceLook>(() => {
 })
 
 const eyeRefs = new Map<string, HTMLElement>()
-const setEyeRef = (key: string) => (el: HTMLElement | null) => {
-  if (el) eyeRefs.set(key, el)
-  else eyeRefs.delete(key)
+const setEyeRef = (key: string) => (el: Element | ComponentPublicInstance | null) => {
+  if (el instanceof HTMLElement) {
+    eyeRefs.set(key, el)
+    return
+  }
+  eyeRefs.delete(key)
 }
 
 const pupilStyle = (key: string, size: number, maxDistance: number, force: ForceLook) => {

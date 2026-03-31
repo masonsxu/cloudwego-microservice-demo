@@ -73,7 +73,8 @@ const pathMapping: Record<string, string> = {
   'organization-management': '/system-settings/organization',
   'role-permissions': '/system-settings/roles',
   'account-management': '/system-settings/accounts',
-  'audit-logs': '/system-settings/audit-logs'
+  'audit-logs': '/system-settings/audit-logs',
+  'oauth2': '/system-settings/oauth2/config'
 }
 
 // 获取菜单索引（使用映射后的路径）

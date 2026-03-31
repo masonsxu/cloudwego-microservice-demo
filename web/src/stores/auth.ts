@@ -24,8 +24,8 @@ export const useAuthStore = defineStore('auth', () => {
     const perm = menuPermissions.value.find(p => p.menu_id === menuId)
     if (!perm) return false
 
-    // perm.permission 现在是数字类型（0, 1, 2, 3）
-    const permLevel = perm.permission as number
+    // perm.permission 是数字类型（0, 1, 2, 3）
+    const permLevel = perm.permission
     const requiredLevels = { none: 0, read: 1, write: 2, full: 3 }
 
     return permLevel >= requiredLevels[requiredLevel]

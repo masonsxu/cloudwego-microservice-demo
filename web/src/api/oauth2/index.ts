@@ -3,6 +3,7 @@ import type {
   OAuth2Client,
   OAuth2Scope,
   OAuth2Consent,
+  OAuth2Config,
   CreateOAuth2ClientRequest,
   CreateOAuth2ClientResponse,
   UpdateOAuth2ClientRequest,
@@ -55,6 +56,13 @@ export const oauth2Api = {
     request<{ scopes: OAuth2Scope[] }>({
       method: 'GET',
       url: '/api/v1/oauth2/scopes',
+    }),
+
+  // 运行时配置
+  getConfig: () =>
+    request<{ config: OAuth2Config }>({
+      method: 'GET',
+      url: '/api/v1/oauth2/config',
     }),
 
   // 授权同意

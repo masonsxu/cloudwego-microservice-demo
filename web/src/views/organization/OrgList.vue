@@ -286,9 +286,9 @@ async function fetchData() {
   loading.value = true
   try {
     const response = await organizationApi.listOrganizations({
-      parentId: searchForm.parent_id || undefined,
+      parent_id: searchForm.parent_id || undefined,
       page: pagination.page,
-      pageSize: pagination.limit
+      limit: pagination.limit
     })
     tableData.value = response.organizations || []
     pagination.total = response.page?.total || 0
@@ -302,7 +302,7 @@ async function fetchData() {
 
 async function fetchOrganizationTree() {
   try {
-    const response = await organizationApi.listOrganizations({ page: 1, pageSize: 1000 })
+    const response = await organizationApi.listOrganizations({ page: 1, limit: 1000 })
     organizationTree.value = buildTree(response.organizations || [])
   } catch {}
 }

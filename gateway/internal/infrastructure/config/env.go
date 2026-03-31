@@ -184,6 +184,9 @@ func mapMiddlewareEnvVars(v *viper.Viper) {
 	// 身份验证配置映射
 	mapJWTEnvVars(v)
 
+	// Casbin 配置映射
+	mapCasbinEnvVars(v)
+
 	// 错误处理中间件配置映射
 	mapErrorHandlerEnvVars(v)
 }
@@ -318,6 +321,34 @@ func mapCookieEnvVars(v *viper.Viper) {
 			return value == "true"
 		},
 	)
+}
+
+// mapCasbinEnvVars 映射 Casbin 相关环境变量
+func mapCasbinEnvVars(v *viper.Viper) {
+	mapToViper(v, "CASBIN_ENABLED", "middleware.casbin.enabled", func(value string) interface{} {
+		return value == "true"
+	})
+	mapToViper(v, "CASBIN_MODEL_PATH", "middleware.casbin.model_path", nil)
+	mapToViper(v, "CASBIN_LOG_ENABLED", "middleware.casbin.log_enabled", func(value string) interface{} {
+		return value == "true"
+	})
+	mapToViper(v, "CASBIN_SYNC_INTERVAL", "middleware.casbin.sync_interval", func(value string) interface{} {
+		if val, err := strconv.Atoi(value); err == nil {
+			return val
+		}
+
+		return 300
+	})
+	mapToViper(v, "CASBIN_SKIP_EXTRA_PATHS", "middleware.casbin.skip_extra_paths", func(value string) interface{} {
+		return splitAndTrim(value, ",")
+	})
+	mapToViper(v, "CASBIN_SUPERADMIN_BYPASS_ENABLED", "middleware.casbin.superadmin_bypass_enabled", func(value string) interface{} {
+		return value == "true"
+	})
+	mapToViper(v, "CASBIN_SUPERADMIN_SUBJECTS", "middleware.casbin.superadmin_subjects", func(value string) interface{} {
+		return splitAndTrim(value, ",")
+	})
+	mapToViper(v, "CASBIN_MENU_MAPPING_FILE", "middleware.casbin.menu_mapping_file", nil)
 }
 
 // mapLogEnvVars 映射日志相关环境变量

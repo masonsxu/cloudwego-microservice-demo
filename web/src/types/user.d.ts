@@ -83,7 +83,7 @@ export interface LoginResponse extends BaseResponse {
 // 菜单权限
 export interface MenuPermission {
   menu_id: string
-  permission: string  // "none", "read", "write", "full"
+  permission: number
 }
 
 // 修改密码请求

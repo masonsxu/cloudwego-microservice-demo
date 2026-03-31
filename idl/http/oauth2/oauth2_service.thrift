@@ -58,6 +58,11 @@ service OAuth2ManagementService {
      * 列出所有可用的 OAuth2 作用域
      */
     oauth2_model.ListOAuth2ScopesResponseDTO listOAuth2Scopes(1: oauth2_model.ListOAuth2ScopesRequestDTO req) (api.get = "/api/v1/oauth2/scopes"),
+
+    /**
+     * 获取 OAuth2 运行时配置（只读）
+     */
+    oauth2_model.GetOAuth2ConfigResponseDTO getOAuth2Config() (api.get = "/api/v1/oauth2/config"),
     // =================================================================
     // 3. 用户授权同意管理 (Consent Management) - 用户接口
     // =================================================================

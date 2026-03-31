@@ -107,11 +107,11 @@ async function handleUpload(options: any) {
   uploadProgress.value = 0
 
   try {
-    const response = await organizationApi.uploadTemporaryLogo({
-      fileName: file.name,
-      fileContent: file,
-      mimeType: file.type
-    })
+    const response = await organizationApi.uploadTemporaryLogo(
+      file.name,
+      file,
+      file.type
+    )
 
     const logo = response.logo
     if (!logo) {

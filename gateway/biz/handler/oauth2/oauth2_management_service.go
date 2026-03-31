@@ -7,6 +7,7 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 
 	oauth2model "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/oauth2"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/context/auth_context"
@@ -277,6 +278,33 @@ func RevokeMyOAuth2Consent(ctx context.Context, c *app.RequestContext) {
 	resp, err := oauth2MgmtService.RevokeMyConsent(ctx, userID, *req.ClientID)
 	if err != nil {
 		errors.HandleServiceError(c, err, "撤销授权同意失败")
+		return
+	}
+
+	errors.JSON(c, consts.StatusOK, resp)
+}
+
+// GetOAuth2Config 获取 OAuth2 运行时配置
+// @Summary 获取 OAuth2 运行时配置
+// @Description 返回网关当前生效的 OAuth2 配置（只读）
+// @Tags OAuth2 管理
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Success 200 {object} oauth2.GetOAuth2ConfigResponseDTO "成功"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /api/v1/oauth2/config [GET]
+func GetOAuth2Config(ctx context.Context, c *app.RequestContext) {
+	var req emptypb.Empty
+	if err := c.BindAndValidate(&req); err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := oauth2MgmtService.GetConfig(ctx)
+	if err != nil {
+		errors.HandleServiceError(c, err, "获取 OAuth2 配置失败")
 		return
 	}
 

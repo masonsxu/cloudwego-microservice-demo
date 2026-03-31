@@ -6,6 +6,8 @@ import (
 
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/assignment"
+	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/base"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/user"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/rpc_base"
@@ -239,16 +241,31 @@ func (l *LogicImpl) DeleteUser(
 	// 3. 执行软删除（级联清理关联数据）
 	err = l.dal.WithTransaction(ctx, func(ctx context.Context, txDAL dal.DAL) error {
 		// 3a. 清理用户的角色分配记录
-		if err := txDAL.DB().WithContext(ctx).
-			Where("user_id = ?", *req.UserID).
-			Delete(&models.UserRoleAssignment{}).Error; err != nil {
-			return fmt.Errorf("清理用户角色分配失败: %w", err)
+		opts := base.NewQueryOptions()
+		opts.FetchAll = true
+		assignments, _, err := txDAL.UserRoleAssignment().FindWithConditions(ctx, &assignment.UserRoleAssignmentQueryConditions{
+			UserID: req.UserID,
+			Page:   opts,
+		})
+		if err != nil {
+			return fmt.Errorf("查询用户角色分配失败: %w", err)
+		}
+
+		assignmentIDs := make([]string, 0, len(assignments))
+		for _, roleAssignment := range assignments {
+			if roleAssignment != nil {
+				assignmentIDs = append(assignmentIDs, roleAssignment.ID.String())
+			}
+		}
+
+		if len(assignmentIDs) > 0 {
+			if err := txDAL.UserRoleAssignment().BatchDelete(ctx, assignmentIDs); err != nil {
+				return fmt.Errorf("清理用户角色分配失败: %w", err)
+			}
 		}
 
 		// 3b. 清理用户的组织成员关系
-		if err := txDAL.DB().WithContext(ctx).
-			Where("user_id = ?", *req.UserID).
-			Delete(&models.UserMembership{}).Error; err != nil {
+		if err := txDAL.UserMembership().BatchDeleteByUser(ctx, *req.UserID); err != nil {
 			return fmt.Errorf("清理用户成员关系失败: %w", err)
 		}
 

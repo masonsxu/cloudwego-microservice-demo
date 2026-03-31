@@ -1,11 +1,13 @@
 package casbin_middleware
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/rs/zerolog"
+	"gopkg.in/yaml.v3"
 
 	identitycli "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/client/identity_cli"
 )
@@ -22,78 +24,14 @@ type Config struct {
 	SyncInterval int
 	// SkipPaths 跳过权限检查的路径列表
 	SkipPaths []string
+	// PathMapping API 路径到权限编码映射
+	PathMapping map[string]string
 	// SuperAdminBypassEnabled 是否启用超管兜底放行
 	SuperAdminBypassEnabled bool
 	// SuperAdminSubjects 超管主体列表（匹配 Casbin subject，例如 role:superadmin）
 	SuperAdminSubjects []string
-}
-
-// DefaultConfig 默认配置
-func DefaultConfig() *Config {
-	return &Config{
-		ModelPath:    "./config/casbin_model.conf",
-		Enabled:      true,
-		LogEnabled:   false,
-		SyncInterval: 300, // 5分钟同步一次
-		SkipPaths: []string{
-			"/health",
-			"/metrics",
-			"/swagger",
-			"/api/v1/identity/auth/login",
-		},
-		SuperAdminBypassEnabled: true,
-		SuperAdminSubjects:      defaultSuperAdminSubjects(),
-	}
-}
-
-// LoadConfigFromEnv 从环境变量加载配置
-func LoadConfigFromEnv() *Config {
-	config := DefaultConfig()
-
-	if modelPath := os.Getenv("CASBIN_MODEL_PATH"); modelPath != "" {
-		config.ModelPath = modelPath
-	}
-
-	if enabled := os.Getenv("CASBIN_ENABLED"); enabled == "false" {
-		config.Enabled = false
-	}
-
-	if logEnabled := os.Getenv("CASBIN_LOG_ENABLED"); logEnabled == "true" {
-		config.LogEnabled = true
-	}
-
-	if skipPaths := os.Getenv("CASBIN_SKIP_PATHS"); skipPaths != "" {
-		config.SkipPaths = splitAndTrim(skipPaths, ",")
-	}
-
-	if superAdminBypassEnabled := os.Getenv("CASBIN_SUPERADMIN_BYPASS_ENABLED"); superAdminBypassEnabled == "false" {
-		config.SuperAdminBypassEnabled = false
-	}
-
-	if superAdminSubjects := os.Getenv("CASBIN_SUPERADMIN_SUBJECTS"); superAdminSubjects != "" {
-		config.SuperAdminSubjects = splitAndTrim(superAdminSubjects, ",")
-	}
-
-	return config
-}
-
-func splitAndTrim(value string, sep string) []string {
-	parts := strings.Split(value, sep)
-	result := make([]string, 0, len(parts))
-
-	for _, part := range parts {
-		trimmed := strings.TrimSpace(part)
-		if trimmed != "" {
-			result = append(result, trimmed)
-		}
-	}
-
-	return result
-}
-
-// ProvideCasbinConfig 提供 Casbin 配置
-func ProvideCasbinConfig() *Config {
-	return LoadConfigFromEnv()
+	// MenuMappingFile 菜单映射文件路径
+	MenuMappingFile string
 }
 
 // ProvideCasbinEnforcer 提供 Casbin Enforcer（使用内存 Adapter）
@@ -155,10 +93,28 @@ func ProvideCasbinMiddleware(config *Config, logger *zerolog.Logger) *CasbinMidd
 	if len(config.SkipPaths) > 0 {
 		middleware.SetSkipPaths(config.SkipPaths)
 	}
+
+	if len(config.PathMapping) > 0 {
+		for path, permCode := range config.PathMapping {
+			middleware.AddPathMapping(path, permCode)
+		}
+	} else {
+		mapping, err := LoadPathMappingFromMenuFile(config.MenuMappingFile)
+		if err != nil {
+			logger.Warn().Err(err).Str("menu_mapping_file", config.MenuMappingFile).
+				Msg("Failed to load Casbin path mapping from menu file")
+		} else {
+			for path, permCode := range mapping {
+				middleware.AddPathMapping(path, permCode)
+			}
+		}
+	}
+
 	middleware.SetSuperAdminBypassConfig(config.SuperAdminBypassEnabled, config.SuperAdminSubjects)
 
 	logger.Info().
 		Strs("skip_paths", middleware.skipPaths).
+		Int("path_mapping_count", len(middleware.pathMapping)).
 		Bool("superadmin_bypass_enabled", config.SuperAdminBypassEnabled).
 		Strs("superadmin_subjects", config.SuperAdminSubjects).
 		Msg("Casbin middleware created successfully")
@@ -188,4 +144,79 @@ func ProvidePolicySyncService(
 	}
 
 	return NewPolicySyncService(middleware.enforcer, identityClient, logger, config.SyncInterval)
+}
+
+type menuConfigFile struct {
+	Menu []menuNode `yaml:"menu"`
+}
+
+type menuNode struct {
+	ID       string     `yaml:"id"`
+	APIPaths []string   `yaml:"api_paths"`
+	Children []menuNode `yaml:"children"`
+}
+
+func LoadPathMappingFromMenuFile(menuFilePath string) (map[string]string, error) {
+	if strings.TrimSpace(menuFilePath) == "" {
+		return map[string]string{}, nil
+	}
+
+	resolvedPath := resolveMenuMappingPath(menuFilePath)
+
+	content, err := os.ReadFile(resolvedPath)
+	if err != nil {
+		return nil, fmt.Errorf("read menu mapping file failed: %w", err)
+	}
+
+	var cfg menuConfigFile
+	if err := yaml.Unmarshal(content, &cfg); err != nil {
+		return nil, fmt.Errorf("unmarshal menu mapping file failed: %w", err)
+	}
+
+	mapping := make(map[string]string)
+	for _, node := range cfg.Menu {
+		collectMenuMapping(node, mapping)
+	}
+
+	return mapping, nil
+}
+
+func resolveMenuMappingPath(configPath string) string {
+	candidates := []string{configPath}
+	if !filepath.IsAbs(configPath) {
+		candidates = append(candidates,
+			filepath.Join("..", configPath),
+			filepath.Join("..", "..", configPath),
+		)
+	}
+
+	for _, candidate := range candidates {
+		if _, err := os.Stat(candidate); err == nil {
+			return candidate
+		}
+	}
+
+	return configPath
+}
+
+func collectMenuMapping(node menuNode, mapping map[string]string) {
+	permCode := ""
+	if strings.TrimSpace(node.ID) != "" {
+		permCode = "menu:" + strings.TrimSpace(node.ID)
+	}
+
+	if permCode != "" {
+		for _, apiPath := range node.APIPaths {
+			trimmedPath := strings.TrimSpace(apiPath)
+			if trimmedPath == "" {
+				continue
+			}
+
+			mapping[trimmedPath] = permCode
+		}
+	}
+
+	for _, child := range node.Children {
+		collectMenuMapping(child, mapping)
+	}
 }

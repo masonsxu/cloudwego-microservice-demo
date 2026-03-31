@@ -47,7 +47,7 @@ withDefaults(defineProps<{
 
 function getCellWidth(col: number): string {
   const widths = ['60%', '70%', '50%', '45%', '55%', '40%', '65%']
-  return widths[(col - 1) % widths.length]
+  return widths[(col - 1) % widths.length] ?? '60%'
 }
 </script>
 

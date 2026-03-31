@@ -43,7 +43,7 @@
 
 | 文档 | 说明 | 适合读者 |
 |------|------|----------|
-| [OAuth2使用教程](05-OAuth2认证/OAuth2使用教程.md) | OAuth2 客户端管理、授权流程、令牌管理 | 开发者、集成方 |
+| [OAuth2使用教程](06-OAuth2认证/OAuth2使用教程.md) | OAuth2 配置、客户端管理、授权流程（MVP） | 开发者、集成方 |
 
 ### 06-UI设计
 
@@ -56,7 +56,7 @@
 - **API 网关 (Hertz)**: 统一 API 入口、JWT 认证、Casbin 权限控制、OpenTelemetry 链路追踪
 - **身份服务 (Kitex)**: 用户管理、组织架构、角色管理、JWT Token 管理、菜单配置
 - **权限管理 (Casbin)**: RBAC 权限引擎、五维权限模型、策略同步、数据范围控制
-- **OAuth2 认证 (Fosite)**: OAuth2/OIDC 协议实现、授权码模式、客户端凭证模式、令牌管理
+- **OAuth2 认证 (Fosite)**: OAuth2 协议实现、授权码模式（PKCE）与刷新令牌、令牌管理
 - **可观测性**: OpenTelemetry 分布式链路追踪、结构化日志
 - **安全性**: JWT 认证、Casbin 鉴权、OAuth2 授权、密码加密
 

@@ -5,6 +5,7 @@ export default {
     confirm: '确认',
     cancel: '取消',
     delete: '删除',
+    remove: '移除',
     edit: '编辑',
     create: '创建',
     search: '搜索',
@@ -44,6 +45,7 @@ export default {
 
   auth: {
     login: '登录',
+    signup: '注册',
     logout: '退出',
     username: '用户名',
     password: '密码',
@@ -266,12 +268,31 @@ export default {
       seconds: '秒',
       grantType: {
         authorizationCode: '授权码模式',
-        clientCredentials: '客户端凭证',
         refreshToken: '刷新令牌'
-      }
+      },
+      pkceRequired: '公共客户端必须使用 PKCE（S256）',
+      copySecret: '复制密钥'
+    },
+    guide: {
+      title: 'OAuth2 MVP 接入指引',
+      step1: '1) 通过 /oauth2/authorize 获取 authorization code（需携带 code_challenge）。',
+      step2: '2) 通过 /oauth2/token 使用 authorization_code + code_verifier 换取 access_token。',
+      step3: '3) 通过 /oauth2/token 使用 refresh_token 刷新 access_token。',
+      unsupported: '不支持：client_credentials / revoke / introspect。'
     },
     scope: {
       title: '作用域管理'
+    },
+    config: {
+      title: 'OAuth2 配置',
+      enabled: 'OAuth2 开关',
+      issuer: 'Issuer',
+      accessTokenLifespan: 'Access Token 有效期',
+      refreshTokenLifespan: 'Refresh Token 有效期',
+      authCodeLifespan: '授权码有效期',
+      enforcePkce: '强制 PKCE',
+      consentPageUrl: '同意页 URL',
+      availableScopes: '可用作用域'
     },
     consent: {
       title: '已授权应用',

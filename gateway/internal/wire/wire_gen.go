@@ -66,7 +66,7 @@ func InitializeApp() (*AppContainer, func(), error) {
 	tokenCacheService := ProvideTokenCache(client, logger)
 	jwtMiddlewareService := ProvideJWTMiddleware(service, jwtConfig, tokenCacheService, logger)
 	responseHeaderMiddlewareService := ProvideResponseHeaderMiddleware()
-	config := ProvideCasbinConfig()
+	config := ProvideCasbinConfig(configuration)
 	casbinMiddleware := ProvideCasbinMiddleware(config, logger)
 	policySyncService := ProvidePolicySyncService(config, casbinMiddleware, identityClient, logger)
 	auditMiddlewareService := ProvideAuditMiddleware(identityClient, jwtConfig, logger)

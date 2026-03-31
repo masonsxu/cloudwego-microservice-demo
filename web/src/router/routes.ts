@@ -81,12 +81,44 @@ const routes: RouteRecordRaw[] = [
           {
             path: 'oauth2',
             name: 'OAuth2Management',
-            component: () => import('@/views/oauth2/ClientList.vue'),
             meta: {
-              title: 'oauth2.client.title',
+              title: 'oauth2.title',
               icon: 'Connection',
               menuId: 'oauth2_management'
-            }
+            },
+            redirect: '/system-settings/oauth2/config',
+            children: [
+              {
+                path: 'config',
+                name: 'OAuth2Config',
+                component: () => import('@/views/oauth2/ConfigDetail.vue'),
+                meta: {
+                  title: 'oauth2.config.title',
+                  menuId: 'oauth2_management'
+                }
+              },
+              {
+                path: 'clients',
+                name: 'OAuth2ClientList',
+                component: () => import('@/views/oauth2/ClientList.vue'),
+                meta: {
+                  title: 'oauth2.client.title',
+                  menuId: 'oauth2_management'
+                }
+              },
+              {
+                path: 'clients/:id',
+                name: 'OAuth2ClientDetail',
+                component: () => import('@/views/oauth2/ClientDetail.vue'),
+                meta: { title: 'oauth2.client.title', hidden: true, menuId: 'oauth2_management' }
+              },
+              {
+                path: 'consents',
+                name: 'OAuth2Consents',
+                component: () => import('@/views/oauth2/ConsentList.vue'),
+                meta: { title: 'oauth2.consent.title', hidden: true, menuId: 'oauth2_management' }
+              }
+            ]
           }
         ]
       },
@@ -126,18 +158,6 @@ const routes: RouteRecordRaw[] = [
         name: 'RoleDetail',
         component: () => import('@/views/role/RoleDetail.vue'),
         meta: { title: 'role.roleDetail', hidden: true }
-      },
-      {
-        path: 'oauth2/clients/:id',
-        name: 'OAuth2ClientDetail',
-        component: () => import('@/views/oauth2/ClientDetail.vue'),
-        meta: { title: 'oauth2.client.title', hidden: true }
-      },
-      {
-        path: 'oauth2/consents',
-        name: 'OAuth2Consents',
-        component: () => import('@/views/oauth2/ConsentList.vue'),
-        meta: { title: 'oauth2.consent.title', hidden: true }
       },
       {
         path: 'system',

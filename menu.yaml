@@ -12,24 +12,42 @@ menu:
         path: "organization-management"
         icon: "IconOrganizationManagement"
         component: "views/system-settings/OrganizationManagement"
+        api_paths:
+          - "/api/v1/identity/organizations"
+          - "/api/v1/identity/organizations/*"
+          - "/api/v1/identity/departments"
+          - "/api/v1/identity/departments/*"
+          - "/api/v1/identity/organization-logos"
+          - "/api/v1/identity/organization-logos/*"
+          - "/api/v1/identity/users/*/memberships"
+          - "/api/v1/identity/users/*/primary-membership"
 
       - name: "角色权限"
         id: "role_permissions"
         path: "role-permissions"
         icon: "IconRolePermissions"
         component: "views/system-settings/RolePermissions"
+        api_paths:
+          - "/api/v1/permission/roles"
+          - "/api/v1/permission/roles/*"
 
       - name: "账号管理"
         id: "account_management"
         path: "account-management"
         icon: "IconAccountManagement"
         component: "views/system-settings/AccountManagement"
+        api_paths:
+          - "/api/v1/identity/users"
+          - "/api/v1/identity/users/*"
 
       - name: "审计日志"
         id: "audit_logs"
         path: "audit-logs"
         icon: "IconAuditLogs"
         component: "views/system-settings/AuditLogs"
+        api_paths:
+          - "/api/v1/identity/audit-logs"
+          - "/api/v1/identity/audit-logs/*"
 
       - name: "OAuth2 应用管理"
         id: "oauth2_management"

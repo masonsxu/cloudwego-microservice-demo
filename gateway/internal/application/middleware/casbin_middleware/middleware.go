@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog"
 
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/context/auth_context"
+	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/common"
 	tracelog "github.com/masonsxu/cloudwego-microservice-demo/gateway/pkg/log"
 )
 
@@ -27,40 +28,10 @@ func NewCasbinMiddleware(enforcer *CasbinEnforcer, logger *zerolog.Logger) *Casb
 	return &CasbinMiddleware{
 		enforcer:                  enforcer,
 		logger:                    logger,
-		skipPaths:                 defaultSkipPaths(),
-		pathMapping:               defaultPathMapping(),
+		skipPaths:                 []string{},
+		pathMapping:               make(map[string]string),
 		superAdminBypassEnabled:   true,
 		superAdminSubjectAllowSet: toLookupSet(defaultSuperAdminSubjects()),
-	}
-}
-
-// defaultSkipPaths 默认跳过权限检查的路径
-func defaultSkipPaths() []string {
-	return []string{
-		"/health",
-		"/metrics",
-		"/swagger",
-		"/api/v1/identity/auth/login",
-	}
-}
-
-// defaultPathMapping 默认 API 路径到 Casbin 资源映射
-func defaultPathMapping() map[string]string {
-	return map[string]string{
-		"/api/v1/permission/roles":                    "menu:role_permissions",
-		"/api/v1/permission/roles/*":                  "menu:role_permissions",
-		"/api/v1/identity/users":                      "menu:account_management",
-		"/api/v1/identity/users/*":                    "menu:account_management",
-		"/api/v1/identity/organizations":              "menu:organization_management",
-		"/api/v1/identity/organizations/*":            "menu:organization_management",
-		"/api/v1/identity/departments":                "menu:organization_management",
-		"/api/v1/identity/departments/*":              "menu:organization_management",
-		"/api/v1/identity/organization-logos":         "menu:organization_management",
-		"/api/v1/identity/organization-logos/*":       "menu:organization_management",
-		"/api/v1/identity/users/*/memberships":        "menu:organization_management",
-		"/api/v1/identity/users/*/primary-membership": "menu:organization_management",
-		"/api/v1/identity/audit-logs":                 "menu:audit_logs",
-		"/api/v1/identity/audit-logs/*":               "menu:audit_logs",
 	}
 }
 
@@ -99,7 +70,7 @@ func (m *CasbinMiddleware) MiddlewareFunc() app.HandlerFunc {
 		method := string(c.Request.Method())
 
 		// 检查是否跳过权限检查
-		shouldSkip := m.shouldSkip(path)
+		shouldSkip := common.ShouldSkip(c, m.skipPaths)
 		tracelog.Event(ctx, m.logger.Debug()).
 			Str("component", "casbin_middleware").
 			Str("path", path).
@@ -253,16 +224,6 @@ func abortWithUnauthorized(c *app.RequestContext, message string) {
 		"code":    401,
 		"message": message,
 	})
-}
-
-// shouldSkip 检查是否应该跳过权限检查
-func (m *CasbinMiddleware) shouldSkip(path string) bool {
-	for _, skipPath := range m.skipPaths {
-		if strings.HasPrefix(path, skipPath) {
-			return true
-		}
-	}
-	return false
 }
 
 // getResource 获取权限资源标识

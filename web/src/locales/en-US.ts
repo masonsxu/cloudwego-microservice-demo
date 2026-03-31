@@ -5,6 +5,7 @@ export default {
     confirm: 'Confirm',
     cancel: 'Cancel',
     delete: 'Delete',
+    remove: 'Remove',
     edit: 'Edit',
     create: 'Create',
     search: 'Search',
@@ -41,6 +42,7 @@ export default {
 
   auth: {
     login: 'Login',
+    signup: 'Sign Up',
     logout: 'Logout',
     username: 'Username',
     password: 'Password',
@@ -263,12 +265,31 @@ export default {
       seconds: 'seconds',
       grantType: {
         authorizationCode: 'Authorization Code',
-        clientCredentials: 'Client Credentials',
         refreshToken: 'Refresh Token'
-      }
+      },
+      pkceRequired: 'Public clients must use PKCE (S256)',
+      copySecret: 'Copy Secret'
+    },
+    guide: {
+      title: 'OAuth2 MVP Quick Guide',
+      step1: '1) Request authorization code via /oauth2/authorize (with code_challenge).',
+      step2: '2) Exchange code via /oauth2/token using authorization_code + code_verifier.',
+      step3: '3) Refresh access token via /oauth2/token using refresh_token.',
+      unsupported: 'Unsupported: client_credentials / revoke / introspect.'
     },
     scope: {
       title: 'Scope Management'
+    },
+    config: {
+      title: 'OAuth2 Configuration',
+      enabled: 'OAuth2 Enabled',
+      issuer: 'Issuer',
+      accessTokenLifespan: 'Access Token Lifespan',
+      refreshTokenLifespan: 'Refresh Token Lifespan',
+      authCodeLifespan: 'Authorization Code Lifespan',
+      enforcePkce: 'Enforce PKCE',
+      consentPageUrl: 'Consent Page URL',
+      availableScopes: 'Available Scopes'
     },
     consent: {
       title: 'Authorized Apps',

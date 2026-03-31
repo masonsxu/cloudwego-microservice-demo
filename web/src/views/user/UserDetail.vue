@@ -205,7 +205,6 @@ const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 
-const loading = ref(false)
 const initialLoading = ref(true)
 const userDetail = ref<UserProfile | null>(null)
 const memberships = ref<any[]>([])

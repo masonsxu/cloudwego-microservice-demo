@@ -51,10 +51,7 @@ func NewOAuth2Provider(cfg config.OAuth2Config, store interface{}) fosite.OAuth2
 			},
 		},
 		compose.OAuth2AuthorizeExplicitFactory,
-		compose.OAuth2ClientCredentialsGrantFactory,
 		compose.OAuth2RefreshTokenGrantFactory,
-		compose.OAuth2TokenRevocationFactory,
-		compose.OAuth2TokenIntrospectionFactory,
 		compose.OAuth2PKCEFactory,
 	)
 }

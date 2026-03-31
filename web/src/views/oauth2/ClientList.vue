@@ -8,6 +8,18 @@
       </el-button>
     </div>
 
+    <el-alert class="mvp-guide" type="info" :closable="false" show-icon>
+      <template #title>
+        {{ t('oauth2.guide.title') }}
+      </template>
+      <div class="guide-lines">
+        <div>{{ t('oauth2.guide.step1') }}</div>
+        <div>{{ t('oauth2.guide.step2') }}</div>
+        <div>{{ t('oauth2.guide.step3') }}</div>
+        <div class="guide-note">{{ t('oauth2.guide.unsupported') }}</div>
+      </div>
+    </el-alert>
+
     <div class="stats-row">
       <div class="stat-card spotlight-card">
         <div class="stat-value">{{ stats.total }}</div>
@@ -29,7 +41,7 @@
         <el-table v-loading="loading" :data="clientList" height="100%" stripe>
           <el-table-column prop="client_name" :label="t('oauth2.client.clientName')" min-width="160">
             <template #default="{ row }">
-              <router-link :to="`/oauth2/clients/${row.id}`" class="text-link">
+              <router-link :to="`/system-settings/oauth2/clients/${row.id}`" class="text-link">
                 {{ row.client_name }}
               </router-link>
             </template>
@@ -62,7 +74,7 @@
           </el-table-column>
           <el-table-column :label="t('common.actions')" width="120" fixed="right">
             <template #default="{ row }">
-              <el-button link type="primary" @click="router.push(`/oauth2/clients/${row.id}`)">
+              <el-button link type="primary" @click="router.push(`/system-settings/oauth2/clients/${row.id}`)">
                 {{ t('common.edit') }}
               </el-button>
               <el-button link type="danger" @click="handleDelete(row)">
@@ -104,13 +116,15 @@
         <el-form-item :label="t('oauth2.client.grantTypes')" prop="grant_types">
           <el-checkbox-group v-model="createForm.grant_types">
             <el-checkbox value="authorization_code">{{ t('oauth2.client.grantType.authorizationCode') }}</el-checkbox>
-            <el-checkbox value="client_credentials">{{ t('oauth2.client.grantType.clientCredentials') }}</el-checkbox>
             <el-checkbox value="refresh_token">{{ t('oauth2.client.grantType.refreshToken') }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
+        <el-form-item v-if="createForm.client_type === 'public'">
+          <el-alert type="warning" :title="t('oauth2.client.pkceRequired')" :closable="false" show-icon />
+        </el-form-item>
         <el-form-item :label="t('oauth2.client.redirectUris')">
           <div class="uri-list">
-            <div v-for="(uri, idx) in createForm.redirect_uris" :key="idx" class="uri-item">
+            <div v-for="(_, idx) in createForm.redirect_uris" :key="idx" class="uri-item">
               <el-input v-model="createForm.redirect_uris[idx]" placeholder="https://example.com/callback" />
               <el-button link type="danger" @click="createForm.redirect_uris.splice(idx, 1)">
                 <el-icon><Delete /></el-icon>
@@ -133,7 +147,7 @@
       <el-alert :title="t('oauth2.client.secretWarning')" type="warning" show-icon :closable="false" class="secret-alert" />
       <div class="secret-display">
         <code>{{ clientSecret }}</code>
-        <el-button size="small" @click="copySecret">{{ t('common.actions') }}</el-button>
+        <el-button size="small" @click="copySecret">{{ t('oauth2.client.copySecret') }}</el-button>
       </div>
       <template #footer>
         <el-button type="primary" @click="showSecretDialog = false">{{ t('common.confirm') }}</el-button>
@@ -151,7 +165,7 @@ import { Plus, Delete } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import ListPageSkeleton from '@/components/skeleton/ListPageSkeleton.vue'
 import { oauth2Api } from '@/api/oauth2'
-import type { OAuth2Client } from '@/types/oauth2'
+import type { OAuth2Client, OAuth2ClientType, OAuth2GrantType } from '@/types/oauth2'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -173,12 +187,18 @@ const stats = computed(() => {
   return { total, active, inactive: total - active }
 })
 
-const createForm = reactive({
+const createForm = reactive<{
+  client_name: string
+  description: string
+  client_type: OAuth2ClientType
+  grant_types: OAuth2GrantType[]
+  redirect_uris: string[]
+}>({
   client_name: '',
   description: '',
-  client_type: 'confidential' as string,
-  grant_types: ['authorization_code', 'refresh_token'] as string[],
-  redirect_uris: [''] as string[],
+  client_type: 'confidential',
+  grant_types: ['authorization_code', 'refresh_token'],
+  redirect_uris: [''],
 })
 
 const formRules: FormRules = {
@@ -190,7 +210,6 @@ const formRules: FormRules = {
 const formatGrantType = (gt: string) => {
   const map: Record<string, string> = {
     authorization_code: t('oauth2.client.grantType.authorizationCode'),
-    client_credentials: t('oauth2.client.grantType.clientCredentials'),
     refresh_token: t('oauth2.client.grantType.refreshToken'),
   }
   return map[gt] || gt
@@ -279,6 +298,24 @@ onMounted(() => {
     font-size: 20px;
     font-weight: 600;
     color: var(--c-text-main);
+  }
+}
+
+.mvp-guide {
+  :deep(.el-alert__title) {
+    font-weight: 600;
+  }
+}
+
+.guide-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+
+  .guide-note {
+    color: var(--el-color-warning-dark-2);
+    font-weight: 500;
   }
 }
 

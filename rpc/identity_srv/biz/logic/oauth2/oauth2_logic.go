@@ -54,6 +54,22 @@ type OAuth2Logic interface {
 		req *identity_srv.ListOAuth2ConsentsRequest,
 	) (*identity_srv.ListOAuth2ConsentsResponse, error)
 	RevokeOAuth2Consent(ctx context.Context, req *identity_srv.RevokeOAuth2ConsentRequest) error
+
+	// Token Storage
+	CreateOAuth2AuthorizeCodeSession(ctx context.Context, req *identity_srv.OAuth2TokenSession) error
+	GetOAuth2AuthorizeCodeSession(ctx context.Context, signature string) (*identity_srv.OAuth2TokenSession, error)
+	InvalidateOAuth2AuthorizeCodeSession(ctx context.Context, signature string) error
+	CreateOAuth2AccessTokenSession(ctx context.Context, req *identity_srv.OAuth2TokenSession) error
+	GetOAuth2AccessTokenSession(ctx context.Context, signature string) (*identity_srv.OAuth2TokenSession, error)
+	DeleteOAuth2AccessTokenSession(ctx context.Context, signature string) error
+	RevokeOAuth2AccessToken(ctx context.Context, requestID string) error
+	CreateOAuth2RefreshTokenSession(ctx context.Context, req *identity_srv.OAuth2TokenSession) error
+	GetOAuth2RefreshTokenSession(ctx context.Context, signature string) (*identity_srv.OAuth2TokenSession, error)
+	DeleteOAuth2RefreshTokenSession(ctx context.Context, signature string) error
+	RevokeOAuth2RefreshToken(ctx context.Context, requestID string) error
+	CreateOAuth2PKCESession(ctx context.Context, req *identity_srv.OAuth2TokenSession) error
+	GetOAuth2PKCESession(ctx context.Context, signature string) (*identity_srv.OAuth2TokenSession, error)
+	DeleteOAuth2PKCESession(ctx context.Context, signature string) error
 }
 
 type logicImpl struct {
@@ -369,4 +385,246 @@ func (l *logicImpl) RevokeOAuth2Consent(ctx context.Context, req *identity_srv.R
 	}
 
 	return l.dal.OAuth2Consent().Revoke(ctx, *req.UserID, *req.ClientID)
+}
+
+// --- Token Storage ---
+
+func (l *logicImpl) CreateOAuth2AuthorizeCodeSession(ctx context.Context, req *identity_srv.OAuth2TokenSession) error {
+	if req == nil || req.Signature == nil || req.RequestID == nil || req.ClientID == nil || req.UserID == nil {
+		return fmt.Errorf("授权码会话参数不完整")
+	}
+
+	userID, err := uuid.Parse(req.GetUserID())
+	if err != nil {
+		return fmt.Errorf("无效的 userID: %w", err)
+	}
+
+	code := &models.OAuth2AuthorizationCode{
+		Signature:           req.GetSignature(),
+		RequestID:           req.GetRequestID(),
+		ClientID:            req.GetClientID(),
+		UserID:              userID,
+		Scopes:              req.GetScopes(),
+		GrantedAudience:     req.GetGrantedAudience(),
+		RedirectURI:         req.GetRedirectURI(),
+		CodeChallenge:       req.GetCodeChallenge(),
+		CodeChallengeMethod: req.GetCodeChallengeMethod(),
+		SessionData:         req.GetSessionData(),
+		FormData:            req.GetFormData(),
+		RequestedAt:         req.GetRequestedAt(),
+		ExpiresAt:           req.GetExpiresAt(),
+		Used:                req.GetUsed(),
+	}
+
+	return l.dal.OAuth2Token().CreateAuthorizationCode(ctx, code)
+}
+
+func (l *logicImpl) GetOAuth2AuthorizeCodeSession(ctx context.Context, signature string) (*identity_srv.OAuth2TokenSession, error) {
+	code, err := l.dal.OAuth2Token().GetAuthorizationCode(ctx, signature)
+	if err != nil {
+		return nil, err
+	}
+
+	userID := code.UserID.String()
+	requestedAt := code.RequestedAt
+	expiresAt := code.ExpiresAt
+	used := code.Used
+
+	return &identity_srv.OAuth2TokenSession{
+		Signature:           &code.Signature,
+		RequestID:           &code.RequestID,
+		ClientID:            &code.ClientID,
+		UserID:              &userID,
+		Scopes:              optionalString(code.Scopes),
+		GrantedAudience:     optionalString(code.GrantedAudience),
+		SessionData:         code.SessionData,
+		FormData:            code.FormData,
+		RedirectURI:         optionalString(code.RedirectURI),
+		CodeChallenge:       optionalString(code.CodeChallenge),
+		CodeChallengeMethod: optionalString(code.CodeChallengeMethod),
+		RequestedAt:         &requestedAt,
+		ExpiresAt:           &expiresAt,
+		Used:                &used,
+	}, nil
+}
+
+func (l *logicImpl) InvalidateOAuth2AuthorizeCodeSession(ctx context.Context, signature string) error {
+	return l.dal.OAuth2Token().InvalidateAuthorizationCode(ctx, signature)
+}
+
+func (l *logicImpl) CreateOAuth2AccessTokenSession(ctx context.Context, req *identity_srv.OAuth2TokenSession) error {
+	if req == nil || req.Signature == nil || req.RequestID == nil || req.ClientID == nil {
+		return fmt.Errorf("访问令牌会话参数不完整")
+	}
+
+	token := &models.OAuth2AccessToken{
+		Signature:       req.GetSignature(),
+		RequestID:       req.GetRequestID(),
+		ClientID:        req.GetClientID(),
+		Scopes:          req.GetScopes(),
+		GrantedAudience: req.GetGrantedAudience(),
+		SessionData:     req.GetSessionData(),
+		FormData:        req.GetFormData(),
+		RequestedAt:     req.GetRequestedAt(),
+		ExpiresAt:       req.GetExpiresAt(),
+		IsRevoked:       req.GetRevoked(),
+	}
+
+	if req.UserID != nil && req.GetUserID() != "" {
+		userID, err := uuid.Parse(req.GetUserID())
+		if err != nil {
+			return fmt.Errorf("无效的 userID: %w", err)
+		}
+		token.UserID = &userID
+	}
+
+	return l.dal.OAuth2Token().CreateAccessToken(ctx, token)
+}
+
+func (l *logicImpl) GetOAuth2AccessTokenSession(ctx context.Context, signature string) (*identity_srv.OAuth2TokenSession, error) {
+	token, err := l.dal.OAuth2Token().GetAccessToken(ctx, signature)
+	if err != nil {
+		return nil, err
+	}
+
+	requestedAt := token.RequestedAt
+	expiresAt := token.ExpiresAt
+	revoked := token.IsRevoked
+
+	session := &identity_srv.OAuth2TokenSession{
+		Signature:       &token.Signature,
+		RequestID:       &token.RequestID,
+		ClientID:        &token.ClientID,
+		Scopes:          optionalString(token.Scopes),
+		GrantedAudience: optionalString(token.GrantedAudience),
+		SessionData:     token.SessionData,
+		FormData:        token.FormData,
+		RequestedAt:     &requestedAt,
+		ExpiresAt:       &expiresAt,
+		Revoked:         &revoked,
+	}
+
+	if token.UserID != nil {
+		userID := token.UserID.String()
+		session.UserID = &userID
+	}
+
+	return session, nil
+}
+
+func (l *logicImpl) DeleteOAuth2AccessTokenSession(ctx context.Context, signature string) error {
+	return l.dal.OAuth2Token().DeleteAccessToken(ctx, signature)
+}
+
+func (l *logicImpl) RevokeOAuth2AccessToken(ctx context.Context, requestID string) error {
+	return l.dal.OAuth2Token().RevokeAccessTokenByRequestID(ctx, requestID)
+}
+
+func (l *logicImpl) CreateOAuth2RefreshTokenSession(ctx context.Context, req *identity_srv.OAuth2TokenSession) error {
+	if req == nil || req.Signature == nil || req.RequestID == nil || req.ClientID == nil || req.UserID == nil {
+		return fmt.Errorf("刷新令牌会话参数不完整")
+	}
+
+	userID, err := uuid.Parse(req.GetUserID())
+	if err != nil {
+		return fmt.Errorf("无效的 userID: %w", err)
+	}
+
+	token := &models.OAuth2RefreshToken{
+		Signature:       req.GetSignature(),
+		RequestID:       req.GetRequestID(),
+		ClientID:        req.GetClientID(),
+		UserID:          userID,
+		Scopes:          req.GetScopes(),
+		GrantedAudience: req.GetGrantedAudience(),
+		SessionData:     req.GetSessionData(),
+		FormData:        req.GetFormData(),
+		RequestedAt:     req.GetRequestedAt(),
+		ExpiresAt:       req.GetExpiresAt(),
+		IsRevoked:       req.GetRevoked(),
+	}
+
+	return l.dal.OAuth2Token().CreateRefreshToken(ctx, token)
+}
+
+func (l *logicImpl) GetOAuth2RefreshTokenSession(ctx context.Context, signature string) (*identity_srv.OAuth2TokenSession, error) {
+	token, err := l.dal.OAuth2Token().GetRefreshToken(ctx, signature)
+	if err != nil {
+		return nil, err
+	}
+
+	userID := token.UserID.String()
+	requestedAt := token.RequestedAt
+	expiresAt := token.ExpiresAt
+	revoked := token.IsRevoked
+
+	return &identity_srv.OAuth2TokenSession{
+		Signature:       &token.Signature,
+		RequestID:       &token.RequestID,
+		ClientID:        &token.ClientID,
+		UserID:          &userID,
+		Scopes:          optionalString(token.Scopes),
+		GrantedAudience: optionalString(token.GrantedAudience),
+		SessionData:     token.SessionData,
+		FormData:        token.FormData,
+		RequestedAt:     &requestedAt,
+		ExpiresAt:       &expiresAt,
+		Revoked:         &revoked,
+	}, nil
+}
+
+func (l *logicImpl) DeleteOAuth2RefreshTokenSession(ctx context.Context, signature string) error {
+	return l.dal.OAuth2Token().DeleteRefreshToken(ctx, signature)
+}
+
+func (l *logicImpl) RevokeOAuth2RefreshToken(ctx context.Context, requestID string) error {
+	return l.dal.OAuth2Token().RevokeRefreshTokenByRequestID(ctx, requestID)
+}
+
+func (l *logicImpl) CreateOAuth2PKCESession(ctx context.Context, req *identity_srv.OAuth2TokenSession) error {
+	if req == nil || req.Signature == nil || req.RequestID == nil {
+		return fmt.Errorf("PKCE 会话参数不完整")
+	}
+
+	session := &models.OAuth2PKCESession{
+		Signature:   req.GetSignature(),
+		RequestID:   req.GetRequestID(),
+		SessionData: req.GetSessionData(),
+		FormData:    req.GetFormData(),
+		RequestedAt: req.GetRequestedAt(),
+		ExpiresAt:   req.GetExpiresAt(),
+	}
+
+	return l.dal.OAuth2Token().CreatePKCESession(ctx, session)
+}
+
+func (l *logicImpl) GetOAuth2PKCESession(ctx context.Context, signature string) (*identity_srv.OAuth2TokenSession, error) {
+	session, err := l.dal.OAuth2Token().GetPKCESession(ctx, signature)
+	if err != nil {
+		return nil, err
+	}
+
+	requestedAt := session.RequestedAt
+	expiresAt := session.ExpiresAt
+
+	return &identity_srv.OAuth2TokenSession{
+		Signature:   &session.Signature,
+		RequestID:   &session.RequestID,
+		SessionData: session.SessionData,
+		FormData:    session.FormData,
+		RequestedAt: &requestedAt,
+		ExpiresAt:   &expiresAt,
+	}, nil
+}
+
+func (l *logicImpl) DeleteOAuth2PKCESession(ctx context.Context, signature string) error {
+	return l.dal.OAuth2Token().DeletePKCESession(ctx, signature)
+}
+
+func optionalString(s string) *string {
+	if s == "" {
+		return nil
+	}
+
+	return &s
 }

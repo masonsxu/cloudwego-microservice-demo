@@ -569,6 +569,10 @@ func TestLogicImpl_DeleteUser(t *testing.T) {
 
 		req := &identity_srv.DeleteUserRequest{UserID: &userID}
 		mocks.UserRepo.EXPECT().GetByID(ctx, userID).Return(user, nil)
+		mocks.AssignmentRepo.EXPECT().
+			FindWithConditions(gomock.Any(), gomock.Any()).
+			Return([]*models.UserRoleAssignment{}, &models.PageResult{Total: 0, Page: 1, Limit: 20, TotalPages: 0}, nil)
+		mocks.MembershipRepo.EXPECT().BatchDeleteByUser(gomock.Any(), userID).Return(nil)
 		mocks.UserRepo.EXPECT().SoftDelete(gomock.Any(), userID).Return(nil)
 
 		err := logic.DeleteUser(ctx, req)
@@ -641,6 +645,10 @@ func TestLogicImpl_DeleteUser(t *testing.T) {
 
 		req := &identity_srv.DeleteUserRequest{UserID: &userID}
 		mocks.UserRepo.EXPECT().GetByID(ctx, userID).Return(user, nil)
+		mocks.AssignmentRepo.EXPECT().
+			FindWithConditions(gomock.Any(), gomock.Any()).
+			Return([]*models.UserRoleAssignment{}, &models.PageResult{Total: 0, Page: 1, Limit: 20, TotalPages: 0}, nil)
+		mocks.MembershipRepo.EXPECT().BatchDeleteByUser(gomock.Any(), userID).Return(nil)
 		mocks.UserRepo.EXPECT().SoftDelete(gomock.Any(), userID).Return(gorm.ErrInvalidDB)
 
 		err := logic.DeleteUser(ctx, req)
@@ -916,7 +924,7 @@ func TestLogicImpl_ChangeUserStatus(t *testing.T) {
 
 		newStatus := core.UserStatus_USER_STATUS_SUSPENDED
 		req := &identity_srv.ChangeUserStatusRequest{
-			UserID:     &userID,
+			UserID:    &userID,
 			NewStatus: &newStatus,
 		}
 
@@ -944,7 +952,7 @@ func TestLogicImpl_ChangeUserStatus(t *testing.T) {
 
 		newStatus := core.UserStatus_USER_STATUS_ACTIVE
 		req := &identity_srv.ChangeUserStatusRequest{
-			UserID:     &userID,
+			UserID:    &userID,
 			NewStatus: &newStatus,
 		}
 
@@ -966,7 +974,7 @@ func TestLogicImpl_ChangeUserStatus(t *testing.T) {
 
 		newStatus := core.UserStatus_USER_STATUS_ACTIVE
 		req := &identity_srv.ChangeUserStatusRequest{
-			UserID:     &userID,
+			UserID:    &userID,
 			NewStatus: &newStatus,
 		}
 
@@ -984,7 +992,7 @@ func TestLogicImpl_ChangeUserStatus(t *testing.T) {
 		emptyID := ""
 		newStatus := core.UserStatus_USER_STATUS_ACTIVE
 		req := &identity_srv.ChangeUserStatusRequest{
-			UserID:     &emptyID,
+			UserID:    &emptyID,
 			NewStatus: &newStatus,
 		}
 
@@ -999,7 +1007,7 @@ func TestLogicImpl_ChangeUserStatus(t *testing.T) {
 
 		newStatus := core.UserStatus_USER_STATUS_ACTIVE
 		req := &identity_srv.ChangeUserStatusRequest{
-			UserID:     &userID,
+			UserID:    &userID,
 			NewStatus: &newStatus,
 		}
 
@@ -1022,7 +1030,7 @@ func TestLogicImpl_ChangeUserStatus(t *testing.T) {
 
 		newStatus := core.UserStatus_USER_STATUS_SUSPENDED
 		req := &identity_srv.ChangeUserStatusRequest{
-			UserID:     &userID,
+			UserID:    &userID,
 			NewStatus: &newStatus,
 		}
 

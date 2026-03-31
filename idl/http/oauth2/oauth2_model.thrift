@@ -285,6 +285,45 @@ struct ListOAuth2ScopesResponseDTO {
     2: optional list<OAuth2ScopeDTO> scopes (go.tag = "json:\"scopes,omitempty\""),
 }
 
+/**
+ * OAuth2 运行时配置 DTO（只读）
+ */
+struct OAuth2ConfigDTO {
+
+    /** 是否启用 OAuth2 */
+    1: optional bool enabled (go.tag = "json:\"enabled\""),
+
+    /** Issuer */
+    2: optional string issuer (go.tag = "json:\"issuer\""),
+
+    /** Access Token 有效期（秒） */
+    3: optional i64 accessTokenLifespan (go.tag = "json:\"access_token_lifespan\""),
+
+    /** Refresh Token 有效期（秒） */
+    4: optional i64 refreshTokenLifespan (go.tag = "json:\"refresh_token_lifespan\""),
+
+    /** 授权码有效期（秒） */
+    5: optional i64 authCodeLifespan (go.tag = "json:\"auth_code_lifespan\""),
+
+    /** 是否强制 PKCE */
+    6: optional bool enforcePKCE (go.tag = "json:\"enforce_pkce\""),
+
+    /** 同意页 URL */
+    7: optional string consentPageURL (go.tag = "json:\"consent_page_url\""),
+}
+
+/**
+ * 查询 OAuth2 配置响应
+ */
+struct GetOAuth2ConfigResponseDTO {
+
+    /** 基础响应 */
+    1: optional base.BaseResponseDTO baseResp (go.tag = "json:\"base_resp\""),
+
+    /** OAuth2 配置 */
+    2: optional OAuth2ConfigDTO config (go.tag = "json:\"config,omitempty\""),
+}
+
 // =================================================================
 // 3. OAuth2 用户授权同意管理 DTO (Consent Management)
 // =================================================================

@@ -81,7 +81,7 @@
         </el-form-item>
         <el-form-item :label="t('oauth2.client.redirectUris')">
           <div class="uri-list">
-            <div v-for="(uri, idx) in editForm.redirect_uris" :key="idx" class="uri-item">
+            <div v-for="(_, idx) in editForm.redirect_uris" :key="idx" class="uri-item">
               <el-input v-model="editForm.redirect_uris[idx]" />
               <el-button link type="danger" @click="editForm.redirect_uris.splice(idx, 1)">
                 <el-icon><Delete /></el-icon>
@@ -102,7 +102,7 @@
       <el-alert :title="t('oauth2.client.secretWarning')" type="warning" show-icon :closable="false" style="margin-bottom: 16px;" />
       <div class="secret-display">
         <code>{{ newSecret }}</code>
-        <el-button size="small" @click="copySecret">Copy</el-button>
+        <el-button size="small" @click="copySecret">{{ t('oauth2.client.copySecret') }}</el-button>
       </div>
       <template #footer>
         <el-button type="primary" @click="showSecretDialog = false">{{ t('common.confirm') }}</el-button>
@@ -144,7 +144,6 @@ const editForm = reactive({
 const formatGrantType = (gt: string) => {
   const map: Record<string, string> = {
     authorization_code: t('oauth2.client.grantType.authorizationCode'),
-    client_credentials: t('oauth2.client.grantType.clientCredentials'),
     refresh_token: t('oauth2.client.grantType.refreshToken'),
   }
   return map[gt] || gt
@@ -191,7 +190,7 @@ const handleDelete = async () => {
   await ElMessageBox.confirm(t('oauth2.client.deleteConfirm'), t('common.confirm'), { type: 'warning' })
   await oauth2Api.deleteClient(route.params.id as string)
   ElMessage.success(t('common.operationSuccess'))
-  router.push('/system-settings/oauth2')
+  router.push('/system-settings/oauth2/clients')
 }
 
 const copySecret = () => {

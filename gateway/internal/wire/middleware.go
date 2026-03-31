@@ -2,6 +2,9 @@
 package wire
 
 import (
+	"os"
+	"strings"
+
 	"github.com/google/wire"
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
 	"github.com/rs/zerolog"
@@ -132,8 +135,68 @@ func ProvideResponseHeaderMiddleware() respmw.ResponseHeaderMiddlewareService {
 }
 
 // ProvideCasbinConfig 提供 Casbin 配置
-func ProvideCasbinConfig() *casbnmw.Config {
-	return casbnmw.LoadConfigFromEnv()
+// 从统一配置中组装 Casbin 中间件配置，同时合并 JWT 跳过路径
+func ProvideCasbinConfig(cfg *config.Configuration) *casbnmw.Config {
+	casbinCfg := &cfg.Middleware.Casbin
+	jwtSkipPaths := cfg.Middleware.JWT.SkipPaths
+
+	// Casbin 跳过集合 = JWT 跳过路径 + Casbin 额外跳过路径
+	mergedSkipPaths := make([]string, 0, len(jwtSkipPaths)+len(casbinCfg.SkipExtraPaths))
+	seen := make(map[string]struct{}, len(jwtSkipPaths)+len(casbinCfg.SkipExtraPaths))
+
+	for _, p := range jwtSkipPaths {
+		t := strings.TrimSpace(p)
+		if t == "" {
+			continue
+		}
+
+		if _, ok := seen[t]; !ok {
+			seen[t] = struct{}{}
+			mergedSkipPaths = append(mergedSkipPaths, t)
+		}
+	}
+
+	for _, p := range casbinCfg.SkipExtraPaths {
+		t := strings.TrimSpace(p)
+		if t == "" {
+			continue
+		}
+
+		if _, ok := seen[t]; !ok {
+			seen[t] = struct{}{}
+			mergedSkipPaths = append(mergedSkipPaths, t)
+		}
+	}
+
+	// 兼容旧 CASBIN_SKIP_PATHS 环境变量（deprecated）
+	if legacySkipPaths := os.Getenv("CASBIN_SKIP_PATHS"); legacySkipPaths != "" {
+		// 仅在未配置新变量时回退使用旧变量
+		if len(casbinCfg.SkipExtraPaths) == 0 {
+			parts := strings.Split(legacySkipPaths, ",")
+			for _, p := range parts {
+				t := strings.TrimSpace(p)
+				if t == "" {
+					continue
+				}
+
+				if _, ok := seen[t]; !ok {
+					seen[t] = struct{}{}
+					mergedSkipPaths = append(mergedSkipPaths, t)
+				}
+			}
+		}
+	}
+
+	return &casbnmw.Config{
+		Enabled:                 casbinCfg.Enabled,
+		ModelPath:               casbinCfg.ModelPath,
+		LogEnabled:              casbinCfg.LogEnabled,
+		SyncInterval:            casbinCfg.SyncInterval,
+		SkipPaths:               mergedSkipPaths,
+		SuperAdminBypassEnabled: casbinCfg.SuperAdminBypassEnabled,
+		SuperAdminSubjects:      casbinCfg.SuperAdminSubjects,
+		MenuMappingFile:         casbinCfg.MenuMappingFile,
+	}
 }
 
 // ProvideCasbinMiddleware 提供 Casbin 权限中间件

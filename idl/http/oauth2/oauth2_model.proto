@@ -108,6 +108,21 @@ message ListOAuth2ScopesResponseDTO {
   repeated OAuth2ScopeDTO scopes = 2 [(api.go_tag) = "json:\"scopes,omitempty\""];
 }
 
+message OAuth2ConfigDTO {
+  optional bool enabled = 1 [(api.go_tag) = "json:\"enabled\""];
+  optional string issuer = 2 [(api.go_tag) = "json:\"issuer\""];
+  optional int64 accessTokenLifespan = 3 [(api.go_tag) = "json:\"access_token_lifespan\""];
+  optional int64 refreshTokenLifespan = 4 [(api.go_tag) = "json:\"refresh_token_lifespan\""];
+  optional int64 authCodeLifespan = 5 [(api.go_tag) = "json:\"auth_code_lifespan\""];
+  optional bool enforcePKCE = 6 [(api.go_tag) = "json:\"enforce_pkce\""];
+  optional string consentPageURL = 7 [(api.go_tag) = "json:\"consent_page_url\""];
+}
+
+message GetOAuth2ConfigResponseDTO {
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional OAuth2ConfigDTO config = 2 [(api.go_tag) = "json:\"config,omitempty\""];
+}
+
 message OAuth2ConsentDTO {
   optional string id = 1 [(api.go_tag) = "json:\"id\""];
   optional string clientID = 2 [(api.go_tag) = "json:\"client_id\""];
