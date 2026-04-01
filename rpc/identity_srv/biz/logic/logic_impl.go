@@ -12,7 +12,6 @@ import (
 	logoLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/logo"
 	membershipLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/membership"
 	menuLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/menu"
-	oauth2Logic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/oauth2"
 	orgLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/organization"
 	userLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/user"
 	rustfsclient "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/rustfs_client"
@@ -76,13 +75,6 @@ type Impl struct {
 
 	// 审计日志
 	auditLogLogic.AuditLogLogic
-
-	// ============================================================================
-	// OAuth2 模块
-	// ============================================================================
-
-	// OAuth2 授权管理
-	oauth2Logic.OAuth2Logic
 }
 
 // NewLogicImpl 创建业务逻辑层实例
@@ -183,9 +175,6 @@ func NewLogicImpl(dal dal.DAL, cfg *config.Config, casbinService casbinLogic.Ser
 		// ============================================================================
 
 		AuditLogLogic: auditLogLogic.NewLogic(dal, conv),
-
-		// OAuth2 模块
-		OAuth2Logic: oauth2Logic.NewLogic(dal, conv),
 	}
 }
 

@@ -11,7 +11,6 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/logo"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/membership"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/menu"
-	oauth2conv "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/oauth2"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/organization"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/converter/user"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
@@ -86,9 +85,6 @@ type Converter interface {
 	UserRoleAssignment() assignment.Converter
 	AuditLog() auditlog.Converter
 
-	// OAuth2 OAuth2 相关转换器
-	// 负责 OAuth2 Client、Scope、Consent 等实体的 Model ↔ Thrift 转换
-	OAuth2() oauth2conv.Converter
 	// ============================================================================
 	// 基础设施转换器 - 通用工具
 	// ============================================================================

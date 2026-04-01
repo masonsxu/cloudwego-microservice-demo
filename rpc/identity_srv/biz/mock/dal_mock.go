@@ -21,10 +21,6 @@ import (
 	logo "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/logo"
 	membership "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/membership"
 	menu "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/menu"
-	oauth2client "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/oauth2client"
-	oauth2consent "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/oauth2consent"
-	oauth2scope "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/oauth2scope"
-	oauth2token "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/oauth2token"
 	organization "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/organization"
 	rolemenu "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/rolemenu"
 	user "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/user"
@@ -153,62 +149,6 @@ func (m *MockDAL) Menu() menu.MenuRepository {
 func (mr *MockDALMockRecorder) Menu() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Menu", reflect.TypeOf((*MockDAL)(nil).Menu))
-}
-
-// OAuth2Client mocks base method.
-func (m *MockDAL) OAuth2Client() oauth2client.OAuth2ClientRepository {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OAuth2Client")
-	ret0, _ := ret[0].(oauth2client.OAuth2ClientRepository)
-	return ret0
-}
-
-// OAuth2Client indicates an expected call of OAuth2Client.
-func (mr *MockDALMockRecorder) OAuth2Client() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OAuth2Client", reflect.TypeOf((*MockDAL)(nil).OAuth2Client))
-}
-
-// OAuth2Consent mocks base method.
-func (m *MockDAL) OAuth2Consent() oauth2consent.OAuth2ConsentRepository {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OAuth2Consent")
-	ret0, _ := ret[0].(oauth2consent.OAuth2ConsentRepository)
-	return ret0
-}
-
-// OAuth2Consent indicates an expected call of OAuth2Consent.
-func (mr *MockDALMockRecorder) OAuth2Consent() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OAuth2Consent", reflect.TypeOf((*MockDAL)(nil).OAuth2Consent))
-}
-
-// OAuth2Scope mocks base method.
-func (m *MockDAL) OAuth2Scope() oauth2scope.OAuth2ScopeRepository {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OAuth2Scope")
-	ret0, _ := ret[0].(oauth2scope.OAuth2ScopeRepository)
-	return ret0
-}
-
-// OAuth2Scope indicates an expected call of OAuth2Scope.
-func (mr *MockDALMockRecorder) OAuth2Scope() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OAuth2Scope", reflect.TypeOf((*MockDAL)(nil).OAuth2Scope))
-}
-
-// OAuth2Token mocks base method.
-func (m *MockDAL) OAuth2Token() oauth2token.OAuth2TokenRepository {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OAuth2Token")
-	ret0, _ := ret[0].(oauth2token.OAuth2TokenRepository)
-	return ret0
-}
-
-// OAuth2Token indicates an expected call of OAuth2Token.
-func (mr *MockDALMockRecorder) OAuth2Token() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OAuth2Token", reflect.TypeOf((*MockDAL)(nil).OAuth2Token))
 }
 
 // Organization mocks base method.
