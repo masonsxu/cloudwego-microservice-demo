@@ -53,7 +53,7 @@ services:
   # etcd 服务注册与发现
   # ===========================================================================
   etcd:
-    image: m.daocloud.io/docker.io/bitnami/etcd:latest
+    image: quay.io/coreos/etcd:v3.6.0
     container_name: etcd
     hostname: etcd
     ports:
@@ -78,7 +78,7 @@ services:
   # RustFS 对象存储
   # ===========================================================================
   rustfs:
-    image: m.daocloud.io/docker.io/rustfs/rustfs:1.0.0-alpha.72
+    image: m.daocloud.io/docker.io/rustfs/rustfs:1.0.0-alpha.90
     container_name: rustfs
     hostname: rustfs
     ports:
