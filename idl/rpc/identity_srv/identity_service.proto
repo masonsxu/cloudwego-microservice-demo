@@ -78,39 +78,19 @@ service IdentityService {
 
   rpc CreateAuditLog(CreateAuditLogRequest) returns (CreateAuditLogResponse);
   rpc ListAuditLogs(ListAuditLogsRequest) returns (ListAuditLogsResponse);
-
-  rpc CreateOAuth2Client(CreateOAuth2ClientRequest) returns (CreateOAuth2ClientResponse);
-  rpc GetOAuth2Client(GetOAuth2ClientRequest) returns (OAuth2Client);
-  rpc UpdateOAuth2Client(UpdateOAuth2ClientRequest) returns (OAuth2Client);
-  rpc DeleteOAuth2Client(DeleteOAuth2ClientRequest) returns (DeleteOAuth2ClientResponse);
-  rpc ListOAuth2Clients(ListOAuth2ClientsRequest) returns (ListOAuth2ClientsResponse);
-  rpc RotateOAuth2ClientSecret(RotateOAuth2ClientSecretRequest) returns (RotateOAuth2ClientSecretResponse);
-  rpc GetOAuth2ClientForAuth(GetOAuth2ClientForAuthRequest) returns (GetOAuth2ClientForAuthResponse);
-  rpc ListOAuth2Scopes(ListOAuth2ScopesRequest) returns (ListOAuth2ScopesResponse);
-  rpc SaveOAuth2Consent(SaveOAuth2ConsentRequest) returns (SaveOAuth2ConsentResponse);
-  rpc GetOAuth2Consent(GetOAuth2ConsentRequest) returns (GetOAuth2ConsentResponse);
-  rpc ListOAuth2Consents(ListOAuth2ConsentsRequest) returns (ListOAuth2ConsentsResponse);
-  rpc RevokeOAuth2Consent(RevokeOAuth2ConsentRequest) returns (RevokeOAuth2ConsentResponse);
-
-  rpc CreateOAuth2AuthorizeCodeSession(OAuth2TokenSession) returns (CreateOAuth2AuthorizeCodeSessionResponse);
-  rpc GetOAuth2AuthorizeCodeSession(GetOAuth2AuthorizeCodeSessionRequest) returns (OAuth2TokenSession);
-  rpc InvalidateOAuth2AuthorizeCodeSession(InvalidateOAuth2AuthorizeCodeSessionRequest) returns (InvalidateOAuth2AuthorizeCodeSessionResponse);
-  rpc CreateOAuth2AccessTokenSession(OAuth2TokenSession) returns (CreateOAuth2AccessTokenSessionResponse);
-  rpc GetOAuth2AccessTokenSession(GetOAuth2AccessTokenSessionRequest) returns (OAuth2TokenSession);
-  rpc DeleteOAuth2AccessTokenSession(DeleteOAuth2AccessTokenSessionRequest) returns (DeleteOAuth2AccessTokenSessionResponse);
-  rpc RevokeOAuth2AccessToken(RevokeOAuth2AccessTokenRequest) returns (RevokeOAuth2AccessTokenResponse);
-  rpc CreateOAuth2RefreshTokenSession(OAuth2TokenSession) returns (CreateOAuth2RefreshTokenSessionResponse);
-  rpc GetOAuth2RefreshTokenSession(GetOAuth2RefreshTokenSessionRequest) returns (OAuth2TokenSession);
-  rpc DeleteOAuth2RefreshTokenSession(DeleteOAuth2RefreshTokenSessionRequest) returns (DeleteOAuth2RefreshTokenSessionResponse);
-  rpc RevokeOAuth2RefreshToken(RevokeOAuth2RefreshTokenRequest) returns (RevokeOAuth2RefreshTokenResponse);
-  rpc CreateOAuth2PKCESession(OAuth2TokenSession) returns (CreateOAuth2PKCESessionResponse);
-  rpc GetOAuth2PKCESession(GetOAuth2PKCESessionRequest) returns (OAuth2TokenSession);
-  rpc DeleteOAuth2PKCESession(DeleteOAuth2PKCESessionRequest) returns (DeleteOAuth2PKCESessionResponse);
 }
 
 message LoginRequest {
   optional string username = 1;
   optional string password = 2;
+
+  // OIDC login support
+  optional string oidcIDToken = 3;
+  optional string oidcProvider = 4;
+  optional string oidcCode = 5;
+  optional string oidcRedirectURI = 6;
+  optional string oidcCodeVerifier = 7;
+  optional string nonce = 8;
 }
 
 message LoginResponse {
@@ -120,6 +100,11 @@ message LoginResponse {
   repeated string roleIDs = 4;
   repeated MenuPermission permissions = 5;
   repeated RoleDefinition roleDetails = 6;
+
+  // OIDC tokens returned after OIDC login
+  optional string idToken = 7;
+  optional string accessToken = 8;
+  optional string refreshToken = 9;
 }
 
 message ChangePasswordRequest {
@@ -726,247 +711,3 @@ message ListAuditLogsResponse {
   optional rpc_base.PageResponse page = 2;
   optional AuditLogStats stats = 3;
 }
-
-message OAuth2Client {
-  optional string id = 1;
-  optional string clientID = 2;
-  optional string clientName = 3;
-  optional string description = 4;
-  optional string clientType = 5;
-  repeated string grantTypes = 6;
-  repeated string redirectURIs = 7;
-  repeated string scopes = 8;
-  optional string logoURI = 9;
-  optional string clientURI = 10;
-  optional int32 accessTokenLifespan = 11;
-  optional int32 refreshTokenLifespan = 12;
-  optional bool isActive = 13;
-  optional string ownerID = 14;
-  optional int64 createdAt = 15;
-  optional int64 updatedAt = 16;
-}
-
-message OAuth2Scope {
-  optional string id = 1;
-  optional string name = 2;
-  optional string displayName = 3;
-  optional string description = 4;
-  optional bool isDefault = 5;
-  optional bool isSystem = 6;
-  optional int64 createdAt = 7;
-  optional int64 updatedAt = 8;
-}
-
-message OAuth2Consent {
-  optional string id = 1;
-  optional string userID = 2;
-  optional string clientID = 3;
-  optional string clientName = 4;
-  repeated string scopes = 5;
-  optional int64 grantedAt = 6;
-  optional int64 expiresAt = 7;
-  optional bool isRevoked = 8;
-  optional int64 createdAt = 9;
-  optional int64 updatedAt = 10;
-}
-
-message CreateOAuth2ClientRequest {
-  optional string clientName = 1;
-  optional string description = 2;
-  optional string clientType = 3;
-  repeated string grantTypes = 4;
-  repeated string redirectURIs = 5;
-  repeated string scopes = 6;
-  optional string logoURI = 7;
-  optional string clientURI = 8;
-  optional int32 accessTokenLifespan = 9;
-  optional int32 refreshTokenLifespan = 10;
-  optional string ownerID = 11;
-}
-
-message CreateOAuth2ClientResponse {
-  optional OAuth2Client client = 1;
-  optional string clientSecret = 2;
-}
-
-message GetOAuth2ClientRequest {
-  optional string id = 1;
-}
-
-message UpdateOAuth2ClientRequest {
-  optional string id = 1;
-  optional string clientName = 2;
-  optional string description = 3;
-  repeated string grantTypes = 4;
-  repeated string redirectURIs = 5;
-  repeated string scopes = 6;
-  optional string logoURI = 7;
-  optional string clientURI = 8;
-  optional int32 accessTokenLifespan = 9;
-  optional int32 refreshTokenLifespan = 10;
-  optional bool isActive = 11;
-}
-
-message DeleteOAuth2ClientRequest {
-  optional string id = 1;
-}
-
-message DeleteOAuth2ClientResponse {}
-
-message ListOAuth2ClientsRequest {
-  optional rpc_base.PageRequest page = 1;
-  optional string ownerID = 2;
-  optional bool isActive = 3;
-}
-
-message ListOAuth2ClientsResponse {
-  repeated OAuth2Client clients = 1;
-  optional rpc_base.PageResponse page = 2;
-}
-
-message RotateOAuth2ClientSecretRequest {
-  optional string id = 1;
-}
-
-message RotateOAuth2ClientSecretResponse {
-  optional string clientSecret = 1;
-}
-
-message GetOAuth2ClientForAuthRequest {
-  optional string clientID = 1;
-}
-
-message GetOAuth2ClientForAuthResponse {
-  optional string id = 1;
-  optional string clientID = 2;
-  optional string clientSecretHash = 3;
-  optional string clientName = 4;
-  optional string clientType = 5;
-  repeated string grantTypes = 6;
-  repeated string redirectURIs = 7;
-  repeated string scopes = 8;
-  optional int32 accessTokenLifespan = 9;
-  optional int32 refreshTokenLifespan = 10;
-  optional bool isActive = 11;
-}
-
-message ListOAuth2ScopesRequest {
-  optional bool defaultOnly = 1;
-}
-
-message ListOAuth2ScopesResponse {
-  repeated OAuth2Scope scopes = 1;
-}
-
-message SaveOAuth2ConsentRequest {
-  optional string userID = 1;
-  optional string clientID = 2;
-  repeated string scopes = 3;
-}
-
-message SaveOAuth2ConsentResponse {}
-
-message GetOAuth2ConsentRequest {
-  optional string userID = 1;
-  optional string clientID = 2;
-}
-
-message GetOAuth2ConsentResponse {
-  optional OAuth2Consent consent = 1;
-  optional bool found = 2;
-}
-
-message ListOAuth2ConsentsRequest {
-  optional string userID = 1;
-  optional rpc_base.PageRequest page = 2;
-}
-
-message ListOAuth2ConsentsResponse {
-  repeated OAuth2Consent consents = 1;
-  optional rpc_base.PageResponse page = 2;
-}
-
-message RevokeOAuth2ConsentRequest {
-  optional string userID = 1;
-  optional string clientID = 2;
-}
-
-message RevokeOAuth2ConsentResponse {}
-
-message OAuth2TokenSession {
-  optional string signature = 1;
-  optional string requestID = 2;
-  optional string clientID = 3;
-  optional string userID = 4;
-  optional string scopes = 5;
-  optional string grantedAudience = 6;
-  optional bytes sessionData = 7;
-  optional bytes formData = 8;
-  optional string redirectURI = 9;
-  optional string codeChallenge = 10;
-  optional string codeChallengeMethod = 11;
-  optional int64 requestedAt = 12;
-  optional int64 expiresAt = 13;
-  optional bool used = 14;
-  optional bool revoked = 15;
-}
-
-message GetOAuth2AuthorizeCodeSessionRequest {
-  optional string signature = 1;
-}
-
-message InvalidateOAuth2AuthorizeCodeSessionRequest {
-  optional string signature = 1;
-}
-
-message GetOAuth2AccessTokenSessionRequest {
-  optional string signature = 1;
-}
-
-message DeleteOAuth2AccessTokenSessionRequest {
-  optional string signature = 1;
-}
-
-message RevokeOAuth2AccessTokenRequest {
-  optional string requestID = 1;
-}
-
-message GetOAuth2RefreshTokenSessionRequest {
-  optional string signature = 1;
-}
-
-message DeleteOAuth2RefreshTokenSessionRequest {
-  optional string signature = 1;
-}
-
-message RevokeOAuth2RefreshTokenRequest {
-  optional string requestID = 1;
-}
-
-message GetOAuth2PKCESessionRequest {
-  optional string signature = 1;
-}
-
-message DeleteOAuth2PKCESessionRequest {
-  optional string signature = 1;
-}
-
-message CreateOAuth2AuthorizeCodeSessionResponse {}
-
-message InvalidateOAuth2AuthorizeCodeSessionResponse {}
-
-message CreateOAuth2AccessTokenSessionResponse {}
-
-message DeleteOAuth2AccessTokenSessionResponse {}
-
-message RevokeOAuth2AccessTokenResponse {}
-
-message CreateOAuth2RefreshTokenSessionResponse {}
-
-message DeleteOAuth2RefreshTokenSessionResponse {}
-
-message RevokeOAuth2RefreshTokenResponse {}
-
-message CreateOAuth2PKCESessionResponse {}
-
-message DeleteOAuth2PKCESessionResponse {}

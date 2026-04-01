@@ -12,6 +12,14 @@ import "http/permission/permission_model.proto";
 message LoginRequestDTO {
   optional string username = 1 [(api.body) = "username", (api.vd) = "@:len($) > 0; msg:'用户名不能为空'", (api.go_tag) = "json:\"username\""];
   optional string password = 2 [(api.body) = "password", (api.vd) = "@:len($) > 0; msg:'密码不能为空'", (api.go_tag) = "json:\"password\""];
+
+  // OIDC login support
+  optional string oidcIDToken = 3 [(api.body) = "oidc_id_token", (api.go_tag) = "json:\"oidc_id_token,omitempty\""];
+  optional string oidcProvider = 4 [(api.body) = "oidc_provider", (api.go_tag) = "json:\"oidc_provider,omitempty\""];
+  optional string oidcCode = 5 [(api.body) = "oidc_code", (api.go_tag) = "json:\"oidc_code,omitempty\""];
+  optional string oidcRedirectURI = 6 [(api.body) = "oidc_redirect_uri", (api.go_tag) = "json:\"oidc_redirect_uri,omitempty\""];
+  optional string oidcCodeVerifier = 7 [(api.body) = "oidc_code_verifier", (api.go_tag) = "json:\"oidc_code_verifier,omitempty\""];
+  optional string nonce = 8 [(api.body) = "nonce", (api.go_tag) = "json:\"nonce,omitempty\""];
 }
 
 message RoleInfoDTO {
@@ -84,6 +92,14 @@ message UserProfileDTO {
   repeated string roleIDs = 20 [(api.go_tag) = "json:\"role_ids,omitempty\""];
   optional string primaryOrganizationID = 21 [(api.go_tag) = "json:\"primary_organization_id,omitempty\""];
   optional string primaryDepartmentID = 22 [(api.go_tag) = "json:\"primary_department_id,omitempty\""];
+
+  // OIDC identity linkage
+  optional string oidcSub = 23 [(api.go_tag) = "json:\"oidc_sub,omitempty\""];
+  optional string oidcIssuer = 24 [(api.go_tag) = "json:\"oidc_issuer,omitempty\""];
+  optional string oidcEmail = 25 [(api.go_tag) = "json:\"oidc_email,omitempty\""];
+  optional string oidcName = 26 [(api.go_tag) = "json:\"oidc_name,omitempty\""];
+  optional string oidcPicture = 27 [(api.go_tag) = "json:\"oidc_picture,omitempty\""];
+  optional int64 oidcAuthTime = 28 [(api.go_tag) = "json:\"oidc_auth_time,omitempty\""];
 }
 
 message UserProfileResponseDTO {
@@ -405,3 +421,96 @@ message ListAuditLogsResponseDTO {
 }
 
 message GetMeRequestDTO {}
+
+// =================================================================
+// OIDC 消息类型
+// =================================================================
+
+message EmptyRequest {}
+message EmptyResponse {}
+
+message OIDCDiscoveryResponse {
+  optional string issuer = 1 [(api.go_tag) = "json:\"issuer\""];
+  optional string authorization_endpoint = 2 [(api.go_tag) = "json:\"authorization_endpoint\""];
+  optional string token_endpoint = 3 [(api.go_tag) = "json:\"token_endpoint\""];
+  optional string userinfo_endpoint = 4 [(api.go_tag) = "json:\"userinfo_endpoint\""];
+  optional string revocation_endpoint = 5 [(api.go_tag) = "json:\"revocation_endpoint\""];
+  optional string introspection_endpoint = 6 [(api.go_tag) = "json:\"introspection_endpoint\""];
+  optional string jwks_uri = 7 [(api.go_tag) = "json:\"jwks_uri\""];
+  repeated string response_types_supported = 8 [(api.go_tag) = "json:\"response_types_supported\""];
+  repeated string subject_types_supported = 9 [(api.go_tag) = "json:\"subject_types_supported\""];
+  repeated string id_token_signing_alg_values_supported = 10 [(api.go_tag) = "json:\"id_token_signing_alg_values_supported\""];
+  repeated string scopes_supported = 11 [(api.go_tag) = "json:\"scopes_supported\""];
+  repeated string token_endpoint_auth_methods_supported = 12 [(api.go_tag) = "json:\"token_endpoint_auth_methods_supported\""];
+}
+
+message OIDCJWKSResponse {
+  optional string keys = 1 [(api.go_tag) = "json:\"keys\""];
+}
+
+message OIDCAuthorizeRequest {
+  optional string response_type = 1 [(api.query) = "response_type", (api.vd) = "@:len($)>0; msg:'response_type不能为空'", (api.go_tag) = "json:\"response_type\""];
+  optional string client_id = 2 [(api.query) = "client_id", (api.vd) = "@:len($)>0; msg:'client_id不能为空'", (api.go_tag) = "json:\"client_id\""];
+  optional string redirect_uri = 3 [(api.query) = "redirect_uri", (api.vd) = "@:len($)>0; msg:'redirect_uri不能为空'", (api.go_tag) = "json:\"redirect_uri\""];
+  optional string scope = 4 [(api.query) = "scope", (api.vd) = "@:len($)>0; msg:'scope不能为空'", (api.go_tag) = "json:\"scope\""];
+  optional string state = 5 [(api.query) = "state", (api.go_tag) = "json:\"state,omitempty\""];
+  optional string nonce = 6 [(api.query) = "nonce", (api.go_tag) = "json:\"nonce,omitempty\""];
+  optional string code_challenge = 7 [(api.query) = "code_challenge", (api.go_tag) = "json:\"code_challenge,omitempty\""];
+  optional string code_challenge_method = 8 [(api.query) = "code_challenge_method", (api.go_tag) = "json:\"code_challenge_method,omitempty\""];
+}
+
+message OIDCAuthorizeResponse {
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional string redirect_url = 2 [(api.go_tag) = "json:\"redirect_url\""];
+}
+
+message OIDCTokenRequest {
+  optional string grant_type = 1 [(api.form) = "grant_type", (api.vd) = "@:len($)>0; msg:'grant_type不能为空'", (api.go_tag) = "json:\"grant_type\""];
+  optional string code = 2 [(api.form) = "code", (api.go_tag) = "json:\"code,omitempty\""];
+  optional string redirect_uri = 3 [(api.form) = "redirect_uri", (api.go_tag) = "json:\"redirect_uri,omitempty\""];
+  optional string client_id = 4 [(api.form) = "client_id", (api.go_tag) = "json:\"client_id,omitempty\""];
+  optional string client_secret = 5 [(api.form) = "client_secret", (api.go_tag) = "json:\"client_secret,omitempty\""];
+  optional string code_verifier = 6 [(api.form) = "code_verifier", (api.go_tag) = "json:\"code_verifier,omitempty\""];
+  optional string refresh_token = 7 [(api.form) = "refresh_token", (api.go_tag) = "json:\"refresh_token,omitempty\""];
+}
+
+message OIDCTokenResponse {
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional string access_token = 2 [(api.go_tag) = "json:\"access_token\""];
+  optional string token_type = 3 [(api.go_tag) = "json:\"token_type\""];
+  optional int64 expires_in = 4 [(api.go_tag) = "json:\"expires_in\""];
+  optional string refresh_token = 5 [(api.go_tag) = "json:\"refresh_token,omitempty\""];
+  optional string id_token = 6 [(api.go_tag) = "json:\"id_token,omitempty\""];
+  optional string scope = 7 [(api.go_tag) = "json:\"scope,omitempty\""];
+}
+
+message OIDCUserinfoResponse {
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional string sub = 2 [(api.go_tag) = "json:\"sub\""];
+  optional string name = 3 [(api.go_tag) = "json:\"name,omitempty\""];
+  optional string preferred_username = 4 [(api.go_tag) = "json:\"preferred_username,omitempty\""];
+  optional string email = 5 [(api.go_tag) = "json:\"email,omitempty\""];
+  optional bool email_verified = 6 [(api.go_tag) = "json:\"email_verified,omitempty\""];
+  optional string picture = 7 [(api.go_tag) = "json:\"picture,omitempty\""];
+}
+
+message OIDCRevokeRequest {
+  optional string token = 1 [(api.form) = "token", (api.vd) = "@:len($)>0; msg:'token不能为空'", (api.go_tag) = "json:\"token\""];
+  optional string token_type_hint = 2 [(api.form) = "token_type_hint", (api.go_tag) = "json:\"token_type_hint,omitempty\""];
+}
+
+message OIDCIntrospectRequest {
+  optional string token = 1 [(api.form) = "token", (api.vd) = "@:len($)>0; msg:'token不能为空'", (api.go_tag) = "json:\"token\""];
+  optional string token_type_hint = 2 [(api.form) = "token_type_hint", (api.go_tag) = "json:\"token_type_hint,omitempty\""];
+}
+
+message OIDCIntrospectResponse {
+  optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
+  optional bool active = 2 [(api.go_tag) = "json:\"active\""];
+  optional string client_id = 3 [(api.go_tag) = "json:\"client_id,omitempty\""];
+  optional string username = 4 [(api.go_tag) = "json:\"username,omitempty\""];
+  optional string scope = 5 [(api.go_tag) = "json:\"scope,omitempty\""];
+  optional string sub = 6 [(api.go_tag) = "json:\"sub,omitempty\""];
+  optional int64 exp = 7 [(api.go_tag) = "json:\"exp,omitempty\""];
+  optional int64 iat = 8 [(api.go_tag) = "json:\"iat,omitempty\""];
+}

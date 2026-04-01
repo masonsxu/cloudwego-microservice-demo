@@ -142,4 +142,43 @@ service IdentityService {
   rpc ListAuditLogs(ListAuditLogsRequestDTO) returns (ListAuditLogsResponseDTO) {
     option (api.get) = "/api/v1/identity/audit-logs";
   }
+
+  // =================================================================
+  // OIDC 标准端点 (OpenID Connect)
+  // =================================================================
+
+  // OIDC Discovery
+  rpc GetOIDCDiscovery(EmptyRequest) returns (OIDCDiscoveryResponse) {
+    option (api.get) = "/.well-known/openid-configuration";
+  }
+
+  // JWKS
+  rpc GetOIDCJWKS(EmptyRequest) returns (OIDCJWKSResponse) {
+    option (api.get) = "/oauth2/jwks";
+  }
+
+  // 授权端点
+  rpc OIDCAuthorize(OIDCAuthorizeRequest) returns (OIDCAuthorizeResponse) {
+    option (api.get) = "/oauth2/authorize";
+  }
+
+  // Token 端点
+  rpc OIDCToken(OIDCTokenRequest) returns (OIDCTokenResponse) {
+    option (api.post) = "/oauth2/token";
+  }
+
+  // Userinfo
+  rpc OIDCUserinfo(EmptyRequest) returns (OIDCUserinfoResponse) {
+    option (api.get) = "/oauth2/userinfo";
+  }
+
+  // Token 吊销
+  rpc OIDCRevokeToken(OIDCRevokeRequest) returns (EmptyResponse) {
+    option (api.post) = "/oauth2/revoke";
+  }
+
+  // Token 内省
+  rpc OIDCIntrospectToken(OIDCIntrospectRequest) returns (OIDCIntrospectResponse) {
+    option (api.post) = "/oauth2/introspect";
+  }
 }

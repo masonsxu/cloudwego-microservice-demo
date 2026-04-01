@@ -18,12 +18,23 @@ message JWTClaimsDTO {
   optional int64 iat = 9 [(api.go_tag) = "json:\"iat,omitempty\" form:\"iat\" query:\"iat\""];
   optional string dataScope = 10 [(api.go_tag) = "json:\"data_scope,omitempty\" form:\"data_scope\" query:\"data_scope\""];
   optional string username = 2 [(api.go_tag) = "json:\"username,omitempty\" form:\"username\" query:\"username\""];
+
+  // OIDC standard claims
+  optional string sub = 11 [(api.go_tag) = "json:\"sub,omitempty\" form:\"sub\" query:\"sub\""];
+  optional string iss = 12 [(api.go_tag) = "json:\"iss,omitempty\" form:\"iss\" query:\"iss\""];
+  optional string aud = 13 [(api.go_tag) = "json:\"aud,omitempty\" form:\"aud\" query:\"aud\""];
+  optional string azp = 14 [(api.go_tag) = "json:\"azp,omitempty\" form:\"azp\" query:\"azp\""];
+  optional string nonce = 15 [(api.go_tag) = "json:\"nonce,omitempty\" form:\"nonce\" query:\"nonce\""];
+  optional int64 authTime = 16 [(api.go_tag) = "json:\"auth_time,omitempty\" form:\"auth_time\" query:\"auth_time\""];
 }
 
 message TokenInfoDTO {
   optional string accessToken = 1 [(api.go_tag) = "json:\"access_token,omitempty\" form:\"access_token\" query:\"access_token\""];
   optional int64 expiresIn = 2 [(api.go_tag) = "json:\"expires_in,omitempty\" form:\"expires_in\" query:\"expires_in\""];
   optional string tokenType = 3 [(api.go_tag) = "json:\"token_type,omitempty\" form:\"token_type\" query:\"token_type\""];
+
+  // OIDC ID Token (JWT)
+  optional string idToken = 4 [(api.go_tag) = "json:\"id_token,omitempty\" form:\"id_token\" query:\"id_token\""];
 }
 
 message BaseResponseDTO {

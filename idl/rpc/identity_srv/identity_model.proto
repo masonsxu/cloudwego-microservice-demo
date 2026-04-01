@@ -78,6 +78,14 @@ message UserProfile {
   repeated string roleIDs = 21;
   optional string primaryOrganizationID = 22;
   optional string primaryDepartmentID = 23;
+
+  // OIDC identity linkage
+  optional string oidcSub = 24;
+  optional string oidcIssuer = 25;
+  optional string oidcEmail = 26;
+  optional string oidcName = 27;
+  optional string oidcPicture = 28;
+  optional int64 oidcAuthTime = 29;
 }
 
 // 用户成员关系。

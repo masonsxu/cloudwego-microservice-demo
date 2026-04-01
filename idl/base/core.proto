@@ -27,4 +27,9 @@ message RequestContext {
   optional string source = 9;
   optional string locale = 10;
   optional StringMapValue metadata = 11;
+
+  // OIDC standard claims for cross-service identity propagation.
+  optional string oidcSub = 12;
+  optional string oidcIss = 13;
+  optional string oidcAud = 14;
 }
