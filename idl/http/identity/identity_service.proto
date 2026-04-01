@@ -154,31 +154,31 @@ service IdentityService {
 
   // JWKS
   rpc GetOIDCJWKS(EmptyRequest) returns (OIDCJWKSResponse) {
-    option (api.get) = "/oauth2/jwks";
+    option (api.get) = "/keys";
   }
 
   // 授权端点
   rpc OIDCAuthorize(OIDCAuthorizeRequest) returns (OIDCAuthorizeResponse) {
-    option (api.get) = "/oauth2/authorize";
+    option (api.get) = "/authorize";
   }
 
   // Token 端点
   rpc OIDCToken(OIDCTokenRequest) returns (OIDCTokenResponse) {
-    option (api.post) = "/oauth2/token";
+    option (api.post) = "/oauth/token";
   }
 
   // Userinfo
   rpc OIDCUserinfo(EmptyRequest) returns (OIDCUserinfoResponse) {
-    option (api.get) = "/oauth2/userinfo";
+    option (api.get) = "/userinfo";
   }
 
   // Token 吊销
   rpc OIDCRevokeToken(OIDCRevokeRequest) returns (EmptyResponse) {
-    option (api.post) = "/oauth2/revoke";
+    option (api.post) = "/revoke";
   }
 
   // Token 内省
   rpc OIDCIntrospectToken(OIDCIntrospectRequest) returns (OIDCIntrospectResponse) {
-    option (api.post) = "/oauth2/introspect";
+    option (api.post) = "/oauth/introspect";
   }
 }

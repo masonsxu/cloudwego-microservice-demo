@@ -184,6 +184,9 @@ func mapMiddlewareEnvVars(v *viper.Viper) {
 	// 身份验证配置映射
 	mapJWTEnvVars(v)
 
+	// OIDC 配置映射
+	mapOIDCEnvVars(v)
+
 	// Casbin 配置映射
 	mapCasbinEnvVars(v)
 
@@ -321,6 +324,30 @@ func mapCookieEnvVars(v *viper.Viper) {
 			return value == "true"
 		},
 	)
+}
+
+// mapOIDCEnvVars 映射 OIDC 相关环境变量
+func mapOIDCEnvVars(v *viper.Viper) {
+	mapToViper(v, "OIDC_ENABLED", "middleware.oidc.enabled", func(value string) interface{} {
+		return value == "true"
+	})
+	mapToViper(v, "OIDC_ISSUER", "middleware.oidc.issuer", nil)
+	mapToViper(v, "OIDC_ACCESS_TOKEN_LIFESPAN", "middleware.oidc.access_token_lifespan", func(value string) interface{} {
+		return parseDurationWithDefault(value, 30*time.Minute)
+	})
+	mapToViper(v, "OIDC_REFRESH_TOKEN_LIFESPAN", "middleware.oidc.refresh_token_lifespan", func(value string) interface{} {
+		return parseDurationWithDefault(value, 7*24*time.Hour)
+	})
+	mapToViper(v, "OIDC_AUTH_CODE_LIFESPAN", "middleware.oidc.auth_code_lifespan", func(value string) interface{} {
+		return parseDurationWithDefault(value, 10*time.Minute)
+	})
+	mapToViper(v, "OIDC_ID_TOKEN_LIFESPAN", "middleware.oidc.id_token_lifespan", func(value string) interface{} {
+		return parseDurationWithDefault(value, 30*time.Minute)
+	})
+	mapToViper(v, "OIDC_ENFORCE_PKCE", "middleware.oidc.enforce_pkce", func(value string) interface{} {
+		return value == "true"
+	})
+	mapToViper(v, "OIDC_CONSENT_PAGE_URL", "middleware.oidc.consent_page_url", nil)
 }
 
 // mapCasbinEnvVars 映射 Casbin 相关环境变量

@@ -17,6 +17,10 @@ import (
 func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
+	root.GET("/authorize", append(_oidcauthorizeMw(), identity.OIDCAuthorize)...)
+	root.GET("/keys", append(_getoidcjwksMw(), identity.GetOIDCJWKS)...)
+	root.POST("/revoke", append(_oidcrevoketokenMw(), identity.OIDCRevokeToken)...)
+	root.GET("/userinfo", append(_oidcuserinfoMw(), identity.OIDCUserinfo)...)
 	{
 		_api := root.Group("/api", _apiMw()...)
 		{
@@ -78,13 +82,9 @@ func Register(r *server.Hertz) {
 		}
 	}
 	{
-		_oauth2 := root.Group("/oauth2", _oauth2Mw()...)
-		_oauth2.GET("/authorize", append(_oidcauthorizeMw(), identity.OIDCAuthorize)...)
-		_oauth2.POST("/introspect", append(_oidcintrospecttokenMw(), identity.OIDCIntrospectToken)...)
-		_oauth2.GET("/jwks", append(_getoidcjwksMw(), identity.GetOIDCJWKS)...)
-		_oauth2.POST("/revoke", append(_oidcrevoketokenMw(), identity.OIDCRevokeToken)...)
-		_oauth2.POST("/token", append(_oidctokenMw(), identity.OIDCToken)...)
-		_oauth2.GET("/userinfo", append(_oidcuserinfoMw(), identity.OIDCUserinfo)...)
+		_oauth := root.Group("/oauth", _oauthMw()...)
+		_oauth.POST("/introspect", append(_oidcintrospecttokenMw(), identity.OIDCIntrospectToken)...)
+		_oauth.POST("/token", append(_oidctokenMw(), identity.OIDCToken)...)
 	}
 	{
 		__well_known := root.Group("/.well-known", __well_knownMw()...)

@@ -83,18 +83,18 @@ func setDefaults(v *viper.Viper) {
 	)
 	v.SetDefault("middleware.jwt.token_head_name", "Bearer")
 	v.SetDefault("middleware.jwt.send_authorization", false)
-	// JWT 跳过认证的路径列表（默认跳过健康检查、指标、OIDC Discovery、JWKS 端点）
+	// JWT 跳过认证的路径列表（默认跳过健康检查、指标、OIDC 公开端点）
 	v.SetDefault("middleware.jwt.skip_paths", []string{
 		"/health",
 		"/metrics",
 		"/ping",
 		"/.well-known/openid-configuration",
-		"/oauth2/jwks",
-		"/oauth2/token",
-		"/oauth2/authorize",
-		"/oauth2/revoke",
-		"/oauth2/introspect",
-		"/oauth2/userinfo",
+		"/keys",
+		"/oauth/token",
+		"/authorize",
+		"/revoke",
+		"/oauth/introspect",
+		"/userinfo",
 	})
 
 	// Cookie默认值

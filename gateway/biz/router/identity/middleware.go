@@ -285,3 +285,8 @@ func _getoidcdiscoveryMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _oauthMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

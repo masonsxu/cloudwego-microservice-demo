@@ -1262,7 +1262,7 @@ func GetOIDCDiscovery(ctx context.Context, c *app.RequestContext) {
 // @Produce json
 // @Success 200 {object} identity.OIDCJWKSResponse "成功"
 // @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
-// @Router /oauth2/jwks [GET]
+// @Router /jwks [GET]
 func GetOIDCJWKS(ctx context.Context, c *app.RequestContext) {
 	if oidcServiceInstance == nil {
 		c.String(consts.StatusServiceUnavailable, "OIDC service not available")
@@ -1286,7 +1286,7 @@ func GetOIDCJWKS(ctx context.Context, c *app.RequestContext) {
 // @Success 302 "重定向到登录页或回调地址"
 // @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
 // @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
-// @Router /oauth2/authorize [GET]
+// @Router /authorize [GET]
 func OIDCAuthorize(ctx context.Context, c *app.RequestContext) {
 	if oidcServiceInstance == nil {
 		c.String(consts.StatusServiceUnavailable, "OIDC service not available")
@@ -1312,7 +1312,7 @@ func OIDCAuthorize(ctx context.Context, c *app.RequestContext) {
 // @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
 // @Failure 401 {object} http_base.OperationStatusResponseDTO "客户端认证失败"
 // @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
-// @Router /oauth2/token [POST]
+// @Router /token [POST]
 func OIDCToken(ctx context.Context, c *app.RequestContext) {
 	if oidcServiceInstance == nil {
 		c.String(consts.StatusServiceUnavailable, "OIDC service not available")
@@ -1330,7 +1330,7 @@ func OIDCToken(ctx context.Context, c *app.RequestContext) {
 // @Success 200 {object} identity.OIDCUserinfoResponse "成功"
 // @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
 // @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
-// @Router /oauth2/userinfo [GET]
+// @Router /userinfo [GET]
 func OIDCUserinfo(ctx context.Context, c *app.RequestContext) {
 	if oidcServiceInstance == nil {
 		c.String(consts.StatusServiceUnavailable, "OIDC service not available")
@@ -1353,7 +1353,7 @@ func OIDCUserinfo(ctx context.Context, c *app.RequestContext) {
 // @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
 // @Failure 401 {object} http_base.OperationStatusResponseDTO "客户端认证失败"
 // @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
-// @Router /oauth2/revoke [POST]
+// @Router /revoke [POST]
 func OIDCRevokeToken(ctx context.Context, c *app.RequestContext) {
 	if oidcServiceInstance == nil {
 		c.String(consts.StatusServiceUnavailable, "OIDC service not available")
@@ -1376,7 +1376,7 @@ func OIDCRevokeToken(ctx context.Context, c *app.RequestContext) {
 // @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
 // @Failure 401 {object} http_base.OperationStatusResponseDTO "客户端认证失败"
 // @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
-// @Router /oauth2/introspect [POST]
+// @Router /introspect [POST]
 func OIDCIntrospectToken(ctx context.Context, c *app.RequestContext) {
 	if oidcServiceInstance == nil {
 		c.String(consts.StatusServiceUnavailable, "OIDC service not available")
