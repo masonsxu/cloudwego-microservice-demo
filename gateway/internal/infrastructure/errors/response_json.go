@@ -22,4 +22,3 @@ import (
 func JSON(c *app.RequestContext, code int, obj interface{}) {
 	c.JSON(code, obj)
 }
-

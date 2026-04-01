@@ -56,6 +56,14 @@ func setDefaults(v *viper.Viper) {
 
 	v.SetDefault("middleware.rate_limit.enabled", false)
 	v.SetDefault("middleware.jwt.enabled", true)
+	v.SetDefault("middleware.oidc.enabled", true)
+	v.SetDefault("middleware.oidc.issuer", "http://localhost:8080")
+	v.SetDefault("middleware.oidc.access_token_lifespan", 30*time.Minute)
+	v.SetDefault("middleware.oidc.refresh_token_lifespan", 7*24*time.Hour)
+	v.SetDefault("middleware.oidc.auth_code_lifespan", 10*time.Minute)
+	v.SetDefault("middleware.oidc.id_token_lifespan", 30*time.Minute)
+	v.SetDefault("middleware.oidc.enforce_pkce", true)
+	v.SetDefault("middleware.oidc.consent_page_url", "")
 	v.SetDefault("middleware.casbin.enabled", true)
 	v.SetDefault("middleware.casbin.model_path", "./config/casbin_model.conf")
 	v.SetDefault("middleware.casbin.log_enabled", false)
@@ -75,14 +83,18 @@ func setDefaults(v *viper.Viper) {
 	)
 	v.SetDefault("middleware.jwt.token_head_name", "Bearer")
 	v.SetDefault("middleware.jwt.send_authorization", false)
-	// JWT 跳过认证的路径列表（默认跳过健康检查、指标、认证相关端点）
+	// JWT 跳过认证的路径列表（默认跳过健康检查、指标、OIDC Discovery、JWKS 端点）
 	v.SetDefault("middleware.jwt.skip_paths", []string{
 		"/health",
 		"/metrics",
 		"/ping",
-		"/api/v1/identity/auth/login",
-		"/api/v1/identity/auth/refresh",
+		"/.well-known/openid-configuration",
+		"/oauth2/jwks",
 		"/oauth2/token",
+		"/oauth2/authorize",
+		"/oauth2/revoke",
+		"/oauth2/introspect",
+		"/oauth2/userinfo",
 	})
 
 	// Cookie默认值
@@ -133,15 +145,6 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("redis.pool_timeout", 4*time.Second)
 	v.SetDefault("redis.idle_timeout", 5*time.Minute)
 	v.SetDefault("redis.idle_check_freq", 1*time.Minute)
-
-	// OAuth2 默认值
-	v.SetDefault("oauth2.enabled", false)
-	v.SetDefault("oauth2.issuer", "http://localhost:8080")
-	v.SetDefault("oauth2.access_token_lifespan", 1*time.Hour)
-	v.SetDefault("oauth2.refresh_token_lifespan", 30*24*time.Hour)
-	v.SetDefault("oauth2.auth_code_lifespan", 10*time.Minute)
-	v.SetDefault("oauth2.enforce_pkce", true)
-	v.SetDefault("oauth2.consent_page_url", "/oauth2/consent")
 }
 
 // DefaultErrorHandlerConfig 返回默认的错误处理中间件配置

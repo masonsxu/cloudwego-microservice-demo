@@ -3,18 +3,10 @@
 package main
 
 import (
-	"log"
-	"time"
-
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/adaptor"
 	handler "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/handler"
 	_ "github.com/masonsxu/cloudwego-microservice-demo/gateway/docs"
-	oauth2svc "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/oauth2"
-	identitycli "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/client/identity_cli"
-	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
-	fositestore "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/fosite_store"
-	oauth2handler "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/oauth2"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
@@ -23,46 +15,5 @@ func customizedRegister(r *server.Hertz) {
 	r.GET("/ping", handler.Ping)
 
 	// Swagger API 文档
-	// 从配置中获取服务地址，避免使用固定的localhost
-	// url := swagger.URL("doc.json")
 	r.GET("/swagger/*any", adaptor.HertzHandler(httpSwagger.WrapHandler))
-
-	// OAuth2 核心协议端点（RFC 6749）
-	registerOAuth2Routes(r)
-}
-
-// registerOAuth2Routes 注册 OAuth2 核心协议端点。
-// 这些端点由 fosite 直接处理，不经过 IDL 代码生成。
-func registerOAuth2Routes(r *server.Hertz) {
-	identityClient, err := identitycli.NewIdentityClient()
-	if err != nil {
-		log.Printf("[OAuth2] create identity client failed: %v", err)
-		return
-	}
-
-	store := fositestore.NewRPCStore(identityClient)
-	cfg := getOAuth2Config()
-	provider := oauth2svc.NewOAuth2Provider(cfg, store)
-	h := oauth2handler.NewHandler(provider)
-
-	oauth2Group := r.Group("/oauth2")
-	oauth2Group.GET("/authorize", h.AuthorizeEndpoint)
-	oauth2Group.POST("/token", h.TokenEndpoint)
-}
-
-// getOAuth2Config 获取 OAuth2 配置。
-func getOAuth2Config() config.OAuth2Config {
-	if config.Config != nil {
-		return config.Config.OAuth2
-	}
-
-	return config.OAuth2Config{
-		Enabled:              true,
-		Issuer:               "http://localhost:8080",
-		AccessTokenLifespan:  time.Hour,
-		RefreshTokenLifespan: 30 * 24 * time.Hour,
-		AuthCodeLifespan:     10 * time.Minute,
-		EnforcePKCE:          true,
-		ConsentPageURL:       "/oauth2/consent",
-	}
 }

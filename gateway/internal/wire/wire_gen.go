@@ -9,7 +9,6 @@ package wire
 import (
 	"github.com/google/wire"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/identity"
-	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/oauth2"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/permission"
 )
 
@@ -50,9 +49,7 @@ func InitializeApp() (*AppContainer, func(), error) {
 	userRoleAssignmentService := ProvideUserRoleAssignmentService(identityClient, permissionAssembler, logger)
 	menuService := ProvideMenuService(identityClient, permissionAssembler, logger)
 	permissionService := ProvidePermissionService(roleDefinitionService, userRoleAssignmentService, menuService)
-	oauth2Assembler := oauth2.NewAssembler()
-	oAuth2ManagementService := ProvideOAuth2ManagementService(identityClient, oauth2Assembler, logger)
-	serviceContainer := NewServiceContainer(service, permissionService, oAuth2ManagementService)
+	serviceContainer := NewServiceContainer(service, permissionService)
 	traceMiddlewareService := ProvideTraceMiddleware(logger)
 	corsMiddlewareService := ProvideCORSMiddleware(configuration, logger)
 	errorHandlerMiddlewareService := ProvideErrorHandlerMiddleware(configuration, logger)
@@ -73,7 +70,11 @@ func InitializeApp() (*AppContainer, func(), error) {
 	middlewareContainer := NewMiddlewareContainer(traceMiddlewareService, corsMiddlewareService, errorHandlerMiddlewareService, jwtMiddlewareService, responseHeaderMiddlewareService, casbinMiddleware, policySyncService, auditMiddlewareService)
 	tracer := ProvideTracer(configuration)
 	serverFactory := ProvideServerFactory(configuration, tracer, provider)
-	handlerRegistry := ProvideHandlerRegistry(serverFactory, tracer, middlewareContainer, serviceContainer, logger)
+	oidcConfig := ProvideOIDCConfig(configuration)
+	identityClientForOIDC := ProvideIdentityClientForOIDC(logger, provider)
+	storage := ProvideOIDCStorage(client, oidcConfig, identityClientForOIDC)
+	oidcService := ProvideOIDCService(oidcConfig, storage)
+	handlerRegistry := ProvideHandlerRegistry(serverFactory, tracer, middlewareContainer, serviceContainer, oidcService, logger)
 	appContainer := NewAppContainer(configuration, logger, serviceContainer, middlewareContainer, handlerRegistry)
 	return appContainer, func() {
 		cleanup()

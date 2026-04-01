@@ -18,7 +18,9 @@ var InfrastructureSet = wire.NewSet(
 	ProvideConfig,
 	ProvideLogger,
 	ProvideIdentityClient,
+	ProvideIdentityClientForOIDC,
 	ProvideJWTConfig,
+	ProvideOIDCConfig,
 	ProvideRedisConfig,
 	ProvideRedisClient,
 	ProvideTokenCache,
@@ -64,10 +66,22 @@ func ProvideIdentityClient(logger *hertzZerolog.Logger, _ *otel.Provider) identi
 	return client
 }
 
+// ProvideIdentityClientForOIDC 提供 OIDC 专用的身份客户端
+// 与 ProvideIdentityClient 共享同一实例，避免重复创建
+func ProvideIdentityClientForOIDC(logger *hertzZerolog.Logger, provider *otel.Provider) identitycli.IdentityClient {
+	return ProvideIdentityClient(logger, provider)
+}
+
 // ProvideJWTConfig 提供JWT配置
 // 从主配置中提取JWT相关配置
 func ProvideJWTConfig(cfg *config.Configuration) *config.JWTConfig {
 	return &cfg.Middleware.JWT
+}
+
+// ProvideOIDCConfig 提供OIDC配置
+// 从主配置中提取OIDC相关配置
+func ProvideOIDCConfig(cfg *config.Configuration) *config.OIDCConfig {
+	return &cfg.Middleware.OIDC
 }
 
 // ProvideDataLakeConfig 提供数据湖配置

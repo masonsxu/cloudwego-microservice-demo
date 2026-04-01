@@ -342,12 +342,22 @@ func mapCasbinEnvVars(v *viper.Viper) {
 	mapToViper(v, "CASBIN_SKIP_EXTRA_PATHS", "middleware.casbin.skip_extra_paths", func(value string) interface{} {
 		return splitAndTrim(value, ",")
 	})
-	mapToViper(v, "CASBIN_SUPERADMIN_BYPASS_ENABLED", "middleware.casbin.superadmin_bypass_enabled", func(value string) interface{} {
-		return value == "true"
-	})
-	mapToViper(v, "CASBIN_SUPERADMIN_SUBJECTS", "middleware.casbin.superadmin_subjects", func(value string) interface{} {
-		return splitAndTrim(value, ",")
-	})
+	mapToViper(
+		v,
+		"CASBIN_SUPERADMIN_BYPASS_ENABLED",
+		"middleware.casbin.superadmin_bypass_enabled",
+		func(value string) interface{} {
+			return value == "true"
+		},
+	)
+	mapToViper(
+		v,
+		"CASBIN_SUPERADMIN_SUBJECTS",
+		"middleware.casbin.superadmin_subjects",
+		func(value string) interface{} {
+			return splitAndTrim(value, ",")
+		},
+	)
 	mapToViper(v, "CASBIN_MENU_MAPPING_FILE", "middleware.casbin.menu_mapping_file", nil)
 }
 

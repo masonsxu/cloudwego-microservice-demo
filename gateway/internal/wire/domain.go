@@ -4,20 +4,21 @@ package wire
 import (
 	"github.com/google/wire"
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
+	"github.com/zitadel/oidc/v3/pkg/op"
 
 	identityassembler "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/identity"
-	oauth2asm "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/oauth2"
 	permissionConv "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/permission"
 	identityservice "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/identity"
-	oauth2service "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/oauth2"
+	oidcservice "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/oidc"
 	permissionservice "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/permission"
 	identitycli "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/client/identity_cli"
+	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
+	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/oidcstore"
+	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/redis"
 )
 
 // DomainServiceSet 领域服务层依赖注入集合
-// 按照分层架构组织：各业务服务 -> 聚合服务
 var DomainServiceSet = wire.NewSet(
-	// 身份管理服务领域服务
 	ProvideAuthService,
 	ProvideUserService,
 	ProvideMembershipService,
@@ -26,22 +27,16 @@ var DomainServiceSet = wire.NewSet(
 	ProvideLogoService,
 	ProvideAuditLogService,
 
-	// 角色与权限管理领域服务
 	ProvideRoleDefinitionService,
 	ProvideUserRoleAssignmentService,
 	ProvideMenuService,
 
-	// 聚合服务
+	ProvideOIDCStorage,
+	ProvideOIDCService,
+
 	ProvideIdentityService,
 	ProvidePermissionService,
-
-	// OAuth2 管理服务
-	ProvideOAuth2ManagementService,
 )
-
-// ============================================================================
-// 各业务领域服务提供者
-// ============================================================================
 
 // ProvideAuthService 提供身份认证服务
 func ProvideAuthService(
@@ -58,11 +53,7 @@ func ProvideUserService(
 	assembler identityassembler.Assembler,
 	logger *hertzZerolog.Logger,
 ) identityservice.UserService {
-	return identityservice.NewUserManagementService(
-		identityClient,
-		assembler,
-		logger,
-	)
+	return identityservice.NewUserManagementService(identityClient, assembler, logger)
 }
 
 // ProvideMembershipService 提供成员关系管理服务
@@ -136,12 +127,7 @@ func ProvideMenuService(
 	return permissionservice.NewMenuService(identityClient, assembler, logger)
 }
 
-// ============================================================================
-// 聚合服务提供者
-// ============================================================================
-
 // ProvideIdentityService 提供统一身份管理服务
-// 使用聚合设计模式，统一管理所有身份相关功能
 func ProvideIdentityService(
 	authService identityservice.AuthService,
 	userService identityservice.UserService,
@@ -163,7 +149,6 @@ func ProvideIdentityService(
 }
 
 // ProvidePermissionService 提供统一权限管理服务
-// 使用聚合设计模式，统一管理所有权限相关功能
 func ProvidePermissionService(
 	roleDefinitionService permissionservice.RoleDefinitionService,
 	userRoleAssignmentService permissionservice.UserRoleAssignmentService,
@@ -176,11 +161,27 @@ func ProvidePermissionService(
 	)
 }
 
-// ProvideOAuth2ManagementService 提供 OAuth2 管理服务
-func ProvideOAuth2ManagementService(
+// ============================================================================
+// OIDC 领域服务提供者
+// ============================================================================
+
+// ProvideOIDCStorage 提供 OIDC Storage（实现 op.Storage 接口）
+func ProvideOIDCStorage(
+	redisClient *redis.Client,
+	oidcConfig *config.OIDCConfig,
 	identityClient identitycli.IdentityClient,
-	assembler oauth2asm.Assembler,
-	logger *hertzZerolog.Logger,
-) oauth2service.OAuth2ManagementService {
-	return oauth2service.NewOAuth2ManagementService(identityClient, assembler, logger)
+) op.Storage {
+	return oidcstore.NewStorage(redisClient.GetClient(), oidcConfig, identityClient)
+}
+
+// ProvideOIDCService 提供 OIDC 领域服务
+func ProvideOIDCService(
+	oidcConfig *config.OIDCConfig,
+	storage op.Storage,
+) oidcservice.Service {
+	svc, err := oidcservice.NewService(oidcConfig, storage)
+	if err != nil {
+		panic(err)
+	}
+	return svc
 }
