@@ -1,12 +1,13 @@
 package permission
 
 import (
+	"google.golang.org/protobuf/types/known/structpb"
+
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/http_base"
 	permissionModel "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/permission"
 	core "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/rpc_base"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 // Assembler 权限管理聚合组装器接口 - 统一暴露给Service层

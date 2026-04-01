@@ -38,7 +38,10 @@ func (s *userRoleAssignmentServiceImpl) GetLastUserRoleAssignment(
 ) (*permission.AssignRoleToUserResponseDTO, error) {
 	result, err := s.ProcessRPCCall(ctx, "获取最新用户角色分配",
 		func(ctx context.Context) (interface{}, error) {
-			return s.identityClient.GetLastUserRoleAssignment(ctx, &identity_srv.GetLastUserRoleAssignmentRequest{UserID: &userID})
+			return s.identityClient.GetLastUserRoleAssignment(
+				ctx,
+				&identity_srv.GetLastUserRoleAssignmentRequest{UserID: &userID},
+			)
 		},
 		"userID", userID,
 	)

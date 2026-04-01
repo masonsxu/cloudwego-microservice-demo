@@ -1,10 +1,11 @@
 package permission
 
 import (
+	"google.golang.org/protobuf/types/known/structpb"
+
 	permissionModel "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/permission"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/common"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 // permissionAssembler 权限转换器实现

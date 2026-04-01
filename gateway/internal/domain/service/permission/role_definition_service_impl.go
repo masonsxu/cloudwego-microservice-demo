@@ -98,7 +98,10 @@ func (s *roleDefinitionServiceImpl) DeleteRoleDefinition(
 ) (*http_base.OperationStatusResponseDTO, error) {
 	err := s.ProcessRPCVoidCall(ctx, "删除角色定义",
 		func(ctx context.Context) error {
-			_, err := s.identityClient.DeleteRoleDefinition(ctx, &identity_srv.DeleteRoleDefinitionRequest{RoleID: &roleID})
+			_, err := s.identityClient.DeleteRoleDefinition(
+				ctx,
+				&identity_srv.DeleteRoleDefinitionRequest{RoleID: &roleID},
+			)
 			return err
 		},
 		"roleID", roleID,
