@@ -53,6 +53,11 @@ type RequestContext struct {
 	Source         *string         `protobuf:"bytes,9,opt,name=source" json:"source,omitempty"`
 	Locale         *string         `protobuf:"bytes,10,opt,name=locale" json:"locale,omitempty"`
 	Metadata       *StringMapValue `protobuf:"bytes,11,opt,name=metadata" json:"metadata,omitempty"`
+
+	// OIDC standard claims for cross-service identity propagation.
+	OidcSub *string `protobuf:"bytes,12,opt,name=oidcSub" json:"oidcSub,omitempty"`
+	OidcIss *string `protobuf:"bytes,13,opt,name=oidcIss" json:"oidcIss,omitempty"`
+	OidcAud *string `protobuf:"bytes,14,opt,name=oidcAud" json:"oidcAud,omitempty"`
 }
 
 func (x *RequestContext) Reset() { *x = RequestContext{} }
@@ -136,4 +141,25 @@ func (x *RequestContext) GetMetadata() *StringMapValue {
 		return x.Metadata
 	}
 	return nil
+}
+
+func (x *RequestContext) GetOidcSub() string {
+	if x != nil && x.OidcSub != nil {
+		return *x.OidcSub
+	}
+	return ""
+}
+
+func (x *RequestContext) GetOidcIss() string {
+	if x != nil && x.OidcIss != nil {
+		return *x.OidcIss
+	}
+	return ""
+}
+
+func (x *RequestContext) GetOidcAud() string {
+	if x != nil && x.OidcAud != nil {
+		return *x.OidcAud
+	}
+	return ""
 }

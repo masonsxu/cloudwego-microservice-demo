@@ -310,6 +310,14 @@ type UserProfile struct {
 	RoleIDs               []string         `protobuf:"bytes,21,rep,name=roleIDs" json:"roleIDs,omitempty"`
 	PrimaryOrganizationID *string          `protobuf:"bytes,22,opt,name=primaryOrganizationID" json:"primaryOrganizationID,omitempty"`
 	PrimaryDepartmentID   *string          `protobuf:"bytes,23,opt,name=primaryDepartmentID" json:"primaryDepartmentID,omitempty"`
+
+	// OIDC identity linkage
+	OidcSub      *string `protobuf:"bytes,24,opt,name=oidcSub" json:"oidcSub,omitempty"`
+	OidcIssuer   *string `protobuf:"bytes,25,opt,name=oidcIssuer" json:"oidcIssuer,omitempty"`
+	OidcEmail    *string `protobuf:"bytes,26,opt,name=oidcEmail" json:"oidcEmail,omitempty"`
+	OidcName     *string `protobuf:"bytes,27,opt,name=oidcName" json:"oidcName,omitempty"`
+	OidcPicture  *string `protobuf:"bytes,28,opt,name=oidcPicture" json:"oidcPicture,omitempty"`
+	OidcAuthTime *int64  `protobuf:"varint,29,opt,name=oidcAuthTime" json:"oidcAuthTime,omitempty"`
 }
 
 func (x *UserProfile) Reset() { *x = UserProfile{} }
@@ -477,6 +485,48 @@ func (x *UserProfile) GetPrimaryDepartmentID() string {
 		return *x.PrimaryDepartmentID
 	}
 	return ""
+}
+
+func (x *UserProfile) GetOidcSub() string {
+	if x != nil && x.OidcSub != nil {
+		return *x.OidcSub
+	}
+	return ""
+}
+
+func (x *UserProfile) GetOidcIssuer() string {
+	if x != nil && x.OidcIssuer != nil {
+		return *x.OidcIssuer
+	}
+	return ""
+}
+
+func (x *UserProfile) GetOidcEmail() string {
+	if x != nil && x.OidcEmail != nil {
+		return *x.OidcEmail
+	}
+	return ""
+}
+
+func (x *UserProfile) GetOidcName() string {
+	if x != nil && x.OidcName != nil {
+		return *x.OidcName
+	}
+	return ""
+}
+
+func (x *UserProfile) GetOidcPicture() string {
+	if x != nil && x.OidcPicture != nil {
+		return *x.OidcPicture
+	}
+	return ""
+}
+
+func (x *UserProfile) GetOidcAuthTime() int64 {
+	if x != nil && x.OidcAuthTime != nil {
+		return *x.OidcAuthTime
+	}
+	return 0
 }
 
 // 用户成员关系。
