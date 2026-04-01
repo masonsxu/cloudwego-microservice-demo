@@ -240,3 +240,48 @@ func _uploadtemporarylogoMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _oauth2Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _oidcauthorizeMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _oidcintrospecttokenMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _getoidcjwksMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _oidcrevoketokenMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _oidctokenMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _oidcuserinfoMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func __well_knownMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _getoidcdiscoveryMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

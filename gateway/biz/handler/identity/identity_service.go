@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/adaptor"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/core"
 	http_base "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/http_base"
@@ -13,6 +14,7 @@ import (
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/context/auth_context"
 	jwtMw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/jwt_middleware"
 	identityservice "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/identity"
+	oidcservice "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/oidc"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/errors"
 )
 
@@ -22,6 +24,9 @@ var identityService identityservice.Service
 // 全局变量保存JWT中间件实例
 // 使用接口类型而不是具体结构体类型，符合依赖倒置原则
 var jwtMiddlewareInstance jwtMw.JWTMiddlewareService
+
+// 全局 OIDC 服务实例（由 zitadel/oidc 提供）
+var oidcServiceInstance oidcservice.Service
 
 // 用于解决 core 包导入但未使用的问题
 var _ = core.UserStatus_USER_STATUS_ACTIVE
@@ -33,6 +38,11 @@ var _ http_base.OperationStatusResponseDTO
 func SetIdentityService(service identityservice.Service, middleware jwtMw.JWTMiddlewareService) {
 	identityService = service
 	jwtMiddlewareInstance = middleware
+}
+
+// SetOIDCService 设置 OIDC 服务实例（由Wire在启动时调用）
+func SetOIDCService(service oidcservice.Service) {
+	oidcServiceInstance = service
 }
 
 // Login
@@ -1227,4 +1237,150 @@ func ListAuditLogs(ctx context.Context, c *app.RequestContext) {
 	}
 
 	errors.JSON(c, consts.StatusOK, resp)
+}
+
+// GetOIDCDiscovery
+// @Summary OIDC Discovery
+// @Description 返回 OIDC Provider 的配置信息（自动发现端点），客户端可通过此端点获取所有 OIDC 服务地址
+// @Tags OIDC认证
+// @Produce json
+// @Success 200 {object} identity.OIDCDiscoveryResponse "成功"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /.well-known/openid-configuration [GET]
+func GetOIDCDiscovery(ctx context.Context, c *app.RequestContext) {
+	if oidcServiceInstance == nil {
+		c.String(consts.StatusServiceUnavailable, "OIDC service not available")
+		return
+	}
+	adaptor.HertzHandler(oidcServiceInstance)(ctx, c)
+}
+
+// GetOIDCJWKS
+// @Summary JSON Web Key Set
+// @Description 返回用于验证 OIDC Token 签名的公钥集合（JWKS）
+// @Tags OIDC认证
+// @Produce json
+// @Success 200 {object} identity.OIDCJWKSResponse "成功"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /oauth2/jwks [GET]
+func GetOIDCJWKS(ctx context.Context, c *app.RequestContext) {
+	if oidcServiceInstance == nil {
+		c.String(consts.StatusServiceUnavailable, "OIDC service not available")
+		return
+	}
+	adaptor.HertzHandler(oidcServiceInstance)(ctx, c)
+}
+
+// OIDCAuthorize
+// @Summary OIDC 授权端点
+// @Description 启动 Authorization Code Flow，用户认证后重定向到回调地址并携带授权码
+// @Tags OIDC认证
+// @Param response_type query string true "响应类型，固定为 code" example(code)
+// @Param client_id query string true "客户端 ID"
+// @Param redirect_uri query string true "回调 URI"
+// @Param scope query string true "请求的权限范围，必须包含 openid" example("openid profile email")
+// @Param state query string false "防 CSRF 状态值"
+// @Param nonce query string false "防重放攻击随机数"
+// @Param code_challenge query string false "PKCE code_challenge"
+// @Param code_challenge_method query string false "PKCE 方法，推荐 S256" example(S256)
+// @Success 302 "重定向到登录页或回调地址"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /oauth2/authorize [GET]
+func OIDCAuthorize(ctx context.Context, c *app.RequestContext) {
+	if oidcServiceInstance == nil {
+		c.String(consts.StatusServiceUnavailable, "OIDC service not available")
+		return
+	}
+	adaptor.HertzHandler(oidcServiceInstance)(ctx, c)
+}
+
+// OIDCToken
+// @Summary OIDC Token 端点
+// @Description 用授权码换取 Access Token、Refresh Token 和 ID Token，或用 Refresh Token 刷新 Access Token
+// @Tags OIDC认证
+// @Accept application/x-www-form-urlencoded
+// @Produce json
+// @Param grant_type formData string true "授权类型" example(authorization_code)
+// @Param code formData string false "授权码（authorization_code 模式）"
+// @Param redirect_uri formData string false "回调 URI（必须与授权请求一致）"
+// @Param client_id formData string false "客户端 ID"
+// @Param client_secret formData string false "客户端密钥（confidential 客户端）"
+// @Param code_verifier formData string false "PKCE code_verifier"
+// @Param refresh_token formData string false "刷新令牌（refresh_token 模式）"
+// @Success 200 {object} identity.OIDCTokenResponse "成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "客户端认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /oauth2/token [POST]
+func OIDCToken(ctx context.Context, c *app.RequestContext) {
+	if oidcServiceInstance == nil {
+		c.String(consts.StatusServiceUnavailable, "OIDC service not available")
+		return
+	}
+	adaptor.HertzHandler(oidcServiceInstance)(ctx, c)
+}
+
+// OIDCUserinfo
+// @Summary OIDC 用户信息端点
+// @Description 使用 Access Token 获取当前认证用户的详细信息（Claims）
+// @Tags OIDC认证
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} identity.OIDCUserinfoResponse "成功"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /oauth2/userinfo [GET]
+func OIDCUserinfo(ctx context.Context, c *app.RequestContext) {
+	if oidcServiceInstance == nil {
+		c.String(consts.StatusServiceUnavailable, "OIDC service not available")
+		return
+	}
+	adaptor.HertzHandler(oidcServiceInstance)(ctx, c)
+}
+
+// OIDCRevokeToken
+// @Summary OIDC Token 吊销端点
+// @Description 吊销指定的 Access Token 或 Refresh Token，使其立即失效
+// @Tags OIDC认证
+// @Accept application/x-www-form-urlencoded
+// @Produce json
+// @Param token formData string true "要吊销的 Token"
+// @Param token_type_hint formData string false "Token 类型提示" example(access_token)
+// @Param client_id formData string false "客户端 ID"
+// @Param client_secret formData string false "客户端密钥"
+// @Success 200 {object} identity.EmptyResponse "成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "客户端认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /oauth2/revoke [POST]
+func OIDCRevokeToken(ctx context.Context, c *app.RequestContext) {
+	if oidcServiceInstance == nil {
+		c.String(consts.StatusServiceUnavailable, "OIDC service not available")
+		return
+	}
+	adaptor.HertzHandler(oidcServiceInstance)(ctx, c)
+}
+
+// OIDCIntrospectToken
+// @Summary OIDC Token 内省端点
+// @Description 查询 Token 的当前状态和关联的元数据信息
+// @Tags OIDC认证
+// @Accept application/x-www-form-urlencoded
+// @Produce json
+// @Param token formData string true "要查询的 Token"
+// @Param token_type_hint formData string false "Token 类型提示" example(access_token)
+// @Param client_id formData string false "客户端 ID"
+// @Param client_secret formData string false "客户端密钥"
+// @Success 200 {object} identity.OIDCIntrospectResponse "成功"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 401 {object} http_base.OperationStatusResponseDTO "客户端认证失败"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /oauth2/introspect [POST]
+func OIDCIntrospectToken(ctx context.Context, c *app.RequestContext) {
+	if oidcServiceInstance == nil {
+		c.String(consts.StatusServiceUnavailable, "OIDC service not available")
+		return
+	}
+	adaptor.HertzHandler(oidcServiceInstance)(ctx, c)
 }

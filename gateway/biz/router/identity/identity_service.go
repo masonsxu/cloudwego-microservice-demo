@@ -77,4 +77,17 @@ func Register(r *server.Hertz) {
 			}
 		}
 	}
+	{
+		_oauth2 := root.Group("/oauth2", _oauth2Mw()...)
+		_oauth2.GET("/authorize", append(_oidcauthorizeMw(), identity.OIDCAuthorize)...)
+		_oauth2.POST("/introspect", append(_oidcintrospecttokenMw(), identity.OIDCIntrospectToken)...)
+		_oauth2.GET("/jwks", append(_getoidcjwksMw(), identity.GetOIDCJWKS)...)
+		_oauth2.POST("/revoke", append(_oidcrevoketokenMw(), identity.OIDCRevokeToken)...)
+		_oauth2.POST("/token", append(_oidctokenMw(), identity.OIDCToken)...)
+		_oauth2.GET("/userinfo", append(_oidcuserinfoMw(), identity.OIDCUserinfo)...)
+	}
+	{
+		__well_known := root.Group("/.well-known", __well_knownMw()...)
+		__well_known.GET("/openid-configuration", append(_getoidcdiscoveryMw(), identity.GetOIDCDiscovery)...)
+	}
 }
