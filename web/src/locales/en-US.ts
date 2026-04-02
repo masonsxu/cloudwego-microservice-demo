@@ -235,69 +235,64 @@ export default {
       passwordChange: 'Password Change'
     }
   },
-  oauth2: {
-    title: 'OAuth2 App Management',
-    client: {
-      title: 'App Management',
-      clientId: 'Client ID',
-      clientName: 'App Name',
-      clientSecret: 'Client Secret',
-      clientType: 'Client Type',
-      confidential: 'Confidential',
-      public: 'Public',
-      grantTypes: 'Grant Types',
-      redirectUris: 'Redirect URIs',
-      scopes: 'Allowed Scopes',
-      logoUri: 'Logo URL',
-      clientUri: 'Homepage URL',
-      accessTokenLifespan: 'Access Token Lifespan',
-      refreshTokenLifespan: 'Refresh Token Lifespan',
-      isActive: 'Status',
-      enabled: 'Enabled',
-      disabled: 'Disabled',
-      ownerIdLabel: 'Owner',
-      createClient: 'Create App',
-      editClient: 'Edit App',
-      deleteConfirm: 'Are you sure to delete this OAuth2 app? All related tokens will be invalidated.',
-      rotateSecret: 'Rotate Secret',
-      rotateSecretConfirm: 'Are you sure to rotate this app\'s client secret? The old secret will be invalidated immediately.',
-      secretWarning: 'Please save this secret now. It will not be shown again after closing this dialog.',
-      seconds: 'seconds',
-      grantType: {
-        authorizationCode: 'Authorization Code',
-        refreshToken: 'Refresh Token'
-      },
-      pkceRequired: 'Public clients must use PKCE (S256)',
-      copySecret: 'Copy Secret'
-    },
-    guide: {
-      title: 'OAuth2 MVP Quick Guide',
-      step1: '1) Request authorization code via /oauth2/authorize (with code_challenge).',
-      step2: '2) Exchange code via /oauth2/token using authorization_code + code_verifier.',
-      step3: '3) Refresh access token via /oauth2/token using refresh_token.',
-      unsupported: 'Unsupported: client_credentials / revoke / introspect.'
-    },
-    scope: {
-      title: 'Scope Management'
-    },
+  oidc: {
+    title: 'OIDC Service',
     config: {
-      title: 'OAuth2 Configuration',
-      enabled: 'OAuth2 Enabled',
+      title: 'OIDC Configuration',
+      providerConfig: 'Provider Configuration',
+      discovered: 'Discovered',
+      unavailable: 'Unavailable',
       issuer: 'Issuer',
+      authorizationEndpoint: 'Authorization Endpoint',
+      tokenEndpoint: 'Token Endpoint',
+      userinfoEndpoint: 'Userinfo Endpoint',
+      jwksUri: 'JWKS URI',
+      revocationEndpoint: 'Revocation Endpoint',
+      introspectionEndpoint: 'Introspection Endpoint',
+      capabilities: 'Capabilities',
+      responseTypes: 'Response Types',
+      scopes: 'Scopes',
+      signingAlgorithms: 'Signing Algorithms',
+      authMethods: 'Auth Methods',
+      runtimeConfig: 'Runtime Configuration',
+      enabled: 'Enabled',
+      enforcePkce: 'Enforce PKCE',
       accessTokenLifespan: 'Access Token Lifespan',
       refreshTokenLifespan: 'Refresh Token Lifespan',
       authCodeLifespan: 'Authorization Code Lifespan',
-      enforcePkce: 'Enforce PKCE',
-      consentPageUrl: 'Consent Page URL',
-      availableScopes: 'Available Scopes'
+      idTokenLifespan: 'ID Token Lifespan',
+      quickLinks: 'Quick Links',
+      viewJwks: 'View JWKS',
+      viewDiscovery: 'View Discovery',
+      integrationGuide: 'Integration Guide',
+      discovery: 'Discovery'
     },
-    consent: {
-      title: 'Authorized Apps',
-      revokeConfirm: 'Are you sure to revoke authorization for this app? The app will no longer be able to access your data.',
-      grantedAt: 'Granted At',
-      authorizedScopes: 'Authorized Scopes',
-      revoke: 'Revoke',
-      noConsents: 'No authorized apps'
+    integration: {
+      title: 'OIDC Integration Guide',
+      guideTitle: 'OIDC Authorization Code Flow + PKCE Integration Steps',
+      step1: 'Build authorization URL, redirect to /authorize endpoint',
+      step2: 'After user login, callback with authorization code',
+      step3: 'Exchange authorization code + code_verifier for token',
+      step4: 'Call /userinfo with access_token to get user info',
+      testFlow: 'Authorization Flow Test',
+      clientId: 'Client ID',
+      redirectUri: 'Redirect URI',
+      scope: 'Request Scopes',
+      enablePkce: 'Enable PKCE',
+      startFlow: 'Generate Authorization URL',
+      flowLog: 'Flow Log',
+      noLogs: 'No logs yet. Click "Generate Authorization URL" to start.',
+      endpoints: 'OIDC Endpoints',
+      codeExample: 'Code Example',
+      log: {
+        buildingAuthUrl: 'Building authorization URL...',
+        pkceEnabled: 'PKCE enabled, generating code_verifier',
+        authUrlReady: 'Authorization URL generated',
+        url: 'URL',
+        authUrlGenerated: 'Authorization URL generated, check log for full link',
+        error: 'Error',
+        flowFailed: 'Flow execution failed'
+      }
     }
   }
 }

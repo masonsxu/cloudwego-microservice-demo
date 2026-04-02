@@ -238,69 +238,64 @@ export default {
       passwordChange: '密码修改'
     }
   },
-  oauth2: {
-    title: 'OAuth2 应用管理',
-    client: {
-      title: '应用管理',
-      clientId: '客户端 ID',
-      clientName: '应用名称',
-      clientSecret: '客户端密钥',
-      clientType: '客户端类型',
-      confidential: '机密客户端',
-      public: '公共客户端',
-      grantTypes: '授权类型',
-      redirectUris: '回调地址',
-      scopes: '允许的作用域',
-      logoUri: 'Logo URL',
-      clientUri: '主页 URL',
-      accessTokenLifespan: 'Access Token 有效期',
-      refreshTokenLifespan: 'Refresh Token 有效期',
-      isActive: '启用状态',
-      enabled: '已启用',
-      disabled: '已禁用',
-      ownerIdLabel: '创建者',
-      createClient: '创建应用',
-      editClient: '编辑应用',
-      deleteConfirm: '确定要删除此 OAuth2 应用吗？删除后所有相关的令牌将失效。',
-      rotateSecret: '轮换密钥',
-      rotateSecretConfirm: '确定要轮换此应用的客户端密钥吗？旧密钥将立即失效。',
-      secretWarning: '请立即保存此密钥，关闭对话框后将无法再次查看。',
-      seconds: '秒',
-      grantType: {
-        authorizationCode: '授权码模式',
-        refreshToken: '刷新令牌'
-      },
-      pkceRequired: '公共客户端必须使用 PKCE（S256）',
-      copySecret: '复制密钥'
-    },
-    guide: {
-      title: 'OAuth2 MVP 接入指引',
-      step1: '1) 通过 /oauth2/authorize 获取 authorization code（需携带 code_challenge）。',
-      step2: '2) 通过 /oauth2/token 使用 authorization_code + code_verifier 换取 access_token。',
-      step3: '3) 通过 /oauth2/token 使用 refresh_token 刷新 access_token。',
-      unsupported: '不支持：client_credentials / revoke / introspect。'
-    },
-    scope: {
-      title: '作用域管理'
-    },
+  oidc: {
+    title: 'OIDC 服务',
     config: {
-      title: 'OAuth2 配置',
-      enabled: 'OAuth2 开关',
+      title: 'OIDC 配置',
+      providerConfig: 'Provider 配置',
+      discovered: '已发现',
+      unavailable: '不可用',
       issuer: 'Issuer',
+      authorizationEndpoint: '授权端点',
+      tokenEndpoint: 'Token 端点',
+      userinfoEndpoint: '用户信息端点',
+      jwksUri: 'JWKS URI',
+      revocationEndpoint: '吊销端点',
+      introspectionEndpoint: '内省端点',
+      capabilities: '支持的能力',
+      responseTypes: '响应类型',
+      scopes: '作用域',
+      signingAlgorithms: '签名算法',
+      authMethods: '认证方法',
+      runtimeConfig: '运行时配置',
+      enabled: '启用状态',
+      enforcePkce: '强制 PKCE',
       accessTokenLifespan: 'Access Token 有效期',
       refreshTokenLifespan: 'Refresh Token 有效期',
       authCodeLifespan: '授权码有效期',
-      enforcePkce: '强制 PKCE',
-      consentPageUrl: '同意页 URL',
-      availableScopes: '可用作用域'
+      idTokenLifespan: 'ID Token 有效期',
+      quickLinks: '快捷链接',
+      viewJwks: '查看 JWKS',
+      viewDiscovery: '查看 Discovery',
+      integrationGuide: '集成指南',
+      discovery: 'Discovery'
     },
-    consent: {
-      title: '已授权应用',
-      revokeConfirm: '确定要撤销对此应用的授权吗？撤销后该应用将无法继续访问你的数据。',
-      grantedAt: '授权时间',
-      authorizedScopes: '授权范围',
-      revoke: '撤销授权',
-      noConsents: '暂无已授权的应用'
+    integration: {
+      title: 'OIDC 集成指南',
+      guideTitle: 'OIDC Authorization Code Flow + PKCE 集成步骤',
+      step1: '构建授权 URL，重定向到 /authorize 端点',
+      step2: '用户登录后，携带 authorization code 回调',
+      step3: '用 authorization code + code_verifier 换取 token',
+      step4: '用 access_token 调用 /userinfo 获取用户信息',
+      testFlow: '授权流程测试',
+      clientId: '客户端 ID',
+      redirectUri: '回调 URI',
+      scope: '请求作用域',
+      enablePkce: '启用 PKCE',
+      startFlow: '生成授权 URL',
+      flowLog: '流程日志',
+      noLogs: '暂无日志，点击"生成授权 URL"开始测试',
+      endpoints: 'OIDC 端点列表',
+      codeExample: '代码示例',
+      log: {
+        buildingAuthUrl: '正在构建授权 URL...',
+        pkceEnabled: 'PKCE 已启用，生成 code_verifier',
+        authUrlReady: '授权 URL 已生成',
+        url: 'URL',
+        authUrlGenerated: '授权 URL 已生成，请查看日志获取完整链接',
+        error: '错误',
+        flowFailed: '流程执行失败'
+      }
     }
   }
 }

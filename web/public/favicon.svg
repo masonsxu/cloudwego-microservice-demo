@@ -1,0 +1,37 @@
+<svg width="512" height="512" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MXW favicon engineering edition">
+  <defs>
+    <linearGradient id="mxwTraceFav" x1="10" y1="11" x2="54" y2="53" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F8E7B9" />
+      <stop offset="52%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#7A5810" />
+    </linearGradient>
+    <filter id="mxwTraceGlowFav" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="1" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="3" y="3" width="58" height="58" rx="13" fill="#0C0C0E" />
+  <path d="M10 5.5H54L58.5 10V54L54 58.5H10L5.5 54V10Z" fill="none" stroke="#1E1E21" stroke-width="1" />
+  <path d="M11.5 7H52.5L57 11.5V52.5L52.5 57H11.5L7 52.5V11.5Z" fill="none" stroke="#D4AF37" stroke-opacity="0.22" stroke-width="1" />
+
+  <line x1="32" y1="13.5" x2="32" y2="50.5" stroke="#1E1E21" stroke-width="1.2" stroke-linecap="round" opacity="0.9" />
+  <line x1="13.5" y1="32" x2="50.5" y2="32" stroke="#1E1E21" stroke-width="0.9" stroke-linecap="round" opacity="0.75" />
+
+  <g fill="none" stroke="url(#mxwTraceFav)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round" filter="url(#mxwTraceGlowFav)">
+    <path d="M11 49V14L21 32L32 20L43 32L53 14V49" />
+    <path d="M11 18L22 50L32 33L42 50L53 18" />
+  </g>
+
+  <g fill="none" stroke-linecap="round">
+    <path d="M26 24L38 40M38 24L26 40" stroke="#0C0C0E" stroke-width="3.2" />
+    <path d="M26 24L38 40M38 24L26 40" stroke="#F8E7B9" stroke-opacity="0.75" stroke-width="1.12" />
+  </g>
+
+  <circle cx="32" cy="27.5" r="1.2" fill="#FCFCFC" />
+  <circle cx="22" cy="44" r="0.7" fill="#FCFCFC" fill-opacity="0.95" />
+  <circle cx="42" cy="44" r="0.7" fill="#FCFCFC" fill-opacity="0.95" />
+</svg>

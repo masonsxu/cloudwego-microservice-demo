@@ -19,26 +19,15 @@
   z-index: 2;
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-weight: 600;
-  font-size: 18px;
 }
 
-.brand-mark {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  display: grid;
-  place-items: center;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(8px);
-}
+.brand-logo {
+  height: 40px;
+  width: auto;
 
-.brand-mark.small {
-  width: 30px;
-  height: 30px;
-  font-size: 12px;
+  &.mobile {
+    height: 34px;
+  }
 }
 
 .character-stage {

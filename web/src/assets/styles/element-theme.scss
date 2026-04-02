@@ -97,7 +97,8 @@
   color: #ffffff;
   font-weight: 600;
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     background: linear-gradient(135deg, var(--c-primary-dark) 0%, var(--c-accent) 100%);
     border-color: var(--c-primary-dark);
     box-shadow: 0 0 18px rgba(63, 81, 181, 0.35);
@@ -109,7 +110,8 @@
   border-color: hsl(var(--border) / 0.6);
   color: var(--c-primary);
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     background-color: rgba(63, 81, 181, 0.08);
     border-color: rgba(63, 81, 181, 0.3);
     color: var(--c-primary-dark);
@@ -142,7 +144,7 @@
     color: var(--c-text-main);
   }
 
-  tr:hover > td.el-table__cell {
+  tr:hover>td.el-table__cell {
     background-color: rgba(63, 81, 181, 0.06) !important;
   }
 
@@ -251,4 +253,9 @@
 .el-dropdown-menu__item:not(.is-disabled):hover {
   background-color: rgba(63, 81, 181, 0.08);
   color: var(--c-primary);
+}
+
+/* 全局消除 el-button 之间的默认间距 */
+.el-button+.el-button {
+  margin-left: 0 !important;
 }

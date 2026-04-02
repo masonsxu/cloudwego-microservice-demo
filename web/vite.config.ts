@@ -1,5 +1,5 @@
-import http from "node:http";
 import vue from "@vitejs/plugin-vue";
+import http from "node:http";
 import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 
@@ -24,6 +24,42 @@ export default defineConfig({
         // 允许跨域携带 Cookie
         cookieDomainRewrite: "localhost",
         // 后端路由也是 /api 开头，所以不需要 rewrite，直接原样转发
+        agent: keepAliveAgent,
+      },
+      // OIDC 标准端点（不在 /api 路径下）
+      "/.well-known": {
+        target: "http://localhost:8088",
+        changeOrigin: true,
+        agent: keepAliveAgent,
+      },
+      "/keys": {
+        target: "http://localhost:8088",
+        changeOrigin: true,
+        agent: keepAliveAgent,
+      },
+      "/authorize": {
+        target: "http://localhost:8088",
+        changeOrigin: true,
+        agent: keepAliveAgent,
+      },
+      "/oauth": {
+        target: "http://localhost:8088",
+        changeOrigin: true,
+        agent: keepAliveAgent,
+      },
+      "/userinfo": {
+        target: "http://localhost:8088",
+        changeOrigin: true,
+        agent: keepAliveAgent,
+      },
+      "/revoke": {
+        target: "http://localhost:8088",
+        changeOrigin: true,
+        agent: keepAliveAgent,
+      },
+      "/oidc": {
+        target: "http://localhost:8088",
+        changeOrigin: true,
         agent: keepAliveAgent,
       },
     },

@@ -2,8 +2,7 @@
   <div class="login-shell">
     <section class="side-visual">
       <div class="brand">
-        <div class="brand-mark">CW</div>
-        <span>CloudWeGo</span>
+        <img src="/logo-light.svg" alt="Logo" class="brand-logo" />
       </div>
 
       <div class="character-stage">
@@ -27,8 +26,7 @@
     <section class="login-panel">
       <div class="panel-inner">
         <div class="mobile-brand">
-          <div class="brand-mark small">CW</div>
-          <span>CloudWeGo</span>
+          <img src="/logo-dark.svg" alt="Logo" class="brand-logo mobile" />
         </div>
 
         <div class="panel-header">
@@ -113,14 +111,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import { useI18n } from 'vue-i18n'
-import { ElMessage } from 'element-plus'
-import type { FormInstance, FormRules } from 'element-plus'
-import { User, Lock, View, Hide } from '@element-plus/icons-vue'
 import AnimatedCharacters from '@/components/AnimatedCharacters.vue'
+import { useAuthStore } from '@/stores/auth'
+import { Hide, Lock, User, View } from '@element-plus/icons-vue'
+import type { FormInstance, FormRules } from 'element-plus'
+import { ElMessage } from 'element-plus'
+import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()

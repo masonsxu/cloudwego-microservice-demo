@@ -79,44 +79,32 @@ const routes: RouteRecordRaw[] = [
             }
           },
           {
-            path: 'oauth2',
-            name: 'OAuth2Management',
+            path: 'oidc',
+            name: 'OIDCManagement',
             meta: {
-              title: 'oauth2.title',
+              title: 'oidc.title',
               icon: 'Connection',
-              menuId: 'oauth2_management'
+              menuId: 'oidc_management'
             },
-            redirect: '/system-settings/oauth2/config',
+            redirect: '/system-settings/oidc/config',
             children: [
               {
                 path: 'config',
-                name: 'OAuth2Config',
-                component: () => import('@/views/oauth2/ConfigDetail.vue'),
+                name: 'OIDCConfig',
+                component: () => import('@/views/oidc/ConfigDetail.vue'),
                 meta: {
-                  title: 'oauth2.config.title',
-                  menuId: 'oauth2_management'
+                  title: 'oidc.config.title',
+                  menuId: 'oidc_management'
                 }
               },
               {
-                path: 'clients',
-                name: 'OAuth2ClientList',
-                component: () => import('@/views/oauth2/ClientList.vue'),
+                path: 'integration',
+                name: 'OIDCIntegration',
+                component: () => import('@/views/oidc/IntegrationGuide.vue'),
                 meta: {
-                  title: 'oauth2.client.title',
-                  menuId: 'oauth2_management'
+                  title: 'oidc.integration.title',
+                  menuId: 'oidc_management'
                 }
-              },
-              {
-                path: 'clients/:id',
-                name: 'OAuth2ClientDetail',
-                component: () => import('@/views/oauth2/ClientDetail.vue'),
-                meta: { title: 'oauth2.client.title', hidden: true, menuId: 'oauth2_management' }
-              },
-              {
-                path: 'consents',
-                name: 'OAuth2Consents',
-                component: () => import('@/views/oauth2/ConsentList.vue'),
-                meta: { title: 'oauth2.consent.title', hidden: true, menuId: 'oauth2_management' }
               }
             ]
           }

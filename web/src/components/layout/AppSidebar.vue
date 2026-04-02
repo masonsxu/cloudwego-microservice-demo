@@ -1,10 +1,20 @@
 <template>
   <div class="app-sidebar">
     <div class="logo">
-      <h1 class="title">
-        <span class="gold-text">♑</span>
-        <span v-if="!appStore.sidebarCollapsed" class="text">CloudWeGo</span>
-      </h1>
+      <img
+        v-if="appStore.theme === 'dark'"
+        src="/logo-dark.svg"
+        alt="Logo"
+        class="logo-img"
+        :class="{ collapsed: appStore.sidebarCollapsed }"
+      />
+      <img
+        v-else
+        src="/logo-light.svg"
+        alt="Logo"
+        class="logo-img"
+        :class="{ collapsed: appStore.sidebarCollapsed }"
+      />
     </div>
     <el-menu
       :default-active="activeMenu"
@@ -67,14 +77,14 @@ const menuList = computed(() => {
 // 注意：子菜单的 path 是相对路径（如 "organization-management"）
 // 需要和父级路径组合后映射
 const pathMapping: Record<string, string> = {
-  // 绝对路径（顶级菜单）
   '/system-settings': '/system-settings',
-  // 相对路径映射（二级菜单）
   'organization-management': '/system-settings/organization',
   'role-permissions': '/system-settings/roles',
   'account-management': '/system-settings/accounts',
   'audit-logs': '/system-settings/audit-logs',
-  'oauth2': '/system-settings/oauth2/config'
+  'oidc': '/system-settings/oidc/config',
+  'oidc-config': '/system-settings/oidc/config',
+  'oidc-integration': '/system-settings/oidc/integration'
 }
 
 // 获取菜单索引（使用映射后的路径）
@@ -129,28 +139,13 @@ function getIconComponent(iconName: string) {
     align-items: center;
     border-bottom: 1px solid rgba(212, 175, 55, 0.2);
 
-    .title {
-      font-family: 'Inter', sans-serif;
-      font-size: 24px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .logo-img {
+      height: 36px;
+      width: auto;
+      transition: all 0.3s ease;
 
-      .gold-text {
-        font-size: 32px;
-        background: linear-gradient(to right, var(--c-accent), var(--c-text-main), var(--c-accent));
-        background-size: 200% auto;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: shine 5s linear infinite;
-      }
-
-      .text {
-        background: linear-gradient(to right, var(--c-accent), var(--c-text-main), var(--c-accent));
-        background-size: 200% auto;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: shine 5s linear infinite;
+      &.collapsed {
+        height: 32px;
       }
     }
   }
@@ -175,9 +170,4 @@ function getIconComponent(iconName: string) {
   }
 }
 
-@keyframes shine {
-  to {
-    background-position: 200% center;
-  }
-}
 </style>
