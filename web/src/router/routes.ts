@@ -259,7 +259,12 @@ function collectMenuRoutes(routeRecords: RouteRecordRaw[], parentPath = '', pare
 
 export const menuRouteDefinitions = collectMenuRoutes(routes)
 
-export const menuRouteMap = new Map(menuRouteDefinitions.map(route => [route.menuId, route]))
+export const menuRouteMap = new Map<string, MenuRouteDefinition>()
+for (const route of menuRouteDefinitions) {
+  if (!menuRouteMap.has(route.menuId)) {
+    menuRouteMap.set(route.menuId, route)
+  }
+}
 
 function collectVisiblePaths(routeRecords: RouteRecordRaw[], parentPath = ''): string[] {
   return routeRecords.flatMap(route => {

@@ -236,7 +236,7 @@ export default {
     }
   },
   oidc: {
-    title: 'OIDC Service',
+    title: 'OIDC',
     config: {
       title: 'OIDC Configuration',
       providerConfig: 'Provider Configuration',

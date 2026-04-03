@@ -239,7 +239,7 @@ export default {
     }
   },
   oidc: {
-    title: 'OIDC 服务',
+    title: 'OIDC',
     config: {
       title: 'OIDC 配置',
       providerConfig: 'Provider 配置',
