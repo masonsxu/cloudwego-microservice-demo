@@ -37,6 +37,7 @@ func (m *JWTMiddlewareImpl) MiddlewareFunc() app.HandlerFunc {
 			Strs("skip_paths", m.jwtConfig.SkipPaths).
 			Bool("should_skip", shouldSkip).
 			Msg("JWT skip decision")
+
 		if shouldSkip {
 			c.Next(ctx)
 			return

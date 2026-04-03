@@ -36,6 +36,7 @@ type Storage struct {
 
 func NewStorage(rdb *redis.Client, cfg *config.OIDCConfig, identityClient identitycli.IdentityClient) *Storage {
 	key, _ := rsa.GenerateKey(rand.Reader, 2048)
+
 	return &Storage{
 		rdb:            rdb,
 		oidcConfig:     cfg,
@@ -60,13 +61,16 @@ func (s *Storage) GetClientByClientID(ctx context.Context, clientID string) (op.
 	if err == redis.Nil {
 		return &defaultClient{ID: clientID}, nil
 	}
+
 	if err != nil {
 		return nil, err
 	}
+
 	var c storedClient
 	if err := json.Unmarshal(data, &c); err != nil {
 		return nil, err
 	}
+
 	return &c, nil
 }
 
@@ -74,30 +78,50 @@ func (s *Storage) AuthorizeClientIDSecret(ctx context.Context, clientID, clientS
 	return nil
 }
 
-func (s *Storage) SetUserinfoFromScopes(ctx context.Context, userinfo *oidc.UserInfo, userID, clientID string, scopes []string) error {
+func (s *Storage) SetUserinfoFromScopes(
+	ctx context.Context,
+	userinfo *oidc.UserInfo,
+	userID, clientID string,
+	scopes []string,
+) error {
 	userinfo.Subject = userID
 	userinfo.PreferredUsername = userID
 	userinfo.Name = userID
 	userinfo.Email = userID + "@example.com"
 	userinfo.EmailVerified = true
+
 	return nil
 }
 
-func (s *Storage) SetUserinfoFromToken(ctx context.Context, userinfo *oidc.UserInfo, tokenID, subject, origin string) error {
+func (s *Storage) SetUserinfoFromToken(
+	ctx context.Context,
+	userinfo *oidc.UserInfo,
+	tokenID, subject, origin string,
+) error {
 	userinfo.Subject = subject
 	userinfo.PreferredUsername = subject
+
 	return nil
 }
 
-func (s *Storage) SetIntrospectionFromToken(ctx context.Context, introspection *oidc.IntrospectionResponse, tokenID, subject, clientID string) error {
+func (s *Storage) SetIntrospectionFromToken(
+	ctx context.Context,
+	introspection *oidc.IntrospectionResponse,
+	tokenID, subject, clientID string,
+) error {
 	introspection.Active = true
 	introspection.Subject = subject
 	introspection.ClientID = clientID
 	introspection.Username = subject
+
 	return nil
 }
 
-func (s *Storage) GetPrivateClaimsFromScopes(ctx context.Context, userID, clientID string, scopes []string) (map[string]any, error) {
+func (s *Storage) GetPrivateClaimsFromScopes(
+	ctx context.Context,
+	userID, clientID string,
+	scopes []string,
+) (map[string]any, error) {
 	return map[string]any{}, nil
 }
 
@@ -114,11 +138,13 @@ func (s *Storage) CheckUsernamePassword(username, password, id string) error {
 	if err != nil {
 		return err
 	}
+
 	authReq := ar.(*authRequest)
 	authReq.IsDone = true
 	authReq.UserID = username
 	data, _ := json.Marshal(authReq)
 	s.rdb.Set(context.Background(), keyPrefixAuthReq+id, data, s.oidcConfig.AuthCodeLifespan)
+
 	return nil
 }
 
@@ -126,7 +152,11 @@ func (s *Storage) CheckUsernamePassword(username, password, id string) error {
 // AuthStorage
 // ===========================================================================
 
-func (s *Storage) CreateAuthRequest(ctx context.Context, authReq *oidc.AuthRequest, userID string) (op.AuthRequest, error) {
+func (s *Storage) CreateAuthRequest(
+	ctx context.Context,
+	authReq *oidc.AuthRequest,
+	userID string,
+) (op.AuthRequest, error) {
 	ar := &authRequest{
 		ID:            uuid.NewString(),
 		CreationDate:  time.Now(),
@@ -149,13 +179,16 @@ func (s *Storage) CreateAuthRequest(ctx context.Context, authReq *oidc.AuthReque
 	}
 
 	data, _ := json.Marshal(ar)
+
 	ttl := s.oidcConfig.AuthCodeLifespan
 	if ttl <= 0 {
 		ttl = 10 * time.Minute
 	}
+
 	if err := s.rdb.Set(ctx, keyPrefixAuthReq+ar.ID, data, ttl).Err(); err != nil {
 		return nil, err
 	}
+
 	return ar, nil
 }
 
@@ -164,13 +197,16 @@ func (s *Storage) AuthRequestByID(ctx context.Context, id string) (op.AuthReques
 	if err == redis.Nil {
 		return nil, oidc.ErrInvalidRequest()
 	}
+
 	if err != nil {
 		return nil, err
 	}
+
 	var ar authRequest
 	if err := json.Unmarshal(data, &ar); err != nil {
 		return nil, err
 	}
+
 	return &ar, nil
 }
 
@@ -179,9 +215,11 @@ func (s *Storage) AuthRequestByCode(ctx context.Context, code string) (op.AuthRe
 	if err == redis.Nil {
 		return nil, oidc.ErrInvalidRequest()
 	}
+
 	if err != nil {
 		return nil, err
 	}
+
 	return s.AuthRequestByID(ctx, id)
 }
 
@@ -196,6 +234,7 @@ func (s *Storage) DeleteAuthRequest(ctx context.Context, id string) error {
 func (s *Storage) CreateAccessToken(ctx context.Context, request op.TokenRequest) (string, time.Time, error) {
 	tokenID := uuid.NewString()
 	expiration := time.Now().Add(s.oidcConfig.AccessTokenLifespan)
+
 	return tokenID, expiration, nil
 }
 
@@ -207,6 +246,7 @@ func (s *Storage) CreateAccessAndRefreshTokens(
 	accessTokenID := uuid.NewString()
 	refreshToken := uuid.NewString()
 	expiration := time.Now().Add(s.oidcConfig.AccessTokenLifespan)
+
 	return accessTokenID, refreshToken, expiration, nil
 }
 
@@ -215,13 +255,16 @@ func (s *Storage) TokenRequestByRefreshToken(ctx context.Context, refreshToken s
 	if err == redis.Nil {
 		return nil, oidc.ErrInvalidRequest()
 	}
+
 	if err != nil {
 		return nil, err
 	}
+
 	var rrt refreshTokenRequest
 	if err := json.Unmarshal(data, &rrt); err != nil {
 		return nil, err
 	}
+
 	return &rrt, nil
 }
 
@@ -232,6 +275,7 @@ func (s *Storage) TerminateSession(ctx context.Context, userID string, clientID 
 func (s *Storage) RevokeToken(ctx context.Context, tokenIDOrToken string, userID string, clientID string) *oidc.Error {
 	s.rdb.Del(ctx, keyPrefixAccessTok+tokenIDOrToken)
 	s.rdb.Del(ctx, keyPrefixRefreshTok+tokenIDOrToken)
+
 	return nil
 }
 
@@ -255,6 +299,7 @@ func (s *Storage) SigningKey(ctx context.Context) (op.SigningKey, error) {
 	if s.signingKey == nil {
 		return nil, oidc.ErrServerError()
 	}
+
 	return &signingKey{KeyData: s.signingKey, KeyID: s.keyID}, nil
 }
 
@@ -266,6 +311,7 @@ func (s *Storage) KeySet(ctx context.Context) ([]op.Key, error) {
 	if s.signingKey == nil {
 		return nil, oidc.ErrServerError()
 	}
+
 	return []op.Key{&keyImpl{PubKey: &s.signingKey.PublicKey, IDVal: s.keyID}}, nil
 }
 
@@ -304,6 +350,7 @@ func (a *authRequest) GetCodeChallenge() *oidc.CodeChallenge {
 	if a.CodeChallenge == nil {
 		return nil
 	}
+
 	return &oidc.CodeChallenge{
 		Challenge: a.CodeChallenge.Challenge,
 		Method:    oidc.CodeChallengeMethod(a.CodeChallenge.Method),
@@ -332,6 +379,7 @@ func (c *storedClient) AuthMethod() oidc.AuthMethod         { return oidc.AuthMe
 func (c *storedClient) ResponseTypes() []oidc.ResponseType {
 	return []oidc.ResponseType{oidc.ResponseTypeCode}
 }
+
 func (c *storedClient) GrantTypes() []oidc.GrantType {
 	return []oidc.GrantType{oidc.GrantTypeCode, oidc.GrantTypeRefreshToken}
 }
@@ -345,6 +393,7 @@ func (c *storedClient) ClockSkew() time.Duration             { return 0 }
 func (c *storedClient) RestrictAdditionalIdTokenScopes() func([]string) []string {
 	return func(s []string) []string { return s }
 }
+
 func (c *storedClient) RestrictAdditionalAccessTokenScopes() func([]string) []string {
 	return func(s []string) []string { return s }
 }
@@ -361,6 +410,7 @@ func (c *defaultClient) AuthMethod() oidc.AuthMethod         { return oidc.AuthM
 func (c *defaultClient) ResponseTypes() []oidc.ResponseType {
 	return []oidc.ResponseType{oidc.ResponseTypeCode}
 }
+
 func (c *defaultClient) GrantTypes() []oidc.GrantType {
 	return []oidc.GrantType{oidc.GrantTypeCode, oidc.GrantTypeRefreshToken}
 }
@@ -374,6 +424,7 @@ func (c *defaultClient) ClockSkew() time.Duration             { return 0 }
 func (c *defaultClient) RestrictAdditionalIdTokenScopes() func([]string) []string {
 	return func(s []string) []string { return s }
 }
+
 func (c *defaultClient) RestrictAdditionalAccessTokenScopes() func([]string) []string {
 	return func(s []string) []string { return s }
 }

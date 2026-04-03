@@ -46,6 +46,7 @@ func NewService(cfg *config.OIDCConfig, storage op.Storage) (Service, error) {
 	if !ok {
 		return nil, fmt.Errorf("storage must be *oidcstore.Storage")
 	}
+
 	storageImpl.SetSigningKey(rsaKey, "oidc-rsa-key")
 
 	// Generate a random 32-byte crypto key for zitadel internal encryption
@@ -53,6 +54,7 @@ func NewService(cfg *config.OIDCConfig, storage op.Storage) (Service, error) {
 	if _, err := rand.Read(cryptoKey); err != nil {
 		return nil, fmt.Errorf("failed to generate crypto key: %w", err)
 	}
+
 	var keyArray [32]byte
 	copy(keyArray[:], cryptoKey)
 
@@ -69,10 +71,10 @@ func NewService(cfg *config.OIDCConfig, storage op.Storage) (Service, error) {
 		SupportedScopes:          []string{"openid", "profile", "email", "offline_access"},
 	}
 
-	provider, err := op.NewOpenIDProvider(
-		cfg.Issuer,
+	provider, err := op.NewProvider(
 		zitadelConfig,
 		storage,
+		op.StaticIssuer(cfg.Issuer),
 		op.WithAllowInsecure(),
 	)
 	if err != nil {

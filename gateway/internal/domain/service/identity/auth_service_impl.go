@@ -124,6 +124,7 @@ func (s *authServiceImpl) ChangePassword(
 
 			// 调用RPC服务
 			_, err := s.identityClient.ChangePassword(ctx, rpcReq)
+
 			return err
 		},
 		"user_id", userID,
@@ -148,6 +149,7 @@ func (s *authServiceImpl) ResetPassword(
 
 			// 调用RPC服务
 			_, err := s.identityClient.ResetPassword(ctx, rpcReq)
+
 			return err
 		},
 		"user_id", req.UserID,
@@ -172,6 +174,7 @@ func (s *authServiceImpl) ForcePasswordChange(
 
 			// 调用RPC服务
 			_, err := s.identityClient.ForcePasswordChange(ctx, rpcReq)
+
 			return err
 		},
 		"user_id", req.UserID, "reason", req.Reason,

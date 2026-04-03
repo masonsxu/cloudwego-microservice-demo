@@ -163,29 +163,37 @@ func (s *userManagementServiceImpl) UpdateUser(
 	httpUserProfile := s.assembler.User().ToHTTPUserProfile(rpcResp.UserProfile)
 
 	// 用户更新成功后，处理组织关系和角色更新
-	if req.UserID != nil {
-		// 1. 如果指定了组织ID，更新主成员关系
-		if req.OrganizationID != nil && *req.OrganizationID != "" {
-			httpUserProfile.PrimaryOrganizationID = req.OrganizationID
-			s.updateOrganizationMembership(ctx, req.UserID, req.OrganizationID, operatorID)
+	if req.UserID == nil {
+		httpResp := &identity.UserProfileResponseDTO{
+			BaseResp: s.ResponseBuilder().BuildSuccessResponse(),
+			User:     httpUserProfile,
 		}
 
-		// 2. 如果指定了角色ID列表，更新角色分配
-		// 使用 req.RoleIDs != nil 来判断字段是否被提供，支持清空所有角色
-		if req.RoleIDs != nil {
-			roleIDs := make([]string, 0, len(req.RoleIDs.GetValues()))
-			for _, value := range req.RoleIDs.GetValues() {
-				if roleID := value.GetStringValue(); roleID != "" {
-					roleIDs = append(roleIDs, roleID)
-				}
-			}
-			httpUserProfile.RoleIDs = roleIDs
-			if err := s.updateUserRoles(ctx, req.UserID, roleIDs, operatorID); err != nil {
-				// 角色更新失败，记录错误并返回
-				s.Log(ctx).Error().Err(err).Str("user_id", *req.UserID).Msg("更新用户角色失败")
+		return httpResp, nil
+	}
 
-				return nil, err
+	// 1. 如果指定了组织ID，更新主成员关系
+	if req.OrganizationID != nil && *req.OrganizationID != "" {
+		httpUserProfile.PrimaryOrganizationID = req.OrganizationID
+		s.updateOrganizationMembership(ctx, req.UserID, req.OrganizationID, operatorID)
+	}
+
+	// 2. 如果指定了角色ID列表，更新角色分配
+	// 使用 req.RoleIDs != nil 来判断字段是否被提供，支持清空所有角色
+	if req.RoleIDs != nil {
+		roleIDs := make([]string, 0, len(req.RoleIDs.GetValues()))
+		for _, value := range req.RoleIDs.GetValues() {
+			if roleID := value.GetStringValue(); roleID != "" {
+				roleIDs = append(roleIDs, roleID)
 			}
+		}
+
+		httpUserProfile.RoleIDs = roleIDs
+		if err := s.updateUserRoles(ctx, req.UserID, roleIDs, operatorID); err != nil {
+			// 角色更新失败，记录错误并返回
+			s.Log(ctx).Error().Err(err).Str("user_id", *req.UserID).Msg("更新用户角色失败")
+
+			return nil, err
 		}
 	}
 
@@ -235,6 +243,7 @@ func (s *userManagementServiceImpl) DeleteUser(
 		func(ctx context.Context) error {
 			rpcReq := s.assembler.User().ToRPCDeleteUserRequest(req)
 			_, err := s.identityClient.DeleteUser(ctx, rpcReq)
+
 			return err
 		},
 		"user_id", req.UserID,
@@ -307,6 +316,7 @@ func (s *userManagementServiceImpl) ChangeUserStatus(
 		func(ctx context.Context) error {
 			rpcReq := s.assembler.User().ToRPCChangeUserStatusRequest(req)
 			_, err := s.identityClient.ChangeUserStatus(ctx, rpcReq)
+
 			return err
 		},
 		"user_id", req.UserID, "status", req.NewStatus,
@@ -326,6 +336,7 @@ func (s *userManagementServiceImpl) UnlockUser(
 		func(ctx context.Context) error {
 			rpcReq := s.assembler.User().ToRPCUnlockUserRequest(req)
 			_, err := s.identityClient.UnlockUser(ctx, rpcReq)
+
 			return err
 		},
 		"user_id", req.UserID,
@@ -524,6 +535,7 @@ func (s *userManagementServiceImpl) updateOrganizationMembership(
 	primaryMembershipResp, err := s.identityClient.GetPrimaryMembership(ctx, &identity_srv.GetPrimaryMembershipRequest{
 		UserID: userID,
 	})
+
 	primaryMembership := primaryMembershipResp.GetMembership()
 	if err != nil || primaryMembership == nil {
 		// 如果没有主成员关系，创建一个新的

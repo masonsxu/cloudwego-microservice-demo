@@ -72,12 +72,15 @@ func (a *orgAssembler) ToRPCCreateOrgRequest(
 	if dto.ParentID != nil {
 		req.ParentID = dto.ParentID
 	}
+
 	if dto.FacilityType != nil {
 		req.FacilityType = dto.FacilityType
 	}
+
 	if dto.AccreditationStatus != nil {
 		req.AccreditationStatus = dto.AccreditationStatus
 	}
+
 	if len(dto.ProvinceCity) > 0 {
 		req.ProvinceCity = &core.StringListValue{Items: dto.ProvinceCity}
 	}
@@ -111,15 +114,19 @@ func (a *orgAssembler) ToRPCUpdateOrgRequest(
 	if dto.Name != nil {
 		req.Name = dto.Name
 	}
+
 	if dto.ParentID != nil {
 		req.ParentID = dto.ParentID
 	}
+
 	if dto.FacilityType != nil {
 		req.FacilityType = dto.FacilityType
 	}
+
 	if dto.AccreditationStatus != nil {
 		req.AccreditationStatus = dto.AccreditationStatus
 	}
+
 	if dto.ProvinceCity != nil {
 		items := make([]string, 0, len(dto.ProvinceCity.GetValues()))
 		for _, value := range dto.ProvinceCity.GetValues() {
@@ -127,6 +134,7 @@ func (a *orgAssembler) ToRPCUpdateOrgRequest(
 				items = append(items, str)
 			}
 		}
+
 		if len(items) > 0 {
 			req.ProvinceCity = &core.StringListValue{Items: items}
 		}

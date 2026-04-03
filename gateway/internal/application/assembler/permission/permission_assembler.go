@@ -93,10 +93,12 @@ func (a *permissionAssembler) ToRPCPermissionsFromListValue(
 		}
 
 		fields := structValue.GetFields()
+
 		resourceValue, ok := fields["resource"]
 		if !ok {
 			continue
 		}
+
 		resource := resourceValue.GetStringValue()
 		if resource == "" {
 			continue
@@ -106,6 +108,7 @@ func (a *permissionAssembler) ToRPCPermissionsFromListValue(
 		if !ok {
 			continue
 		}
+
 		action := actionValue.GetStringValue()
 		if action == "" {
 			continue
@@ -115,6 +118,7 @@ func (a *permissionAssembler) ToRPCPermissionsFromListValue(
 			Resource: &resource,
 			Action:   &action,
 		}
+
 		if descriptionValue, ok := fields["description"]; ok {
 			if description := descriptionValue.GetStringValue(); description != "" {
 				permission.Description = &description

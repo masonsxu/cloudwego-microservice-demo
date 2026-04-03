@@ -124,6 +124,7 @@ func (s *organizationServiceImpl) DeleteOrganization(
 			_, err := s.identityClient.DeleteOrganization(ctx, &identity_srv.DeleteOrganizationRequest{
 				OrganizationID: req.OrganizationID,
 			})
+
 			return err
 		},
 		"organization_id", req.OrganizationID,

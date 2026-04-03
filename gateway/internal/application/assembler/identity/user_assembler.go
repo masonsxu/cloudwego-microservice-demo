@@ -88,30 +88,39 @@ func (a *userAssembler) ToRPCCreateUserRequest(
 	if dto.Email != nil {
 		req.Email = dto.Email
 	}
+
 	if dto.Phone != nil {
 		req.Phone = dto.Phone
 	}
+
 	if dto.FirstName != nil {
 		req.FirstName = dto.FirstName
 	}
+
 	if dto.LastName != nil {
 		req.LastName = dto.LastName
 	}
+
 	if dto.RealName != nil {
 		req.RealName = dto.RealName
 	}
+
 	if dto.Gender != nil {
 		req.Gender = common.ConvertGenderToRPCPtr(*dto.Gender)
 	}
+
 	if dto.ProfessionalTitle != nil {
 		req.ProfessionalTitle = dto.ProfessionalTitle
 	}
+
 	if dto.EmployeeID != nil {
 		req.EmployeeID = dto.EmployeeID
 	}
+
 	if dto.MustChangePassword != nil {
 		req.MustChangePassword = dto.MustChangePassword
 	}
+
 	if dto.AccountExpiry != nil {
 		req.AccountExpiry = dto.AccountExpiry
 	}
@@ -146,30 +155,39 @@ func (a *userAssembler) ToRPCUpdateUserRequest(
 	if dto.Email != nil {
 		req.Email = dto.Email
 	}
+
 	if dto.Phone != nil {
 		req.Phone = dto.Phone
 	}
+
 	if dto.FirstName != nil {
 		req.FirstName = dto.FirstName
 	}
+
 	if dto.LastName != nil {
 		req.LastName = dto.LastName
 	}
+
 	if dto.RealName != nil {
 		req.RealName = dto.RealName
 	}
+
 	if dto.Gender != nil {
 		req.Gender = common.ConvertGenderToRPCPtr(*dto.Gender)
 	}
+
 	if dto.ProfessionalTitle != nil {
 		req.ProfessionalTitle = dto.ProfessionalTitle
 	}
+
 	if dto.EmployeeID != nil {
 		req.EmployeeID = dto.EmployeeID
 	}
+
 	if dto.AccountExpiry != nil {
 		req.AccountExpiry = dto.AccountExpiry
 	}
+
 	return req
 }
 
@@ -189,27 +207,35 @@ func (a *userAssembler) ToRPCUpdateMeRequest(
 	if dto.Email != nil {
 		req.Email = dto.Email
 	}
+
 	if dto.Phone != nil {
 		req.Phone = dto.Phone
 	}
+
 	if dto.FirstName != nil {
 		req.FirstName = dto.FirstName
 	}
+
 	if dto.LastName != nil {
 		req.LastName = dto.LastName
 	}
+
 	if dto.RealName != nil {
 		req.RealName = dto.RealName
 	}
+
 	if dto.Gender != nil {
 		req.Gender = common.ConvertGenderToRPCPtr(*dto.Gender)
 	}
+
 	if dto.ProfessionalTitle != nil {
 		req.ProfessionalTitle = dto.ProfessionalTitle
 	}
+
 	if dto.EmployeeID != nil {
 		req.EmployeeID = dto.EmployeeID
 	}
+
 	if dto.AccountExpiry != nil {
 		req.AccountExpiry = dto.AccountExpiry
 	}

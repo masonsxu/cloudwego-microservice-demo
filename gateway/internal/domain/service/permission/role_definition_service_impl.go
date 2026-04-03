@@ -102,6 +102,7 @@ func (s *roleDefinitionServiceImpl) DeleteRoleDefinition(
 				ctx,
 				&identity_srv.DeleteRoleDefinitionRequest{RoleID: &roleID},
 			)
+
 			return err
 		},
 		"roleID", roleID,

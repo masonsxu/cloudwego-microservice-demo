@@ -161,6 +161,7 @@ func (a *userRoleAssembler) ToRPCBatchBindUsersToRoleRequest(
 	}
 
 	var userIDs *core.StringListValue
+
 	if http.UserIDs != nil {
 		items := make([]string, 0, len(http.UserIDs.GetValues()))
 		for _, value := range http.UserIDs.GetValues() {
@@ -168,6 +169,7 @@ func (a *userRoleAssembler) ToRPCBatchBindUsersToRoleRequest(
 				items = append(items, userID)
 			}
 		}
+
 		if len(items) > 0 {
 			userIDs = &core.StringListValue{Items: items}
 		}

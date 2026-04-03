@@ -50,12 +50,14 @@ func (s *userRoleAssignmentServiceImpl) GetLastUserRoleAssignment(
 	}
 
 	rpcResp := result.(*identity_srv.GetLastUserRoleAssignmentResponse)
+
 	httpResp := &permission.AssignRoleToUserResponseDTO{
 		AssignmentID: nil,
 	}
 	if rpcResp.UserRoleAssignment != nil {
 		httpResp.AssignmentID = rpcResp.UserRoleAssignment.Id
 	}
+
 	httpResp.BaseResp = s.ResponseBuilder().BuildSuccessResponse()
 
 	return httpResp, nil

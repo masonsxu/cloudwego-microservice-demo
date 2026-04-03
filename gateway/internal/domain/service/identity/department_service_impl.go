@@ -144,6 +144,7 @@ func (s *departmentServiceImpl) DeleteDepartment(
 			_, err := s.identityClient.DeleteDepartment(ctx, &identity_srv.DeleteDepartmentRequest{
 				DepartmentID: req.DepartmentID,
 			})
+
 			return err
 		},
 		"department_id", req.DepartmentID,

@@ -50,6 +50,7 @@ func (s *menuServiceImpl) UploadMenu(
 
 			// 调用RPC服务
 			_, err := s.identityClient.UploadMenu(ctx, rpcReq)
+
 			return err
 		},
 		"yaml_size", len(req.MenuFile),
