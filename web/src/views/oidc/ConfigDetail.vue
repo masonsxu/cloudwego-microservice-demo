@@ -3,10 +3,10 @@
     <div class="page-header">
       <h2>{{ t('oidc.config.title') }}</h2>
       <div class="header-actions">
-        <el-button type="primary" @click="refreshData">
-          <el-icon><Refresh /></el-icon>
+        <Button @click="refreshData">
+          <RefreshCw class="w-4 h-4 mr-1" />
           {{ t('common.refresh') }}
-        </el-button>
+        </Button>
       </div>
     </div>
 
@@ -21,143 +21,159 @@
         :side-item-counts="[8, 4]"
         :main-item-counts="[1]"
       />
-      <el-row v-else v-loading="loading" :gutter="20">
-        <el-col :span="16">
-          <el-card shadow="never" class="config-card">
-            <template #header>
-              <div class="card-header">
-                <span>{{ t('oidc.config.providerConfig') }}</span>
-                <el-tag :type="discoveryConfig ? 'success' : 'danger'" size="small">
+      <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div class="lg:col-span-2 space-y-5">
+          <Card class="bg-card border-border/60 rounded-[18px] shadow-card">
+            <CardHeader class="border-b border-border/60 px-5 py-3.5">
+              <div class="flex items-center justify-between">
+                <span class="text-primary font-semibold">{{ t('oidc.config.providerConfig') }}</span>
+                <Badge :variant="discoveryConfig ? 'outline' : 'destructive'" class="text-xs" :class="discoveryConfig ? 'bg-green-500/10 border-green-500/30 text-green-500' : ''">
                   {{ discoveryConfig ? t('oidc.config.discovered') : t('oidc.config.unavailable') }}
-                </el-tag>
+                </Badge>
               </div>
-            </template>
-            <el-descriptions :column="2" border>
-              <el-descriptions-item :label="t('oidc.config.issuer')" :span="2">
-                <code class="code-text">{{ discoveryConfig?.issuer || '-' }}</code>
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('oidc.config.authorizationEndpoint')" :span="2">
-                <code class="code-text">{{ discoveryConfig?.authorization_endpoint || '-' }}</code>
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('oidc.config.tokenEndpoint')" :span="2">
-                <code class="code-text">{{ discoveryConfig?.token_endpoint || '-' }}</code>
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('oidc.config.userinfoEndpoint')" :span="2">
-                <code class="code-text">{{ discoveryConfig?.userinfo_endpoint || '-' }}</code>
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('oidc.config.jwksUri')" :span="2">
-                <code class="code-text">{{ discoveryConfig?.jwks_uri || '-' }}</code>
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('oidc.config.revocationEndpoint')" :span="2">
-                <code class="code-text">{{ discoveryConfig?.revocation_endpoint || '-' }}</code>
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('oidc.config.introspectionEndpoint')" :span="2">
-                <code class="code-text">{{ discoveryConfig?.introspection_endpoint || '-' }}</code>
-              </el-descriptions-item>
-            </el-descriptions>
-          </el-card>
+            </CardHeader>
+            <CardContent class="p-5">
+              <div class="grid grid-cols-1 gap-3">
+                <div class="flex justify-between items-start text-sm">
+                  <span class="text-muted-foreground w-[180px] flex-shrink-0">{{ t('oidc.config.issuer') }}</span>
+                  <code class="text-xs bg-accent/50 px-2 py-0.5 rounded font-mono break-all">{{ discoveryConfig?.issuer || '-' }}</code>
+                </div>
+                <div class="flex justify-between items-start text-sm">
+                  <span class="text-muted-foreground w-[180px] flex-shrink-0">{{ t('oidc.config.authorizationEndpoint') }}</span>
+                  <code class="text-xs bg-accent/50 px-2 py-0.5 rounded font-mono break-all">{{ discoveryConfig?.authorization_endpoint || '-' }}</code>
+                </div>
+                <div class="flex justify-between items-start text-sm">
+                  <span class="text-muted-foreground w-[180px] flex-shrink-0">{{ t('oidc.config.tokenEndpoint') }}</span>
+                  <code class="text-xs bg-accent/50 px-2 py-0.5 rounded font-mono break-all">{{ discoveryConfig?.token_endpoint || '-' }}</code>
+                </div>
+                <div class="flex justify-between items-start text-sm">
+                  <span class="text-muted-foreground w-[180px] flex-shrink-0">{{ t('oidc.config.userinfoEndpoint') }}</span>
+                  <code class="text-xs bg-accent/50 px-2 py-0.5 rounded font-mono break-all">{{ discoveryConfig?.userinfo_endpoint || '-' }}</code>
+                </div>
+                <div class="flex justify-between items-start text-sm">
+                  <span class="text-muted-foreground w-[180px] flex-shrink-0">{{ t('oidc.config.jwksUri') }}</span>
+                  <code class="text-xs bg-accent/50 px-2 py-0.5 rounded font-mono break-all">{{ discoveryConfig?.jwks_uri || '-' }}</code>
+                </div>
+                <div class="flex justify-between items-start text-sm">
+                  <span class="text-muted-foreground w-[180px] flex-shrink-0">{{ t('oidc.config.revocationEndpoint') }}</span>
+                  <code class="text-xs bg-accent/50 px-2 py-0.5 rounded font-mono break-all">{{ discoveryConfig?.revocation_endpoint || '-' }}</code>
+                </div>
+                <div class="flex justify-between items-start text-sm">
+                  <span class="text-muted-foreground w-[180px] flex-shrink-0">{{ t('oidc.config.introspectionEndpoint') }}</span>
+                  <code class="text-xs bg-accent/50 px-2 py-0.5 rounded font-mono break-all">{{ discoveryConfig?.introspection_endpoint || '-' }}</code>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-          <el-card shadow="never" class="config-card" style="margin-top: 16px;">
-            <template #header>{{ t('oidc.config.capabilities') }}</template>
-            <el-descriptions :column="1" border>
-              <el-descriptions-item :label="t('oidc.config.responseTypes')">
-                <el-tag
-                  v-for="type in discoveryConfig?.response_types_supported"
-                  :key="type"
-                  size="small"
-                  style="margin: 2px 4px;"
-                >
-                  {{ type }}
-                </el-tag>
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('oidc.config.scopes')">
-                <el-tag
-                  v-for="scope in discoveryConfig?.scopes_supported"
-                  :key="scope"
-                  size="small"
-                  style="margin: 2px 4px;"
-                >
-                  {{ scope }}
-                </el-tag>
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('oidc.config.signingAlgorithms')">
-                <el-tag
-                  v-for="alg in discoveryConfig?.id_token_signing_alg_values_supported"
-                  :key="alg"
-                  size="small"
-                  style="margin: 2px 4px;"
-                >
-                  {{ alg }}
-                </el-tag>
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('oidc.config.authMethods')">
-                <el-tag
-                  v-for="method in discoveryConfig?.token_endpoint_auth_methods_supported"
-                  :key="method"
-                  size="small"
-                  style="margin: 2px 4px;"
-                >
-                  {{ method }}
-                </el-tag>
-              </el-descriptions-item>
-            </el-descriptions>
-          </el-card>
-        </el-col>
+          <Card class="bg-card border-border/60 rounded-[18px] shadow-card">
+            <CardHeader class="border-b border-border/60 px-5 py-3.5">
+              <span class="text-primary font-semibold">{{ t('oidc.config.capabilities') }}</span>
+            </CardHeader>
+            <CardContent class="p-5 space-y-3">
+              <div class="text-sm">
+                <span class="text-muted-foreground block mb-1.5">{{ t('oidc.config.responseTypes') }}</span>
+                <div class="flex flex-wrap gap-1.5">
+                  <Badge v-for="type in discoveryConfig?.response_types_supported" :key="type" variant="secondary" class="text-xs">{{ type }}</Badge>
+                </div>
+              </div>
+              <div class="text-sm">
+                <span class="text-muted-foreground block mb-1.5">{{ t('oidc.config.scopes') }}</span>
+                <div class="flex flex-wrap gap-1.5">
+                  <Badge v-for="scope in discoveryConfig?.scopes_supported" :key="scope" variant="secondary" class="text-xs">{{ scope }}</Badge>
+                </div>
+              </div>
+              <div class="text-sm">
+                <span class="text-muted-foreground block mb-1.5">{{ t('oidc.config.signingAlgorithms') }}</span>
+                <div class="flex flex-wrap gap-1.5">
+                  <Badge v-for="alg in discoveryConfig?.id_token_signing_alg_values_supported" :key="alg" variant="secondary" class="text-xs">{{ alg }}</Badge>
+                </div>
+              </div>
+              <div class="text-sm">
+                <span class="text-muted-foreground block mb-1.5">{{ t('oidc.config.authMethods') }}</span>
+                <div class="flex flex-wrap gap-1.5">
+                  <Badge v-for="method in discoveryConfig?.token_endpoint_auth_methods_supported" :key="method" variant="secondary" class="text-xs">{{ method }}</Badge>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-        <el-col :span="8">
-          <el-card shadow="never">
-            <template #header>{{ t('oidc.config.runtimeConfig') }}</template>
-            <el-descriptions :column="1" border>
-              <el-descriptions-item :label="t('oidc.config.enabled')">
-                <el-tag :type="envConfig?.enabled ? 'success' : 'danger'" size="small" effect="dark">
+        <div class="space-y-5">
+          <Card class="bg-card border-border/60 rounded-[18px] shadow-card">
+            <CardHeader class="border-b border-border/60 px-5 py-3.5">
+              <span class="text-primary font-semibold">{{ t('oidc.config.runtimeConfig') }}</span>
+            </CardHeader>
+            <CardContent class="p-5 space-y-3">
+              <div class="flex justify-between text-sm">
+                <span class="text-muted-foreground">{{ t('oidc.config.enabled') }}</span>
+                <Badge :variant="envConfig?.enabled ? 'outline' : 'destructive'" class="text-xs" :class="envConfig?.enabled ? 'bg-green-500/10 border-green-500/30 text-green-500' : ''">
                   {{ envConfig?.enabled ? t('common.yes') : t('common.no') }}
-                </el-tag>
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('oidc.config.enforcePkce')">
-                <el-tag :type="envConfig?.enforcePkce ? 'success' : 'warning'" size="small" effect="dark">
+                </Badge>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-muted-foreground">{{ t('oidc.config.enforcePkce') }}</span>
+                <Badge :variant="envConfig?.enforcePkce ? 'outline' : 'default'" class="text-xs" :class="envConfig?.enforcePkce ? 'bg-green-500/10 border-green-500/30 text-green-500' : ''">
                   {{ envConfig?.enforcePkce ? t('common.yes') : t('common.no') }}
-                </el-tag>
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('oidc.config.accessTokenLifespan')">
-                {{ envConfig?.accessTokenLifespan || '-' }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('oidc.config.refreshTokenLifespan')">
-                {{ envConfig?.refreshTokenLifespan || '-' }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('oidc.config.authCodeLifespan')">
-                {{ envConfig?.authCodeLifespan || '-' }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('oidc.config.idTokenLifespan')">
-                {{ envConfig?.idTokenLifespan || '-' }}
-              </el-descriptions-item>
-            </el-descriptions>
-          </el-card>
+                </Badge>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-muted-foreground">{{ t('oidc.config.accessTokenLifespan') }}</span>
+                <span class="text-foreground">{{ envConfig?.accessTokenLifespan || '-' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-muted-foreground">{{ t('oidc.config.refreshTokenLifespan') }}</span>
+                <span class="text-foreground">{{ envConfig?.refreshTokenLifespan || '-' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-muted-foreground">{{ t('oidc.config.authCodeLifespan') }}</span>
+                <span class="text-foreground">{{ envConfig?.authCodeLifespan || '-' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-muted-foreground">{{ t('oidc.config.idTokenLifespan') }}</span>
+                <span class="text-foreground">{{ envConfig?.idTokenLifespan || '-' }}</span>
+              </div>
+            </CardContent>
+          </Card>
 
-          <el-card shadow="never" style="margin-top: 16px;">
-            <template #header>{{ t('oidc.config.quickLinks') }}</template>
-            <div class="quick-links">
-              <el-button class="link-btn" @click="showJwksDialog = true">
-                <el-icon><Link /></el-icon>{{ t('oidc.config.viewJwks') }}
-              </el-button>
-              <el-button class="link-btn" @click="showDiscoveryDialog = true">
-                <el-icon><Link /></el-icon>{{ t('oidc.config.viewDiscovery') }}
-              </el-button>
-              <el-button class="link-btn" @click="router.push('/system-settings/oidc/integration')">
-                <el-icon><Document /></el-icon>{{ t('oidc.config.integrationGuide') }}
-              </el-button>
-            </div>
-          </el-card>
-        </el-col>
-      </el-row>
+          <Card class="bg-card border-border/60 rounded-[18px] shadow-card">
+            <CardHeader class="border-b border-border/60 px-5 py-3.5">
+              <span class="text-primary font-semibold">{{ t('oidc.config.quickLinks') }}</span>
+            </CardHeader>
+            <CardContent class="p-5 space-y-2.5">
+              <Button variant="outline" class="w-full justify-start" @click="showJwksDialog = true">
+                <LinkIcon class="w-4 h-4 mr-2" />{{ t('oidc.config.viewJwks') }}
+              </Button>
+              <Button variant="outline" class="w-full justify-start" @click="showDiscoveryDialog = true">
+                <LinkIcon class="w-4 h-4 mr-2" />{{ t('oidc.config.viewDiscovery') }}
+              </Button>
+              <Button variant="outline" class="w-full justify-start" @click="router.push('/system-settings/oidc/integration')">
+                <FileText class="w-4 h-4 mr-2" />{{ t('oidc.config.integrationGuide') }}
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
 
-    <el-dialog v-model="showJwksDialog" :title="t('oidc.config.viewJwks')" width="70%" @open="fetchJwks">
-      <pre class="json-viewer" v-loading="jwksLoading">{{ jwksContent ? JSON.stringify(jwksContent, null, 2) : t('common.noData') }}</pre>
-    </el-dialog>
+    <Dialog v-model:open="showJwksDialog">
+      <DialogContent class="max-w-[70%]">
+        <DialogHeader>
+          <DialogTitle>{{ t('oidc.config.viewJwks') }}</DialogTitle>
+        </DialogHeader>
+        <pre class="json-viewer" v-if="jwksLoading">Loading...</pre>
+        <pre class="json-viewer" v-else>{{ jwksContent ? JSON.stringify(jwksContent, null, 2) : t('common.noData') }}</pre>
+      </DialogContent>
+    </Dialog>
 
-    <el-dialog v-model="showDiscoveryDialog" :title="t('oidc.config.viewDiscovery')" width="70%">
-      <pre class="json-viewer">{{ discoveryJson || t('common.noData') }}</pre>
-    </el-dialog>
+    <Dialog v-model:open="showDiscoveryDialog">
+      <DialogContent class="max-w-[70%]">
+        <DialogHeader>
+          <DialogTitle>{{ t('oidc.config.viewDiscovery') }}</DialogTitle>
+        </DialogHeader>
+        <pre class="json-viewer">{{ discoveryJson || t('common.noData') }}</pre>
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
 
@@ -165,10 +181,14 @@
 import { oidcProviderApi } from '@/api/oidc'
 import DetailPageSkeleton from '@/components/skeleton/DetailPageSkeleton.vue'
 import type { OIDCDiscoveryConfig, OIDCJWKSResponse } from '@/types/oidc'
-import { Document, Link, Refresh } from '@element-plus/icons-vue'
+import { RefreshCw, Link as LinkIcon, FileText } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { Card, CardHeader, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -211,18 +231,6 @@ const refreshData = async () => {
   await fetchDiscovery()
 }
 
-const fetchJwks = async () => {
-  jwksLoading.value = true
-  try {
-    const response = await oidcProviderApi.getJWKS()
-    jwksContent.value = response
-  } catch {
-    jwksContent.value = null
-  } finally {
-    jwksLoading.value = false
-  }
-}
-
 onMounted(async () => {
   try {
     await fetchDiscovery()
@@ -232,7 +240,7 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .oidc-config {
   display: flex;
   flex-direction: column;
@@ -243,54 +251,21 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
 
-  h2 {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--c-text-main);
-  }
+.page-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--c-text-main);
+}
 
-  .header-actions {
-    display: flex;
-    gap: 8px;
-  }
+.header-actions {
+  display: flex;
+  gap: 8px;
 }
 
 .content-row {
   flex: 1;
-}
-
-.config-card {
-  margin-bottom: 16px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.code-text {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: var(--bg-base);
-  color: var(--c-accent);
-}
-
-.quick-links {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.link-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  text-align: left;
 }
 
 .json-viewer {

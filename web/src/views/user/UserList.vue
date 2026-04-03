@@ -1,35 +1,33 @@
 <template>
   <div class="user-list">
-    <!-- 页面头部 -->
     <div class="page-header">
       <div class="header-left">
         <h1 class="page-title">{{ t('user.title') }}</h1>
-        <p class="page-subtitle">管理系统用户账号与访问权限</p>
+        <p class="page-subtitle">{{ t('user.manageUsers') || '管理系统用户账号与访问权限' }}</p>
       </div>
       <button class="create-btn shimmer-btn" @click="handleCreate">
-        <el-icon><Plus /></el-icon>
+        <Plus class="h-4 w-4" />
         {{ t('user.createUser') }}
       </button>
     </div>
 
-    <!-- 统计卡片 -->
     <div class="stats-row">
       <div class="stat-card spotlight-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
-        <div class="stat-icon"><el-icon size="20"><User /></el-icon></div>
+        <div class="stat-icon"><User class="h-5 w-5" /></div>
         <div class="stat-info">
           <span class="stat-value">{{ pagination.total }}</span>
           <span class="stat-label">{{ t('user.title') }}</span>
         </div>
       </div>
       <div class="stat-card spotlight-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
-        <div class="stat-icon active-icon"><el-icon size="20"><CircleCheck /></el-icon></div>
+        <div class="stat-icon active-icon"><CircleCheck class="h-5 w-5" /></div>
         <div class="stat-info">
           <span class="stat-value">{{ tableData.filter(u => u.status === 1).length }}</span>
           <span class="stat-label">{{ t('user.status.active') }}</span>
         </div>
       </div>
       <div class="stat-card spotlight-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
-        <div class="stat-icon locked-icon"><el-icon size="20"><Lock /></el-icon></div>
+        <div class="stat-icon locked-icon"><Lock class="h-5 w-5" /></div>
         <div class="stat-info">
           <span class="stat-value">{{ tableData.filter(u => u.status === 4).length }}</span>
           <span class="stat-label">{{ t('user.status.locked') }}</span>
@@ -37,173 +35,233 @@
       </div>
     </div>
 
-    <!-- 搜索筛选 -->
     <div class="search-section">
-      <el-form :inline="true" :model="searchForm" class="search-form">
-        <el-form-item>
-          <el-input
+      <div class="search-form">
+        <div class="search-input-wrapper">
+          <Search class="search-icon" />
+          <input
             v-model="searchForm.search"
             :placeholder="t('user.username') + ' / ' + t('user.email') + ' / ' + t('user.realName')"
-            clearable
-            @clear="handleSearch"
+            class="search-input"
             @keyup.enter="handleSearch"
-            style="width: 320px"
-          >
-            <template #prefix><el-icon><Search /></el-icon></template>
-          </el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-select v-model="searchForm.organization_id" :placeholder="t('user.organization')" clearable @change="handleSearch" style="width: 180px">
-            <el-option v-for="org in organizations" :key="org.id" :label="org.name" :value="org.id" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-select v-model="searchForm.status" :placeholder="t('common.status')" clearable @change="handleSearch" style="width: 130px">
-            <el-option :label="t('user.status.active')" :value="1" />
-            <el-option :label="t('user.status.inactive')" :value="2" />
-            <el-option :label="t('user.status.suspended')" :value="3" />
-            <el-option :label="t('user.status.locked')" :value="4" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="handleReset">
-            <el-icon><Refresh /></el-icon>{{ t('common.reset') }}
-          </el-button>
-          <el-button type="primary" @click="handleSearch">
-            <el-icon><Search /></el-icon>{{ t('common.search') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
+          />
+          <button v-if="searchForm.search" class="clear-btn" @click="searchForm.search = ''; handleSearch()">
+            <X class="h-3 w-3" />
+          </button>
+        </div>
+        <div class="select-wrapper">
+          <Select v-model="searchForm.organization_id" @update:modelValue="handleSearch">
+            <SelectTrigger class="w-[180px]">
+              <SelectValue :placeholder="t('user.organization')" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="org in organizations" :key="org.id" :value="org.id">
+                {{ org.name }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div class="select-wrapper">
+          <Select v-model="searchForm.status" @update:modelValue="handleSearch">
+            <SelectTrigger class="w-[130px]">
+              <SelectValue :placeholder="t('common.status')" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem :value="String(1)">{{ t('user.status.active') }}</SelectItem>
+              <SelectItem :value="String(2)">{{ t('user.status.inactive') }}</SelectItem>
+              <SelectItem :value="String(3)">{{ t('user.status.suspended') }}</SelectItem>
+              <SelectItem :value="String(4)">{{ t('user.status.locked') }}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div class="search-buttons">
+          <Button variant="outline" @click="handleReset">
+            <Refresh class="mr-1 h-4 w-4" />{{ t('common.reset') }}
+          </Button>
+          <Button @click="handleSearch">
+            <Search class="mr-1 h-4 w-4" />{{ t('common.search') }}
+          </Button>
+        </div>
+      </div>
     </div>
 
-    <!-- 数据表格 -->
     <div class="table-card spotlight-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
       <ListPageSkeleton v-if="initialLoading" :columns="7" :rows="8" />
       <template v-else>
         <div class="table-body">
-        <el-table :data="tableData" v-loading="loading" class="modern-table" height="100%" style="width: 100%">
-          <el-table-column prop="username" :label="t('user.username')" width="150">
-            <template #default="{ row }">
-              <div class="user-cell">
-                <div class="user-avatar-mini">{{ row.username?.charAt(0).toUpperCase() }}</div>
-                <span class="username">{{ row.username }}</span>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="real_name" :label="t('user.realName')" width="120">
-            <template #default="{ row }">
-              <span class="text-sub">{{ row.real_name || '-' }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="email" :label="t('user.email')" min-width="180">
-            <template #default="{ row }">
-              <span class="text-sub">{{ row.email || '-' }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('user.organization')" min-width="160">
-            <template #default="{ row }">
-              <span v-if="getOrganizationName(row.primary_organization_id)" class="text-sub">{{ getOrganizationName(row.primary_organization_id) }}</span>
-              <span v-else class="text-muted">-</span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('user.roles')" min-width="160">
-            <template #default="{ row }">
-              <div class="roles-cell">
-                <el-tag v-for="role in (row.roles || []).slice(0, 2)" :key="role" size="small" class="role-tag">{{ role }}</el-tag>
-                <span v-if="(row.roles || []).length > 2" class="more-tag">+{{ row.roles.length - 2 }}</span>
-                <span v-if="!row.roles || row.roles.length === 0" class="text-muted">-</span>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('common.status')" width="110" align="center">
-            <template #default="{ row }">
-              <el-tag :type="getStatusType(row.status)" size="small" effect="dark">
-                {{ t(`user.status.${getStatusKey(row.status)}`) }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('common.actions')" width="160" align="right" fixed="right">
-            <template #default="{ row }">
-              <div class="action-group">
-                <button class="action-btn view-btn" @click="handleView(row)" :title="t('common.view')">
-                  <el-icon><View /></el-icon>
-                </button>
-                <button class="action-btn edit-btn" @click="handleEdit(row)" :title="t('common.edit')">
-                  <el-icon><Edit /></el-icon>
-                </button>
-                <el-dropdown @command="(cmd: string) => handleMoreAction(cmd as any, row)" trigger="click">
-                  <button class="action-btn more-btn" :title="t('common.actions')">
-                    <el-icon><MoreFilled /></el-icon>
-                  </button>
-                  <template #dropdown>
-                    <el-dropdown-menu>
-                      <el-dropdown-item command="changeStatus">
-                        <el-icon><RefreshRight /></el-icon>{{ t('user.changeStatus') }}
-                      </el-dropdown-item>
-                      <el-dropdown-item command="resetPassword">
-                        <el-icon><Lock /></el-icon>{{ t('user.resetPassword') }}
-                      </el-dropdown-item>
-                      <el-dropdown-item command="delete" divided>
-                        <el-icon><Delete /></el-icon>{{ t('user.deleteUser') }}
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </template>
-                </el-dropdown>
-              </div>
-            </template>
-          </el-table-column>
-        </el-table>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead class="w-[150px]">{{ t('user.username') }}</TableHead>
+                <TableHead class="w-[120px]">{{ t('user.realName') }}</TableHead>
+                <TableHead>{{ t('user.email') }}</TableHead>
+                <TableHead>{{ t('user.organization') }}</TableHead>
+                <TableHead>{{ t('user.roles') }}</TableHead>
+                <TableHead class="w-[110px] text-center">{{ t('common.status') }}</TableHead>
+                <TableHead class="w-[160px] text-right">{{ t('common.actions') }}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow v-for="row in tableData" :key="row.id">
+                <TableCell>
+                  <div class="user-cell">
+                    <div class="user-avatar-mini">{{ row.username?.charAt(0).toUpperCase() }}</div>
+                    <span class="username">{{ row.username }}</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <span class="text-sub">{{ row.real_name || '-' }}</span>
+                </TableCell>
+                <TableCell>
+                  <span class="text-sub">{{ row.email || '-' }}</span>
+                </TableCell>
+                <TableCell>
+                  <span v-if="getOrganizationName(row.primary_organization_id)" class="text-sub">{{ getOrganizationName(row.primary_organization_id) }}</span>
+                  <span v-else class="text-muted">-</span>
+                </TableCell>
+                <TableCell>
+                  <div class="roles-cell">
+                    <Badge v-for="role in (row.role_names || []).slice(0, 2)" :key="role" variant="secondary" class="role-tag">{{ role }}</Badge>
+                    <span v-if="(row.role_names ?? []).length > 2" class="more-tag">+{{ (row.role_names ?? []).length - 2 }}</span>
+                    <span v-if="!row.role_names || row.role_names.length === 0" class="text-muted">-</span>
+                  </div>
+                </TableCell>
+                <TableCell class="text-center">
+                  <Badge :class="getStatusBadgeClass(row.status)">
+                    {{ t(`user.status.${getStatusKey(row.status)}`) }}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <div class="action-group">
+                    <button class="action-btn view-btn" @click="handleView(row)" :title="t('common.view')">
+                      <Eye class="h-4 w-4" />
+                    </button>
+                    <button class="action-btn edit-btn" @click="handleEdit(row)" :title="t('common.edit')">
+                      <Pencil class="h-4 w-4" />
+                    </button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger as-child>
+                        <button class="action-btn more-btn" :title="t('common.actions')">
+                          <MoreHorizontal class="h-4 w-4" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem @select="handleMoreAction('changeStatus', row)">
+                          <RefreshCw class="mr-2 h-4 w-4" />{{ t('user.changeStatus') }}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @select="handleMoreAction('resetPassword', row)">
+                          <Lock class="mr-2 h-4 w-4" />{{ t('user.resetPassword') }}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem class="text-destructive" @select="handleMoreAction('delete', row)">
+                          <Trash2 class="mr-2 h-4 w-4" />{{ t('user.deleteUser') }}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
         </div>
 
         <div class="pagination-wrapper">
-          <el-pagination
-            v-model:current-page="pagination.page"
-            v-model:page-size="pagination.limit"
-            :total="pagination.total"
-            :page-sizes="[10, 20, 50, 100]"
-            :background="true"
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="handleSizeChange"
-            @current-change="handlePageChange"
-          />
+          <div class="pagination-info">
+            <span class="text-sm text-muted-foreground">
+              {{ t('common.total') || '共' }} {{ pagination.total }} {{ t('common.items') || '条' }}
+            </span>
+          </div>
+          <div class="pagination-controls">
+            <Select v-model="paginationLimitString">
+              <SelectTrigger class="w-[80px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem :value="String(10)">10</SelectItem>
+                <SelectItem :value="String(20)">20</SelectItem>
+                <SelectItem :value="String(50)">50</SelectItem>
+                <SelectItem :value="String(100)">100</SelectItem>
+              </SelectContent>
+            </Select>
+            <div class="page-buttons">
+              <Button variant="outline" size="sm" :disabled="pagination.page <= 1" @click="handlePageChange(pagination.page - 1)">
+                <ChevronLeft class="h-4 w-4" />
+              </Button>
+              <span class="page-info">{{ pagination.page }}</span>
+              <Button variant="outline" size="sm" :disabled="pagination.page >= Math.ceil(pagination.total / pagination.limit)" @click="handlePageChange(pagination.page + 1)">
+                <ChevronRight class="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </div>
       </template>
     </div>
 
-    <!-- 变更状态对话框 -->
-    <el-dialog v-model="statusDialogVisible" :title="t('user.changeStatus')" width="480px">
-      <el-form :model="statusForm" label-width="100px">
-        <el-form-item :label="t('common.status')">
-          <el-select v-model="statusForm.new_status" style="width: 100%">
-            <el-option :label="t('user.status.active')" :value="1" />
-            <el-option :label="t('user.status.inactive')" :value="2" />
-            <el-option :label="t('user.status.suspended')" :value="3" />
-            <el-option :label="t('user.status.locked')" :value="4" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('common.description')">
-          <el-input v-model="statusForm.reason" type="textarea" :rows="3" :placeholder="t('common.description')" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="statusDialogVisible = false">{{ t('common.cancel') }}</el-button>
-        <el-button type="primary" @click="confirmChangeStatus" :loading="submitting">{{ t('common.confirm') }}</el-button>
-      </template>
-    </el-dialog>
+    <Dialog v-model:open="statusDialogVisible">
+      <DialogContent class="sm:max-w-[480px]">
+        <DialogHeader>
+          <DialogTitle>{{ t('user.changeStatus') }}</DialogTitle>
+        </DialogHeader>
+        <div class="grid gap-4 py-4">
+          <div class="grid grid-cols-4 items-center gap-4">
+            <label class="text-right text-sm">{{ t('common.status') }}</label>
+            <Select v-model="statusFormNewStatusString" class="col-span-3">
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem :value="String(1)">{{ t('user.status.active') }}</SelectItem>
+                <SelectItem :value="String(2)">{{ t('user.status.inactive') }}</SelectItem>
+                <SelectItem :value="String(3)">{{ t('user.status.suspended') }}</SelectItem>
+                <SelectItem :value="String(4)">{{ t('user.status.locked') }}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div class="grid grid-cols-4 items-center gap-4">
+            <label class="text-right text-sm">{{ t('common.descriptions') }}</label>
+            <Textarea v-model="statusForm.reason" :placeholder="t('common.descriptions')" class="col-span-3" :rows="3" />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" @click="statusDialogVisible = false">{{ t('common.cancel') }}</Button>
+          <Button @click="confirmChangeStatus" :disabled="submitting">{{ t('common.confirm') }}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Refresh, Plus, View, Edit, Delete, Lock, RefreshRight, User, CircleCheck, MoreFilled } from '@element-plus/icons-vue'
+import { toast } from 'vue-sonner'
+import {
+  Plus, Search, RefreshCw, User, CircleCheck, Lock,
+  Eye, Pencil, MoreHorizontal, Trash2,
+  ChevronLeft, ChevronRight, X
+} from 'lucide-vue-next'
 import { getUserList, changeUserStatus, deleteUser } from '@/api/user'
 import { getOrganizationList } from '@/api/organization'
 import type { UserListItem } from '@/types/user'
 import type { Organization } from '@/types/organization'
 import ListPageSkeleton from '@/components/skeleton/ListPageSkeleton.vue'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { Badge } from '@/components/ui/badge'
+import {
+  Table, TableHeader, TableBody, TableHead, TableRow, TableCell
+} from '@/components/ui/table'
+import {
+  Select, SelectTrigger, SelectValue, SelectContent, SelectItem
+} from '@/components/ui/select'
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter
+} from '@/components/ui/dialog'
+import {
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
+  DropdownMenuItem, DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -214,11 +272,21 @@ const submitting = ref(false)
 const tableData = ref<UserListItem[]>([])
 const organizations = ref<Organization[]>([])
 
-const searchForm = reactive({ search: '', organization_id: '', status: undefined as number | undefined })
+const searchForm = reactive({ search: '', organization_id: '', status: undefined as string | undefined })
 const pagination = reactive({ page: 1, limit: 20, total: 0 })
 const statusDialogVisible = ref(false)
 const statusForm = reactive({ user_id: '', new_status: 1, reason: '' })
 const currentUser = ref<UserListItem | null>(null)
+
+const paginationLimitString = computed({
+  get: () => String(pagination.limit),
+  set: (val: string) => { pagination.limit = Number(val) },
+})
+
+const statusFormNewStatusString = computed({
+  get: () => String(statusForm.new_status),
+  set: (val: string) => { statusForm.new_status = Number(val) },
+})
 
 onMounted(() => { fetchData(); fetchOrganizations() })
 
@@ -255,12 +323,12 @@ async function fetchData() {
       page: pagination.page, limit: pagination.limit,
       search: searchForm.search || undefined,
       organization_id: searchForm.organization_id || undefined,
-      status: searchForm.status
+      status: searchForm.status ? Number(searchForm.status) : undefined
     })
     tableData.value = response.users || []
     pagination.total = (response as any).total || 0
   } catch (error: any) {
-    ElMessage.error(error.message || t('common.operationFailed'))
+    toast.error(error.message || t('common.operationFailed'))
   } finally {
     loading.value = false
     initialLoading.value = false
@@ -289,37 +357,42 @@ async function confirmChangeStatus() {
   submitting.value = true
   try {
     await changeUserStatus(statusForm.user_id, statusForm.new_status, statusForm.reason)
-    ElMessage.success(t('common.operationSuccess')); statusDialogVisible.value = false; fetchData()
+    toast.success(t('common.operationSuccess')); statusDialogVisible.value = false; fetchData()
   } catch (error: any) {
-    ElMessage.error(error.message || t('common.operationFailed'))
+    toast.error(error.message || t('common.operationFailed'))
   } finally { submitting.value = false }
 }
 
 async function handleResetPassword(_row: UserListItem) {
   try {
-    await ElMessageBox.prompt(t('user.newPassword') + '（留空则系统自动生成）', t('user.resetPassword'), {
-      confirmButtonText: t('common.confirm'), cancelButtonText: t('common.cancel'),
-      inputPattern: /^.{0,50}$/, inputErrorMessage: '密码长度不能超过50位'
-    })
-    ElMessage.success('密码重置成功')
+    const newPassword = prompt(t('user.newPassword') + '（留空则系统自动生成）')
+    if (newPassword !== null) {
+      toast.success('密码重置成功')
+    }
   } catch {}
 }
 
 async function handleDelete(row: UserListItem) {
   try {
-    await ElMessageBox.confirm(`${t('user.username')}: ${row.username}`, t('common.deleteConfirm'), {
-      confirmButtonText: t('common.confirm'), cancelButtonText: t('common.cancel'), type: 'warning', distinguishCancelAndClose: true
-    })
-    await deleteUser(row.id); ElMessage.success(t('common.deleteSuccess')); fetchData()
+    if (confirm(`${t('user.username')}: ${row.username}\n${t('common.deleteConfirm')}`)) {
+      await deleteUser(row.id); toast.success(t('common.deleteSuccess')); fetchData()
+    }
   } catch (error: any) {
-    if (error !== 'cancel' && error !== 'close') ElMessage.error(error.message || t('common.operationFailed'))
+    toast.error(error.message || t('common.operationFailed'))
   }
 }
 
-function handleSizeChange(size: number) { pagination.limit = size; pagination.page = 1; fetchData() }
 function handlePageChange(page: number) { pagination.page = page; fetchData() }
 function getStatusKey(status: number) { return ({ 1: 'active', 2: 'inactive', 3: 'suspended', 4: 'locked' } as Record<number, string>)[status] || 'unknown' }
-function getStatusType(status: number) { return ({ 1: 'success', 2: 'info', 3: 'warning', 4: 'danger' } as Record<number, string>)[status] || 'info' }
+function getStatusBadgeClass(status: number) {
+  const classMap: Record<number, string> = {
+    1: 'bg-emerald-500 text-white',
+    2: 'bg-gray-400 text-white',
+    3: 'bg-amber-500 text-white',
+    4: 'bg-red-500 text-white'
+  }
+  return classMap[status] || 'bg-gray-400 text-white'
+}
 </script>
 
 <style scoped lang="scss">
@@ -334,38 +407,38 @@ function getStatusType(status: number) { return ({ 1: 'success', 2: 'info', 3: '
     align-items: flex-end;
     margin-bottom: 28px;
 
-      .header-left {
-        .page-title {
-          font-size: 26px;
-          font-weight: 700;
-          font-family: 'Inter', sans-serif;
-          background: linear-gradient(120deg, var(--c-primary), var(--c-accent));
-          background-clip: text;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          margin: 0 0 6px;
-          line-height: 1.2;
-        }
-        .page-subtitle { color: var(--c-text-sub); font-size: 13px; margin: 0; }
+    .header-left {
+      .page-title {
+        font-size: 26px;
+        font-weight: 700;
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(120deg, var(--c-primary), var(--c-accent));
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 0 0 6px;
+        line-height: 1.2;
       }
-
-      .create-btn {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 20px;
-        background: linear-gradient(135deg, var(--c-primary) 0%, var(--c-accent) 100%);
-        color: #fff;
-        font-weight: 600;
-        font-size: 14px;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-
-        &:hover { box-shadow: 0 0 24px rgba(63, 81, 181, 0.35); transform: translateY(-1px); }
-      }
+      .page-subtitle { color: var(--c-text-sub); font-size: 13px; margin: 0; }
     }
+
+    .create-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, var(--c-primary) 0%, var(--c-accent) 100%);
+      color: #fff;
+      font-weight: 600;
+      font-size: 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover { box-shadow: 0 0 24px rgba(63, 81, 181, 0.35); transform: translateY(-1px); }
+    }
+  }
 
   .stats-row {
     display: grid;
@@ -420,7 +493,74 @@ function getStatusType(status: number) { return ({ 1: 'success', 2: 'info', 3: '
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      :deep(.el-form-item) { margin-bottom: 0; margin-right: 12px; }
+      gap: 12px;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 320px;
+
+      .search-icon {
+        position: absolute;
+        left: 10px;
+        height: 16px;
+        width: 16px;
+        color: var(--c-text-muted);
+      }
+
+      .search-input {
+        width: 100%;
+        height: 36px;
+        padding: 0 32px 0 34px;
+        border: 1px solid hsl(var(--border));
+        border-radius: 8px;
+        background: var(--bg-input);
+        color: var(--c-text-main);
+        font-size: 14px;
+
+        &:focus {
+          outline: none;
+          border-color: var(--c-primary);
+          box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.15);
+        }
+
+        &::placeholder {
+          color: var(--c-text-muted);
+        }
+      }
+
+      .clear-btn {
+        position: absolute;
+        right: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        border: none;
+        background: transparent;
+        color: var(--c-text-muted);
+        cursor: pointer;
+        border-radius: 4px;
+
+        &:hover {
+          background: var(--bg-card);
+          color: var(--c-text-main);
+        }
+      }
+    }
+
+    .select-wrapper {
+      :deep(.select-trigger) {
+        height: 36px;
+      }
+    }
+
+    .search-buttons {
+      display: flex;
+      gap: 8px;
     }
   }
 
@@ -438,11 +578,7 @@ function getStatusType(status: number) { return ({ 1: 'success', 2: 'info', 3: '
     .table-body {
       flex: 1;
       min-height: 0;
-    }
-
-    .modern-table {
-      :deep(th.el-table__cell) { padding: 14px 12px; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; }
-      :deep(td.el-table__cell) { padding: 12px; }
+      overflow: auto;
     }
 
     .user-cell {
@@ -478,7 +614,6 @@ function getStatusType(status: number) { return ({ 1: 'success', 2: 'info', 3: '
 
       .role-tag {
         font-size: 11px;
-        padding: 1px 8px;
       }
 
       .more-tag {
@@ -508,7 +643,6 @@ function getStatusType(status: number) { return ({ 1: 'success', 2: 'info', 3: '
         cursor: pointer;
         transition: all 0.2s ease;
         color: var(--c-text-sub);
-        font-size: 14px;
 
         &:hover { transform: translateY(-1px); }
         &.view-btn:hover { color: var(--c-primary); border-color: rgba(63, 81, 181, 0.3); background: rgba(63, 81, 181, 0.08); }
@@ -519,9 +653,35 @@ function getStatusType(status: number) { return ({ 1: 'success', 2: 'info', 3: '
 
     .pagination-wrapper {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
+      align-items: center;
       padding: 16px 20px;
       border-top: 1px solid var(--c-border);
+
+      .pagination-info {
+        display: flex;
+        align-items: center;
+      }
+
+      .pagination-controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .page-buttons {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .page-info {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--c-text-main);
+            min-width: 32px;
+            text-align: center;
+          }
+        }
+      }
     }
   }
 }

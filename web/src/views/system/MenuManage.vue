@@ -1,16 +1,14 @@
 <template>
   <div class="menu-manage">
-    <el-card class="menu-card">
-      <template #header>
-        <div class="card-header">
-          <span class="title">{{ t('system.menuManage') }}</span>
-          <span class="meta">System</span>
-        </div>
-      </template>
+    <div class="menu-card">
+      <div class="card-header">
+        <span class="title">{{ t('system.menuManage') }}</span>
+        <span class="meta">System</span>
+      </div>
       <div class="card-body">
         <p>菜单管理页面 - 待开发</p>
       </div>
-    </el-card>
+    </div>
   </div>
 </template>
 

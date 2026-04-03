@@ -1,16 +1,14 @@
 <template>
   <div class="role-roleEdit">
-    <el-card class="menu-card">
-      <template #header>
-        <div class="card-header">
-          <span class="title">roleEdit role - 待开发</span>
-          <span class="meta">Edit</span>
-        </div>
-      </template>
+    <div class="menu-card">
+      <div class="card-header">
+        <span class="title">roleEdit role - 待开发</span>
+        <span class="meta">Edit</span>
+      </div>
       <div class="card-body">
         <p>此页面正在开发中...</p>
       </div>
-    </el-card>
+    </div>
   </div>
 </template>
 

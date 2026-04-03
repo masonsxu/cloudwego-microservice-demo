@@ -313,6 +313,7 @@ func (l *LogicImpl) validateCreateOrganizationRequest(
 				return errno.ErrInvalidParams.WithMessage("省市信息不能为空")
 			}
 		}
+
 		if len(provinceCity) > 10 {
 			return errno.ErrInvalidParams.WithMessage("省市信息列表项目数量不能超过10个")
 		}
@@ -336,6 +337,7 @@ func (l *LogicImpl) validateUpdateOrganizationRequest(
 				return errno.ErrInvalidParams.WithMessage("省市信息不能为空")
 			}
 		}
+
 		if len(provinceCity) > 10 {
 			return errno.ErrInvalidParams.WithMessage("省市信息列表项目数量不能超过10个")
 		}

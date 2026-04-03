@@ -183,5 +183,6 @@ func ProvideOIDCService(
 	if err != nil {
 		panic(err)
 	}
+
 	return svc
 }

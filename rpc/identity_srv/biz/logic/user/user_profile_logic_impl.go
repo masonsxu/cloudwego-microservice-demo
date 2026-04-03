@@ -243,10 +243,12 @@ func (l *LogicImpl) DeleteUser(
 		// 3a. 清理用户的角色分配记录
 		opts := base.NewQueryOptions()
 		opts.FetchAll = true
-		assignments, _, err := txDAL.UserRoleAssignment().FindWithConditions(ctx, &assignment.UserRoleAssignmentQueryConditions{
-			UserID: req.UserID,
-			Page:   opts,
-		})
+
+		assignments, _, err := txDAL.UserRoleAssignment().
+			FindWithConditions(ctx, &assignment.UserRoleAssignmentQueryConditions{
+				UserID: req.UserID,
+				Page:   opts,
+			})
 		if err != nil {
 			return fmt.Errorf("查询用户角色分配失败: %w", err)
 		}

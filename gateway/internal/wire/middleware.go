@@ -169,20 +169,18 @@ func ProvideCasbinConfig(cfg *config.Configuration) *casbnmw.Config {
 	}
 
 	// 兼容旧 CASBIN_SKIP_PATHS 环境变量（deprecated）
-	if legacySkipPaths := os.Getenv("CASBIN_SKIP_PATHS"); legacySkipPaths != "" {
-		// 仅在未配置新变量时回退使用旧变量
-		if len(casbinCfg.SkipExtraPaths) == 0 {
-			parts := strings.Split(legacySkipPaths, ",")
-			for _, p := range parts {
-				t := strings.TrimSpace(p)
-				if t == "" {
-					continue
-				}
+	legacySkipPaths := os.Getenv("CASBIN_SKIP_PATHS")
+	if legacySkipPaths != "" && len(casbinCfg.SkipExtraPaths) == 0 {
+		parts := strings.Split(legacySkipPaths, ",")
+		for _, p := range parts {
+			t := strings.TrimSpace(p)
+			if t == "" {
+				continue
+			}
 
-				if _, ok := seen[t]; !ok {
-					seen[t] = struct{}{}
-					mergedSkipPaths = append(mergedSkipPaths, t)
-				}
+			if _, ok := seen[t]; !ok {
+				seen[t] = struct{}{}
+				mergedSkipPaths = append(mergedSkipPaths, t)
 			}
 		}
 	}

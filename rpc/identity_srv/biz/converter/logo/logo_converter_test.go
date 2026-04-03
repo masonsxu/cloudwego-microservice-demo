@@ -326,7 +326,9 @@ func TestConverterImpl_StatusThriftToModel(t *testing.T) {
 	converter := &ConverterImpl{}
 
 	t.Run("临时状态转换", func(t *testing.T) {
-		result := converter.StatusThriftToModel(identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_UNSPECIFIED)
+		result := converter.StatusThriftToModel(
+			identity_srv.OrganizationLogoStatus_ORGANIZATION_LOGO_STATUS_UNSPECIFIED,
+		)
 		assert.Equal(t, models.LogoStatusTemporary, result)
 	})
 

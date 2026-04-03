@@ -256,10 +256,12 @@ func (a *menuAssembler) ToRPCMenuConfigsFromListValue(
 		}
 
 		fields := structValue.GetFields()
+
 		menuIDValue, ok := fields["menuID"]
 		if !ok {
 			continue
 		}
+
 		menuID := menuIDValue.GetStringValue()
 		if menuID == "" {
 			continue

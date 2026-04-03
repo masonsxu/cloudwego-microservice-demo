@@ -20,11 +20,13 @@ func ShouldSkip(c *app.RequestContext, skipPaths []string) bool {
 				path,
 				pattern,
 			)
+
 			return true // 继续下一个 handler，不再走鉴权
 		}
 	}
 
 	fmt.Printf("[skip-debug] method=%s path=%s matched_pattern=<none>\n", method, path)
+
 	return false
 }
 

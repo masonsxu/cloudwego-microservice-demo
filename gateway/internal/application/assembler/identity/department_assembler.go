@@ -89,6 +89,7 @@ func (a *departmentAssembler) ToRPCUpdateDeptRequest(
 	if dto.Name != nil {
 		req.Name = dto.Name
 	}
+
 	if dto.DepartmentType != nil {
 		req.DepartmentType = dto.DepartmentType
 	}

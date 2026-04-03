@@ -1,16 +1,14 @@
 <template>
   <div class="system-systemCreate">
-    <el-card class="menu-card">
-      <template #header>
-        <div class="card-header">
-          <span class="title">systemCreate system - 待开发</span>
-          <span class="meta">Create</span>
-        </div>
-      </template>
+    <div class="menu-card">
+      <div class="card-header">
+        <span class="title">systemCreate system - 待开发</span>
+        <span class="meta">Create</span>
+      </div>
       <div class="card-body">
         <p>此页面正在开发中...</p>
       </div>
-    </el-card>
+    </div>
   </div>
 </template>
 

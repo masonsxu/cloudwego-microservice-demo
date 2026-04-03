@@ -1,5 +1,5 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
-import { ElMessage } from 'element-plus'
+import { toast } from 'vue-sonner'
 import { useAuthStore } from '@/stores/auth'
 
 // 创建 axios 实例
@@ -57,7 +57,7 @@ instance.interceptors.response.use(
     // 处理统一响应格式
     if (data.base_resp) {
       if (data.base_resp.code !== 0) {
-        ElMessage.error(data.base_resp.message || '请求失败')
+        toast.error(data.base_resp.message || '请求失败')
         return Promise.reject(new Error(data.base_resp.message))
       }
       // 返回去除 base_resp 后的数据
@@ -121,24 +121,24 @@ instance.interceptors.response.use(
           }
 
         case 403:
-          ElMessage.error('没有权限访问')
+          toast.error('没有权限访问')
           break
 
         case 404:
-          ElMessage.error('请求的资源不存在')
+          toast.error('请求的资源不存在')
           break
 
         case 500:
-          ElMessage.error('服务器内部错误')
+          toast.error('服务器内部错误')
           break
 
         default:
-          ElMessage.error(error.message || '请求失败')
+          toast.error(error.message || '请求失败')
       }
     } else if (error.request) {
-      ElMessage.error('网络连接失败，请检查网络')
+      toast.error('网络连接失败，请检查网络')
     } else {
-      ElMessage.error('请求配置错误')
+      toast.error('请求配置错误')
     }
 
     return Promise.reject(error)

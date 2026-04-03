@@ -1,173 +1,206 @@
 <template>
-  <div class="app-sidebar">
-    <div class="logo">
+  <div class="flex flex-col h-full">
+    <div class="flex items-center justify-center p-5 border-b border-[rgba(212,175,55,0.2)]">
       <img
         v-if="appStore.theme === 'dark'"
         src="/logo-dark.svg"
         alt="Logo"
-        class="logo-img"
-        :class="{ collapsed: appStore.sidebarCollapsed }"
+        class="h-9 w-auto transition-all duration-300"
+        :class="{ 'h-8': appStore.sidebarCollapsed }"
       />
       <img
         v-else
         src="/logo-light.svg"
         alt="Logo"
-        class="logo-img"
-        :class="{ collapsed: appStore.sidebarCollapsed }"
+        class="h-9 w-auto transition-all duration-300"
+        :class="{ 'h-8': appStore.sidebarCollapsed }"
       />
     </div>
-    <el-menu
-      :default-active="activeMenu"
-      :collapse="appStore.sidebarCollapsed"
-      :unique-opened="true"
-      router
-      class="sidebar-menu"
-    >
+    <nav class="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[rgba(212,175,55,0.3)] [&::-webkit-scrollbar-thumb]:rounded-sm">
       <template v-for="item in menuList" :key="item.id">
-        <el-sub-menu v-if="item.children && item.children.length > 0" :index="getMenuIndex(item)">
-          <template #title>
-            <el-icon v-if="item.icon">
-              <component :is="getIconComponent(item.icon)" />
-            </el-icon>
-            <span>{{ t(item.name || '') }}</span>
-          </template>
-          <template v-for="child in item.children" :key="child.id">
-            <el-menu-item :index="getMenuIndex(child)">
-              <el-icon v-if="child.icon">
-                <component :is="getIconComponent(child.icon)" />
-              </el-icon>
-              <span>{{ t(child.name || '') }}</span>
-            </el-menu-item>
-          </template>
-        </el-sub-menu>
-        <el-menu-item v-else :index="getMenuIndex(item)">
-          <el-icon v-if="item.icon">
-            <component :is="getIconComponent(item.icon)" />
-          </el-icon>
-          <span>{{ t(item.name || '') }}</span>
-        </el-menu-item>
+        <div v-if="item.children && item.children.length > 0" class="relative">
+          <button
+            class="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-[var(--c-text-sub)] transition-colors hover:bg-[rgba(212,175,55,0.08)] hover:text-[var(--c-accent)]"
+            :class="{
+              'justify-center px-2': appStore.sidebarCollapsed,
+              'bg-[rgba(212,175,55,0.12)] text-[var(--c-accent)]': isMenuBranchActive(item)
+            }"
+            @click="handleParentMenuClick(item)"
+          >
+            <component :is="getIconComponent(item.icon)" v-if="item.icon" class="h-4 w-4" />
+            <span v-show="!appStore.sidebarCollapsed">{{ getMenuLabel(item.name) }}</span>
+          </button>
+          <div v-show="isMenuExpanded(item) && !appStore.sidebarCollapsed" class="bg-[rgba(0,0,0,0.1)]">
+            <template v-for="child in item.children" :key="child.id">
+              <RouterLink
+                v-if="getMenuRoute(child)"
+                :to="getMenuRoute(child)!"
+                class="flex items-center gap-3 pl-12 pr-4 py-2 text-sm text-[var(--c-text-sub)] transition-colors hover:bg-[rgba(212,175,55,0.08)] hover:text-[var(--c-accent)]"
+                :class="{ 'bg-[rgba(212,175,55,0.12)] text-[var(--c-accent)]': isMenuActive(child) }"
+              >
+                <component :is="getIconComponent(child.icon)" v-if="child.icon" class="h-4 w-4" />
+                <span>{{ getMenuLabel(child.name) }}</span>
+              </RouterLink>
+              <div
+                v-else
+                class="flex items-center gap-3 pl-12 pr-4 py-2 text-sm text-[var(--c-text-sub)] opacity-60 cursor-not-allowed"
+              >
+                <component :is="getIconComponent(child.icon)" v-if="child.icon" class="h-4 w-4" />
+                <span>{{ getMenuLabel(child.name) }}</span>
+              </div>
+            </template>
+          </div>
+        </div>
+        <RouterLink
+          v-else-if="getMenuRoute(item)"
+          :to="getMenuRoute(item)!"
+          class="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--c-text-sub)] transition-colors hover:bg-[rgba(212,175,55,0.08)] hover:text-[var(--c-accent)]"
+          :class="{
+            'justify-center px-2': appStore.sidebarCollapsed,
+            'bg-[rgba(212,175,55,0.12)] text-[var(--c-accent)]': isMenuActive(item)
+          }"
+        >
+          <component :is="getIconComponent(item.icon)" v-if="item.icon" class="h-4 w-4" />
+          <span v-show="!appStore.sidebarCollapsed">{{ getMenuLabel(item.name) }}</span>
+        </RouterLink>
+        <div
+          v-else
+          class="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--c-text-sub)] opacity-60 cursor-not-allowed"
+          :class="{ 'justify-center px-2': appStore.sidebarCollapsed }"
+        >
+          <component :is="getIconComponent(item.icon)" v-if="item.icon" class="h-4 w-4" />
+          <span v-show="!appStore.sidebarCollapsed">{{ getMenuLabel(item.name) }}</span>
+        </div>
       </template>
-    </el-menu>
+    </nav>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, ref } from 'vue'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
+import { Settings, Building2, Key, User, FileText, Menu } from 'lucide-vue-next'
 import type { MenuNodeDTO } from '@/api/role'
+import { menuRouteMap, visibleRoutePaths } from '@/router/routes'
+import type { AppRouteMeta } from '@/router/routes'
 
 const appStore = useAppStore()
 const route = useRoute()
+const router = useRouter()
 const authStore = useAuthStore()
 const { t } = useI18n()
 
-const activeMenu = computed(() => route.path)
+const expandedMenus = ref<Set<string>>(new Set())
 
-// 从后端返回的菜单树生成侧边栏菜单
-const menuList = computed(() => {
-  const menuTree = authStore.menuTree || []
-  console.log('[AppSidebar] menuTree:', JSON.stringify(menuTree, null, 2))
-  return menuTree
+const menuList = computed(() => authStore.menuTree || [])
+
+const activeMenuId = computed(() => {
+  const meta = route.meta as AppRouteMeta
+  return meta.activeMenu || meta.menuId || ''
 })
 
-// 路径映射：后端菜单路径 -> 前端路由路径
-// 注意：子菜单的 path 是相对路径（如 "organization-management"）
-// 需要和父级路径组合后映射
-const pathMapping: Record<string, string> = {
-  '/system-settings': '/system-settings',
-  'organization-management': '/system-settings/organization',
-  'role-permissions': '/system-settings/roles',
-  'account-management': '/system-settings/accounts',
-  'audit-logs': '/system-settings/audit-logs',
-  'oidc': '/system-settings/oidc/config',
-  'oidc-config': '/system-settings/oidc/config',
-  'oidc-integration': '/system-settings/oidc/integration'
-}
+const activeRoutePath = computed(() => {
+  const meta = route.meta as AppRouteMeta
 
-// 获取菜单索引（使用映射后的路径）
-function getMenuIndex(menu: MenuNodeDTO): string {
-  const originalPath = menu.path || ''
-
-  // 如果是绝对路径（以 / 开头），直接映射
-  if (originalPath.startsWith('/')) {
-    return pathMapping[originalPath] || originalPath
+  if (meta.activeMenu) {
+    return menuRouteMap.get(meta.activeMenu)?.path || route.path
   }
 
-  // 如果是相对路径，先尝试直接映射，如果失败则与父路径组合
-  const mapped = pathMapping[originalPath]
-  if (mapped) {
-    return mapped
+  return route.path
+})
+
+function toggleSubMenu(id: string) {
+  if (expandedMenus.value.has(id)) {
+    expandedMenus.value.delete(id)
+    return
   }
 
-  // 如果没有映射，使用原始路径
-  return originalPath
+  expandedMenus.value.add(id)
 }
 
-// 图标名称到 Element Plus 图标组件的映射
+function getMenuRoute(menu: MenuNodeDTO): string | null {
+  const mappedRoute = menuRouteMap.get(menu.id)?.path
+  if (mappedRoute) {
+    return mappedRoute
+  }
+
+  if (menu.path && visibleRoutePaths.has(menu.path)) {
+    return menu.path
+  }
+
+  return null
+}
+
+function getMenuLabel(name?: string): string {
+  if (!name) {
+    return ''
+  }
+
+  return name.includes('.') ? t(name) : name
+}
+
+function hasNavigableChildren(menu: MenuNodeDTO): boolean {
+  return !!menu.children?.some(child => getMenuRoute(child))
+}
+
+function isMenuActive(menu: MenuNodeDTO): boolean {
+  const target = getMenuRoute(menu)
+
+  if (menu.id && activeMenuId.value) {
+    return menu.id === activeMenuId.value
+  }
+
+  return !!target && activeRoutePath.value === target
+}
+
+function isMenuBranchActive(menu: MenuNodeDTO): boolean {
+  if (isMenuActive(menu)) {
+    return true
+  }
+
+  return !!menu.children?.some(child => isMenuActive(child))
+}
+
+function isMenuExpanded(menu: MenuNodeDTO): boolean {
+  return isMenuBranchActive(menu) || expandedMenus.value.has(menu.id)
+}
+
+async function handleParentMenuClick(menu: MenuNodeDTO) {
+  if (appStore.sidebarCollapsed) {
+    appStore.toggleSidebar()
+  }
+
+  const target = getMenuRoute(menu)
+
+  if (target && target !== route.path) {
+    await router.push(target)
+    return
+  }
+
+  if (hasNavigableChildren(menu)) {
+    toggleSubMenu(menu.id)
+  }
+}
+
 function getIconComponent(iconName: string) {
-  const iconMap: Record<string, string> = {
-    'IconSystemSettings': 'Setting',
-    'IconOrganizationManagement': 'OfficeBuilding',
-    'IconRolePermissions': 'Key',
-    'IconAccountManagement': 'User',
-    'IconAuditLogs': 'Document',
-    'Odometer': 'Odometer',
-    'User': 'User',
-    'OfficeBuilding': 'OfficeBuilding',
-    'Key': 'Key',
-    'Setting': 'Setting',
-    'Document': 'Document',
-    'Menu': 'Menu'
+  const iconMap: Record<string, any> = {
+    IconSystemSettings: Settings,
+    IconOrganizationManagement: Building2,
+    IconRolePermissions: Key,
+    IconAccountManagement: User,
+    IconAuditLogs: FileText,
+    Odometer: Menu,
+    User,
+    OfficeBuilding: Building2,
+    Key,
+    Settings,
+    Document: FileText,
+    Menu
   }
-  return iconMap[iconName] || 'Menu'
+
+  return iconMap[iconName] || Menu
 }
 </script>
-
-<style scoped lang="scss">
-.app-sidebar {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-
-  .logo {
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-
-    .logo-img {
-      height: 36px;
-      width: auto;
-      transition: all 0.3s ease;
-
-      &.collapsed {
-        height: 32px;
-      }
-    }
-  }
-
-  .sidebar-menu {
-    flex: 1;
-    border: none;
-    overflow-y: auto;
-
-    &::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: rgba(212, 175, 55, 0.3);
-      border-radius: 2px;
-    }
-  }
-}
-
-</style>

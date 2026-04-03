@@ -377,7 +377,8 @@ func seedSuperAdminMenuPermissions(db *gorm.DB, logger *zerolog.Logger) error {
 	}
 
 	if err := db.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Unscoped().Delete(&models.RoleMenuPermission{}, "role_id = ?", superadminRole.ID).Error; err != nil {
+		if err := tx.Unscoped().
+			Delete(&models.RoleMenuPermission{}, "role_id = ?", superadminRole.ID).Error; err != nil {
 			return fmt.Errorf("删除 superadmin 旧菜单权限失败: %w", err)
 		}
 

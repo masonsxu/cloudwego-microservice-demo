@@ -332,12 +332,22 @@ func mapOIDCEnvVars(v *viper.Viper) {
 		return value == "true"
 	})
 	mapToViper(v, "OIDC_ISSUER", "middleware.oidc.issuer", nil)
-	mapToViper(v, "OIDC_ACCESS_TOKEN_LIFESPAN", "middleware.oidc.access_token_lifespan", func(value string) interface{} {
-		return parseDurationWithDefault(value, 30*time.Minute)
-	})
-	mapToViper(v, "OIDC_REFRESH_TOKEN_LIFESPAN", "middleware.oidc.refresh_token_lifespan", func(value string) interface{} {
-		return parseDurationWithDefault(value, 7*24*time.Hour)
-	})
+	mapToViper(
+		v,
+		"OIDC_ACCESS_TOKEN_LIFESPAN",
+		"middleware.oidc.access_token_lifespan",
+		func(value string) interface{} {
+			return parseDurationWithDefault(value, 30*time.Minute)
+		},
+	)
+	mapToViper(
+		v,
+		"OIDC_REFRESH_TOKEN_LIFESPAN",
+		"middleware.oidc.refresh_token_lifespan",
+		func(value string) interface{} {
+			return parseDurationWithDefault(value, 7*24*time.Hour)
+		},
+	)
 	mapToViper(v, "OIDC_AUTH_CODE_LIFESPAN", "middleware.oidc.auth_code_lifespan", func(value string) interface{} {
 		return parseDurationWithDefault(value, 10*time.Minute)
 	})

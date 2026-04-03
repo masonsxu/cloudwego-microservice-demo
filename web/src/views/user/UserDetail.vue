@@ -1,41 +1,42 @@
 <template>
   <div class="user-detail">
-    <el-page-header @back="handleBack" :title="t('common.back')">
-      <template #content>
-        <span class="page-title">
-          {{ t('user.userDetail') }}
-        </span>
-      </template>
-      <template #extra>
-        <el-button-group>
-          <el-button @click="handleEdit">
-            <el-icon><Edit /></el-icon>
-            {{ t('user.editUser') }}
-          </el-button>
-          <el-dropdown @command="handleAction">
-            <el-button>
-              更多<el-icon><ArrowDown /></el-icon>
-            </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item command="changeStatus">
-                  <el-icon><RefreshRight /></el-icon>
-                  {{ t('user.changeStatus') }}
-                </el-dropdown-item>
-                <el-dropdown-item command="resetPassword">
-                  <el-icon><Lock /></el-icon>
-                  {{ t('user.resetPassword') }}
-                </el-dropdown-item>
-                <el-dropdown-item command="delete" divided>
-                  <el-icon><Delete /></el-icon>
-                  {{ t('user.deleteUser') }}
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </el-button-group>
-      </template>
-    </el-page-header>
+    <div class="page-header">
+      <button class="back-btn" @click="handleBack">
+        <ArrowLeft class="h-4 w-4" />
+        {{ t('common.back') }}
+      </button>
+      <div class="header-content">
+        <h1 class="page-title">{{ t('user.userDetail') }}</h1>
+      </div>
+      <div class="header-actions">
+        <Button variant="outline" @click="handleEdit">
+          <Pencil class="mr-1 h-4 w-4" />
+          {{ t('user.editUser') }}
+        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger as-child>
+            <Button variant="outline">
+              {{ t('common.actions') }}<ChevronDown class="ml-1 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem @select="handleAction('changeStatus')">
+              <RefreshCw class="mr-2 h-4 w-4" />
+              {{ t('user.changeStatus') }}
+            </DropdownMenuItem>
+            <DropdownMenuItem @select="handleAction('resetPassword')">
+              <Lock class="mr-2 h-4 w-4" />
+              {{ t('user.resetPassword') }}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem class="text-destructive" @select="handleAction('delete')">
+              <Trash2 class="mr-2 h-4 w-4" />
+              {{ t('user.deleteUser') }}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </div>
 
     <div class="detail-content">
       <DetailPageSkeleton
@@ -48,132 +49,131 @@
         :side-item-counts="[4]"
         :main-item-counts="[12]"
       />
-      <el-row v-else :gutter="20">
-        <!-- 基本信息 -->
-        <el-col :xs="24" :lg="8">
-          <el-card class="info-card">
-            <template #header>
-              <div class="card-header">
-                <el-icon><User /></el-icon>
-                <span>{{ t('user.userDetail') }}</span>
-              </div>
-            </template>
-            <div class="user-avatar">
-              <el-avatar :size="100" :src="userDetail?.avatar">
+      <div v-else class="detail-grid">
+        <div class="info-card">
+          <div class="card-header">
+            <User class="h-5 w-5" />
+            <span>{{ t('user.userDetail') }}</span>
+          </div>
+          <div class="user-avatar">
+            <Avatar class="avatar-size">
+              <AvatarImage :src="userDetail?.avatar ?? ''" />
+              <AvatarFallback>
                 {{ userDetail?.username?.charAt(0).toUpperCase() }}
-              </el-avatar>
-              <el-tag
-                :type="getStatusType(userDetail?.status)"
-                effect="dark"
-                size="large"
-                class="status-tag"
-              >
-                {{ t(`user.status.${getStatusKey(userDetail?.status)}`) }}
-              </el-tag>
+              </AvatarFallback>
+            </Avatar>
+            <Badge :class="getStatusBadgeClass(userDetail?.status)" class="status-tag">
+              {{ t(`user.status.${getStatusKey(userDetail?.status)}`) }}
+            </Badge>
+          </div>
+          <div class="user-info">
+            <div class="info-row">
+              <span class="info-label">{{ t('user.username') }}</span>
+              <span class="info-value">{{ userDetail?.username }}</span>
             </div>
-            <el-descriptions :column="1" class="user-info">
-              <el-descriptions-item :label="t('user.username')">
-                {{ userDetail?.username }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('user.realName')">
-                {{ userDetail?.real_name || '-' }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('user.email')">
-                {{ userDetail?.email || '-' }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('user.phone')">
-                {{ userDetail?.phone || '-' }}
-              </el-descriptions-item>
-            </el-descriptions>
-          </el-card>
-        </el-col>
+            <div class="info-row">
+              <span class="info-label">{{ t('user.realName') }}</span>
+              <span class="info-value">{{ userDetail?.real_name || '-' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ t('user.email') }}</span>
+              <span class="info-value">{{ userDetail?.email || '-' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{{ t('user.phone') }}</span>
+              <span class="info-value">{{ userDetail?.phone || '-' }}</span>
+            </div>
+          </div>
+        </div>
 
-        <!-- 详细信息 -->
-        <el-col :xs="24" :lg="16">
-          <el-card class="detail-card">
-            <template #header>
-              <div class="card-header">
-                <el-icon><InfoFilled /></el-icon>
-                <span>{{ t('common.description') }}</span>
-              </div>
-            </template>
-            <el-descriptions :column="2" border>
-              <el-descriptions-item :label="t('user.firstName')">
-                {{ userDetail?.first_name || '-' }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('user.lastName')">
-                {{ userDetail?.last_name || '-' }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('user.gender.label')">
-                {{ t(`user.gender.${getGenderKey(userDetail?.gender)}`) }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('user.employeeId')">
-                {{ userDetail?.employee_id || '-' }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('user.professionalTitle')">
-                {{ userDetail?.professional_title || '-' }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('user.organization')">
-                {{ userDetail?.organization?.name || '-' }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('user.department')">
-                {{ userDetail?.department?.name || '-' }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('user.roles')" :span="2">
-                <el-tag
-                  v-for="role in userDetail?.role_names"
-                  :key="role"
-                  type="success"
-                  class="mr-1"
-                >
+        <div class="detail-card">
+          <div class="card-header">
+            <Info class="h-5 w-5" />
+            <span>{{ t('common.descriptions') }}</span>
+          </div>
+          <div class="detail-grid-2col">
+            <div class="detail-item">
+              <span class="detail-label">{{ t('user.firstName') }}</span>
+              <span class="detail-value">{{ userDetail?.first_name || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">{{ t('user.lastName') }}</span>
+              <span class="detail-value">{{ userDetail?.last_name || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">{{ t('user.gender.label') }}</span>
+              <span class="detail-value">{{ t(`user.gender.${getGenderKey(userDetail?.gender)}`) }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">{{ t('user.employeeId') }}</span>
+              <span class="detail-value">{{ userDetail?.employee_id || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">{{ t('user.professionalTitle') }}</span>
+              <span class="detail-value">{{ userDetail?.professional_title || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">{{ t('user.organization') }}</span>
+              <span class="detail-value">{{ userDetail?.organization?.name || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">{{ t('user.department') }}</span>
+              <span class="detail-value">{{ userDetail?.department?.name || '-' }}</span>
+            </div>
+            <div class="detail-item col-span-2">
+              <span class="detail-label">{{ t('user.roles') }}</span>
+              <span class="detail-value">
+                <Badge v-for="role in userDetail?.role_names" :key="role" variant="secondary" class="mr-1">
                   {{ role }}
-                </el-tag>
+                </Badge>
                 <span v-if="!userDetail?.role_names || userDetail.role_names.length === 0">-</span>
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('user.accountExpiry')">
-                {{ formatDate(userDetail?.account_expiry) }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('user.mustChangePassword')">
-                <el-tag :type="userDetail?.must_change_password ? 'warning' : 'success'">
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">{{ t('user.accountExpiry') }}</span>
+              <span class="detail-value">{{ formatDate(userDetail?.account_expiry) }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">{{ t('user.mustChangePassword') }}</span>
+              <span class="detail-value">
+                <Badge :variant="userDetail?.must_change_password ? 'default' : 'secondary'">
                   {{ userDetail?.must_change_password ? t('common.yes') : t('common.no') }}
-                </el-tag>
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('common.createTime')">
-                {{ formatDateTime(userDetail?.created_at) }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('common.updateTime')">
-                {{ formatDateTime(userDetail?.updated_at) }}
-              </el-descriptions-item>
-            </el-descriptions>
-          </el-card>
+                </Badge>
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">{{ t('common.createTime') }}</span>
+              <span class="detail-value">{{ formatDateTime(userDetail?.created_at) }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">{{ t('common.updateTime') }}</span>
+              <span class="detail-value">{{ formatDateTime(userDetail?.updated_at) }}</span>
+            </div>
+          </div>
+        </div>
 
-          <!-- 成员关系 -->
-          <el-card class="membership-card" v-if="memberships.length > 0">
-            <template #header>
-              <div class="card-header">
-                <el-icon><Connection /></el-icon>
-                <span>{{ t('user.memberships') }}</span>
-              </div>
-            </template>
-            <el-timeline>
-              <el-timeline-item
-                v-for="membership in memberships"
-                :key="membership.id"
-                :timestamp="formatDateTime(membership.created_at)"
-                placement="top"
-              >
-                <el-card>
+        <div class="membership-card" v-if="memberships.length > 0">
+          <div class="card-header">
+            <Link class="h-5 w-5" />
+            <span>{{ t('user.memberships') }}</span>
+          </div>
+          <div class="timeline">
+            <div v-for="membership in memberships" :key="membership.id" class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <div class="timeline-timestamp">{{ formatDateTime(membership.created_at) }}</div>
+                <div class="timeline-card">
                   <h4>{{ membership.organization?.name }}</h4>
                   <p>{{ membership.department?.name || t('user.noDepartment') }}</p>
-                  <el-tag v-if="membership.is_primary" type="warning" size="small">
+                  <Badge v-if="membership.is_primary" variant="outline" class="mt-2">
                     {{ t('user.primary') }}
-                  </el-tag>
-                </el-card>
-              </el-timeline-item>
-            </el-timeline>
-          </el-card>
-        </el-col>
-      </el-row>
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -182,17 +182,11 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { toast } from 'vue-sonner'
 import {
-  User,
-  Edit,
-  Delete,
-  Lock,
-  RefreshRight,
-  ArrowDown,
-  InfoFilled,
-  Connection
-} from '@element-plus/icons-vue'
+  User, Pencil, Trash2, Lock, RefreshCw, ChevronDown,
+  Info, Link, ArrowLeft
+} from 'lucide-vue-next'
 import { getUserDetail } from '@/api/user'
 import { deleteUser } from '@/api/user'
 import { organizationApi } from '@/api/organization'
@@ -200,6 +194,13 @@ import { departmentApi } from '@/api/department'
 import type { UserProfile } from '@/types/user'
 import { formatOptionalTimestamp } from '@/utils/date'
 import DetailPageSkeleton from '@/components/skeleton/DetailPageSkeleton.vue'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import {
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
+  DropdownMenuItem, DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu'
 
 const route = useRoute()
 const router = useRouter()
@@ -223,7 +224,6 @@ async function fetchUserDetail() {
     const response = await getUserDetail(userId)
     const user = response.user
 
-    // 根据后端返回的 primary_organization_id 查询组织名称
     if (user.primary_organization_id) {
       try {
         const orgResponse = await organizationApi.getOrganization(user.primary_organization_id)
@@ -236,7 +236,6 @@ async function fetchUserDetail() {
       }
     }
 
-    // 根据后端返回的 primary_department_id 查询部门名称
     if (user.primary_department_id) {
       try {
         const deptResponse = await departmentApi.getDepartment(user.primary_department_id)
@@ -250,13 +249,9 @@ async function fetchUserDetail() {
     }
 
     userDetail.value = user
-
-    // TODO: 获取成员关系
-    // const membershipsResponse = await getUserMemberships(userId)
-    // memberships.value = membershipsResponse.memberships
   } catch (error: any) {
     console.error('Failed to fetch user detail:', error)
-    ElMessage.error(error.message || t('common.operationFailed'))
+    toast.error(error.message || t('common.operationFailed'))
   }
 }
 
@@ -274,12 +269,10 @@ async function handleAction(command: string) {
       await handleDelete()
       break
     case 'resetPassword':
-      // TODO: 实现重置密码
-      ElMessage.info('功能开发中...')
+      toast.info('功能开发中...')
       break
     case 'changeStatus':
-      // TODO: 实现变更状态
-      ElMessage.info('功能开发中...')
+      toast.info('功能开发中...')
       break
   }
 }
@@ -288,23 +281,15 @@ async function handleDelete() {
   if (!userDetail.value) return
 
   try {
-    await ElMessageBox.confirm(
-      `${t('user.username')}: ${userDetail.value.username}`,
-      t('common.deleteConfirm'),
-      {
-        confirmButtonText: t('common.confirm'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning'
-      }
-    )
-
-    await deleteUser(userDetail.value.id)
-    ElMessage.success(t('common.deleteSuccess'))
-    router.push('/users')
+    if (confirm(`${t('user.username')}: ${userDetail.value.username}\n${t('common.deleteConfirm')}`)) {
+      await deleteUser(userDetail.value.id)
+      toast.success(t('common.deleteSuccess'))
+      router.push('/users')
+    }
   } catch (error: any) {
     if (error !== 'cancel') {
       console.error('Failed to delete user:', error)
-      ElMessage.error(error.message || t('common.operationFailed'))
+      toast.error(error.message || t('common.operationFailed'))
     }
   }
 }
@@ -320,15 +305,15 @@ function getStatusKey(status?: number): string {
   return statusMap[status] || 'unknown'
 }
 
-function getStatusType(status?: number): string {
-  if (!status) return 'info'
-  const typeMap: Record<number, string> = {
-    1: 'success',
-    2: 'info',
-    3: 'warning',
-    4: 'danger'
+function getStatusBadgeClass(status?: number): string {
+  if (!status) return 'bg-gray-400 text-white'
+  const classMap: Record<number, string> = {
+    1: 'bg-emerald-500 text-white',
+    2: 'bg-gray-400 text-white',
+    3: 'bg-amber-500 text-white',
+    4: 'bg-red-500 text-white'
   }
-  return typeMap[status] || 'info'
+  return classMap[status] || 'bg-gray-400 text-white'
 }
 
 function getGenderKey(gender?: number): string {
@@ -342,12 +327,10 @@ function getGenderKey(gender?: number): string {
 }
 
 function formatDate(timestamp?: number): string {
-  // 后端返回的是毫秒时间戳，直接使用工具函数
   return formatOptionalTimestamp(timestamp, 'YYYY-MM-DD')
 }
 
 function formatDateTime(timestamp?: number): string {
-  // 后端返回的是毫秒时间戳，直接使用工具函数
   return formatOptionalTimestamp(timestamp, 'YYYY-MM-DD HH:mm:ss')
 }
 </script>
@@ -356,15 +339,56 @@ function formatDateTime(timestamp?: number): string {
 .user-detail {
   padding: 20px;
 
-  .page-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--c-primary);
-    font-family: 'Inter', sans-serif;
+  .page-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border: 1px solid hsl(var(--border));
+      border-radius: 8px;
+      background: var(--bg-card);
+      color: var(--c-text-sub);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: var(--bg-input);
+        color: var(--c-text-main);
+      }
+    }
+
+    .header-content {
+      flex: 1;
+
+      .page-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--c-primary);
+        font-family: 'Inter', sans-serif;
+        margin: 0;
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
   }
 
   .detail-content {
     margin-top: 20px;
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 20px;
+    }
 
     .info-card,
     .detail-card,
@@ -373,7 +397,6 @@ function formatDateTime(timestamp?: number): string {
       border: 1px solid hsl(var(--border) / 0.6);
       border-radius: 18px;
       box-shadow: var(--shadow-card);
-      margin-bottom: 20px;
 
       .card-header {
         display: flex;
@@ -383,47 +406,151 @@ function formatDateTime(timestamp?: number): string {
         font-family: 'Inter', sans-serif;
         font-size: 16px;
         font-weight: 600;
-      }
-
-      :deep(.el-card__header) {
-        border-bottom: 1px solid hsl(var(--border) / 0.6);
         padding: 14px 20px;
+        border-bottom: 1px solid hsl(var(--border) / 0.6);
       }
     }
 
-    .user-avatar {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      margin-bottom: 30px;
+    .info-card {
+      padding-bottom: 20px;
 
-      .el-avatar {
-        font-size: 40px;
-        font-weight: 600;
-        background: linear-gradient(135deg, var(--c-primary) 0%, var(--c-accent) 100%);
-        color: #fff;
+      .user-avatar {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 30px;
+        padding-top: 20px;
+
+        .avatar-size {
+          width: 100px;
+          height: 100px;
+          font-size: 40px;
+          font-weight: 600;
+
+          :deep(.avatar-fallback) {
+            background: linear-gradient(135deg, var(--c-primary) 0%, var(--c-accent) 100%);
+            color: #fff;
+          }
+        }
+
+        .status-tag {
+          font-size: 14px;
+        }
       }
 
-      .status-tag {
-        font-size: 14px;
+      .user-info {
+        padding: 0 20px;
+
+        .info-row {
+          display: flex;
+          justify-content: space-between;
+          padding: 10px 0;
+          border-bottom: 1px solid hsl(var(--border) / 0.3);
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          .info-label {
+            color: var(--c-text-sub);
+            font-size: 13px;
+          }
+
+          .info-value {
+            color: var(--c-text-main);
+            font-size: 13px;
+          }
+        }
       }
     }
 
-    .user-info {
-      width: 100%;
+    .detail-card {
+      padding-bottom: 20px;
 
-      :deep(.el-descriptions__label) {
-        color: var(--c-text-sub);
-      }
+      .detail-grid-2col {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        padding: 20px;
 
-      :deep(.el-descriptions__content) {
-        color: var(--c-text-main);
+        .detail-item {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+
+          &.col-span-2 {
+            grid-column: span 2;
+          }
+
+          .detail-label {
+            color: var(--c-text-sub);
+            font-size: 12px;
+          }
+
+          .detail-value {
+            color: var(--c-text-main);
+            font-size: 13px;
+          }
+        }
       }
     }
 
-    .mr-1 {
-      margin-right: 4px;
+    .membership-card {
+      margin-top: 20px;
+      padding-bottom: 20px;
+
+      .timeline {
+        padding: 20px;
+
+        .timeline-item {
+          position: relative;
+          padding-left: 24px;
+          padding-bottom: 20px;
+
+          &:last-child {
+            padding-bottom: 0;
+          }
+
+          .timeline-dot {
+            position: absolute;
+            left: 0;
+            top: 4px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--c-primary);
+          }
+
+          .timeline-content {
+            .timeline-timestamp {
+              font-size: 12px;
+              color: var(--c-text-muted);
+              margin-bottom: 8px;
+            }
+
+            .timeline-card {
+              padding: 12px 16px;
+              background: var(--bg-input);
+              border: 1px solid hsl(var(--border) / 0.6);
+              border-radius: 10px;
+
+              h4 {
+                margin: 0 0 4px;
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--c-text-main);
+              }
+
+              p {
+                margin: 0;
+                font-size: 13px;
+                color: var(--c-text-sub);
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

@@ -1,26 +1,29 @@
 <template>
-  <div class="org-detail">
-    <el-page-header @back="handleBack" :title="t('common.back')">
-      <template #content>
-        <span class="page-title">
+  <div class="p-5">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-5">
+      <div class="flex items-center gap-3">
+        <Button variant="ghost" size="sm" @click="handleBack">
+          <ArrowLeft class="w-4 h-4 mr-1" />
+          {{ t('common.back') }}
+        </Button>
+        <h1 class="text-xl font-bold font-[Inter] text-primary">
           {{ orgDetail?.name || t('organization.orgDetail') }}
-        </span>
-      </template>
-      <template #extra>
-        <el-button-group>
-          <el-button @click="handleEdit">
-            <el-icon><Edit /></el-icon>
-            {{ t('organization.editOrganization') }}
-          </el-button>
-          <el-button type="danger" @click="handleDelete">
-            <el-icon><Delete /></el-icon>
-            {{ t('organization.deleteOrganization') }}
-          </el-button>
-        </el-button-group>
-      </template>
-    </el-page-header>
+        </h1>
+      </div>
+      <div class="flex gap-2">
+        <Button variant="outline" @click="handleEdit">
+          <Pencil class="w-4 h-4 mr-1" />
+          {{ t('organization.editOrganization') }}
+        </Button>
+        <Button variant="destructive" @click="handleDelete">
+          <Trash2 class="w-4 h-4 mr-1" />
+          {{ t('organization.deleteOrganization') }}
+        </Button>
+      </div>
+    </div>
 
-    <div class="detail-content">
+    <div class="mt-5">
       <DetailPageSkeleton
         v-if="initialLoading"
         :side-span="8"
@@ -31,154 +34,150 @@
         :side-item-counts="[3, 2]"
         :main-item-counts="[6, 4, 2]"
       />
-      <el-row v-else v-loading="loading" :gutter="20">
-        <!-- 基本信息 -->
-        <el-col :xs="24" :lg="8">
-          <el-card class="info-card">
-            <template #header>
-              <div class="card-header">
-                <el-icon><OfficeBuilding /></el-icon>
+      <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <!-- Left Column -->
+        <div class="space-y-5">
+          <!-- Basic Info -->
+          <Card class="bg-card border-border/60 rounded-[18px] shadow-card">
+            <CardHeader class="border-b border-border/60 px-5 py-3.5">
+              <div class="flex items-center gap-2 text-primary font-semibold">
+                <Building2 class="w-4 h-4" />
                 <span>{{ t('organization.basicInfo') }}</span>
               </div>
-            </template>
-            <div class="org-avatar">
-              <el-avatar :size="100" :src="orgDetail?.logo">
-                <el-icon><OfficeBuilding /></el-icon>
-              </el-avatar>
-            </div>
-            <el-descriptions :column="1" class="org-info">
-              <el-descriptions-item :label="t('organization.name')">
-                {{ orgDetail?.name }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('organization.code')">
-                {{ orgDetail?.code || '-' }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('organization.parentOrganization')">
-                <el-tag v-if="!orgDetail?.parent_id" type="info" size="small">
-                  {{ t('organization.root') }}
-                </el-tag>
-                <router-link
-                  v-else
-                  :to="`/organizations/${orgDetail.parent_id}`"
-                  class="link"
-                >
-                  {{ orgDetail?.parent?.name }}
-                </router-link>
-              </el-descriptions-item>
-            </el-descriptions>
-          </el-card>
+            </CardHeader>
+            <CardContent class="p-5">
+              <div class="flex flex-col items-center mb-5">
+                <div class="w-[100px] h-[100px] rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-3xl font-semibold">
+                  <img v-if="orgDetail?.logo" :src="orgDetail.logo" class="w-full h-full rounded-full object-cover" />
+                  <Building2 v-else class="w-10 h-10" />
+                </div>
+              </div>
+              <div class="space-y-3">
+                <div class="flex justify-between text-sm">
+                  <span class="text-muted-foreground">{{ t('organization.name') }}</span>
+                  <span class="text-foreground font-medium">{{ orgDetail?.name }}</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span class="text-muted-foreground">{{ t('organization.code') }}</span>
+                  <span class="text-foreground font-medium">{{ orgDetail?.code || '-' }}</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span class="text-muted-foreground">{{ t('organization.parentOrganization') }}</span>
+                  <span class="text-foreground font-medium">
+                    <Badge v-if="!orgDetail?.parent_id" variant="outline" class="text-xs">{{ t('organization.root') }}</Badge>
+                    <router-link v-else :to="`/organizations/${orgDetail.parent_id}`" class="text-primary hover:underline">{{ orgDetail?.parent?.name }}</router-link>
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-          <!-- 统计信息 -->
-          <el-card class="stat-card">
-            <template #header>
-              <div class="card-header">
-                <el-icon><DataAnalysis /></el-icon>
+          <!-- Statistics -->
+          <Card class="bg-card border-border/60 rounded-[18px] shadow-card">
+            <CardHeader class="border-b border-border/60 px-5 py-3.5">
+              <div class="flex items-center gap-2 text-primary font-semibold">
+                <BarChart3 class="w-4 h-4" />
                 <span>{{ t('organization.statistics') }}</span>
               </div>
-            </template>
-            <el-row :gutter="10">
-              <el-col :span="12">
-                <div class="stat-item">
-                  <div class="stat-value">{{ orgDetail?.member_count || 0 }}</div>
-                  <div class="stat-label">{{ t('organization.memberCount') }}</div>
+            </CardHeader>
+            <CardContent class="p-5">
+              <div class="grid grid-cols-2 gap-2.5">
+                <div class="text-center p-4 bg-input rounded-lg border border-primary/20">
+                  <div class="text-2xl font-semibold text-primary mb-1">{{ orgDetail?.member_count || 0 }}</div>
+                  <div class="text-xs text-muted-foreground">{{ t('organization.memberCount') }}</div>
                 </div>
-              </el-col>
-              <el-col :span="12">
-                <div class="stat-item">
-                  <div class="stat-value">{{ orgDetail?.department_count || 0 }}</div>
-                  <div class="stat-label">{{ t('organization.departmentCount') }}</div>
+                <div class="text-center p-4 bg-input rounded-lg border border-primary/20">
+                  <div class="text-2xl font-semibold text-primary mb-1">{{ orgDetail?.department_count || 0 }}</div>
+                  <div class="text-xs text-muted-foreground">{{ t('organization.departmentCount') }}</div>
                 </div>
-              </el-col>
-            </el-row>
-          </el-card>
-        </el-col>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-        <!-- 详细信息 -->
-        <el-col :xs="24" :lg="16">
-          <el-card class="detail-card">
-            <template #header>
-              <div class="card-header">
-                <el-icon><InfoFilled /></el-icon>
+        <!-- Right Column -->
+        <div class="lg:col-span-2 space-y-5">
+          <!-- Detail Info -->
+          <Card class="bg-card border-border/60 rounded-[18px] shadow-card">
+            <CardHeader class="border-b border-border/60 px-5 py-3.5">
+              <div class="flex items-center gap-2 text-primary font-semibold">
+                <Info class="w-4 h-4" />
                 <span>{{ t('organization.detailInfo') }}</span>
               </div>
-            </template>
-            <el-descriptions :column="2" border>
-              <el-descriptions-item :label="t('organization.facilityType')">
-                {{ orgDetail?.facility_type || '-' }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('organization.accreditationStatus')">
-                <el-tag v-if="orgDetail?.accreditation_status" type="success" size="small">
-                  {{ orgDetail.accreditation_status }}
-                </el-tag>
-                <span v-else>-</span>
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('organization.provinceCity')" :span="2">
-                <el-tag
-                  v-for="city in orgDetail?.province_city"
-                  :key="city"
-                  class="mr-1"
-                >
-                  {{ city }}
-                </el-tag>
-                <span v-if="!orgDetail?.province_city || orgDetail.province_city.length === 0">-</span>
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('common.createTime')">
-                {{ formatDateTime(orgDetail?.created_at) }}
-              </el-descriptions-item>
-              <el-descriptions-item :label="t('common.updateTime')">
-                {{ formatDateTime(orgDetail?.updated_at) }}
-              </el-descriptions-item>
-            </el-descriptions>
-          </el-card>
-
-          <!-- 子组织列表 -->
-          <el-card class="children-card">
-            <template #header>
-              <div class="card-header">
-                <el-icon><Files /></el-icon>
-                <span>{{ t('organization.childOrganizations') }}</span>
-              </div>
-            </template>
-            <el-empty
-              v-if="!orgDetail?.children || orgDetail.children.length === 0"
-              :description="t('organization.noChildOrganizations')"
-            />
-            <div v-else class="children-list">
-              <div
-                v-for="child in orgDetail?.children"
-                :key="child.id"
-                class="child-item"
-              >
-                <div class="child-info">
-                  <el-icon class="child-icon"><OfficeBuilding /></el-icon>
-                  <div class="child-details">
-                    <div class="child-name">{{ child.name }}</div>
-                    <div class="child-meta">
-                      <span>{{ t('organization.memberCount') }}: {{ child.member_count || 0 }}</span>
-                      <span>{{ t('organization.departmentCount') }}: {{ child.department_count || 0 }}</span>
-                    </div>
+            </CardHeader>
+            <CardContent class="p-5">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1">
+                  <span class="text-xs text-muted-foreground">{{ t('organization.facilityType') }}</span>
+                  <p class="text-sm text-foreground">{{ orgDetail?.facility_type || '-' }}</p>
+                </div>
+                <div class="space-y-1">
+                  <span class="text-xs text-muted-foreground">{{ t('organization.accreditationStatus') }}</span>
+                  <p class="text-sm text-foreground">
+                    <Badge v-if="orgDetail?.accreditation_status" variant="outline" class="bg-green-500/10 border-green-500/30 text-green-500 text-xs">{{ orgDetail.accreditation_status }}</Badge>
+                    <span v-else>-</span>
+                  </p>
+                </div>
+                <div class="space-y-1 col-span-2">
+                  <span class="text-xs text-muted-foreground">{{ t('organization.provinceCity') }}</span>
+                  <div class="flex flex-wrap gap-1 mt-1">
+                    <Badge v-for="city in orgDetail?.province_city" :key="city" variant="secondary" class="text-xs">{{ city }}</Badge>
+                    <span v-if="!orgDetail?.province_city || orgDetail.province_city.length === 0" class="text-sm text-muted-foreground">-</span>
                   </div>
                 </div>
-                <el-button
-                  link
-                  type="primary"
-                  @click="router.push(`/organizations/${child.id}`)"
-                >
-                  {{ t('common.view') }}
-                </el-button>
+                <div class="space-y-1">
+                  <span class="text-xs text-muted-foreground">{{ t('common.createTime') }}</span>
+                  <p class="text-sm text-foreground">{{ formatDateTime(orgDetail?.created_at) }}</p>
+                </div>
+                <div class="space-y-1">
+                  <span class="text-xs text-muted-foreground">{{ t('common.updateTime') }}</span>
+                  <p class="text-sm text-foreground">{{ formatDateTime(orgDetail?.updated_at) }}</p>
+                </div>
               </div>
-            </div>
-          </el-card>
+            </CardContent>
+          </Card>
 
-          <!-- Logo 管理 -->
-          <el-card class="logo-card">
-            <template #header>
-              <div class="card-header">
-                <el-icon><Picture /></el-icon>
+          <!-- Child Organizations -->
+          <Card class="bg-card border-border/60 rounded-[18px] shadow-card">
+            <CardHeader class="border-b border-border/60 px-5 py-3.5">
+              <div class="flex items-center gap-2 text-primary font-semibold">
+                <FolderOpen class="w-4 h-4" />
+                <span>{{ t('organization.childOrganizations') }}</span>
+              </div>
+            </CardHeader>
+            <CardContent class="p-5">
+              <div v-if="!orgDetail?.children || orgDetail.children.length === 0" class="text-center py-8 text-muted-foreground">
+                {{ t('organization.noChildOrganizations') }}
+              </div>
+              <div v-else class="space-y-2.5">
+                <div v-for="child in orgDetail?.children" :key="child.id" class="flex items-center justify-between p-4 bg-input rounded-lg border border-border/60">
+                  <div class="flex items-center gap-4">
+                    <Building2 class="w-8 h-8 text-primary" />
+                    <div>
+                      <div class="font-medium text-foreground">{{ child.name }}</div>
+                      <div class="flex gap-4 text-xs text-muted-foreground mt-1">
+                        <span>{{ t('organization.memberCount') }}: {{ child.member_count || 0 }}</span>
+                        <span>{{ t('organization.departmentCount') }}: {{ child.department_count || 0 }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="sm" @click="router.push(`/organizations/${child.id}`)">
+                    {{ t('common.view') }}
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <!-- Logo Management -->
+          <Card class="bg-card border-border/60 rounded-[18px] shadow-card">
+            <CardHeader class="border-b border-border/60 px-5 py-3.5">
+              <div class="flex items-center gap-2 text-primary font-semibold">
+                <ImageIcon class="w-4 h-4" />
                 <span>{{ t('organization.logoManagement') }}</span>
               </div>
-            </template>
-            <div class="logo-section">
+            </CardHeader>
+            <CardContent class="p-5 flex justify-center min-h-[250px] items-center">
               <OrgLogoUpload
                 :organization-id="orgId"
                 :logo-url="orgDetail?.logo"
@@ -186,110 +185,93 @@
                 @upload-success="handleLogoUploadSuccess"
                 @remove="handleLogoRemove"
               />
-            </div>
-          </el-card>
-        </el-col>
-      </el-row>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
 
-    <!-- 编辑组织对话框 -->
-    <el-dialog
-      v-model="editDialogVisible"
-      :title="t('organization.editOrganization')"
-      width="600px"
-      @closed="handleEditDialogClosed"
-    >
-      <el-form
-        ref="editFormRef"
-        :model="editFormData"
-        :rules="editFormRules"
-        label-width="140px"
-      >
-        <el-form-item :label="t('organization.name')" prop="name">
-          <el-input
-            v-model="editFormData.name"
-            :placeholder="t('organization.namePlaceholder')"
-            maxlength="100"
-            show-word-limit
-          />
-        </el-form-item>
-        <el-form-item :label="t('organization.code')" prop="code">
-          <el-input
-            v-model="editFormData.code"
-            :placeholder="t('organization.codePlaceholder')"
-            maxlength="50"
-          />
-        </el-form-item>
-        <el-form-item :label="t('organization.parentOrganization')" prop="parent_id">
-          <el-tree-select
-            v-model="editFormData.parent_id"
-            :data="organizationTree"
-            :props="{ label: 'name', value: 'id' }"
-            :placeholder="t('organization.parentOrganizationPlaceholder')"
-            clearable
-            check-strictly
-          />
-        </el-form-item>
-        <el-form-item :label="t('organization.facilityType')" prop="facility_type">
-          <el-input
-            v-model="editFormData.facility_type"
-            :placeholder="t('organization.facilityTypePlaceholder')"
-            maxlength="100"
-          />
-        </el-form-item>
-        <el-form-item :label="t('organization.accreditationStatus')" prop="accreditation_status">
-          <el-input
-            v-model="editFormData.accreditation_status"
-            :placeholder="t('organization.accreditationStatusPlaceholder')"
-            maxlength="100"
-          />
-        </el-form-item>
-        <el-form-item :label="t('organization.provinceCity')" prop="province_city">
-          <el-cascader
-            v-model="editFormData.province_city"
-            :options="provinceCityOptions"
-            :props="{
-              value: 'label',
-              label: 'label',
-              children: 'children',
-              multiple: true
-            }"
-            :placeholder="t('organization.provinceCityPlaceholder')"
-            clearable
-            collapse-tags
-            collapse-tags-tooltip
-          />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="editDialogVisible = false">{{ t('common.cancel') }}</el-button>
-        <el-button type="primary" @click="handleUpdate" :loading="updating">
-          {{ t('common.confirm') }}
-        </el-button>
-      </template>
-    </el-dialog>
+    <!-- Edit Dialog -->
+    <Dialog v-model:open="editDialogVisible">
+      <DialogContent class="max-w-[600px]">
+        <DialogHeader>
+          <DialogTitle>{{ t('organization.editOrganization') }}</DialogTitle>
+        </DialogHeader>
+        <div class="space-y-4 py-4">
+          <div class="space-y-2">
+            <Label>{{ t('organization.name') }}</Label>
+            <Input v-model="editFormData.name" :placeholder="t('organization.namePlaceholder')" maxlength="100" />
+          </div>
+          <div class="space-y-2">
+            <Label>{{ t('organization.code') }}</Label>
+            <Input v-model="editFormData.code" :placeholder="t('organization.codePlaceholder')" maxlength="50" />
+          </div>
+          <div class="space-y-2">
+            <Label>{{ t('organization.parentOrganization') }}</Label>
+            <Select v-model="editFormData.parent_id">
+              <SelectTrigger>
+                <SelectValue :placeholder="t('organization.parentOrganizationPlaceholder')" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">无</SelectItem>
+                <template v-for="org in flattenOrgTree(organizationTree)" :key="org.id">
+                  <SelectItem :value="org.id">{{ org.name }}</SelectItem>
+                </template>
+              </SelectContent>
+            </Select>
+          </div>
+          <div class="space-y-2">
+            <Label>{{ t('organization.facilityType') }}</Label>
+            <Input v-model="editFormData.facility_type" :placeholder="t('organization.facilityTypePlaceholder')" maxlength="100" />
+          </div>
+          <div class="space-y-2">
+            <Label>{{ t('organization.accreditationStatus') }}</Label>
+            <Input v-model="editFormData.accreditation_status" :placeholder="t('organization.accreditationStatusPlaceholder')" maxlength="100" />
+          </div>
+          <div class="space-y-2">
+            <Label>{{ t('organization.provinceCity') }}</Label>
+            <div class="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 border border-input rounded-md">
+              <template v-for="province in provinceCityOptions" :key="province.label">
+                <template v-for="city in province.children" :key="city.label">
+                  <label class="flex items-center gap-1 text-sm">
+                    <Checkbox
+                      :checked="editFormDataProvinceCity.includes(city.label)"
+                      @update:checked="(checked: boolean) => toggleCitySelection(checked, city.label)"
+                    />
+                    <span class="text-muted-foreground">{{ province.label }} - {{ city.label }}</span>
+                  </label>
+                </template>
+              </template>
+            </div>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" @click="editDialogVisible = false">{{ t('common.cancel') }}</Button>
+          <Button @click="handleUpdate" :disabled="updating">{{ t('common.confirm') }}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
-import {
-  Edit,
-  Delete,
-  OfficeBuilding,
-  InfoFilled,
-  DataAnalysis,
-  Files,
-  Picture
-} from '@element-plus/icons-vue'
+import { toast } from 'vue-sonner'
+import { ArrowLeft, Pencil, Trash2, Building2, BarChart3, Info, FolderOpen, ImageIcon } from 'lucide-vue-next'
 import { organizationApi } from '@/api/organization'
 import { formatOptionalTimestamp } from '@/utils/date'
 import OrgLogoUpload from '@/components/OrgLogoUpload.vue'
 import DetailPageSkeleton from '@/components/skeleton/DetailPageSkeleton.vue'
 import type { OrganizationDTO, UpdateOrganizationRequestDTO } from '@/api/organization'
+import { Card, CardHeader, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Badge } from '@/components/ui/badge'
+import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
 
 const router = useRouter()
 const route = useRoute()
@@ -302,21 +284,27 @@ const orgDetail = ref<OrganizationDTO | null>(null)
 const organizationTree = ref<any[]>([])
 
 const editDialogVisible = ref(false)
-const editFormRef = ref<FormInstance>()
+const editFormRef = ref()
 
 const editFormData = reactive<UpdateOrganizationRequestDTO & { code?: string }>({
   name: '',
-  parent_id: '',
+  parent_id: 'none',
   facility_type: '',
   accreditation_status: '',
   province_city: []
 })
 
-const editFormRules: FormRules = {
-  name: [
-    { required: true, message: t('organization.nameRequired'), trigger: 'blur' },
-    { min: 2, max: 100, message: t('organization.nameLengthLimit'), trigger: 'blur' }
-  ]
+const editFormDataProvinceCity = computed({
+  get: () => editFormData.province_city || [],
+  set: (val: string[]) => { editFormData.province_city = val },
+})
+
+function toggleCitySelection(checked: boolean, city: string) {
+  if (checked) {
+    editFormData.province_city = [...(editFormData.province_city || []), city]
+  } else {
+    editFormData.province_city = (editFormData.province_city || []).filter(c => c !== city)
+  }
 }
 
 const provinceCityOptions = [
@@ -369,6 +357,15 @@ onMounted(async () => {
   }
 })
 
+function flattenOrgTree(orgs: any[]): any[] {
+  const result: any[] = []
+  for (const org of orgs) {
+    result.push(org)
+    if (org.children?.length) result.push(...flattenOrgTree(org.children))
+  }
+  return result
+}
+
 async function fetchOrganizationTree() {
   try {
     const response = await organizationApi.listOrganizations({ page: 1, limit: 1000 })
@@ -395,7 +392,7 @@ async function fetchData() {
     orgDetail.value = response.organization || null
   } catch (error: any) {
     console.error('Failed to fetch organization detail:', error)
-    ElMessage.error(error.message || t('common.operationFailed'))
+    toast.error(error.message || t('common.operationFailed'))
   } finally {
     loading.value = false
   }
@@ -411,7 +408,7 @@ function handleEdit() {
   Object.assign(editFormData, {
     name: orgDetail.value.name,
     code: orgDetail.value.code,
-    parent_id: orgDetail.value.parent_id || '',
+    parent_id: orgDetail.value.parent_id || 'none',
     facility_type: orgDetail.value.facility_type || '',
     accreditation_status: orgDetail.value.accreditation_status || '',
     province_city: orgDetail.value.province_city || []
@@ -423,56 +420,41 @@ function handleEdit() {
 async function handleUpdate() {
   if (!editFormRef.value) return
 
-  await editFormRef.value.validate(async (valid) => {
+  editFormRef.value.validate(async (valid: boolean) => {
     if (!valid) return
 
     updating.value = true
     try {
       const updateData: UpdateOrganizationRequestDTO = {
         name: editFormData.name,
-        parent_id: editFormData.parent_id || undefined,
+        parent_id: editFormData.parent_id !== 'none' ? editFormData.parent_id : undefined,
         facility_type: editFormData.facility_type,
         accreditation_status: editFormData.accreditation_status,
         province_city: editFormData.province_city
       }
 
       await organizationApi.updateOrganization(orgId, updateData)
-      ElMessage.success(t('common.updateSuccess'))
+      toast.success(t('common.updateSuccess'))
       editDialogVisible.value = false
       fetchData()
     } catch (error: any) {
       console.error('Failed to update organization:', error)
-      ElMessage.error(error.message || t('common.operationFailed'))
+      toast.error(error.message || t('common.operationFailed'))
     } finally {
       updating.value = false
     }
   })
 }
 
-function handleEditDialogClosed() {
-  editFormRef.value?.resetFields()
-}
-
 async function handleDelete() {
   try {
-    await ElMessageBox.confirm(
-      `${t('organization.name')}: ${orgDetail.value?.name}`,
-      t('common.deleteConfirm'),
-      {
-        confirmButtonText: t('common.confirm'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning',
-        distinguishCancelAndClose: true
-      }
-    )
-
     await organizationApi.deleteOrganization(orgId)
-    ElMessage.success(t('common.deleteSuccess'))
+    toast.success(t('common.deleteSuccess'))
     router.push('/organizations')
   } catch (error: any) {
     if (error !== 'cancel' && error !== 'close') {
       console.error('Failed to delete organization:', error)
-      ElMessage.error(error.message || t('common.operationFailed'))
+      toast.error(error.message || t('common.operationFailed'))
     }
   }
 }
@@ -488,7 +470,7 @@ function handleLogoUpdate(logoUrl: string) {
 }
 
 function handleLogoUploadSuccess(_logoId: string, _logoUrl: string) {
-  ElMessage.success(t('organization.logoUploadSuccess'))
+  toast.success(t('organization.logoUploadSuccess'))
   fetchData()
 }
 
@@ -496,164 +478,9 @@ function handleLogoRemove() {
   if (orgDetail.value) {
     orgDetail.value.logo = ''
   }
-  ElMessage.success(t('organization.logoRemoveSuccess'))
+  toast.success(t('organization.logoRemoveSuccess'))
 }
 </script>
 
-<style scoped lang="scss">
-.org-detail {
-  padding: 20px;
-
-  .page-title {
-    color: var(--c-primary);
-    font-family: 'Inter', sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-  }
-
-  .detail-content {
-    margin-top: 20px;
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--c-primary);
-      font-weight: 600;
-    }
-
-    .info-card,
-    .stat-card,
-    .detail-card,
-    .children-card,
-    .logo-card {
-      background: var(--bg-card);
-      border: 1px solid hsl(var(--border) / 0.6);
-      border-radius: 18px;
-      box-shadow: var(--shadow-card);
-      margin-bottom: 20px;
-
-      :deep(.el-card__header) {
-        border-bottom: 1px solid hsl(var(--border) / 0.6);
-        padding: 14px 20px;
-      }
-    }
-
-    .info-card {
-      .org-avatar {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 20px;
-
-        :deep(.el-avatar) {
-          background: linear-gradient(135deg, var(--c-primary) 0%, var(--c-accent) 100%);
-          color: #fff;
-        }
-      }
-
-      .org-info {
-        margin-top: 20px;
-      }
-    }
-
-    .stat-card {
-      .stat-item {
-        text-align: center;
-        padding: 15px;
-        background-color: var(--bg-input);
-        border-radius: 8px;
-        border: 1px solid rgba(63, 81, 181, 0.2);
-
-        .stat-value {
-          font-size: 28px;
-          font-weight: 600;
-          color: var(--c-primary);
-          margin-bottom: 5px;
-        }
-
-        .stat-label {
-          font-size: 12px;
-          color: var(--c-text-sub);
-        }
-      }
-    }
-
-    .detail-card {
-    }
-
-    .children-card {
-      .children-list {
-        .child-item {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 15px;
-          background-color: var(--bg-input);
-          border-radius: 8px;
-          border: 1px solid hsl(var(--border) / 0.6);
-          margin-bottom: 10px;
-
-          &:last-child {
-            margin-bottom: 0;
-          }
-
-          .child-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-
-            .child-icon {
-              font-size: 32px;
-              color: var(--c-primary);
-            }
-
-            .child-details {
-              .child-name {
-                font-size: 16px;
-                font-weight: 500;
-                margin-bottom: 5px;
-              }
-
-              .child-meta {
-                display: flex;
-                gap: 15px;
-                font-size: 12px;
-                color: var(--c-text-sub);
-              }
-            }
-          }
-        }
-      }
-    }
-
-    .logo-card {
-      .logo-section {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 250px;
-
-        .current-logo {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-      }
-    }
-
-    .mr-1 {
-      margin-right: 4px;
-    }
-
-    .link {
-      color: var(--c-primary);
-      text-decoration: none;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-  }
-}
+<style scoped>
 </style>

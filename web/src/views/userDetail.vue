@@ -1,16 +1,14 @@
 <template>
   <div class="user-userDetail">
-    <el-card class="menu-card">
-      <template #header>
-        <div class="card-header">
-          <span class="title">userDetail user - 待开发</span>
-          <span class="meta">Detail</span>
-        </div>
-      </template>
+    <div class="menu-card">
+      <div class="card-header">
+        <span class="title">userDetail user - 待开发</span>
+        <span class="meta">Detail</span>
+      </div>
       <div class="card-body">
         <p>此页面正在开发中...</p>
       </div>
-    </el-card>
+    </div>
   </div>
 </template>
 

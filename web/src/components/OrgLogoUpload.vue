@@ -1,49 +1,55 @@
 <template>
   <div class="org-logo-upload">
-    <el-upload
+    <div
       class="logo-uploader"
-      :show-file-list="false"
-      :before-upload="beforeUpload"
-      :http-request="handleUpload"
-      :disabled="uploading"
-      accept="image/*"
+      @click="!disabled && !uploading && fileInputRef?.click()"
+      @keydown.enter="!disabled && !uploading && fileInputRef?.click()"
+      tabindex="0"
+      role="button"
+      :aria-disabled="disabled || uploading"
     >
+      <input
+        ref="fileInputRef"
+        type="file"
+        accept="image/*"
+        class="hidden"
+        @change="onFileChange"
+        :disabled="disabled || uploading"
+      />
       <div v-if="logoUrl" class="logo-preview">
-        <el-image
+        <img
           :src="logoUrl"
-          fit="contain"
-          style="width: 100%; height: 100%;"
-          :preview-src-list="[logoUrl]"
+          class="w-full h-full object-contain"
+          alt="Logo"
         />
         <div class="preview-mask" v-if="!disabled">
-          <el-icon><ZoomIn /></el-icon>
+          <ZoomIn class="w-6 h-6" />
           <span>{{ t('common.preview') }}</span>
         </div>
       </div>
       <div v-else class="upload-placeholder">
-        <el-icon class="upload-icon"><Plus /></el-icon>
+        <Plus class="upload-icon w-10 h-10" />
         <div class="upload-text">{{ t('organization.uploadLogo') }}</div>
         <div class="upload-hint">{{ t('organization.uploadLogoHint') }}</div>
       </div>
-    </el-upload>
+    </div>
 
     <div class="logo-actions" v-if="logoUrl && !disabled">
-      <el-button
-        type="danger"
-        size="small"
+      <Button
+        variant="destructive"
+        size="sm"
         @click="handleRemove"
         :disabled="uploading"
       >
-        <el-icon><Delete /></el-icon>
+        <Trash2 class="w-4 h-4 mr-1" />
         {{ t('common.remove') }}
-      </el-button>
+      </Button>
     </div>
 
-    <el-progress
+    <Progress
       v-if="uploading"
-      :percentage="uploadProgress"
-      :stroke-width="6"
-      class="upload-progress"
+      :model-value="uploadProgress"
+      class="upload-progress h-1.5"
     />
   </div>
 </template>
@@ -51,9 +57,11 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ElMessage } from 'element-plus'
-import { Plus, ZoomIn, Delete } from '@element-plus/icons-vue'
+import { toast } from 'vue-sonner'
+import { Plus, ZoomIn, Trash2 } from 'lucide-vue-next'
 import { organizationApi } from '@/api/organization'
+import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
 
 interface Props {
   organizationId?: string
@@ -77,6 +85,7 @@ const { t } = useI18n()
 
 const uploading = ref(false)
 const uploadProgress = ref(0)
+const fileInputRef = ref<HTMLInputElement>()
 
 watch(() => props.logoUrl, (newVal) => {
   if (!newVal) {
@@ -84,25 +93,28 @@ watch(() => props.logoUrl, (newVal) => {
   }
 })
 
-async function beforeUpload(file: File) {
+async function onFileChange(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+
   const isImage = file.type.startsWith('image/')
   if (!isImage) {
-    ElMessage.error(t('organization.logoFormatError'))
-    return false
+    toast.error(t('organization.logoFormatError'))
+    return
   }
 
   const isLt2M = file.size / 1024 / 1024 < 2
   if (!isLt2M) {
-    ElMessage.error(t('organization.logoSizeError'))
-    return false
+    toast.error(t('organization.logoSizeError'))
+    return
   }
 
-  return true
+  await handleUpload(file)
+  input.value = ''
 }
 
-async function handleUpload(options: any) {
-  const file = options.file as File
-
+async function handleUpload(file: File) {
   uploading.value = true
   uploadProgress.value = 0
 
@@ -125,15 +137,15 @@ async function handleUpload(options: any) {
     emit('update:logoUrl', logoUrl)
     emit('upload-success', logo.id || '', logoUrl)
 
-    ElMessage.success(t('common.uploadSuccess'))
+    toast.success(t('common.uploadSuccess'))
 
     if (props.organizationId && logo.id) {
       await organizationApi.bindLogoToOrganization(props.organizationId, logo.id)
-      ElMessage.success(t('organization.logoBindSuccess'))
+      toast.success(t('organization.logoBindSuccess'))
     }
   } catch (error: any) {
     console.error('Failed to upload logo:', error)
-    ElMessage.error(error.message || t('common.uploadFailed'))
+    toast.error(error.message || t('common.uploadFailed'))
   } finally {
     uploading.value = false
     uploadProgress.value = 0
@@ -143,25 +155,28 @@ async function handleUpload(options: any) {
 function handleRemove() {
   emit('update:logoUrl', '')
   emit('remove')
-  ElMessage.success(t('common.removeSuccess'))
+  toast.success(t('common.removeSuccess'))
 }
 </script>
 
 <style scoped lang="scss">
 .org-logo-upload {
   .logo-uploader {
-    :deep(.el-upload) {
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-      border: 1px dashed rgba(212, 175, 55, 0.3);
-      border-radius: 8px;
-      background-color: rgba(44, 46, 51, 0.3);
-      transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px dashed rgba(212, 175, 55, 0.3);
+    border-radius: 8px;
+    background-color: rgba(44, 46, 51, 0.3);
+    transition: all 0.3s;
 
-      &:hover {
-        border-color: var(--c-accent);
-      }
+    &:hover {
+      border-color: var(--c-accent);
+    }
+
+    &[aria-disabled="true"] {
+      cursor: not-allowed;
+      opacity: 0.6;
     }
   }
 
@@ -189,10 +204,6 @@ function handleRemove() {
       opacity: 0;
       transition: opacity 0.3s;
       gap: 8px;
-
-      .el-icon {
-        font-size: 24px;
-      }
     }
 
     &:hover .preview-mask {
@@ -210,7 +221,6 @@ function handleRemove() {
     color: var(--c-text-sub);
 
     .upload-icon {
-      font-size: 40px;
       color: var(--c-accent);
       margin-bottom: 10px;
     }
