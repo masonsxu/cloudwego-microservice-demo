@@ -66,15 +66,6 @@
           </Select>
         </div>
         <div class="form-field">
-          <Input
-            v-model="dateRangeDisplay"
-            :placeholder="t('audit.dateRange')"
-            class="w-[220px]"
-            readonly
-            @click="showDatePicker = true"
-          />
-        </div>
-        <div class="form-field">
           <Button variant="default" @click="handleSearch">
             <Search class="w-4 h-4 mr-1" />{{ t('common.search') }}
           </Button>
@@ -180,7 +171,6 @@ import type { AuditLogStats } from '@/types/audit'
 import ListPageSkeleton from '@/components/skeleton/ListPageSkeleton.vue'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 
@@ -189,8 +179,6 @@ const { t } = useI18n()
 const initialLoading = ref(true)
 const loading = ref(false)
 const auditLogs = ref<AuditLogDTO[]>([])
-const dateRange = ref<[number, number] | null>(null)
-const showDatePicker = ref(false)
 const stats = ref<AuditLogStats>({ total_count: 0, success_count: 0, avg_duration_ms: 0 })
 
 const searchForm = reactive({
@@ -203,14 +191,6 @@ const pagination = reactive({ page: 1, size: 20, total: 0 })
 const paginationSizeString = computed({
   get: () => String(pagination.size),
   set: (val: string) => { pagination.size = Number(val) },
-})
-
-const dateRangeDisplay = computed(() => {
-  if (!dateRange.value) return ''
-  const pad = (n: number) => String(n).padStart(2, '0')
-  const start = new Date(dateRange.value[0])
-  const end = new Date(dateRange.value[1])
-  return `${start.getFullYear()}-${pad(start.getMonth() + 1)}-${pad(start.getDate())} ~ ${end.getFullYear()}-${pad(end.getMonth() + 1)}-${pad(end.getDate())}`
 })
 
 const successRate = computed(() => {
@@ -240,10 +220,6 @@ const loadAuditLogs = async () => {
       action: searchForm.action !== 'all' ? Number(searchForm.action) : undefined,
       success: searchForm.success === 'true' ? true : searchForm.success === 'false' ? false : undefined,
     }
-    if (dateRange.value) {
-      params.start_time = dateRange.value[0]
-      params.end_time = dateRange.value[1]
-    }
     const response = await auditApi.getAuditLogs(params)
     auditLogs.value = response.audit_logs || []
     pagination.total = response.page?.total || 0
@@ -262,7 +238,6 @@ const handleSearch = () => { pagination.page = 1; loadAuditLogs() }
 const handleReset = () => {
   searchForm.action = 'all'
   searchForm.success = 'all'
-  dateRange.value = null
   pagination.page = 1
   loadAuditLogs()
 }

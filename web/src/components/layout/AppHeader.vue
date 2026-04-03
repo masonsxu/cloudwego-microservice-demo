@@ -69,10 +69,38 @@
       </DropdownMenu>
     </div>
   </div>
+
+  <Dialog v-model:open="passwordDialogOpen">
+    <DialogContent class="max-w-[420px]">
+      <DialogHeader>
+        <DialogTitle>{{ t('auth.changePassword') }}</DialogTitle>
+      </DialogHeader>
+      <div class="space-y-4 py-4">
+        <div class="space-y-2">
+          <Label>{{ t('auth.oldPassword') }}</Label>
+          <Input v-model="passwordForm.oldPassword" type="password" :placeholder="t('auth.oldPassword')" />
+        </div>
+        <div class="space-y-2">
+          <Label>{{ t('auth.newPassword') }}</Label>
+          <Input v-model="passwordForm.newPassword" type="password" :placeholder="t('auth.newPassword')" />
+        </div>
+        <div class="space-y-2">
+          <Label>{{ t('auth.confirmPassword') }}</Label>
+          <Input v-model="passwordForm.confirmPassword" type="password" :placeholder="t('auth.confirmPassword')" />
+        </div>
+      </div>
+      <DialogFooter>
+        <Button variant="outline" @click="handlePasswordDialogClose">{{ t('common.cancel') }}</Button>
+        <Button :disabled="passwordSubmitting" @click="handlePasswordSubmit">{{ t('common.confirm') }}</Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, reactive, ref } from 'vue'
+import { toast } from 'vue-sonner'
+import { authApi } from '@/api/auth'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
@@ -85,12 +113,24 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
 import AppBreadcrumb from './AppBreadcrumb.vue'
 
 const appStore = useAppStore()
 const authStore = useAuthStore()
 const router = useRouter()
 const { t, locale } = useI18n()
+
+const passwordDialogOpen = ref(false)
+const passwordSubmitting = ref(false)
+const passwordForm = reactive({
+  oldPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+})
 
 const currentLanguage = computed(() => {
   return locale.value === 'zh-CN' ? '简体中文' : 'English'
@@ -105,6 +145,38 @@ function handleLanguageCommand(command: string) {
   locale.value = command
 }
 
+function resetPasswordForm() {
+  passwordForm.oldPassword = ''
+  passwordForm.newPassword = ''
+  passwordForm.confirmPassword = ''
+}
+
+function handlePasswordDialogClose() {
+  passwordDialogOpen.value = false
+  resetPasswordForm()
+}
+
+async function handlePasswordSubmit() {
+  if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+    toast.error(t('auth.passwordNotMatch'))
+    return
+  }
+
+  passwordSubmitting.value = true
+  try {
+    await authApi.changePassword({
+      old_password: passwordForm.oldPassword,
+      new_password: passwordForm.newPassword
+    })
+    toast.success(t('auth.passwordChanged'))
+    handlePasswordDialogClose()
+  } catch (error: any) {
+    toast.error(error?.message || t('common.operationFailed'))
+  } finally {
+    passwordSubmitting.value = false
+  }
+}
+
 async function handleUserCommand(command: string) {
   switch (command) {
     case 'profile':
@@ -114,6 +186,7 @@ async function handleUserCommand(command: string) {
       await router.push({ name: 'UserDetail', params: { id: authStore.userId } })
       break
     case 'password':
+      passwordDialogOpen.value = true
       break
     case 'logout':
       if (window.confirm(t('auth.logoutConfirm'))) {

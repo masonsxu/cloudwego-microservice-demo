@@ -28,7 +28,7 @@
             @click="handleParentMenuClick(item)"
           >
             <component :is="getIconComponent(item.icon)" v-if="item.icon" class="h-4 w-4" />
-            <span v-show="!appStore.sidebarCollapsed">{{ t(item.name || '') }}</span>
+            <span v-show="!appStore.sidebarCollapsed">{{ getMenuLabel(item.name) }}</span>
           </button>
           <div v-show="isMenuExpanded(item) && !appStore.sidebarCollapsed" class="bg-[rgba(0,0,0,0.1)]">
             <template v-for="child in item.children" :key="child.id">
@@ -39,14 +39,14 @@
                 :class="{ 'bg-[rgba(212,175,55,0.12)] text-[var(--c-accent)]': isMenuActive(child) }"
               >
                 <component :is="getIconComponent(child.icon)" v-if="child.icon" class="h-4 w-4" />
-                <span>{{ t(child.name || '') }}</span>
+                <span>{{ getMenuLabel(child.name) }}</span>
               </RouterLink>
               <div
                 v-else
                 class="flex items-center gap-3 pl-12 pr-4 py-2 text-sm text-[var(--c-text-sub)] opacity-60 cursor-not-allowed"
               >
                 <component :is="getIconComponent(child.icon)" v-if="child.icon" class="h-4 w-4" />
-                <span>{{ t(child.name || '') }}</span>
+                <span>{{ getMenuLabel(child.name) }}</span>
               </div>
             </template>
           </div>
@@ -61,7 +61,7 @@
           }"
         >
           <component :is="getIconComponent(item.icon)" v-if="item.icon" class="h-4 w-4" />
-          <span v-show="!appStore.sidebarCollapsed">{{ t(item.name || '') }}</span>
+          <span v-show="!appStore.sidebarCollapsed">{{ getMenuLabel(item.name) }}</span>
         </RouterLink>
         <div
           v-else
@@ -69,7 +69,7 @@
           :class="{ 'justify-center px-2': appStore.sidebarCollapsed }"
         >
           <component :is="getIconComponent(item.icon)" v-if="item.icon" class="h-4 w-4" />
-          <span v-show="!appStore.sidebarCollapsed">{{ t(item.name || '') }}</span>
+          <span v-show="!appStore.sidebarCollapsed">{{ getMenuLabel(item.name) }}</span>
         </div>
       </template>
     </nav>
@@ -122,15 +122,24 @@ function toggleSubMenu(id: string) {
 }
 
 function getMenuRoute(menu: MenuNodeDTO): string | null {
-  if (!menu.path) {
-    return null
+  const mappedRoute = menuRouteMap.get(menu.id)?.path
+  if (mappedRoute) {
+    return mappedRoute
   }
 
-  if (visibleRoutePaths.has(menu.path)) {
+  if (menu.path && visibleRoutePaths.has(menu.path)) {
     return menu.path
   }
 
-  return menuRouteMap.get(menu.id)?.path || null
+  return null
+}
+
+function getMenuLabel(name?: string): string {
+  if (!name) {
+    return ''
+  }
+
+  return name.includes('.') ? t(name) : name
 }
 
 function hasNavigableChildren(menu: MenuNodeDTO): boolean {
