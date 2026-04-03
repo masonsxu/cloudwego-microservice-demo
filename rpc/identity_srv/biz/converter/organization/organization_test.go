@@ -573,10 +573,10 @@ func TestConverterImpl_ApplyUpdateToModel(t *testing.T) {
 		}
 
 		req := &identity_srv.UpdateOrganizationRequest{
-			ParentID:            nil,                                     // nil ParentID
-			FacilityType:        func() *string { s := ""; return &s }(), // 空字符串
-			AccreditationStatus: nil,                                     // nil
-			ProvinceCity:        &core.StringListValue{Items: []string{}}, // 空列表
+			ParentID:            nil,
+			FacilityType:        func() *string { s := ""; return &s }(),
+			AccreditationStatus: nil,
+			ProvinceCity:        &core.StringListValue{Items: []string{}},
 		}
 
 		result := converter.ApplyUpdateToModel(existing, req)
