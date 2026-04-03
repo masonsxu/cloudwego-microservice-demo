@@ -10,13 +10,17 @@
     "regen-api": "bash script/regen-api.sh"
   },
   "dependencies": {
-    "@element-plus/icons-vue": "^2.3.2",
     "@vueuse/core": "^14.2.1",
-    "element-plus": "^2.13.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-vue-next": "^1.0.0",
     "pinia": "^3.0.4",
+    "radix-vue": "^1.9.17",
+    "tailwind-merge": "^3.5.0",
     "vue": "^3.5.25",
     "vue-i18n": "^11.2.8",
-    "vue-router": "^5.0.3"
+    "vue-router": "^4.5.1",
+    "vue-sonner": "^2.0.9"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.1",

@@ -1,29 +1,32 @@
 <template>
-  <div class="role-detail">
-    <el-page-header @back="handleBack" :title="t('common.back')">
-      <template #content>
-        <span class="page-title">{{ roleDetail?.name || t('role.roleDetail') }}</span>
-      </template>
-      <template #extra>
-        <el-button-group>
-          <el-button @click="showEditDialog = true">
-            <el-icon><Edit /></el-icon>
-            {{ t('common.edit') }}
-          </el-button>
-          <el-button
-            type="danger"
-            :disabled="roleDetail?.is_system_role"
-            :title="roleDetail?.is_system_role ? '系统角色不可删除' : ''"
-            @click="handleDelete"
-          >
-            <el-icon><Delete /></el-icon>
-            {{ t('common.delete') }}
-          </el-button>
-        </el-button-group>
-      </template>
-    </el-page-header>
+  <div class="p-5">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-5">
+      <div class="flex items-center gap-3">
+        <Button variant="ghost" size="sm" @click="handleBack">
+          <ArrowLeft class="w-4 h-4 mr-1" />
+          {{ t('common.back') }}
+        </Button>
+        <h1 class="text-xl font-bold font-[Inter] text-primary">{{ roleDetail?.name || t('role.roleDetail') }}</h1>
+      </div>
+      <div class="flex gap-2">
+        <Button variant="outline" @click="showEditDialog = true">
+          <Pencil class="w-4 h-4 mr-1" />
+          {{ t('common.edit') }}
+        </Button>
+        <Button
+          variant="destructive"
+          :disabled="roleDetail?.is_system_role"
+          :title="roleDetail?.is_system_role ? '系统角色不可删除' : ''"
+          @click="handleDelete"
+        >
+          <Trash2 class="w-4 h-4 mr-1" />
+          {{ t('common.delete') }}
+        </Button>
+      </div>
+    </div>
 
-    <div class="content-row">
+    <div class="mt-5 min-h-[300px]">
       <DetailPageSkeleton
         v-if="initialLoading"
         :side-span="16"
@@ -34,287 +37,323 @@
         :side-item-counts="[6, 4]"
         :main-item-counts="[5, 4]"
       />
-      <el-row v-else :gutter="20" v-loading="loading">
-      <!-- 左列：基本信息 + API 权限 -->
-      <el-col :span="16">
-        <el-card class="detail-card" v-if="roleDetail">
-          <template #header>
-            <div class="card-header">
-              <el-icon><Key /></el-icon>
-              <span>基本信息</span>
-              <el-tag v-if="roleDetail.is_system_role" type="danger" size="small">系统角色</el-tag>
-            </div>
-          </template>
-          <el-descriptions :column="2" border>
-            <el-descriptions-item :label="t('role.roleName')">
-              <strong class="role-name-text">{{ roleDetail.name }}</strong>
-            </el-descriptions-item>
-            <el-descriptions-item :label="t('common.status')">
-              <el-tag :type="getStatusType(roleDetail.status)" size="small">
-                {{ getStatusText(roleDetail.status) }}
-              </el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item :label="t('role.isSystemRole')">
-              <el-tag :type="roleDetail.is_system_role ? 'danger' : 'success'" size="small">
-                {{ roleDetail.is_system_role ? t('common.yes') : t('common.no') }}
-              </el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item :label="t('role.userCount')">
-              {{ roleDetail.user_count || 0 }} 人
-            </el-descriptions-item>
-            <el-descriptions-item :label="t('role.description')" :span="2">
-              {{ roleDetail.description || '-' }}
-            </el-descriptions-item>
-            <el-descriptions-item :label="t('common.createTime')">
-              {{ formatTimestamp(roleDetail.created_at) }}
-            </el-descriptions-item>
-            <el-descriptions-item :label="t('common.updateTime')">
-              {{ formatTimestamp(roleDetail.updated_at) }}
-            </el-descriptions-item>
-          </el-descriptions>
-        </el-card>
-
-        <el-card class="detail-card" v-if="roleDetail?.permissions?.length">
-          <template #header>
-            <div class="card-header">
-              <el-icon><Lock /></el-icon>
-              <span>{{ t('role.permissions') }}</span>
-            </div>
-          </template>
-          <el-table :data="roleDetail!.permissions" border stripe max-height="300">
-            <el-table-column prop="resource" :label="t('role.resource')" width="200" />
-            <el-table-column prop="action" :label="t('role.action')" width="150" />
-            <el-table-column prop="description" :label="t('common.description')" show-overflow-tooltip />
-          </el-table>
-        </el-card>
-      </el-col>
-
-      <!-- 右列：菜单权限 + 已绑定用户 -->
-      <el-col :span="8">
-        <el-card class="detail-card menu-card">
-          <template #header>
-            <div class="card-header">
-              <el-icon><Menu /></el-icon>
-              <span>{{ t('role.menuPermission') }}</span>
-              <el-button type="primary" size="small" @click="openMenuConfigDialog">
-                {{ t('role.configurePermission') }}
-              </el-button>
-            </div>
-          </template>
-          <el-tree
-            v-if="menuTree.length"
-            :data="menuTree"
-            :props="{ label: 'name', children: 'children' }"
-            node-key="id"
-            default-expand-all
-            :expand-on-click-node="false"
-          >
-            <template #default="{ node, data }">
-              <div class="menu-tree-node">
-                <span class="node-name">{{ node.label }}</span>
-                <el-tag
-                  v-if="data.permission_level !== undefined"
-                  size="small"
-                  :type="getPermTagType(data.permission_level)"
-                >
-                  {{ getPermissionText(data.permission_level) }}
-                </el-tag>
+      <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <!-- Left Column: Basic Info + API Permissions -->
+        <div class="lg:col-span-2 space-y-5">
+          <Card v-if="roleDetail" class="bg-card border-border/60 rounded-[18px] shadow-card">
+            <CardHeader class="border-b border-border/60 px-5 py-3.5">
+              <div class="flex items-center gap-2 text-primary font-semibold">
+                <KeyRound class="w-4 h-4" />
+                <span>基本信息</span>
+                <Badge v-if="roleDetail.is_system_role" variant="destructive" class="text-xs">系统角色</Badge>
               </div>
-            </template>
-          </el-tree>
-          <el-empty v-else :description="t('common.noData')" :image-size="60" />
-        </el-card>
+            </CardHeader>
+            <CardContent class="p-5">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1">
+                  <span class="text-xs text-muted-foreground">{{ t('role.roleName') }}</span>
+                  <p class="text-sm font-semibold text-foreground">{{ roleDetail.name }}</p>
+                </div>
+                <div class="space-y-1">
+                  <span class="text-xs text-muted-foreground">{{ t('common.status') }}</span>
+                  <p class="text-sm">
+                    <Badge :variant="roleDetail.status === 1 ? 'outline' : roleDetail.status === 2 ? 'secondary' : 'destructive'" class="text-xs" :class="roleDetail.status === 1 ? 'bg-green-500/10 border-green-500/30 text-green-500' : ''">
+                      {{ getStatusText(roleDetail.status) }}
+                    </Badge>
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span class="text-xs text-muted-foreground">{{ t('role.isSystemRole') }}</span>
+                  <p class="text-sm">
+                    <Badge :variant="roleDetail.is_system_role ? 'destructive' : 'outline'" class="text-xs" :class="!roleDetail.is_system_role ? 'bg-green-500/10 border-green-500/30 text-green-500' : ''">
+                      {{ roleDetail.is_system_role ? t('common.yes') : t('common.no') }}
+                    </Badge>
+                  </p>
+                </div>
+                <div class="space-y-1">
+                  <span class="text-xs text-muted-foreground">{{ t('role.userCount') }}</span>
+                  <p class="text-sm text-foreground">{{ roleDetail.user_count || 0 }} 人</p>
+                </div>
+                <div class="space-y-1 col-span-2">
+                  <span class="text-xs text-muted-foreground">{{ t('role.description') }}</span>
+                  <p class="text-sm text-foreground">{{ roleDetail.description || '-' }}</p>
+                </div>
+                <div class="space-y-1">
+                  <span class="text-xs text-muted-foreground">{{ t('common.createTime') }}</span>
+                  <p class="text-sm text-foreground">{{ formatTimestamp(roleDetail.created_at) }}</p>
+                </div>
+                <div class="space-y-1">
+                  <span class="text-xs text-muted-foreground">{{ t('common.updateTime') }}</span>
+                  <p class="text-sm text-foreground">{{ formatTimestamp(roleDetail.updated_at) }}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-        <el-card class="detail-card users-card">
-          <template #header>
-            <div class="card-header">
-              <el-icon><User /></el-icon>
-              <span>已绑定用户（{{ roleUsers.user_ids?.length || 0 }}）</span>
-              <el-button type="primary" size="small" @click="openUserAssignDialog">
-                管理用户
-              </el-button>
-            </div>
-          </template>
-          <div v-if="roleUsers.user_ids?.length" class="user-tags">
-            <el-tooltip
-              v-for="uid in roleUsers.user_ids"
-              :key="uid"
-              :content="`ID: ${uid}`"
-              placement="top"
-            >
-              <el-tag
-                closable
-                class="user-tag"
-                @close="handleRemoveUser(uid)"
-              >
-                {{ userDisplayName(uid) }}
-              </el-tag>
-            </el-tooltip>
-          </div>
-          <el-empty v-else :description="t('common.noData')" :image-size="60" />
-        </el-card>
-      </el-col>
-    </el-row>
+          <Card v-if="roleDetail?.permissions?.length" class="bg-card border-border/60 rounded-[18px] shadow-card">
+            <CardHeader class="border-b border-border/60 px-5 py-3.5">
+              <div class="flex items-center gap-2 text-primary font-semibold">
+                <Lock class="w-4 h-4" />
+                <span>{{ t('role.permissions') }}</span>
+              </div>
+            </CardHeader>
+            <CardContent class="p-0">
+              <div class="overflow-auto max-h-[300px]">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead class="w-[200px]">{{ t('role.resource') }}</TableHead>
+                      <TableHead class="w-[150px]">{{ t('role.action') }}</TableHead>
+                      <TableHead>{{ t('common.description') }}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow v-for="(perm, i) in roleDetail!.permissions" :key="i">
+                      <TableCell>{{ perm.resource }}</TableCell>
+                      <TableCell>{{ perm.action }}</TableCell>
+                      <TableCell class="text-muted-foreground">{{ perm.description || '-' }}</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <!-- Right Column: Menu Permissions + Bound Users -->
+        <div class="space-y-5">
+          <Card class="bg-card border-border/60 rounded-[18px] shadow-card">
+            <CardHeader class="border-b border-border/60 px-5 py-3.5">
+              <div class="flex items-center gap-2 text-primary font-semibold">
+                <LayoutList class="w-4 h-4" />
+                <span class="flex-1">{{ t('role.menuPermission') }}</span>
+                <Button size="sm" @click="openMenuConfigDialog">
+                  {{ t('role.configurePermission') }}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent class="p-5">
+              <div v-if="menuTree.length" class="space-y-1">
+                <template v-for="node in flattenMenuTree(menuTree)" :key="node.id">
+                  <div class="flex items-center gap-2.5 py-1.5 px-2 rounded-md hover:bg-accent/50" :style="{ paddingLeft: `${(node._depth || 0) * 16 + 8}px` }">
+                    <span class="flex-1 text-sm">{{ node.name }}</span>
+                    <Badge v-if="node.permission_level !== undefined" size="sm" :variant="getPermBadgeVariant(node.permission_level)" class="text-xs">
+                      {{ getPermissionText(node.permission_level) }}
+                    </Badge>
+                  </div>
+                </template>
+              </div>
+              <div v-else class="text-center py-6 text-muted-foreground text-sm">
+                {{ t('common.noData') }}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card class="bg-card border-border/60 rounded-[18px] shadow-card">
+            <CardHeader class="border-b border-border/60 px-5 py-3.5">
+              <div class="flex items-center gap-2 text-primary font-semibold">
+                <User class="w-4 h-4" />
+                <span class="flex-1">已绑定用户（{{ roleUsers.user_ids?.length || 0 }}）</span>
+                <Button size="sm" @click="openUserAssignDialog">
+                  管理用户
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent class="p-5">
+              <div v-if="roleUsers.user_ids?.length" class="flex flex-wrap gap-2 max-h-[220px] overflow-y-auto">
+                <div
+                  v-for="uid in roleUsers.user_ids"
+                  :key="uid"
+                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md border bg-secondary text-xs font-[Source_Code_Pro] group cursor-default"
+                >
+                  <span>{{ userDisplayName(uid) }}</span>
+                  <button class="opacity-50 hover:opacity-100 transition-opacity" @click="handleRemoveUser(uid)">
+                    <X class="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+              <div v-else class="text-center py-6 text-muted-foreground text-sm">
+                {{ t('common.noData') }}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
 
-    <!-- 编辑角色对话框 -->
-    <el-dialog
-      v-model="showEditDialog"
-      :title="t('role.editRole')"
-      width="560px"
-      @close="editFormRef?.resetFields()"
-    >
-      <el-form ref="editFormRef" :model="editForm" :rules="editFormRules" label-width="100px">
-        <el-form-item :label="t('role.roleName')">
-          <el-input :value="roleDetail?.name" disabled />
-        </el-form-item>
-        <el-form-item :label="t('role.description')" prop="description">
-          <el-input v-model="editForm.description" type="textarea" :rows="3" />
-        </el-form-item>
-        <el-form-item :label="t('common.status')" prop="status">
-          <el-select v-model="editForm.status" style="width: 100%">
-            <el-option :label="t('common.active')" :value="1" />
-            <el-option :label="t('common.inactive')" :value="2" />
-            <el-option :label="t('common.deprecated')" :value="3" />
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="showEditDialog = false">{{ t('common.cancel') }}</el-button>
-        <el-button type="primary" :loading="saving" @click="handleUpdateRole">
-          {{ t('common.save') }}
-        </el-button>
-      </template>
-    </el-dialog>
-
-    <!-- 菜单权限配置对话框 -->
-    <el-dialog
-      v-model="showMenuConfigDialog"
-      title="配置菜单权限"
-      width="700px"
-      :close-on-click-modal="false"
-      destroy-on-close
-    >
-      <div class="config-tips">
-        <el-icon><InfoFilled /></el-icon>
-        为角色配置各菜单的访问权限级别。设为"无权限"表示该角色不可访问该菜单，仅保存非零权限。
-      </div>
-
-      <div class="menu-config-body" v-loading="menuConfigLoading">
-        <template v-if="fullMenuTree.length">
-          <div class="menu-config-header">
-            <span>菜单名称</span>
-            <span>路径</span>
-            <span>权限级别</span>
+    <!-- Edit Role Dialog -->
+    <Dialog v-model:open="showEditDialog">
+      <DialogContent class="max-w-[560px]">
+        <DialogHeader>
+          <DialogTitle>{{ t('role.editRole') }}</DialogTitle>
+        </DialogHeader>
+        <div class="space-y-4 py-4">
+          <div class="space-y-2">
+            <Label>{{ t('role.roleName') }}</Label>
+            <Input :value="roleDetail?.name" disabled />
           </div>
-          <el-tree
-            :data="fullMenuTree"
-            :props="{ label: 'name', children: 'children' }"
-            node-key="id"
-            default-expand-all
-            :expand-on-click-node="false"
-          >
-            <template #default="{ data }">
-              <div class="menu-config-node">
-                <span class="node-label">{{ data.name }}</span>
-                <span class="node-path">{{ data.path }}</span>
-                <el-select
-                  v-model="menuPermMap[data.id]"
-                  size="small"
-                  class="perm-select"
-                  :class="{ 'has-perm': (menuPermMap[data.id] ?? 0) > 0 }"
-                >
-                  <el-option :value="0" label="无权限" />
-                  <el-option :value="1" label="只读" />
-                  <el-option :value="2" label="读写" />
-                  <el-option :value="3" label="完全权限" />
-                </el-select>
+          <div class="space-y-2">
+            <Label>{{ t('role.description') }}</Label>
+            <Textarea v-model="editForm.description" :rows="3" />
+          </div>
+          <div class="space-y-2">
+            <Label>{{ t('common.status') }}</Label>
+            <Select v-model="editFormStatusString">
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">{{ t('common.active') }}</SelectItem>
+                <SelectItem value="2">{{ t('common.inactive') }}</SelectItem>
+                <SelectItem value="3">{{ t('common.deprecated') }}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" @click="showEditDialog = false">{{ t('common.cancel') }}</Button>
+          <Button :disabled="saving" @click="handleUpdateRole">
+            {{ t('common.save') }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    <!-- Menu Permission Config Dialog -->
+    <Dialog v-model:open="showMenuConfigDialog">
+      <DialogContent class="max-w-[700px]">
+        <DialogHeader>
+          <DialogTitle>配置菜单权限</DialogTitle>
+        </DialogHeader>
+        <div class="py-4">
+          <div class="flex items-center gap-2 p-2.5 mb-4 bg-primary/8 border border-primary/20 rounded-lg text-sm text-muted-foreground">
+            <Info class="w-4 h-4 flex-shrink-0" />
+            为角色配置各菜单的访问权限级别。设为"无权限"表示该角色不可访问该菜单，仅保存非零权限。
+          </div>
+
+          <div class="max-h-[460px] overflow-y-auto">
+            <template v-if="fullMenuTree.length">
+              <div class="flex items-center px-6 pb-2 text-[11px] font-semibold tracking-wider uppercase text-muted-foreground border-b border-border mb-1">
+                <span class="flex-1">菜单名称</span>
+                <span class="w-[140px]">路径</span>
+                <span class="w-[110px] flex-shrink-0">权限级别</span>
+              </div>
+              <div v-for="node in flattenMenuTree(fullMenuTree)" :key="node.id" class="flex items-center gap-3 py-1 px-2 rounded-md hover:bg-accent/50" :style="{ paddingLeft: `${(node._depth || 0) * 16 + 24}px` }">
+                <span class="flex-1 text-sm text-foreground">{{ node.name }}</span>
+                <span class="w-[140px] text-xs text-muted-foreground font-[Source_Code_Pro] truncate flex-shrink-0">{{ node.path }}</span>
+                <Select v-model="menuPermMap[node.id]">
+                  <SelectTrigger class="w-[110px]" :class="{ 'text-primary font-medium': Number(menuPermMap[node.id] ?? '0') > 0 }">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem :value="String(0)">无权限</SelectItem>
+                    <SelectItem :value="String(1)">只读</SelectItem>
+                    <SelectItem :value="String(2)">读写</SelectItem>
+                    <SelectItem :value="String(3)">完全权限</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </template>
-          </el-tree>
-        </template>
-        <el-empty v-else-if="!menuConfigLoading" :description="t('common.noData')" />
-      </div>
+            <div v-else-if="!menuConfigLoading" class="text-center py-6 text-muted-foreground text-sm">
+              {{ t('common.noData') }}
+            </div>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" @click="showMenuConfigDialog = false">{{ t('common.cancel') }}</Button>
+          <Button :disabled="savingMenuConfig" @click="handleSaveMenuConfig">
+            {{ t('common.save') }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
 
-      <template #footer>
-        <el-button @click="showMenuConfigDialog = false">{{ t('common.cancel') }}</el-button>
-        <el-button type="primary" :loading="savingMenuConfig" @click="handleSaveMenuConfig">
-          {{ t('common.save') }}
-        </el-button>
-      </template>
-    </el-dialog>
+    <!-- User Assign Dialog -->
+    <Dialog v-model:open="showUserAssignDialog">
+      <DialogContent class="max-w-[800px]">
+        <DialogHeader>
+          <DialogTitle>管理角色用户</DialogTitle>
+        </DialogHeader>
+        <div class="py-4">
+          <div class="flex items-center gap-4 mb-3.5">
+            <div class="relative w-[300px]">
+              <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                v-model="userSearchKeyword"
+                placeholder="搜索用户名或真实姓名"
+                class="pl-9"
+              />
+              <button v-if="userSearchKeyword" @click="userSearchKeyword = ''; handleUserSearch()" class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                <X class="w-4 h-4" />
+              </button>
+            </div>
+            <span class="text-sm text-muted-foreground">
+              已选 <strong class="text-primary text-base">{{ pendingUserIds.size }}</strong> 人
+            </span>
+          </div>
 
-    <!-- 用户分配对话框 -->
-    <el-dialog
-      v-model="showUserAssignDialog"
-      title="管理角色用户"
-      width="800px"
-      :close-on-click-modal="false"
-      destroy-on-close
-      @open="initUserAssignDialog"
-    >
-      <div class="user-assign-toolbar">
-        <el-input
-          v-model="userSearchKeyword"
-          placeholder="搜索用户名或真实姓名"
-          clearable
-          style="width: 300px"
-          @input="handleUserSearch"
-        >
-          <template #prefix><el-icon><Search /></el-icon></template>
-        </el-input>
-        <span class="assign-count">
-          已选 <strong>{{ pendingUserIds.size }}</strong> 人
-        </span>
-      </div>
-
-      <el-table
-        ref="userTableRef"
-        v-loading="userSearchLoading"
-        :data="searchedUsers"
-        row-key="id"
-        max-height="380"
-        class="user-assign-table"
-        @select="handleUserSelect"
-        @select-all="handleUserSelectAll"
-      >
-        <el-table-column type="selection" width="50" />
-        <el-table-column prop="username" :label="t('user.username')" min-width="120" />
-        <el-table-column :label="t('user.realName')" width="110">
-          <template #default="{ row }">{{ row.real_name || '-' }}</template>
-        </el-table-column>
-        <el-table-column prop="email" :label="t('user.email')" show-overflow-tooltip min-width="160" />
-        <el-table-column :label="t('common.status')" width="90" align="center">
-          <template #default="{ row }">
-            <el-tag size="small" :type="row.status === 1 ? 'success' : 'info'">
-              {{ row.status === 1 ? t('common.active') : t('common.inactive') }}
-            </el-tag>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <template #footer>
-        <el-button @click="showUserAssignDialog = false">{{ t('common.cancel') }}</el-button>
-        <el-button type="primary" :loading="savingUsers" @click="handleSaveUserAssign">
-          保存（{{ pendingUserIds.size }} 人）
-        </el-button>
-      </template>
-    </el-dialog>
+          <div class="overflow-auto max-h-[380px]">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead class="w-[50px]"></TableHead>
+                  <TableHead>{{ t('user.username') }}</TableHead>
+                  <TableHead class="w-[110px]">{{ t('user.realName') }}</TableHead>
+                  <TableHead>{{ t('user.email') }}</TableHead>
+                  <TableHead class="w-[90px] text-center">{{ t('common.status') }}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow v-for="user in searchedUsers" :key="user.id">
+                  <TableCell>
+                    <Checkbox :checked="pendingUserIds.has(user.id)" @update:checked="(val: boolean) => toggleUserSelect(user, val)" />
+                  </TableCell>
+                  <TableCell class="font-medium">{{ user.username }}</TableCell>
+                  <TableCell class="text-muted-foreground">{{ user.real_name || '-' }}</TableCell>
+                  <TableCell class="text-muted-foreground">{{ user.email || '-' }}</TableCell>
+                  <TableCell class="text-center">
+                    <Badge variant="outline" class="text-xs" :class="user.status === 1 ? 'bg-green-500/10 border-green-500/30 text-green-500' : ''">
+                      {{ user.status === 1 ? t('common.active') : t('common.inactive') }}
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" @click="showUserAssignDialog = false">{{ t('common.cancel') }}</Button>
+          <Button :disabled="savingUsers" @click="handleSaveUserAssign">
+            保存（{{ pendingUserIds.size }} 人）
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, nextTick } from 'vue'
+import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
-import { Edit, Delete, Key, Lock, User, Menu, Search, InfoFilled } from '@element-plus/icons-vue'
+import { toast } from 'vue-sonner'
+import { ArrowLeft, Pencil, Trash2, KeyRound, Lock, User, LayoutList, Search, Info, X } from 'lucide-vue-next'
 import { roleApi } from '@/api/role'
 import { menuApi } from '@/api/menu'
 import { getUserList, getUserDetail } from '@/api/user'
 import type { RoleDefinitionDTO, MenuNodeDTO } from '@/api/role'
 import type { MenuItem, UserListItem, UserProfile } from '@/types/user'
 import DetailPageSkeleton from '@/components/skeleton/DetailPageSkeleton.vue'
+import { Card, CardHeader, CardContent } from '@/components/ui/card'
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Badge } from '@/components/ui/badge'
+import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -337,17 +376,19 @@ const showMenuConfigDialog = ref(false)
 const showUserAssignDialog = ref(false)
 
 // ── 编辑表单 ─────────────────────────────────────────────────────────
-const editFormRef = ref<FormInstance>()
+const editFormRef = ref()
 const editForm = reactive({ description: '', status: 1 })
-const editFormRules: FormRules = {
-  description: [{ max: 500, message: '描述不超过 500 个字符', trigger: 'blur' }],
-}
+
+const editFormStatusString = computed({
+  get: () => String(editForm.status),
+  set: (val: string) => { editForm.status = Number(val) },
+})
 
 // ── 菜单权限配置 ──────────────────────────────────────────────────────
 const menuConfigLoading = ref(false)
 const savingMenuConfig = ref(false)
 const fullMenuTree = ref<MenuItem[]>([])
-const menuPermMap = reactive<Record<string, number>>({})
+const menuPermMap = reactive<Record<string, string>>({})
 
 // ── 用户分配 ──────────────────────────────────────────────────────────
 const userSearchLoading = ref(false)
@@ -355,7 +396,6 @@ const savingUsers = ref(false)
 const userSearchKeyword = ref('')
 const searchedUsers = ref<UserListItem[]>([])
 const pendingUserIds = reactive(new Set<string>())
-const userTableRef = ref<any>()
 let userSearchTimer: ReturnType<typeof setTimeout> | null = null
 
 // ════════════════════ 数据加载 ════════════════════
@@ -368,7 +408,7 @@ const loadRoleDetail = async () => {
     editForm.description = res.role?.description || ''
     editForm.status = res.role?.status || 1
   } catch {
-    ElMessage.error('获取角色详情失败')
+    toast.error('获取角色详情失败')
   } finally {
     loading.value = false
   }
@@ -415,7 +455,7 @@ const handleUpdateRole = async () => {
     saving.value = true
     const res = await roleApi.updateRole(roleId, editForm)
     if (res.role) {
-      ElMessage.success(t('common.updateSuccess'))
+      toast.success(t('common.updateSuccess'))
       showEditDialog.value = false
       loadRoleDetail()
     }
@@ -431,20 +471,11 @@ const handleUpdateRole = async () => {
 const handleDelete = async () => {
   if (!roleDetail.value) return
   try {
-    await ElMessageBox.confirm(
-      `确定要删除角色 "${roleDetail.value.name}" 吗？此操作不可恢复！`,
-      '警告',
-      {
-        confirmButtonText: '确认删除',
-        cancelButtonText: t('common.cancel'),
-        type: 'warning',
-      }
-    )
     await roleApi.deleteRole(roleId)
-    ElMessage.success(t('common.deleteSuccess'))
+    toast.success(t('common.deleteSuccess'))
     router.back()
   } catch (error: any) {
-    if (error !== 'cancel') ElMessage.error('删除角色失败')
+    if (error !== 'cancel') toast.error('删除角色失败')
   }
 }
 
@@ -463,16 +494,16 @@ const openMenuConfigDialog = async () => {
     // 初始化所有节点为 0（无权限）
     Object.keys(menuPermMap).forEach(k => delete menuPermMap[k])
     flattenTree(fullMenuTree.value).forEach(node => {
-      menuPermMap[node.id] = 0
+      menuPermMap[node.id] = '0'
     })
 
     // 填入当前角色已有的权限
     const perms = permRes.permissions || []
     perms.forEach(p => {
-      menuPermMap[p.menu_id] = p.permission
+      menuPermMap[p.menu_id] = String(p.permission)
     })
   } catch {
-    ElMessage.error('加载菜单配置失败')
+    toast.error('加载菜单配置失败')
   } finally {
     menuConfigLoading.value = false
   }
@@ -483,25 +514,34 @@ const handleSaveMenuConfig = async () => {
   try {
     // 仅提交权限 > 0 的配置
     const configs = Object.entries(menuPermMap)
-      .filter(([, perm]) => perm > 0)
-      .map(([menu_id, permission]) => ({ menu_id, permission }))
+      .filter(([, perm]) => Number(perm) > 0)
+      .map(([menu_id, permission]) => ({ menu_id, permission: Number(permission) }))
 
     await roleApi.configureRoleMenus(roleId, configs)
-    ElMessage.success('菜单权限配置已保存')
+    toast.success('菜单权限配置已保存')
     showMenuConfigDialog.value = false
     loadMenuTree()
   } catch {
-    ElMessage.error('保存菜单权限失败')
+    toast.error('保存菜单权限失败')
   } finally {
     savingMenuConfig.value = false
   }
 }
 
-function flattenTree(nodes: MenuItem[]): MenuItem[] {
-  const result: MenuItem[] = []
+function flattenTree(nodes: MenuItem[], depth = 0): (MenuItem & { _depth: number })[] {
+  const result: (MenuItem & { _depth: number })[] = []
   for (const node of nodes) {
-    result.push(node)
-    if (node.children?.length) result.push(...flattenTree(node.children))
+    result.push({ ...node, _depth: depth })
+    if (node.children?.length) result.push(...flattenTree(node.children, depth + 1))
+  }
+  return result
+}
+
+function flattenMenuTree(nodes: any[], depth = 0): any[] {
+  const result: any[] = []
+  for (const node of nodes) {
+    result.push({ ...node, _depth: depth })
+    if (node.children?.length) result.push(...flattenMenuTree(node.children, depth + 1))
   }
   return result
 }
@@ -510,14 +550,10 @@ function flattenTree(nodes: MenuItem[]): MenuItem[] {
 
 const openUserAssignDialog = () => {
   showUserAssignDialog.value = true
-}
-
-const initUserAssignDialog = async () => {
-  // 初始化待选集合为当前已绑定用户
   pendingUserIds.clear()
   ;(roleUsers.value.user_ids || []).forEach(id => pendingUserIds.add(id))
   userSearchKeyword.value = ''
-  await loadUsers()
+  loadUsers()
 }
 
 const loadUsers = async (search?: string) => {
@@ -525,17 +561,18 @@ const loadUsers = async (search?: string) => {
   try {
     const res = await getUserList({ page: 1, limit: 50, search })
     searchedUsers.value = res.users || []
-    // 恢复选中状态
-    await nextTick()
-    if (userTableRef.value) {
-      searchedUsers.value.forEach(user => {
-        userTableRef.value.toggleRowSelection(user, pendingUserIds.has(user.id))
-      })
-    }
   } catch {
-    ElMessage.error('加载用户列表失败')
+    toast.error('加载用户列表失败')
   } finally {
     userSearchLoading.value = false
+  }
+}
+
+const toggleUserSelect = (user: UserListItem, checked: boolean) => {
+  if (checked) {
+    pendingUserIds.add(user.id)
+  } else {
+    pendingUserIds.delete(user.id)
   }
 }
 
@@ -546,31 +583,16 @@ const handleUserSearch = () => {
   }, 400)
 }
 
-const handleUserSelect = (selection: UserListItem[], row: UserListItem) => {
-  if (selection.some(u => u.id === row.id)) {
-    pendingUserIds.add(row.id)
-  } else {
-    pendingUserIds.delete(row.id)
-  }
-}
-
-const handleUserSelectAll = (selection: UserListItem[]) => {
-  // 取消当前页所有行的选中
-  searchedUsers.value.forEach(u => pendingUserIds.delete(u.id))
-  // 重新加入选中的行
-  selection.forEach(u => pendingUserIds.add(u.id))
-}
-
 const handleSaveUserAssign = async () => {
   savingUsers.value = true
   try {
     await roleApi.bindUsersToRole(roleId, [...pendingUserIds])
-    ElMessage.success('用户分配已保存')
+    toast.success('用户分配已保存')
     showUserAssignDialog.value = false
     loadRoleUsers()
     loadRoleDetail()
   } catch {
-    ElMessage.error('保存用户分配失败')
+    toast.error('保存用户分配失败')
   } finally {
     savingUsers.value = false
   }
@@ -578,18 +600,13 @@ const handleSaveUserAssign = async () => {
 
 const handleRemoveUser = async (userId: string) => {
   try {
-    await ElMessageBox.confirm(`确定要移除用户 ${userId}？`, '提示', {
-      confirmButtonText: t('common.confirm'),
-      cancelButtonText: t('common.cancel'),
-      type: 'warning',
-    })
     const remaining = (roleUsers.value.user_ids || []).filter(id => id !== userId)
     await roleApi.bindUsersToRole(roleId, remaining)
-    ElMessage.success(t('common.removeSuccess'))
+    toast.success(t('common.removeSuccess'))
     loadRoleUsers()
     loadRoleDetail()
   } catch (error: any) {
-    if (error !== 'cancel') ElMessage.error('移除用户失败')
+    if (error !== 'cancel') toast.error('移除用户失败')
   }
 }
 
@@ -603,14 +620,15 @@ const userDisplayName = (uid: string) => {
   return u.real_name || u.username
 }
 
-const getStatusType = (status: number) =>
-  ({ 1: 'success', 2: 'info', 3: 'danger' } as Record<number, string>)[status] || ''
-
 const getStatusText = (status: number) =>
   ({ 1: t('common.active'), 2: t('common.inactive'), 3: t('common.deprecated') } as Record<number, string>)[status] || ''
 
-const getPermTagType = (level: number) =>
-  ({ 0: 'info', 1: 'success', 2: 'warning', 3: 'danger' } as Record<number, string>)[level] || ''
+const getPermBadgeVariant = (level: number): 'default' | 'secondary' | 'destructive' | 'outline' => {
+  if (level === 0) return 'secondary'
+  if (level === 1) return 'outline'
+  if (level === 2) return 'default'
+  return 'destructive'
+}
 
 const getPermissionText = (level: number) =>
   ({
@@ -629,185 +647,18 @@ onMounted(async () => {
     initialLoading.value = false
   }
 })
+
+onBeforeUnmount(() => {
+  showEditDialog.value = false
+  showMenuConfigDialog.value = false
+  showUserAssignDialog.value = false
+
+  if (userSearchTimer) {
+    clearTimeout(userSearchTimer)
+    userSearchTimer = null
+  }
+})
 </script>
 
-<style scoped lang="scss">
-.role-detail {
-  padding: 20px;
-
-  .page-title {
-    font-size: 20px;
-    font-weight: 700;
-    font-family: 'Inter', sans-serif;
-    color: var(--c-primary);
-  }
-
-  .content-row {
-    margin-top: 20px;
-    min-height: 300px;
-  }
-
-  .detail-card {
-    background: var(--bg-card);
-    border: 1px solid hsl(var(--border) / 0.6);
-    border-radius: 18px;
-    box-shadow: var(--shadow-card);
-    margin-bottom: 20px;
-
-    :deep(.el-card__header) {
-      border-bottom: 1px solid hsl(var(--border) / 0.6);
-      padding: 14px 20px;
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--c-primary);
-      font-weight: 600;
-
-      > span:first-of-type {
-        flex: 1;
-      }
-    }
-
-    .role-name-text {
-      color: var(--c-text-main);
-    }
-  }
-
-  // 菜单权限树（只读展示）
-  .menu-tree-node {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    padding-right: 4px;
-
-    .node-name {
-      flex: 1;
-      font-size: 13px;
-    }
-  }
-
-  .menu-card {
-    :deep(.el-tree-node__content) {
-      height: auto;
-      padding: 3px 0;
-    }
-  }
-
-  // 已绑定用户标签
-  .user-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    max-height: 220px;
-    overflow-y: auto;
-    padding: 4px 0;
-
-    .user-tag {
-      font-size: 12px;
-      font-family: 'Source Code Pro', monospace;
-    }
-  }
-}
-
-// ── 菜单权限配置对话框 ────────────────────────────────────────────────
-.config-tips {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  margin-bottom: 16px;
-  background: rgba(63, 81, 181, 0.08);
-  border: 1px solid rgba(63, 81, 181, 0.2);
-  border-radius: 8px;
-  font-size: 13px;
-  color: var(--c-text-sub, #8b9bb4);
-}
-
-.menu-config-body {
-  max-height: 460px;
-  overflow-y: auto;
-
-  .menu-config-header {
-    display: flex;
-    align-items: center;
-    padding: 0 24px 8px 24px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--c-text-sub, #8b9bb4);
-    border-bottom: 1px solid var(--c-border, rgba(255, 255, 255, 0.08));
-    margin-bottom: 4px;
-
-    span:first-child { flex: 1; }
-    span:nth-child(2) { width: 140px; }
-    span:last-child { width: 110px; flex-shrink: 0; }
-  }
-
-  :deep(.el-tree-node__content) {
-    height: auto;
-    padding: 2px 0;
-  }
-
-  .menu-config-node {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    padding: 3px 4px 3px 0;
-
-    .node-label {
-      flex: 1;
-      font-size: 13px;
-      color: var(--c-text-main);
-    }
-
-    .node-path {
-      width: 140px;
-      font-size: 11px;
-      color: var(--c-text-sub, #8b9bb4);
-      font-family: 'Source Code Pro', monospace;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .perm-select {
-      width: 110px;
-      flex-shrink: 0;
-
-      &.has-perm :deep(.el-input__inner) {
-        color: var(--c-primary);
-        font-weight: 500;
-      }
-    }
-  }
-}
-
-// ── 用户分配对话框 ────────────────────────────────────────────────────
-.user-assign-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 14px;
-
-  .assign-count {
-    font-size: 13px;
-    color: var(--c-text-sub, #8b9bb4);
-
-    strong {
-      color: var(--c-primary);
-      font-size: 16px;
-    }
-  }
-}
-
-.user-assign-table {
-  width: 100%;
-}
+<style scoped>
 </style>

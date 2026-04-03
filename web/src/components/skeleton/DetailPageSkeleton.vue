@@ -1,6 +1,6 @@
 <template>
-  <el-row :gutter="20">
-    <el-col :xs="24" :lg="sideSpan">
+  <div class="grid gap-5 lg:grid-cols-3">
+    <div class="lg:col-span-1">
       <div
         v-for="n in sideCards"
         :key="'s' + n"
@@ -27,8 +27,8 @@
           </div>
         </div>
       </div>
-    </el-col>
-    <el-col :xs="24" :lg="mainSpan">
+    </div>
+    <div class="lg:col-span-2">
       <div
         v-for="n in mainCards"
         :key="'m' + n"
@@ -51,8 +51,8 @@
           </div>
         </div>
       </div>
-    </el-col>
-  </el-row>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -1,6 +1,5 @@
 <template>
   <div class="audit-log-list">
-    <!-- 页面头部 -->
     <div class="page-header">
       <div class="header-left">
         <h1 class="page-title">{{ t('audit.title') }}</h1>
@@ -8,24 +7,23 @@
       </div>
     </div>
 
-    <!-- 统计卡片 -->
     <div class="stats-row">
       <div class="stat-card spotlight-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
-        <div class="stat-icon"><el-icon size="20"><Document /></el-icon></div>
+        <div class="stat-icon"><FileText class="w-5 h-5" /></div>
         <div class="stat-info">
           <span class="stat-value">{{ stats.total_count }}</span>
           <span class="stat-label">{{ t('audit.totalRecords') }}</span>
         </div>
       </div>
       <div class="stat-card spotlight-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
-        <div class="stat-icon success-icon"><el-icon size="20"><CircleCheck /></el-icon></div>
+        <div class="stat-icon success-icon"><CircleCheck class="w-5 h-5" /></div>
         <div class="stat-info">
           <span class="stat-value">{{ successRate }}%</span>
           <span class="stat-label">{{ t('audit.successRate') }}</span>
         </div>
       </div>
       <div class="stat-card spotlight-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
-        <div class="stat-icon duration-icon"><el-icon size="20"><Timer /></el-icon></div>
+        <div class="stat-icon duration-icon"><Timer class="w-5 h-5" /></div>
         <div class="stat-info">
           <span class="stat-value">{{ stats.avg_duration_ms }}ms</span>
           <span class="stat-label">{{ t('audit.avgDuration') }}</span>
@@ -33,111 +31,138 @@
       </div>
     </div>
 
-    <!-- 搜索栏 -->
     <div class="search-section">
-      <el-form :inline="true" class="search-form">
-        <el-form-item>
-          <el-select v-model="searchForm.action" :placeholder="t('audit.allActions')" clearable @clear="handleSearch" style="width: 150px">
-            <el-option :label="t('audit.actionType.create')" :value="1" />
-            <el-option :label="t('audit.actionType.update')" :value="2" />
-            <el-option :label="t('audit.actionType.delete')" :value="3" />
-            <el-option :label="t('audit.actionType.login')" :value="4" />
-            <el-option :label="t('audit.actionType.logout')" :value="5" />
-            <el-option :label="t('audit.actionType.passwordChange')" :value="6" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-select v-model="searchForm.success" :placeholder="t('audit.allStatus')" clearable @clear="handleSearch" style="width: 130px">
-            <el-option :label="t('audit.success')" :value="true" />
-            <el-option :label="t('audit.failed')" :value="false" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-date-picker
-            v-model="dateRange"
-            type="datetimerange"
-            :start-placeholder="t('audit.dateRange')"
-            end-placeholder=""
-            value-format="x"
-            style="width: 340px"
+      <div class="search-form">
+        <div class="form-field">
+          <Select v-model="searchForm.action" @update:modelValue="handleSearch">
+            <SelectTrigger class="w-[150px]">
+              <SelectValue :placeholder="t('audit.allActions')" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="all">{{ t('audit.allActions') }}</SelectItem>
+                <SelectItem value="1">{{ t('audit.actionType.create') }}</SelectItem>
+                <SelectItem value="2">{{ t('audit.actionType.update') }}</SelectItem>
+                <SelectItem value="3">{{ t('audit.actionType.delete') }}</SelectItem>
+                <SelectItem value="4">{{ t('audit.actionType.login') }}</SelectItem>
+                <SelectItem value="5">{{ t('audit.actionType.logout') }}</SelectItem>
+                <SelectItem value="6">{{ t('audit.actionType.passwordChange') }}</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <div class="form-field">
+          <Select v-model="searchForm.success" @update:modelValue="handleSearch">
+            <SelectTrigger class="w-[130px]">
+              <SelectValue :placeholder="t('audit.allStatus')" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="all">{{ t('audit.allStatus') }}</SelectItem>
+                <SelectItem value="true">{{ t('audit.success') }}</SelectItem>
+                <SelectItem value="false">{{ t('audit.failed') }}</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <div class="form-field">
+          <Input
+            v-model="dateRangeDisplay"
+            :placeholder="t('audit.dateRange')"
+            class="w-[220px]"
+            readonly
+            @click="showDatePicker = true"
           />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="handleSearch">
-            <el-icon><Search /></el-icon>{{ t('common.search') }}
-          </el-button>
-          <el-button @click="handleReset">
-            <el-icon><RefreshLeft /></el-icon>{{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
+        </div>
+        <div class="form-field">
+          <Button variant="default" @click="handleSearch">
+            <Search class="w-4 h-4 mr-1" />{{ t('common.search') }}
+          </Button>
+          <Button variant="outline" @click="handleReset">
+            <RotateCcw class="w-4 h-4 mr-1" />{{ t('common.reset') }}
+          </Button>
+        </div>
+      </div>
     </div>
 
-    <!-- 审计日志表格 -->
     <div class="table-card spotlight-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
       <ListPageSkeleton v-if="initialLoading" :columns="7" :rows="10" />
       <template v-else>
         <div class="table-body">
-        <el-table v-loading="loading" :data="auditLogs" class="modern-table" height="100%" style="width: 100%">
-          <el-table-column :label="t('common.createTime')" width="170">
-            <template #default="{ row }">
-              <span class="text-sub time-text">{{ formatTimestamp(row.created_at) }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('audit.user')" min-width="120">
-            <template #default="{ row }">
-              <span class="user-text">{{ row.username || row.user_id || '-' }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('audit.action')" width="110" align="center">
-            <template #default="{ row }">
-              <el-tag :type="getActionTagType(row.action)" size="small" class="action-tag">
-                {{ getActionText(row.action) }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="resource" :label="t('audit.resource')" min-width="200" show-overflow-tooltip>
-            <template #default="{ row }">
-              <span class="resource-text">{{ row.resource }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('audit.statusCode')" width="100" align="center">
-            <template #default="{ row }">
-              <span class="status-code" :class="getStatusCodeClass(row.status_code)">{{ row.status_code }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('common.status')" width="90" align="center">
-            <template #default="{ row }">
-              <el-tag :type="row.success ? 'success' : 'danger'" size="small">
-                {{ row.success ? t('audit.success') : t('audit.failed') }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('audit.clientIP')" width="140">
-            <template #default="{ row }">
-              <span class="text-sub">{{ row.client_ip }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('audit.duration')" width="100" align="right">
-            <template #default="{ row }">
-              <span class="duration-text" :class="{ 'duration-slow': row.duration_ms >= 1000 }">
-                {{ row.duration_ms }}ms
-              </span>
-            </template>
-          </el-table-column>
-        </el-table>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead class="w-[170px]">{{ t('common.createTime') }}</TableHead>
+                <TableHead class="min-w-[120px]">{{ t('audit.user') }}</TableHead>
+                <TableHead class="w-[110px] text-center">{{ t('audit.action') }}</TableHead>
+                <TableHead class="min-w-[200px]">{{ t('audit.resource') }}</TableHead>
+                <TableHead class="w-[100px] text-center">{{ t('audit.statusCode') }}</TableHead>
+                <TableHead class="w-[90px] text-center">{{ t('common.status') }}</TableHead>
+                <TableHead class="w-[140px]">{{ t('audit.clientIP') }}</TableHead>
+                <TableHead class="w-[100px] text-right">{{ t('audit.duration') }}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow v-for="row in auditLogs" :key="row.id">
+                <TableCell class="text-[var(--c-text-sub)] text-xs font-mono">{{ formatTimestamp(row.created_at) }}</TableCell>
+                <TableCell class="font-medium text-[var(--c-text-main)]">{{ row.username || row.user_id || '-' }}</TableCell>
+                <TableCell class="text-center">
+                  <Badge :variant="getActionBadgeVariant(row.action)" class="min-w-[56px] justify-center">
+                    {{ getActionText(row.action) }}
+                  </Badge>
+                </TableCell>
+                <TableCell class="font-mono text-xs text-[var(--c-text-sub)] truncate max-w-[200px]" :title="row.resource">{{ row.resource }}</TableCell>
+                <TableCell class="text-center">
+                  <span class="font-mono font-semibold text-sm" :class="getStatusCodeClass(row.status_code)">{{ row.status_code }}</span>
+                </TableCell>
+                <TableCell class="text-center">
+                  <Badge :variant="row.success ? 'default' : 'destructive'" class="text-xs">
+                    {{ row.success ? t('audit.success') : t('audit.failed') }}
+                  </Badge>
+                </TableCell>
+                <TableCell class="text-[var(--c-text-sub)] text-xs">{{ row.client_ip }}</TableCell>
+                <TableCell class="text-right">
+                  <span class="font-mono text-xs text-[var(--c-text-sub)]" :class="{ 'duration-slow': row.duration_ms >= 1000 }">
+                    {{ row.duration_ms }}ms
+                  </span>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
         </div>
 
         <div class="pagination-wrapper">
-          <el-pagination
-            v-model:current-page="pagination.page"
-            v-model:page-size="pagination.size"
-            :total="pagination.total"
-            :page-sizes="[10, 20, 50, 100]"
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="loadAuditLogs"
-            @current-change="loadAuditLogs"
-          />
+          <div class="flex items-center gap-4">
+            <span class="text-sm text-[var(--c-text-sub)]">
+              {{ t('common.total') }}: {{ pagination.total }}
+            </span>
+            <Select v-model="paginationSizeString" @update:modelValue="loadAuditLogs">
+              <SelectTrigger class="w-[80px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="20">20</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+                <SelectItem value="100">100</SelectItem>
+              </SelectContent>
+            </Select>
+            <div class="flex items-center gap-1">
+              <Button variant="outline" size="sm" :disabled="pagination.page <= 1" @click="pagination.page = 1; loadAuditLogs()">
+                <ChevronsLeft class="w-4 h-4" />
+              </Button>
+              <Button variant="outline" size="sm" :disabled="pagination.page <= 1" @click="pagination.page--; loadAuditLogs()">
+                <ChevronLeft class="w-4 h-4" />
+              </Button>
+              <span class="px-3 text-sm">{{ pagination.page }}</span>
+              <Button variant="outline" size="sm" :disabled="pagination.page >= Math.ceil(pagination.total / pagination.size)" @click="pagination.page++; loadAuditLogs()">
+                <ChevronRight class="w-4 h-4" />
+              </Button>
+              <Button variant="outline" size="sm" :disabled="pagination.page >= Math.ceil(pagination.total / pagination.size)" @click="pagination.page = Math.ceil(pagination.total / pagination.size); loadAuditLogs()">
+                <ChevronsRight class="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
         </div>
       </template>
     </div>
@@ -147,12 +172,17 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ElMessage } from 'element-plus'
-import { Document, CircleCheck, Timer, Search, RefreshLeft } from '@element-plus/icons-vue'
+import { toast } from 'vue-sonner'
+import { FileText, CircleCheck, Timer, Search, RotateCcw, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-vue-next'
 import { auditApi } from '@/api/audit'
 import type { AuditLogDTO } from '@/api/audit'
 import type { AuditLogStats } from '@/types/audit'
 import ListPageSkeleton from '@/components/skeleton/ListPageSkeleton.vue'
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Badge } from '@/components/ui/badge'
 
 const { t } = useI18n()
 
@@ -160,14 +190,28 @@ const initialLoading = ref(true)
 const loading = ref(false)
 const auditLogs = ref<AuditLogDTO[]>([])
 const dateRange = ref<[number, number] | null>(null)
+const showDatePicker = ref(false)
 const stats = ref<AuditLogStats>({ total_count: 0, success_count: 0, avg_duration_ms: 0 })
 
 const searchForm = reactive({
-  action: undefined as number | undefined,
-  success: undefined as boolean | undefined,
+  action: 'all',
+  success: 'all',
 })
 
 const pagination = reactive({ page: 1, size: 20, total: 0 })
+
+const paginationSizeString = computed({
+  get: () => String(pagination.size),
+  set: (val: string) => { pagination.size = Number(val) },
+})
+
+const dateRangeDisplay = computed(() => {
+  if (!dateRange.value) return ''
+  const pad = (n: number) => String(n).padStart(2, '0')
+  const start = new Date(dateRange.value[0])
+  const end = new Date(dateRange.value[1])
+  return `${start.getFullYear()}-${pad(start.getMonth() + 1)}-${pad(start.getDate())} ~ ${end.getFullYear()}-${pad(end.getMonth() + 1)}-${pad(end.getDate())}`
+})
 
 const successRate = computed(() => {
   if (stats.value.total_count === 0) return 0
@@ -193,8 +237,8 @@ const loadAuditLogs = async () => {
     const params: Record<string, any> = {
       page: pagination.page,
       limit: pagination.size,
-      action: searchForm.action,
-      success: searchForm.success,
+      action: searchForm.action !== 'all' ? Number(searchForm.action) : undefined,
+      success: searchForm.success === 'true' ? true : searchForm.success === 'false' ? false : undefined,
     }
     if (dateRange.value) {
       params.start_time = dateRange.value[0]
@@ -207,7 +251,7 @@ const loadAuditLogs = async () => {
       stats.value = response.stats
     }
   } catch {
-    ElMessage.error(t('common.operationFailed'))
+    toast.error(t('common.operationFailed'))
   } finally {
     loading.value = false
     initialLoading.value = false
@@ -216,8 +260,8 @@ const loadAuditLogs = async () => {
 
 const handleSearch = () => { pagination.page = 1; loadAuditLogs() }
 const handleReset = () => {
-  searchForm.action = undefined
-  searchForm.success = undefined
+  searchForm.action = 'all'
+  searchForm.success = 'all'
   dateRange.value = null
   pagination.page = 1
   loadAuditLogs()
@@ -235,16 +279,16 @@ const getActionText = (action: number) => {
   return map[action] || String(action)
 }
 
-const getActionTagType = (action: number) => {
-  const map: Record<number, string> = {
-    1: '',        // 创建 - 蓝色 (default)
-    2: 'warning', // 更新 - 橙色
-    3: 'danger',  // 删除 - 红色
-    4: 'success', // 登录 - 绿色
-    5: 'info',    // 登出 - 灰色
-    6: '',        // 密码修改 - 蓝色
+const getActionBadgeVariant = (action: number): 'default' | 'secondary' | 'destructive' | 'outline' => {
+  const map: Record<number, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+    1: 'default',
+    2: 'secondary',
+    3: 'destructive',
+    4: 'default',
+    5: 'outline',
+    6: 'default',
   }
-  return map[action] || 'info'
+  return map[action] || 'outline'
 }
 
 const getStatusCodeClass = (code: number) => {
@@ -370,7 +414,7 @@ onMounted(() => { loadAuditLogs() })
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      :deep(.el-form-item) { margin-bottom: 0; margin-right: 12px; }
+      gap: 12px;
     }
   }
 
@@ -390,46 +434,14 @@ onMounted(() => { loadAuditLogs() })
       min-height: 0;
     }
 
-    .modern-table {
-      :deep(th.el-table__cell) { padding: 14px 12px; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; }
-      :deep(td.el-table__cell) { padding: 14px 12px; }
-    }
-
-    .text-sub { color: var(--c-text-sub); font-size: 13px; }
-    .time-text { font-size: 12px; font-family: 'JetBrains Mono', monospace; }
-    .user-text { font-weight: 500; color: var(--c-text-main); }
-
-    .resource-text {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      color: var(--c-text-sub);
-    }
-
-    .action-tag {
-      min-width: 56px;
-      text-align: center;
-    }
-
-    .status-code {
-      font-family: 'JetBrains Mono', monospace;
+    .duration-slow {
+      color: #F56C6C;
       font-weight: 600;
-      font-size: 13px;
-
-      &.status-2xx { color: #67C23A; }
-      &.status-4xx { color: #E6A23C; }
-      &.status-5xx { color: #F56C6C; }
     }
 
-    .duration-text {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      color: var(--c-text-sub);
-
-      &.duration-slow {
-        color: #F56C6C;
-        font-weight: 600;
-      }
-    }
+    .status-2xx { color: #67C23A; }
+    .status-4xx { color: #E6A23C; }
+    .status-5xx { color: #F56C6C; }
 
     .pagination-wrapper {
       display: flex;

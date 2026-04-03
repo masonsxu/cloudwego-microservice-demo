@@ -4,113 +4,145 @@
       <h2>{{ t('oidc.integration.title') }}</h2>
     </div>
 
-    <el-alert type="info" :closable="false" show-icon class="guide-alert">
-      <template #title>{{ t('oidc.integration.guideTitle') }}</template>
-      <div class="guide-steps">
-        <div class="guide-step">
-          <span class="step-num">1</span>
-          <span>{{ t('oidc.integration.step1') }}</span>
-        </div>
-        <div class="guide-step">
-          <span class="step-num">2</span>
-          <span>{{ t('oidc.integration.step2') }}</span>
-        </div>
-        <div class="guide-step">
-          <span class="step-num">3</span>
-          <span>{{ t('oidc.integration.step3') }}</span>
-        </div>
-        <div class="guide-step">
-          <span class="step-num">4</span>
-          <span>{{ t('oidc.integration.step4') }}</span>
-        </div>
-      </div>
-    </el-alert>
-
-    <el-row :gutter="20">
-      <el-col :span="16">
-        <el-card shadow="never">
-          <template #header>{{ t('oidc.integration.testFlow') }}</template>
-
-          <el-form :model="testForm" label-width="160px" class="test-form">
-            <el-form-item :label="t('oidc.integration.clientId')">
-              <el-input v-model="testForm.clientId" placeholder="your-client-id" />
-            </el-form-item>
-            <el-form-item :label="t('oidc.integration.redirectUri')">
-              <el-input v-model="testForm.redirectUri" placeholder="http://localhost:3000/callback" />
-            </el-form-item>
-            <el-form-item :label="t('oidc.integration.scope')">
-              <el-checkbox-group v-model="testForm.scopes">
-                <el-checkbox value="openid">openid</el-checkbox>
-                <el-checkbox value="profile">profile</el-checkbox>
-                <el-checkbox value="email">email</el-checkbox>
-                <el-checkbox value="offline_access">offline_access</el-checkbox>
-              </el-checkbox-group>
-            </el-form-item>
-            <el-form-item :label="t('oidc.integration.enablePkce')">
-              <el-switch v-model="testForm.enablePkce" />
-            </el-form-item>
-
-            <el-form-item>
-              <el-button type="primary" @click="startAuthFlow" :loading="flowLoading">
-                {{ t('oidc.integration.startFlow') }}
-              </el-button>
-            </el-form-item>
-          </el-form>
-        </el-card>
-
-        <el-card shadow="never" style="margin-top: 16px;">
-          <template #header>{{ t('oidc.integration.flowLog') }}</template>
-          <div class="flow-log" ref="logContainerRef">
-            <div v-for="(log, idx) in flowLogs" :key="idx" :class="['log-entry', `log-${log.level}`]">
-              <span class="log-time">{{ log.time }}</span>
-              <span class="log-message">{{ log.message }}</span>
-            </div>
-            <div v-if="flowLogs.length === 0" class="log-empty">{{ t('oidc.integration.noLogs') }}</div>
+    <Alert>
+      <AlertTitle>{{ t('oidc.integration.guideTitle') }}</AlertTitle>
+      <AlertDescription>
+        <div class="guide-steps">
+          <div class="guide-step">
+            <span class="step-num">1</span>
+            <span>{{ t('oidc.integration.step1') }}</span>
           </div>
-        </el-card>
-      </el-col>
+          <div class="guide-step">
+            <span class="step-num">2</span>
+            <span>{{ t('oidc.integration.step2') }}</span>
+          </div>
+          <div class="guide-step">
+            <span class="step-num">3</span>
+            <span>{{ t('oidc.integration.step3') }}</span>
+          </div>
+          <div class="guide-step">
+            <span class="step-num">4</span>
+            <span>{{ t('oidc.integration.step4') }}</span>
+          </div>
+        </div>
+      </AlertDescription>
+    </Alert>
 
-      <el-col :span="8">
-        <el-card shadow="never">
-          <template #header>{{ t('oidc.integration.endpoints') }}</template>
-          <el-descriptions :column="1" border size="small">
-            <el-descriptions-item :label="t('oidc.config.discovery')">
-              <code class="code-text">/.well-known/openid-configuration</code>
-            </el-descriptions-item>
-            <el-descriptions-item :label="t('oidc.config.jwksUri')">
-              <code class="code-text">/keys</code>
-            </el-descriptions-item>
-            <el-descriptions-item :label="t('oidc.config.authorizationEndpoint')">
-              <code class="code-text">/authorize</code>
-            </el-descriptions-item>
-            <el-descriptions-item :label="t('oidc.config.tokenEndpoint')">
-              <code class="code-text">/oauth/token</code>
-            </el-descriptions-item>
-            <el-descriptions-item :label="t('oidc.config.userinfoEndpoint')">
-              <code class="code-text">/userinfo</code>
-            </el-descriptions-item>
-            <el-descriptions-item :label="t('oidc.config.revocationEndpoint')">
-              <code class="code-text">/revoke</code>
-            </el-descriptions-item>
-            <el-descriptions-item :label="t('oidc.config.introspectionEndpoint')">
-              <code class="code-text">/oauth/introspect</code>
-            </el-descriptions-item>
-          </el-descriptions>
-        </el-card>
+    <div class="grid gap-4 lg:grid-cols-3">
+      <div class="lg:col-span-2 space-y-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>{{ t('oidc.integration.testFlow') }}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="space-y-4">
+              <div class="space-y-2">
+                <Label>{{ t('oidc.integration.clientId') }}</Label>
+                <Input v-model="testForm.clientId" placeholder="your-client-id" />
+              </div>
+              <div class="space-y-2">
+                <Label>{{ t('oidc.integration.redirectUri') }}</Label>
+                <Input v-model="testForm.redirectUri" placeholder="http://localhost:3000/callback" />
+              </div>
+              <div class="space-y-2">
+                <Label>{{ t('oidc.integration.scope') }}</Label>
+                <div class="flex flex-wrap gap-4">
+                  <div class="flex items-center gap-2" v-for="scope in ['openid', 'profile', 'email', 'offline_access']" :key="scope">
+                    <Checkbox :id="scope" :value="scope" :checked="testForm.scopes.includes(scope)" @update:checked="(checked: boolean) => toggleScope(scope, checked)" />
+                    <label :for="scope" class="text-sm">{{ scope }}</label>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <Switch :checked="testForm.enablePkce" @update:checked="(checked: boolean) => testForm.enablePkce = checked" />
+                <Label>{{ t('oidc.integration.enablePkce') }}</Label>
+              </div>
+              <Button variant="default" @click="startAuthFlow" :loading="flowLoading">
+                {{ t('oidc.integration.startFlow') }}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
-        <el-card shadow="never" style="margin-top: 16px;">
-          <template #header>{{ t('oidc.integration.codeExample') }}</template>
-          <pre class="code-block"><code>{{ codeExample }}</code></pre>
-        </el-card>
-      </el-col>
-    </el-row>
+        <Card>
+          <CardHeader>
+            <CardTitle>{{ t('oidc.integration.flowLog') }}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="flow-log" ref="logContainerRef">
+              <div v-for="(log, idx) in flowLogs" :key="idx" :class="['log-entry', `log-${log.level}`]">
+                <span class="log-time">{{ log.time }}</span>
+                <span class="log-message">{{ log.message }}</span>
+              </div>
+              <div v-if="flowLogs.length === 0" class="log-empty">{{ t('oidc.integration.noLogs') }}</div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div class="space-y-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>{{ t('oidc.integration.endpoints') }}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="space-y-3">
+              <div class="flex justify-between items-center py-2 border-b border-[hsl(var(--border))]">
+                <span class="text-sm text-[var(--c-text-sub)]">{{ t('oidc.config.discovery') }}</span>
+                <code class="code-text">/.well-known/openid-configuration</code>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b border-[hsl(var(--border))]">
+                <span class="text-sm text-[var(--c-text-sub)]">{{ t('oidc.config.jwksUri') }}</span>
+                <code class="code-text">/keys</code>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b border-[hsl(var(--border))]">
+                <span class="text-sm text-[var(--c-text-sub)]">{{ t('oidc.config.authorizationEndpoint') }}</span>
+                <code class="code-text">/authorize</code>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b border-[hsl(var(--border))]">
+                <span class="text-sm text-[var(--c-text-sub)]">{{ t('oidc.config.tokenEndpoint') }}</span>
+                <code class="code-text">/oauth/token</code>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b border-[hsl(var(--border))]">
+                <span class="text-sm text-[var(--c-text-sub)]">{{ t('oidc.config.userinfoEndpoint') }}</span>
+                <code class="code-text">/userinfo</code>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b border-[hsl(var(--border))]">
+                <span class="text-sm text-[var(--c-text-sub)]">{{ t('oidc.config.revocationEndpoint') }}</span>
+                <code class="code-text">/revoke</code>
+              </div>
+              <div class="flex justify-between items-center py-2">
+                <span class="text-sm text-[var(--c-text-sub)]">{{ t('oidc.config.introspectionEndpoint') }}</span>
+                <code class="code-text">/oauth/introspect</code>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>{{ t('oidc.integration.codeExample') }}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <pre class="code-block"><code>{{ codeExample }}</code></pre>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ElMessage } from 'element-plus'
+import { toast } from 'vue-sonner'
 import { nextTick, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Switch } from '@/components/ui/switch'
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
 
 const { t } = useI18n()
 
@@ -192,6 +224,16 @@ const generateRandomString = (length: number) => {
   return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
 }
 
+const toggleScope = (scope: string, checked: boolean) => {
+  if (checked) {
+    if (!testForm.scopes.includes(scope)) {
+      testForm.scopes.push(scope)
+    }
+  } else {
+    testForm.scopes = testForm.scopes.filter(s => s !== scope)
+  }
+}
+
 const startAuthFlow = async () => {
   flowLoading.value = true
   flowLogs.value = []
@@ -208,7 +250,6 @@ const startAuthFlow = async () => {
     authUrl.searchParams.set('state', generateRandomString(32))
 
     if (testForm.enablePkce) {
-      const codeVerifier = generateRandomString(64)
       authUrl.searchParams.set('code_challenge_method', 'S256')
       addLog(t('oidc.integration.log.pkceEnabled'), 'info')
     }
@@ -216,10 +257,10 @@ const startAuthFlow = async () => {
     addLog(t('oidc.integration.log.authUrlReady'), 'success')
     addLog(`${t('oidc.integration.log.url')}: ${authUrl.toString()}`, 'info')
 
-    ElMessage.success(t('oidc.integration.log.authUrlGenerated'))
+    toast.success(t('oidc.integration.log.authUrlGenerated'))
   } catch (error) {
     addLog(`${t('oidc.integration.log.error')}: ${error}`, 'error')
-    ElMessage.error(t('oidc.integration.log.flowFailed'))
+    toast.error(t('oidc.integration.log.flowFailed'))
   } finally {
     flowLoading.value = false
   }
@@ -237,12 +278,6 @@ const startAuthFlow = async () => {
   font-size: 20px;
   font-weight: 600;
   color: var(--c-text-main);
-}
-
-.guide-alert {
-  :deep(.el-alert__title) {
-    font-weight: 600;
-  }
 }
 
 .guide-steps {
@@ -271,12 +306,6 @@ const startAuthFlow = async () => {
   font-size: 11px;
   font-weight: 600;
   flex-shrink: 0;
-}
-
-.test-form {
-  :deep(.el-form-item__label) {
-    font-weight: 500;
-  }
 }
 
 .flow-log {
@@ -313,19 +342,19 @@ const startAuthFlow = async () => {
 
 .log-success {
   .log-message {
-    color: var(--el-color-success);
+    color: #67C23A;
   }
 }
 
 .log-error {
   .log-message {
-    color: var(--el-color-danger);
+    color: #F56C6C;
   }
 }
 
 .log-warn {
   .log-message {
-    color: var(--el-color-warning);
+    color: #E6A23C;
   }
 }
 

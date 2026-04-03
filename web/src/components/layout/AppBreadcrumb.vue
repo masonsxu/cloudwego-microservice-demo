@@ -1,89 +1,98 @@
 <template>
-  <el-breadcrumb separator="/" class="app-breadcrumb">
-    <transition-group name="breadcrumb">
-      <el-breadcrumb-item v-for="(item, index) in levelList" :key="item.path">
-        <span v-if="item.redirect === 'noRedirect' || index === levelList.length - 1" class="no-redirect">
-          {{ t(String(item.meta?.title || item.name)) }}
-        </span>
-        <a v-else @click.prevent="handleLink(item)">
-          {{ t(String(item.meta?.title || item.name)) }}
-        </a>
-      </el-breadcrumb-item>
-    </transition-group>
-  </el-breadcrumb>
+  <nav class="inline-block text-sm ml-2" aria-label="Breadcrumb">
+    <BreadcrumbList class="flex items-center">
+      <template v-for="(item, index) in levelList" :key="item.path">
+        <BreadcrumbItem class="flex items-center">
+          <span
+            v-if="item.redirect === 'noRedirect' || index === levelList.length - 1"
+            class="text-[var(--c-accent)] cursor-text"
+          >
+            {{ t(String(item.title || item.name)) }}
+          </span>
+          <RouterLink
+            v-else
+            :to="resolveBreadcrumbTarget(item)"
+            class="text-[var(--c-text-sub)] cursor-pointer transition-colors hover:text-[var(--c-accent)]"
+          >
+            {{ t(String(item.title || item.name)) }}
+          </RouterLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator v-if="index < levelList.length - 1" class="text-[var(--c-text-sub)]">
+          /
+        </BreadcrumbSeparator>
+      </template>
+    </BreadcrumbList>
+  </nav>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { useRoute, useRouter, type RouteLocationMatched } from 'vue-router'
+import { computed } from 'vue'
+import { RouterLink, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
+import { menuRouteMap } from '@/router/routes'
+import type { AppRouteMeta } from '@/router/routes'
+
+interface BreadcrumbEntry {
+  path: string
+  title?: string
+  name?: string | symbol
+  redirect?: string
+}
 
 const route = useRoute()
-const router = useRouter()
 const { t } = useI18n()
 
-const levelList = ref<RouteLocationMatched[]>([])
+const dashboardBreadcrumb: BreadcrumbEntry = {
+  path: '/dashboard',
+  title: 'dashboard.title'
+}
 
-function getBreadcrumb() {
-  let matched = route.matched.filter(item => item.meta && item.meta.title)
-  const first = matched[0]
+const levelList = computed<BreadcrumbEntry[]>(() => {
+  const matched: BreadcrumbEntry[] = route.matched
+    .filter(item => {
+      const meta = item.meta as AppRouteMeta
+      return meta.title && meta.breadcrumb !== false
+    })
+    .map(item => ({
+      path: item.path,
+      title: (item.meta as AppRouteMeta).title,
+      name: typeof item.name === 'string' || typeof item.name === 'symbol' ? item.name : undefined,
+      redirect: typeof item.redirect === 'string' ? item.redirect : undefined
+    }))
 
-  if (first && first.path !== '/dashboard') {
-    matched = [{ path: '/dashboard', meta: { title: 'dashboard.title' } } as any].concat(matched)
+  const breadcrumbs = matched.length > 0 ? [...matched] : []
+  const first = breadcrumbs[0]
+
+  if (!first || first.path !== '/dashboard') {
+    breadcrumbs.unshift(dashboardBreadcrumb)
   }
 
-  levelList.value = matched.filter(item => {
-    return item.meta && item.meta.title && item.meta.breadcrumb !== false
+  const meta = route.meta as AppRouteMeta
+  if (!meta.hidden || !meta.activeMenu) {
+    return breadcrumbs
+  }
+
+  const activeMenuRoute = menuRouteMap.get(meta.activeMenu)
+  if (!activeMenuRoute || breadcrumbs.some(item => item.path === activeMenuRoute.path)) {
+    return breadcrumbs
+  }
+
+  breadcrumbs.splice(1, 0, {
+    path: activeMenuRoute.path,
+    title: activeMenuRoute.title,
+    name: activeMenuRoute.name
   })
-}
 
-function handleLink(item: RouteLocationMatched) {
-  const { redirect, path } = item
-  if (redirect) {
-    router.push(redirect as string)
-    return
+  return breadcrumbs
+})
+
+function resolveBreadcrumbTarget(item: BreadcrumbEntry) {
+  if (item.redirect && item.redirect !== 'noRedirect' && item.redirect !== route.path) {
+    return item.redirect
   }
-  router.push(path)
-}
 
-watch(
-  () => route.path,
-  () => getBreadcrumb(),
-  { immediate: true }
-)
+  return item.path
+}
 </script>
 
-<style scoped lang="scss">
-.app-breadcrumb {
-  display: inline-block;
-  font-size: 14px;
-  line-height: 60px;
-  margin-left: 8px;
-
-  .no-redirect {
-    color: var(--c-accent);
-    cursor: text;
-  }
-
-  a {
-    color: var(--c-text-sub);
-    cursor: pointer;
-    transition: color 0.3s ease;
-
-    &:hover {
-      color: var(--c-accent);
-    }
-  }
-}
-
-.breadcrumb-enter-active,
-.breadcrumb-leave-active {
-  transition: all 0.3s ease;
-}
-
-.breadcrumb-enter-from,
-.breadcrumb-leave-to {
-  opacity: 0;
-  transform: translateX(20px);
-}
-</style>

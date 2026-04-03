@@ -1,11 +1,11 @@
 <template>
   <div class="table-skeleton">
     <!-- Table header -->
-    <div class="skeleton-table-header">
+    <div class="flex gap-4 px-5 py-4 border-b border-[var(--c-border)]">
       <div
         v-for="i in columns"
         :key="i"
-        class="skeleton-bone table-header-bone"
+        class="skeleton-bone h-3 w-[60%] rounded-sm"
         :style="{ flex: i === 1 ? 1.5 : 1 }"
       />
     </div>
@@ -13,25 +13,25 @@
     <div
       v-for="row in rows"
       :key="row"
-      class="skeleton-table-row"
-      :style="{ animationDelay: `${row * 0.04}s` }"
+      class="flex gap-4 px-5 py-3.5 border-b border-white/[0.02] animate-fadeSlideIn"
+      :style="{ animationDelay: `${row * 0.04}s`, animationFillMode: 'backwards' }"
     >
       <div
         v-for="col in columns"
         :key="col"
-        class="skeleton-table-cell"
+        class="flex items-center min-w-0"
         :style="{ flex: col === 1 ? 1.5 : 1 }"
       >
-        <div v-if="col === 1" class="cell-with-avatar">
-          <div class="skeleton-bone avatar-bone" />
-          <div class="skeleton-bone cell-text-bone" />
+        <div v-if="col === 1" class="flex items-center gap-2.5 w-full">
+          <div class="skeleton-bone w-[30px] h-[30px] rounded-lg flex-shrink-0" />
+          <div class="skeleton-bone h-3.5 w-[70%]" />
         </div>
-        <div v-else class="skeleton-bone cell-text-bone" :style="{ width: getCellWidth(col) }" />
+        <div v-else class="skeleton-bone h-3.5" :style="{ width: getCellWidth(col) }" />
       </div>
     </div>
     <!-- Pagination -->
-    <div class="skeleton-pagination">
-      <div class="skeleton-bone pagination-bone" />
+    <div class="flex justify-end px-5 py-4 border-t border-[var(--c-border)]">
+      <div class="skeleton-bone w-80 h-7 rounded-md" />
     </div>
   </div>
 </template>
@@ -74,70 +74,9 @@ function getCellWidth(col: number): string {
   border-radius: 6px;
 }
 
-.table-skeleton {
-  .skeleton-table-header {
-    display: flex;
-    gap: 16px;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--c-border);
-
-    .table-header-bone {
-      height: 12px;
-      width: 60%;
-      border-radius: 3px;
-    }
-  }
-
-  .skeleton-table-row {
-    display: flex;
-    gap: 16px;
-    padding: 14px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-    animation: fadeSlideIn 0.25s ease-out backwards;
-
-    &:last-of-type { border-bottom: none; }
-  }
-
-  .skeleton-table-cell {
-    display: flex;
-    align-items: center;
-    min-width: 0;
-  }
-
-  .cell-with-avatar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-
-    .avatar-bone {
-      width: 30px;
-      height: 30px;
-      border-radius: 8px;
-      flex-shrink: 0;
-    }
-
-    .cell-text-bone {
-      width: 70%;
-      height: 14px;
-    }
-  }
-
-  .cell-text-bone {
-    height: 14px;
-  }
-
-  .skeleton-pagination {
-    display: flex;
-    justify-content: flex-end;
-    padding: 16px 20px;
-    border-top: 1px solid var(--c-border);
-
-    .pagination-bone {
-      width: 320px;
-      height: 28px;
-      border-radius: 6px;
-    }
-  }
+.animate-fadeSlideIn {
+  animation-name: fadeSlideIn;
+  animation-duration: 0.25s;
+  animation-timing-function: ease-out;
 }
 </style>
