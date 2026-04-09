@@ -112,3 +112,7 @@ docs/FINAL-*.md
 docker-compose.override.yml
 .iflow/
 gha-creds-*.json
+
+# MemPalace 本地配置
+entities.json
+mempalace.yaml
