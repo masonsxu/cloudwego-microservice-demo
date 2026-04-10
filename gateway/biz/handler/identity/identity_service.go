@@ -1362,6 +1362,38 @@ func OIDCRevokeToken(ctx context.Context, c *app.RequestContext) {
 	adaptor.HertzHandler(oidcServiceInstance)(ctx, c)
 }
 
+// OIDCLogin
+// @Summary OIDC 自动登录端点（开发测试用）
+// @Description OIDC Provider 重定向到此端点完成自动认证，然后跳转到回调
+// @Tags OIDC认证
+// @Param id query string true "认证请求 ID"
+// @Success 302 "重定向到 /authorize/callback"
+// @Router /login [GET]
+func OIDCLogin(ctx context.Context, c *app.RequestContext) {
+	if oidcServiceInstance == nil {
+		c.String(consts.StatusServiceUnavailable, "OIDC service not available")
+		return
+	}
+	adaptor.HertzHandler(oidcServiceInstance)(ctx, c)
+}
+
+// OIDCAuthorizeCallback
+// @Summary OIDC 授权回调端点
+// @Description 登录完成后回调此端点，完成授权并重定向到客户端回调地址（携带授权码）
+// @Tags OIDC认证
+// @Param id query string true "认证请求 ID"
+// @Success 302 "重定向到客户端回调地址（携带 code 和 state）"
+// @Failure 400 {object} http_base.OperationStatusResponseDTO "请求参数错误"
+// @Failure 500 {object} http_base.OperationStatusResponseDTO "内部错误"
+// @Router /authorize/callback [GET]
+func OIDCAuthorizeCallback(ctx context.Context, c *app.RequestContext) {
+	if oidcServiceInstance == nil {
+		c.String(consts.StatusServiceUnavailable, "OIDC service not available")
+		return
+	}
+	adaptor.HertzHandler(oidcServiceInstance)(ctx, c)
+}
+
 // OIDCIntrospectToken
 // @Summary OIDC Token 内省端点
 // @Description 查询 Token 的当前状态和关联的元数据信息

@@ -20,6 +20,25 @@ type serviceImpl struct {
 }
 
 func (s *serviceImpl) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// 处理 /login 自动认证：OIDC Provider 重定向到 /login?id=xxx
+	// 自动完成用户认证并重定向到 /authorize/callback?id=xxx
+	if r.URL.Path == "/login" {
+		authReqID := r.URL.Query().Get("id")
+		if authReqID == "" {
+			http.Error(w, "missing id parameter", http.StatusBadRequest)
+			return
+		}
+		// CheckUsernamePassword 始终成功，设置 IsDone=true 和 UserID
+		if err := s.storage.CheckUsernamePassword("oidc-test-user", "", authReqID); err != nil {
+			http.Error(w, "authentication failed: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		// 重定向到 OIDC Provider 的回调端点以完成授权
+		callbackURL := "/authorize/callback?id=" + authReqID
+		http.Redirect(w, r, callbackURL, http.StatusFound)
+		return
+	}
+
 	s.provider.ServeHTTP(w, r)
 }
 

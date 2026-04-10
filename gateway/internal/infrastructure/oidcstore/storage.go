@@ -383,7 +383,7 @@ func (c *storedClient) ResponseTypes() []oidc.ResponseType {
 func (c *storedClient) GrantTypes() []oidc.GrantType {
 	return []oidc.GrantType{oidc.GrantTypeCode, oidc.GrantTypeRefreshToken}
 }
-func (c *storedClient) LoginURL(string) string               { return "/login" }
+func (c *storedClient) LoginURL(authReqID string) string               { return "/login?id=" + authReqID }
 func (c *storedClient) AccessTokenType() op.AccessTokenType  { return op.AccessTokenTypeBearer }
 func (c *storedClient) IDTokenLifetime() time.Duration       { return 1 * time.Hour }
 func (c *storedClient) DevMode() bool                        { return false }
@@ -403,7 +403,13 @@ type defaultClient struct {
 }
 
 func (c *defaultClient) GetID() string                       { return c.ID }
-func (c *defaultClient) RedirectURIs() []string              { return []string{"http://localhost"} }
+func (c *defaultClient) RedirectURIs() []string {
+	return []string{
+		"http://localhost",
+		"http://localhost:5173",
+		"http://localhost:5173/oidc/callback",
+	}
+}
 func (c *defaultClient) PostLogoutRedirectURIs() []string    { return []string{} }
 func (c *defaultClient) ApplicationType() op.ApplicationType { return op.ApplicationTypeNative }
 func (c *defaultClient) AuthMethod() oidc.AuthMethod         { return oidc.AuthMethodNone }
@@ -414,7 +420,7 @@ func (c *defaultClient) ResponseTypes() []oidc.ResponseType {
 func (c *defaultClient) GrantTypes() []oidc.GrantType {
 	return []oidc.GrantType{oidc.GrantTypeCode, oidc.GrantTypeRefreshToken}
 }
-func (c *defaultClient) LoginURL(string) string               { return "/login" }
+func (c *defaultClient) LoginURL(authReqID string) string               { return "/login?id=" + authReqID }
 func (c *defaultClient) AccessTokenType() op.AccessTokenType  { return op.AccessTokenTypeBearer }
 func (c *defaultClient) IDTokenLifetime() time.Duration       { return 1 * time.Hour }
 func (c *defaultClient) DevMode() bool                        { return true }

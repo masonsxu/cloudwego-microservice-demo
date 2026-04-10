@@ -92,6 +92,8 @@ func setDefaults(v *viper.Viper) {
 		"/keys",
 		"/oauth/token",
 		"/authorize",
+		"/authorize/callback",
+		"/login",
 		"/revoke",
 		"/oauth/introspect",
 		"/userinfo",
