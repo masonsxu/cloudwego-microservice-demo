@@ -35,7 +35,9 @@ func (s *serviceImpl) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		// 重定向到 OIDC Provider 的回调端点以完成授权
 		callbackURL := "/authorize/callback?id=" + authReqID
+
 		http.Redirect(w, r, callbackURL, http.StatusFound)
+
 		return
 	}
 

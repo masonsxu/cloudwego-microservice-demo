@@ -268,6 +268,7 @@ func (a *menuAssembler) ToRPCMenuConfigsFromListValue(
 		}
 
 		config := &identity_srv.MenuConfig{MenuID: &menuID}
+
 		if permissionValue, ok := fields["permission"]; ok {
 			permission := identity_srv.PermissionLevel(int32(permissionValue.GetNumberValue()))
 			config.Permission = &permission
