@@ -110,6 +110,7 @@ docs/FINAL-*.md
 
 # 容器相关
 docker-compose.override.yml
+docker/pod.yml
 .iflow/
 gha-creds-*.json
 

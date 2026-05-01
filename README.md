@@ -169,6 +169,16 @@ curl http://localhost:8080/ping
 # 返回: {"message":"pong"}
 ```
 
+> **可选**：如果你希望以 Kubernetes 资源模型启动基础设施（用于学习 K8s 概念），可使用 `podman kube play`：
+>
+> ```bash
+> cp docker/pod.yml.example docker/pod.yml   # 修改其中的 CHANGE_ME_* 占位密码
+> podman kube play docker/pod.yml             # 启动
+> podman kube play --down docker/pod.yml      # 销毁
+> ```
+>
+> 与 `podman-compose` 启动方式二选一，不要同时使用（端口冲突）。
+
 ### 访问入口
 
 - **API 网关**: http://localhost:8080

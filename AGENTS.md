@@ -37,6 +37,32 @@ cd rpc/identity_srv && sh build.sh && sh output/bootstrap.sh
 cd gateway && sh build.sh && sh output/bootstrap.sh
 ```
 
+### 基础设施可选启动方式：podman kube play（K8s 风格）
+
+> 用于学习 K8s 资源模型；与 docker-compose 二选一，**不要同时启动**（端口冲突）。
+
+```bash
+# 1. 首次使用：复制示例文件，修改其中的 CHANGE_ME_* 占位密码
+cp docker/pod.yml.example docker/pod.yml
+vim docker/pod.yml   # 修改 Secret 中三个 CHANGE_ME_* 值
+
+# 2. 启动（创建 Secret + PVC + 5 个 Deployment + Service）
+podman kube play docker/pod.yml
+
+# 3. 查看
+podman pod ps
+podman ps
+podman volume ls
+
+# 4. 销毁（保留 PVC 数据）
+podman kube play --down docker/pod.yml
+
+# 5. 销毁并清空数据
+podman kube play --down --force docker/pod.yml
+```
+
+**敏感文件管理**：`docker/pod.yml` 已加入 `.gitignore`，仅 `pod.yml.example` 入库。修改 example 时不要写入真实密码。
+
 ### 测试
 
 ```bash
@@ -320,6 +346,7 @@ Logo 存储有两个端点：
 | `.golangci.yml` | Lint + 格式化配置（行长 120，导入顺序） |
 | `scripts/git-hooks/pre-commit` | 安装：`ln -sf ../../scripts/git-hooks/pre-commit .git/hooks/pre-commit` |
 | `docker/docker-compose.yml` | 基础设施容器编排（podman-compose） |
+| `docker/pod.yml.example` | K8s 资源清单模板（podman kube play）；`pod.yml` 为本地填写密码后的版本，已 gitignore |
 | `idl/` | Thrift IDL 接口定义（修改此处触发代码生成） |
 | `rpc/identity_srv/pkg/errno/` | 错误码定义和转换工具 |
 | `gateway/config/casbin_model.conf` | Casbin RBAC 模型配置 |
