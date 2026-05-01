@@ -216,6 +216,8 @@ cd rpc/identity_srv/wire && wire
 cd gateway/internal/wire && wire
 ```
 
+**🚫 禁止使用 cwgo**：cwgo 已停止维护（CloudWeGo 官方仓库长期未更新），本项目仅使用 Kitex 原生 `gen_kitex_code.sh` 和 Hertz 原生 `gen_hertz_code.sh`。AI 在任何场景下都不得建议或调用 `cwgo`，新增/修改 IDL 必须走上述两个原生脚本。
+
 ## 架构
 
 ### 代码分层（identity_srv）
