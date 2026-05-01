@@ -93,7 +93,7 @@ go tool cover -func=coverage.out | grep total
 
 **适用范围**：
 - ✅ 可以执行：代码生成、编译测试、lint检查、数据库迁移等一次性任务
-- ❌ 禁止执行：`npm run dev`、`sh build.sh && sh output/bootstrap.sh` 等长期运行的服务
+- ❌ 禁止执行：`npm run dev`、`podman kube play docker/pod.yml` 等长期运行的服务
 
 ### 🔒 代码一致性规范（防止 CI 测试失败）
 
