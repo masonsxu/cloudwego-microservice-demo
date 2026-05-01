@@ -142,10 +142,6 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data
-            # 如需启用 init-scripts，请取消下方注释并把 hostPath 改成宿主机绝对路径
-            # - name: init-scripts
-            #   mountPath: /docker-entrypoint-initdb.d
-            #   readOnly: true
           readinessProbe:
             exec:
               command:
@@ -160,10 +156,6 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: postgres-data
-        # - name: init-scripts
-        #   hostPath:
-        #     path: /home/masonsxu/code/github/cloudwego-microservice-demo/docker/init-scripts/postgres
-        #     type: Directory
 
 ---
 apiVersion: v1

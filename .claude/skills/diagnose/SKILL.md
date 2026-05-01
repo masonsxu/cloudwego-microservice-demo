@@ -41,7 +41,7 @@ argument-hint: "<error message>"
 #### 连接/运行时错误
 - 特征：`connection refused`、`timeout`、`dial tcp`
 - 排查方向：
-  1. 检查基础设施是否启动：`cd docker && podman-compose ps`
+  1. 检查基础设施是否启动：`podman pod ps`
   2. 检查端口：PostgreSQL(5432)、etcd(2379)、Redis(6379)、RPC(8891)、Gateway(8080)
   3. 检查环境变量配置（读取 `docs/01-快速入门/配置参考.md`）
   4. 检查服务注册发现（etcd）

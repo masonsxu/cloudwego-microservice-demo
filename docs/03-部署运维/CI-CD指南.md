@@ -121,7 +121,7 @@ cd rpc/identity_srv && golangci-lint fmt
 cd gateway && golangci-lint fmt
 
 # 4. 运行测试（需要基础设施）
-cd docker && podman-compose up -d
+podman kube play docker/pod.yml
 cd rpc/identity_srv && go test ./... -v -race
 cd gateway && go test ./... -v -race
 
