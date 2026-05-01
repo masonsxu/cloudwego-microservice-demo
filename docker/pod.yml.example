@@ -436,3 +436,204 @@ spec:
     - name: otlp-http
       port: 4318
       targetPort: 4318
+
+---
+# =============================================================================
+# 应用层环境变量 ConfigMap
+# 仅放置容器化场景与默认值不同的关键配置；其余使用代码中的 defaults.go
+# =============================================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudwego-app-env
+data:
+  # ---- 服务发现 / 中间件地址（容器内通过 Service 名解析）----
+  ETCD_ADDRESS: etcd:2379
+  REDIS_ADDRESS: redis:6379
+  TRACING_ENABLED: "true"
+  TRACING_ENDPOINT: jaeger:4317
+
+  # ---- 数据库（identity_srv 用）----
+  DB_HOST: postgres
+  DB_PORT: "5432"
+
+  # ---- 对象存储（identity_srv 用）----
+  # 容器内访问端点
+  LOGO_STORAGE_S3_ENDPOINT: http://rustfs:9000
+  # 浏览器访问端点（用于生成预签名 URL）
+  LOGO_STORAGE_S3_PUBLIC_ENDPOINT: http://localhost:9000
+
+  # ---- 日志路径（appuser 有写权限的目录）----
+  LOG_OUTPUT: stdout
+
+---
+# =============================================================================
+# identity_srv：Deployment + Service（Kitex RPC 身份认证服务）
+# =============================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: identity-srv
+  labels:
+    app: identity-srv
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: identity-srv
+  template:
+    metadata:
+      labels:
+        app: identity-srv
+    spec:
+      # 启动顺序由 K8s 自动重试保障：基础设施未 ready 时启动失败 → 自动重启
+      restartPolicy: Always
+      containers:
+        - name: identity-srv
+          image: localhost/identity-srv:latest
+          imagePullPolicy: Never            # 仅使用本地构建的镜像，避免 podman 误把 localhost/ 当 registry
+          ports:
+            - name: rpc
+              containerPort: 8891
+              hostPort: 8891
+            - name: health
+              containerPort: 10000
+              hostPort: 10000
+          envFrom:
+            - configMapRef:
+                name: cloudwego-app-env
+          env:
+            # 数据库账号密码（来自 Secret）
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: cloudwego-secrets
+                  key: POSTGRES_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudwego-secrets
+                  key: POSTGRES_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: cloudwego-secrets
+                  key: POSTGRES_DB
+            # RustFS 凭证
+            - name: LOGO_STORAGE_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cloudwego-secrets
+                  key: RUSTFS_ACCESS_KEY
+            - name: LOGO_STORAGE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cloudwego-secrets
+                  key: RUSTFS_SECRET_KEY
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 10000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: 10000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: identity-srv
+spec:
+  selector:
+    app: identity-srv
+  ports:
+    - name: rpc
+      port: 8891
+      targetPort: 8891
+    - name: health
+      port: 10000
+      targetPort: 10000
+
+---
+# =============================================================================
+# gateway：Deployment + Service（Hertz HTTP 网关）
+# =============================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  labels:
+    app: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: gateway
+          image: localhost/gateway:latest
+          imagePullPolicy: Never
+          ports:
+            - name: http
+              containerPort: 8080
+              hostPort: 8080
+          envFrom:
+            - configMapRef:
+                name: cloudwego-app-env
+          env:
+            # Redis 密码
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudwego-secrets
+                  key: REDIS_PASSWORD
+            # JWT 签名密钥
+            - name: JWT_SIGNING_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cloudwego-secrets
+                  key: JWT_SIGNING_KEY
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+spec:
+  selector:
+    app: gateway
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080

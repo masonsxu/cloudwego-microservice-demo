@@ -148,36 +148,41 @@ graph TD
 - Docker 20.10+ / Podman 4.0+
 - Docker Compose 2.0+ / podman-compose
 
-### 使用 Docker 运行
+### 使用 Podman 运行（推荐：podman kube play 一键启动）
 
 ```bash
 # 1. 克隆仓库
 git clone https://github.com/masonsxu/cloudwego-microservice-demo.git
 cd cloudwego-microservice-demo
 
-# 2. 启动基础设施（PostgreSQL、etcd、Redis、RustFS、Jaeger）
-cd docker && podman-compose up -d
+# 2. 准备配置（修改 Secret 中四个 CHANGE_ME_* 占位密码）
+cp docker/pod.yml.example docker/pod.yml
+vim docker/pod.yml
 
-# 3. 启动 RPC 服务（新终端）
-cd rpc/identity_srv && sh build.sh && sh output/bootstrap.sh
+# 3. 构建 Go 服务镜像
+./scripts/build-images.sh
 
-# 4. 启动网关服务（新终端）
-cd gateway && sh build.sh && sh output/bootstrap.sh
+# 4. 一键启动全栈（5 基础设施 + identity_srv + gateway）
+podman kube play docker/pod.yml
 
 # 5. 验证
 curl http://localhost:8080/ping
 # 返回: {"message":"pong"}
+
+# 销毁
+podman kube play --down docker/pod.yml             # 保留数据卷
+podman kube play --down --force docker/pod.yml     # 同时清空数据卷
 ```
 
-> **可选**：如果你希望以 Kubernetes 资源模型启动基础设施（用于学习 K8s 概念），可使用 `podman kube play`：
+> **替代方案（即将废弃）**：原 `docker-compose.yml` + 本地脚本仍可使用，但已停止维护，仅作为过渡保留：
 >
 > ```bash
-> cp docker/pod.yml.example docker/pod.yml   # 修改其中的 CHANGE_ME_* 占位密码
-> podman kube play docker/pod.yml             # 启动
-> podman kube play --down docker/pod.yml      # 销毁
+> cd docker && podman-compose up -d
+> cd rpc/identity_srv && sh build.sh && sh output/bootstrap.sh   # 新终端
+> cd gateway && sh build.sh && sh output/bootstrap.sh             # 新终端
 > ```
 >
-> 与 `podman-compose` 启动方式二选一，不要同时使用（端口冲突）。
+> 两种方式不要同时启动（端口冲突）。
 
 ### 访问入口
 

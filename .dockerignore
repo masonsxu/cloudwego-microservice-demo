@@ -73,7 +73,6 @@ GEMINI.md
 
 # 配置文件
 .config.*
-menu.yaml
 .pre-commit-config.yaml
 .editorconfig
 .golangci.yml

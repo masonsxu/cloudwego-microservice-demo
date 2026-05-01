@@ -37,29 +37,47 @@ cd rpc/identity_srv && sh build.sh && sh output/bootstrap.sh
 cd gateway && sh build.sh && sh output/bootstrap.sh
 ```
 
-### 基础设施可选启动方式：podman kube play（K8s 风格）
+### 基础设施可选启动方式：podman kube play（K8s 风格，全栈）
 
-> 用于学习 K8s 资源模型；与 docker-compose 二选一，**不要同时启动**（端口冲突）。
+> 用 `podman kube play docker/pod.yml` 一键启动**全部基础设施 + 两个 Go 服务**。
+> 当前与 docker-compose 共存（**不要同时启动**，会端口冲突），后续验证稳定后会逐步替换 docker-compose。
 
 ```bash
 # 1. 首次使用：复制示例文件，修改其中的 CHANGE_ME_* 占位密码
 cp docker/pod.yml.example docker/pod.yml
-vim docker/pod.yml   # 修改 Secret 中三个 CHANGE_ME_* 值
+vim docker/pod.yml   # 修改 Secret 中四个 CHANGE_ME_* 值（Postgres/RustFS/Redis/JWT）
 
-# 2. 启动（创建 Secret + PVC + 5 个 Deployment + Service）
+# 2. 构建本地镜像（identity-srv:latest 和 gateway:latest）
+./scripts/build-images.sh                  # 全部构建
+./scripts/build-images.sh identity         # 只构建 identity-srv
+./scripts/build-images.sh gateway          # 只构建 gateway
+
+# 3. 启动（5 基础设施 + identity-srv + gateway，共 7 个 Pod）
 podman kube play docker/pod.yml
 
-# 3. 查看
-podman pod ps
-podman ps
-podman volume ls
+# 4. 查看
+podman pod ps          # 查看所有 Pod
+podman ps              # 查看所有容器
+podman volume ls       # 查看 PVC 持久卷
+podman logs -f gateway-pod-gateway          # 查看 gateway 日志
+podman logs -f identity-srv-pod-identity-srv # 查看 identity_srv 日志
 
-# 4. 销毁（保留 PVC 数据）
+# 5. 修改代码后重新部署
+./scripts/build-images.sh gateway
+podman kube play --down docker/pod.yml
+podman kube play docker/pod.yml
+
+# 6. 销毁（保留 PVC 数据卷）
 podman kube play --down docker/pod.yml
 
-# 5. 销毁并清空数据
+# 7. 销毁并清空数据卷
 podman kube play --down --force docker/pod.yml
 ```
+
+**资源拆分说明**：
+- `Secret/cloudwego-secrets`：密码、密钥（Postgres/RustFS/Redis/JWT）
+- `ConfigMap/cloudwego-app-env`：容器化场景必需的环境变量（服务发现地址、DB 主机等）
+- 其他 .env 配置项依赖代码内 `defaults.go`，需自定义时可在对应 Deployment 的 `env:` 中追加
 
 **敏感文件管理**：`docker/pod.yml` 已加入 `.gitignore`，仅 `pod.yml.example` 入库。修改 example 时不要写入真实密码。
 
@@ -347,6 +365,7 @@ Logo 存储有两个端点：
 | `scripts/git-hooks/pre-commit` | 安装：`ln -sf ../../scripts/git-hooks/pre-commit .git/hooks/pre-commit` |
 | `docker/docker-compose.yml` | 基础设施容器编排（podman-compose） |
 | `docker/pod.yml.example` | K8s 资源清单模板（podman kube play）；`pod.yml` 为本地填写密码后的版本，已 gitignore |
+| `scripts/build-images.sh` | 构建 identity-srv / gateway 容器镜像，配合 podman kube play 使用 |
 | `idl/` | Thrift IDL 接口定义（修改此处触发代码生成） |
 | `rpc/identity_srv/pkg/errno/` | 错误码定义和转换工具 |
 | `gateway/config/casbin_model.conf` | Casbin RBAC 模型配置 |

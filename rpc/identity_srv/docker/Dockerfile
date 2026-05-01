@@ -1,63 +1,60 @@
-# 多阶段构建的 Dockerfile for identity-service
-# 基于 Go 1.24 构建，遵循容器最佳实践
+# =============================================================================
+# identity_srv RPC 服务镜像
+# =============================================================================
+# 构建命令（必须在项目根目录执行）：
+#   podman build -f rpc/identity_srv/docker/Dockerfile -t identity-srv:latest rpc/identity_srv
+#
+# 说明：
+#   - identity_srv 自身 go.mod 不依赖外部 replace 路径，可以用子目录作为构建上下文
+#   - 通过 GOWORK=off 显式禁用 go.work，避免容器内找不到兄弟模块
+# =============================================================================
 
+# -----------------------------------------------------------------------------
 # 构建阶段
-FROM m.daocloud.io/docker.io/library/golang:1.24 AS builder
+# -----------------------------------------------------------------------------
+FROM m.daocloud.io/docker.io/library/golang:1.25 AS builder
 
-# 设置 Go 环境变量
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
     GOOS=linux \
-    GOARCH=amd64 \
-    GOPROXY=https://goproxy.cn,direct
+    GOPROXY=https://goproxy.cn,direct \
+    GOWORK=off
 
-# 设置工作目录
-WORKDIR /app
+WORKDIR /build
 
-# 复制 go mod 和 sum 文件
+# 利用 Docker 层缓存：先单独 COPY go.mod/go.sum 下载依赖
 COPY go.mod go.sum ./
-
-# 下载依赖
 RUN go mod download
 
-# 复制源代码
+# 复制源码并构建
 COPY . .
+RUN go build -ldflags="-s -w" -trimpath -o identity_srv .
 
-# 构建应用
-RUN go build -o identity-service .
-
+# -----------------------------------------------------------------------------
 # 运行阶段
+# -----------------------------------------------------------------------------
 FROM m.daocloud.io/docker.io/library/alpine:latest
 
-# 安装 ca-certificates 和 tzdata 以支持 HTTPS 请求和时区
 RUN apk --no-cache add ca-certificates tzdata curl
-
-# 设置时区环境变量
 ENV TZ=Asia/Shanghai
 
-# 创建非 root 用户
 RUN adduser -D -s /bin/sh appuser
 
-# 设置工作目录
 WORKDIR /app
 
-# 从构建阶段复制二进制文件和配置文件
-COPY --from=builder /app/identity-service .
-COPY --from=builder /app/config/permission_model.conf ./config/
-COPY --from=builder /app/script/ ./script/
+# 拷贝二进制和运行时需要的配置文件
+COPY --from=builder /build/identity_srv .
+COPY --from=builder /build/config/seed_menu.yaml ./config/seed_menu.yaml
 
-# 更改文件所有者
-RUN chown -R appuser:appuser /app
+# 准备日志目录并修正归属
+RUN mkdir -p /app/logs && chown -R appuser:appuser /app
 
-# 切换到非 root 用户
 USER appuser
-# 暴露服务端口
-EXPOSE 8888
-EXPOSE 10000
 
-# 健康检查
-HEALTHCHECK --interval=15s --timeout=3s --start-period=5s --retries=3 \
+# 8891: Kitex RPC 端口；10000: 健康检查 HTTP 端口
+EXPOSE 8891 10000
+
+HEALTHCHECK --interval=15s --timeout=3s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:10000/live || exit 1
 
-# 启动命令
-ENTRYPOINT ["./identity-service"]
+ENTRYPOINT ["/app/identity_srv"]

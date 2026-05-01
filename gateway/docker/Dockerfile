@@ -1,81 +1,73 @@
-# 多阶段构建的 Dockerfile for gateway
-# 基于 Go 1.24 构建，遵循容器最佳实践
-# 必须在项目根目录下构建: podman build -f gateway/docker/Dockerfile -t gateway .
+# =============================================================================
+# gateway HTTP 网关镜像
+# =============================================================================
+# 构建命令（必须在项目根目录执行，因为 gateway 通过 replace 引用 ../rpc/identity_srv）：
+#   podman build -f gateway/docker/Dockerfile -t gateway:latest .
+#
+# 说明：
+#   - 构建上下文必须是项目根，才能同时拷贝 gateway/ 和 rpc/identity_srv/
+#   - GOWORK=off 禁用 workspace，由 go.mod 中的 replace 指令解析模块路径
+#   - swag init 在容器内执行，宿主机不需要预先生成 docs/
+# =============================================================================
 
+# -----------------------------------------------------------------------------
 # 构建阶段
-FROM m.daocloud.io/docker.io/library/golang:1.24 AS builder
+# -----------------------------------------------------------------------------
+FROM m.daocloud.io/docker.io/library/golang:1.25 AS builder
 
-# 设置 Go 环境变量
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
     GOOS=linux \
-    GOARCH=amd64 \
-    GOPROXY=https://goproxy.cn,direct
+    GOPROXY=https://goproxy.cn,direct \
+    GOWORK=off
 
-# 设置工作目录
-WORKDIR /app
+WORKDIR /build
 
-# 复制 go.work 和 go.work.sum (如果有)
-# COPY go.work go.work.sum ./
-
-# 复制依赖的 rpc 服务 go.mod 和 go.sum
-# 注意：这里假设构建上下文是项目根目录
+# 利用层缓存：先拷 go.mod/go.sum 下载依赖（保留相对路径，让 replace 能解析）
 COPY rpc/identity_srv/go.mod rpc/identity_srv/go.sum ./rpc/identity_srv/
+COPY gateway/go.mod gateway/go.sum ./gateway/
+RUN cd gateway && go mod download
 
-# 复制 api/api_gateway 的 go.mod 和 go.sum
-COPY api/api_gateway/go.mod api/api_gateway/go.sum ./api/api_gateway/
-
-# 下载依赖
-# 切换到 api 目录下载依赖，这样 go.mod 中的相对路径 replace 才能正确解析
-WORKDIR /app/api/api_gateway
-RUN go mod download
-
-# 安装 swag 工具
+# 安装 swag（构建期工具，不进入运行镜像）
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 
-# 复制源代码
-# 复制 rpc 服务源码 (如果 api 网关依赖了 rpc 的代码而不仅仅是接口定义，通常依赖 idl 生成的代码)
-# 如果依赖的是 kitex 生成的代码，通常在 rpc/xxx_srv/kitex_gen 下，或者 api 网关自己生成了一份
-# 根据 go.mod replace 指令，api 网关直接依赖 rpc 服务的模块，所以需要复制 rpc 服务源码
-WORKDIR /app
+# 复制全部源码（含 replace 指向的 rpc/identity_srv）
 COPY rpc/identity_srv/ ./rpc/identity_srv/
-# 复制 api 网关源码
-COPY api/api_gateway/ ./api/api_gateway/
+COPY gateway/ ./gateway/
 
-# 构建应用
-WORKDIR /app/api/api_gateway
-RUN chmod +x ./build.sh && ./build.sh
+WORKDIR /build/gateway
 
+# 生成 Swagger 文档
+RUN swag init --parseDependencyLevel 1 --useStructName true
+
+# 构建二进制
+RUN go build -ldflags="-s -w" -trimpath -o hertz_service .
+
+# -----------------------------------------------------------------------------
 # 运行阶段
+# -----------------------------------------------------------------------------
 FROM m.daocloud.io/docker.io/library/alpine:latest
 
-# 安装 ca-certificates 和 tzdata
 RUN apk --no-cache add ca-certificates tzdata curl
-
-# 设置时区
 ENV TZ=Asia/Shanghai
 
-# 创建非 root 用户
-RUN adduser -D -s /bin/sh gateway
+RUN adduser -D -s /bin/sh appuser
 
-# 设置工作目录
 WORKDIR /app
 
-# 复制构建产物
-COPY --from=builder /app/api/api_gateway/output/ ./output/
+# 拷贝二进制 + 运行时所需配置
+COPY --from=builder /build/gateway/hertz_service .
+COPY --from=builder /build/gateway/config/ ./config/
+# CASBIN_MENU_MAPPING_FILE 默认相对路径 menu.yaml（位于项目根，直接从构建上下文拷贝）
+COPY menu.yaml ./menu.yaml
 
-# 更改文件所有者
-RUN chown -R gateway:gateway /app
+RUN mkdir -p /app/logs && chown -R appuser:appuser /app
 
-# 切换到非 root 用户
-USER gateway
+USER appuser
 
-# 暴露服务端口
 EXPOSE 8080
 
-# 健康检查
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8080/ping || exit 1
 
-# 启动命令
-ENTRYPOINT ["/app/output/bootstrap.sh"]
+ENTRYPOINT ["/app/hertz_service"]
