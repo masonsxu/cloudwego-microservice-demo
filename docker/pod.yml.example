@@ -328,7 +328,8 @@ spec:
               hostPort: 6379
           command: [sh, -c]
           args:
-            - 'redis-server --appendonly yes --requirepass "$REDIS_PASSWORD"'
+            # exec 让 redis-server 替换 sh 成为 PID 1，避免 sh 不转发 SIGTERM 导致关闭时只能 SIGKILL
+            - 'exec redis-server --appendonly yes --requirepass "$REDIS_PASSWORD"'
           env:
             - name: REDIS_PASSWORD
               valueFrom:
@@ -348,6 +349,8 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 5
+      # AOF 同步在大数据量下可能 >10s，给 redis 足够时间优雅关闭
+      terminationGracePeriodSeconds: 30
       volumes:
         - name: data
           persistentVolumeClaim:
