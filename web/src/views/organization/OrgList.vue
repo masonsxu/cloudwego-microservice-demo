@@ -272,7 +272,6 @@ const paginationLimitString = computed({
 })
 const dialogVisible = ref(false)
 const dialogMode = ref<'create' | 'edit'>('create')
-const formRef = ref()
 const currentOrg = ref<OrganizationDTO | null>(null)
 
 const formData = reactive<CreateOrganizationRequestDTO & { code?: string }>({
@@ -379,28 +378,24 @@ async function handleDelete(row: OrganizationDTO) {
 }
 
 async function handleSubmit() {
-  if (!formRef.value) return
-  await formRef.value.validate(async (valid: boolean) => {
-    if (!valid) return
-    submitting.value = true
-    try {
-      if (dialogMode.value === 'create') {
-        await organizationApi.createOrganization({
-          ...formData,
-          parent_id: formData.parent_id !== 'none' ? formData.parent_id : undefined,
-        } as CreateOrganizationRequestDTO)
-        toast.success(t('common.createSuccess'))
-      } else if (currentOrg.value?.id) {
-        await organizationApi.updateOrganization(currentOrg.value.id, { name: formData.name, parent_id: formData.parent_id !== 'none' ? formData.parent_id : undefined, facility_type: formData.facility_type, accreditation_status: formData.accreditation_status, province_city: formData.province_city })
-        toast.success(t('common.updateSuccess'))
-      }
-      dialogVisible.value = false; fetchData(); fetchOrganizationTree()
-    } catch (error: any) {
-      toast.error(error.message || t('common.operationFailed'))
-    } finally {
-      submitting.value = false
+  submitting.value = true
+  try {
+    if (dialogMode.value === 'create') {
+      await organizationApi.createOrganization({
+        ...formData,
+        parent_id: formData.parent_id !== 'none' ? formData.parent_id : undefined,
+      } as CreateOrganizationRequestDTO)
+      toast.success(t('common.createSuccess'))
+    } else if (currentOrg.value?.id) {
+      await organizationApi.updateOrganization(currentOrg.value.id, { name: formData.name, parent_id: formData.parent_id !== 'none' ? formData.parent_id : undefined, facility_type: formData.facility_type, accreditation_status: formData.accreditation_status, province_city: formData.province_city })
+      toast.success(t('common.updateSuccess'))
     }
-  })
+    dialogVisible.value = false; fetchData(); fetchOrganizationTree()
+  } catch (error: any) {
+    toast.error(error.message || t('common.operationFailed'))
+  } finally {
+    submitting.value = false
+  }
 }
 
 function resetForm() { Object.assign(formData, { name: '', code: '', parent_id: 'none', facility_type: '', accreditation_status: '', province_city: [] }) }

@@ -272,6 +272,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@/components/ui/select'
 
 const router = useRouter()
 const route = useRoute()
@@ -284,7 +285,6 @@ const orgDetail = ref<OrganizationDTO | null>(null)
 const organizationTree = ref<any[]>([])
 
 const editDialogVisible = ref(false)
-const editFormRef = ref()
 
 const editFormData = reactive<UpdateOrganizationRequestDTO & { code?: string }>({
   name: '',
@@ -418,32 +418,26 @@ function handleEdit() {
 }
 
 async function handleUpdate() {
-  if (!editFormRef.value) return
-
-  editFormRef.value.validate(async (valid: boolean) => {
-    if (!valid) return
-
-    updating.value = true
-    try {
-      const updateData: UpdateOrganizationRequestDTO = {
-        name: editFormData.name,
-        parent_id: editFormData.parent_id !== 'none' ? editFormData.parent_id : undefined,
-        facility_type: editFormData.facility_type,
-        accreditation_status: editFormData.accreditation_status,
-        province_city: editFormData.province_city
-      }
-
-      await organizationApi.updateOrganization(orgId, updateData)
-      toast.success(t('common.updateSuccess'))
-      editDialogVisible.value = false
-      fetchData()
-    } catch (error: any) {
-      console.error('Failed to update organization:', error)
-      toast.error(error.message || t('common.operationFailed'))
-    } finally {
-      updating.value = false
+  updating.value = true
+  try {
+    const updateData: UpdateOrganizationRequestDTO = {
+      name: editFormData.name,
+      parent_id: editFormData.parent_id !== 'none' ? editFormData.parent_id : undefined,
+      facility_type: editFormData.facility_type,
+      accreditation_status: editFormData.accreditation_status,
+      province_city: editFormData.province_city
     }
-  })
+
+    await organizationApi.updateOrganization(orgId, updateData)
+    toast.success(t('common.updateSuccess'))
+    editDialogVisible.value = false
+    fetchData()
+  } catch (error: any) {
+    console.error('Failed to update organization:', error)
+    toast.error(error.message || t('common.operationFailed'))
+  } finally {
+    updating.value = false
+  }
 }
 
 async function handleDelete() {
