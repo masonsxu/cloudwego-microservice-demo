@@ -23,17 +23,17 @@ func setDefaults(v *viper.Viper) {
 
 	// 数据库默认配置
 	v.SetDefault("database.driver", "postgres")
-	v.SetDefault("database.host", "localhost")
+	v.SetDefault("database.host", "127.0.0.1")
 	v.SetDefault("database.port", 5432)
 	v.SetDefault("database.username", "postgres")
 	v.SetDefault("database.password", "")
-	v.SetDefault("database.dbname", "postgres")
+	v.SetDefault("database.dbname", "identity_srv")
 	v.SetDefault("database.max_idle_conns", 5)
 	v.SetDefault("database.max_open_conns", 20)
 	v.SetDefault("database.conn_max_lifetime", 60*time.Minute)
 	v.SetDefault("database.conn_max_idle_time", 5*time.Minute)
 	v.SetDefault("database.sslmode", "disable")
-	v.SetDefault("database.timezone", "UTC")
+	v.SetDefault("database.timezone", "Asia/Shanghai")
 
 	// etcd配置默认值
 	v.SetDefault("etcd.address", "localhost:2379")
@@ -43,7 +43,7 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("log.level", "info")
 	v.SetDefault("log.format", "json")
 	v.SetDefault("log.output", "file")
-	v.SetDefault("log.file_path", "./logs/identity-srv.log")
+	v.SetDefault("log.file_path", "./logs/identity-service.log")
 	v.SetDefault("log.max_size", 100)
 	v.SetDefault("log.max_age", 30)
 	v.SetDefault("log.max_backups", 10)
@@ -59,7 +59,7 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("logo_storage.s3_region", "us-east-1")
 	v.SetDefault("logo_storage.s3_use_ssl", false)
 	v.SetDefault("logo_storage.use_path_style", true) // 默认使用 Path Style 模式（适合开发环境）
-	v.SetDefault("logo_storage.access_key", "")
+	v.SetDefault("logo_storage.access_key", "RustFSadmin")
 	v.SetDefault("logo_storage.secret_key", "")
 	v.SetDefault("logo_storage.s3_log_enabled", false)
 	v.SetDefault("logo_storage.timeout", 5)
