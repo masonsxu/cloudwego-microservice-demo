@@ -9,10 +9,10 @@ import (
 // setDefaults 设置默认配置值
 func setDefaults(v *viper.Viper) {
 	// 服务器默认值
-	v.SetDefault("server.name", "api-gateway")
+	v.SetDefault("server.name", "gateway")
 	v.SetDefault("server.host", "0.0.0.0")
 	v.SetDefault("server.port", "8080")
-	v.SetDefault("server.debug", false) // 默认关闭，开发环境通过 .env 设置为 true
+	v.SetDefault("server.debug", false) // 默认关闭，生产环境通过 .env 设置为 true
 	v.SetDefault("server.read_timeout", 30*time.Second)
 	v.SetDefault("server.write_timeout", 30*time.Second)
 	v.SetDefault("server.idle_timeout", 120*time.Second)
@@ -22,15 +22,15 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("etcd.timeout", 5*time.Second)
 
 	// 客户端默认值
-	v.SetDefault("client.connection_timeout", 500*time.Millisecond)
-	v.SetDefault("client.request_timeout", 3*time.Second)
+	v.SetDefault("client.connection_timeout", 2*time.Second)
+	v.SetDefault("client.request_timeout", 60*time.Second)
 
 	// 连接池默认值
 	// MaxIdlePerAddress 估算: QPS_per_host * avg_response_time_sec
 	v.SetDefault("client.pool.max_idle_per_address", 10)
 	v.SetDefault("client.pool.min_idle_per_address", 2)
-	v.SetDefault("client.pool.max_idle_global", 1000)
-	v.SetDefault("client.pool.max_idle_timeout", time.Minute)
+	v.SetDefault("client.pool.max_idle_global", 100)
+	v.SetDefault("client.pool.max_idle_timeout", 5*time.Minute)
 
 	// 默认服务配置
 	v.SetDefault("client.services.identity.name", "identity-service")
@@ -68,7 +68,10 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("middleware.casbin.model_path", "./config/casbin_model.conf")
 	v.SetDefault("middleware.casbin.log_enabled", false)
 	v.SetDefault("middleware.casbin.sync_interval", 300)
-	v.SetDefault("middleware.casbin.skip_extra_paths", []string{})
+	v.SetDefault("middleware.casbin.skip_extra_paths", []string{
+		"/favicon.ico",
+		"/api/v1/permission/menu/upload",
+	})
 	v.SetDefault("middleware.casbin.superadmin_bypass_enabled", true)
 	v.SetDefault("middleware.casbin.superadmin_subjects", []string{"role:superadmin", "username:superadmin"})
 	v.SetDefault("middleware.casbin.menu_mapping_file", "menu.yaml")
@@ -83,11 +86,8 @@ func setDefaults(v *viper.Viper) {
 	)
 	v.SetDefault("middleware.jwt.token_head_name", "Bearer")
 	v.SetDefault("middleware.jwt.send_authorization", false)
-	// JWT 跳过认证的路径列表（默认跳过健康检查、指标、OIDC 公开端点）
+	// JWT 跳过认证的路径列表（默认跳过健康检查、指标、OIDC 公开端点、登录/刷新）
 	v.SetDefault("middleware.jwt.skip_paths", []string{
-		"/health",
-		"/metrics",
-		"/ping",
 		"/.well-known/openid-configuration",
 		"/keys",
 		"/oauth/token",
@@ -97,6 +97,12 @@ func setDefaults(v *viper.Viper) {
 		"/revoke",
 		"/oauth/introspect",
 		"/userinfo",
+		"/api/v1/identity/auth/login",
+		"/api/v1/identity/auth/refresh",
+		"/ping",
+		"/health",
+		"/metrics",
+		"/swagger/*",
 	})
 
 	// Cookie默认值
@@ -113,7 +119,7 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("log.level", "info")
 	v.SetDefault("log.format", "json")
 	v.SetDefault("log.output", "file")
-	v.SetDefault("log.file_path", "./logs/api_gateway.log")
+	v.SetDefault("log.file_path", "./logs/api-gateway.log")
 	v.SetDefault("log.max_size", 100)
 	v.SetDefault("log.max_age", 30)
 	v.SetDefault("log.max_backups", 10)
@@ -147,6 +153,9 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("redis.pool_timeout", 4*time.Second)
 	v.SetDefault("redis.idle_timeout", 5*time.Minute)
 	v.SetDefault("redis.idle_check_freq", 1*time.Minute)
+
+	// DataLake 默认值
+	v.SetDefault("data_lake.data_lake_url", "http://localhost:8080")
 }
 
 // DefaultErrorHandlerConfig 返回默认的错误处理中间件配置
