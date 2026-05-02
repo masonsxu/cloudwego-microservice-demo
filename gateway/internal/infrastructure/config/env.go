@@ -275,7 +275,7 @@ func mapJWTEnvVars(v *viper.Viper) {
 		"JWT_SEND_AUTHORIZATION",
 		"middleware.jwt.send_authorization",
 		func(value string) interface{} {
-			return value == "false" // 默认不发送 Authorization header
+			return value == "true"
 		},
 	)
 	mapToViper(v, "JWT_SKIP_PATHS", "middleware.jwt.skip_paths", func(value string) interface{} {
