@@ -46,6 +46,7 @@ stringData:
   RUSTFS_ACCESS_KEY: Admin
   RUSTFS_SECRET_KEY: CHANGE_ME_rustfs     # ← 修改为强密码（最少 8 位）
   REDIS_PASSWORD: CHANGE_ME_redis         # ← 修改为强密码
+  JWT_SIGNING_KEY: CHANGE_ME_jwt          # ← 修改为随机字符串（openssl rand -base64 32）
 
 ---
 # -----------------------------------------------------------------------------
@@ -451,6 +452,8 @@ data:
   # ---- 数据库（identity_srv 用）----
   DB_HOST: postgres
   DB_PORT: "5432"
+  DB_TIMEZONE: Asia/Shanghai
+  DB_SSLMODE: disable
 
   # ---- 对象存储（identity_srv 用）----
   # 容器内访问端点
@@ -458,8 +461,21 @@ data:
   # 浏览器访问端点（用于生成预签名 URL）
   LOGO_STORAGE_S3_PUBLIC_ENDPOINT: http://localhost:9000
 
-  # ---- 日志路径（appuser 有写权限的目录）----
+  # ---- 网关：JWT 认证（常变项，部署时按需修改）----
+  # 跳过认证的路径（逗号分隔），新增无需认证的端点时需同步追加
+  JWT_SKIP_PATHS: "/.well-known/openid-configuration,/keys,/oauth/token,/authorize,/authorize/callback,/login,/revoke,/oauth/introspect,/userinfo,/api/v1/identity/auth/login,/api/v1/identity/auth/refresh,/ping,/health,/metrics,/swagger/*"
+  # JWT Token 有效期
+  JWT_TIMEOUT: 30m
+  JWT_MAX_REFRESH: 168h
+
+  # ---- 网关：CORS（部署时按实际前端地址修改）----
+  CORS_ALLOW_ORIGINS: "http://localhost:5173"
+
+  # ---- 日志路径（容器内 appuser 有写权限的目录）----
   LOG_OUTPUT: stdout
+
+  # ---- 调试开关（生产环境建议注释或设为 false）----
+  SERVER_DEBUG: "false"
 
 ---
 # =============================================================================
