@@ -1,5 +1,5 @@
-# 优化后的前端菜单配置文件
-# 增加了 path, icon, component 字段以符合常见的前端框架使用规范
+# 默认菜单种子数据
+# 与 menu.yaml 保持同步，用于首次数据库初始化
 menu:
   - name: "系统设置"
     id: "system_settings"
@@ -9,30 +9,42 @@ menu:
     children:
       - name: "组织管理"
         id: "organization_management"
-        path: "organization-management"
+        path: "organization"
         icon: "IconOrganizationManagement"
-        component: "views/system-settings/OrganizationManagement"
+        component: "views/organization/OrgList"
 
-      - name: "角色权限"
+      - name: "角色管理"
         id: "role_permissions"
-        path: "role-permissions"
+        path: "roles"
         icon: "IconRolePermissions"
-        component: "views/system-settings/RolePermissions"
+        component: "views/role/RoleList"
 
-      - name: "账号管理"
+      - name: "用户管理"
         id: "account_management"
-        path: "account-management"
+        path: "accounts"
         icon: "IconAccountManagement"
-        component: "views/system-settings/AccountManagement"
+        component: "views/user/UserList"
 
       - name: "审计日志"
         id: "audit_logs"
         path: "audit-logs"
         icon: "IconAuditLogs"
-        component: "views/system-settings/AuditLogs"
+        component: "views/audit/AuditLog"
 
-      - name: "OAuth2 应用管理"
-        id: "oauth2_management"
-        path: "oauth2"
-        icon: "IconOAuth2"
-        component: "views/system-settings/OAuth2Management"
+      - name: "OIDC"
+        id: "oidc_management"
+        path: "oidc"
+        icon: "Connection"
+        component: "Layout"
+        children:
+          - name: "OIDC 配置"
+            id: "oidc_config"
+            path: "/system-settings/oidc/config"
+            icon: "Connection"
+            component: "views/oidc/ConfigDetail"
+
+          - name: "OIDC 集成指南"
+            id: "oidc_integration"
+            path: "/system-settings/oidc/integration"
+            icon: "Connection"
+            component: "views/oidc/IntegrationGuide"

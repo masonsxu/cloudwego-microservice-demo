@@ -82,7 +82,7 @@ import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
-import { Settings, Building2, Key, User, FileText, Menu } from 'lucide-vue-next'
+import { Settings, Building2, Key, User, FileText, Menu, Network } from 'lucide-vue-next'
 import type { MenuNodeDTO } from '@/api/role'
 import { menuRouteMap, visibleRoutePaths } from '@/router/routes'
 import type { AppRouteMeta } from '@/router/routes'
@@ -198,6 +198,8 @@ function getIconComponent(iconName: string) {
     Key,
     Settings,
     Document: FileText,
+    Connection: Network,
+    Network,
     Menu
   }
 
