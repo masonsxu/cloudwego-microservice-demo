@@ -366,9 +366,8 @@ function getStatusBadgeClass(status?: number): string {
 
     .page-title {
       font-size: 20px;
-      font-weight: 700;
-      color: var(--c-primary);
-      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      color: var(--color-ink-strong);
       margin: 0;
     }
   }
@@ -377,23 +376,21 @@ function getStatusBadgeClass(status?: number): string {
     margin-top: 20px;
 
     .form-section {
-      background: var(--bg-card);
-      border: 1px solid hsl(var(--border) / 0.6);
-      border-radius: 18px;
-      box-shadow: var(--shadow-card);
+      background: var(--color-canvas);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: 8px;
       padding: 20px;
 
       .card-header {
         display: flex;
         align-items: center;
         gap: 10px;
-        color: var(--c-primary);
-        font-family: 'Inter', sans-serif;
-        font-size: 16px;
+        color: var(--color-ink-strong);
+        font-size: 14px;
         font-weight: 600;
         margin-bottom: 20px;
         padding-bottom: 12px;
-        border-bottom: 1px solid hsl(var(--border) / 0.6);
+        border-bottom: 1px solid var(--color-border-subtle);
       }
 
       .form-grid {
@@ -418,7 +415,7 @@ function getStatusBadgeClass(status?: number): string {
         }
 
         .error-text {
-          color: #ef4444;
+          color: var(--color-danger-ink);
           font-size: 12px;
         }
       }
@@ -430,10 +427,9 @@ function getStatusBadgeClass(status?: number): string {
       justify-content: flex-end;
       gap: 12px;
       padding: 16px;
-      background: var(--bg-card);
-      border: 1px solid hsl(var(--border) / 0.6);
-      border-radius: 16px;
-      box-shadow: var(--shadow-card);
+      background: var(--color-canvas);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: 8px;
 
       button {
         min-width: 120px;

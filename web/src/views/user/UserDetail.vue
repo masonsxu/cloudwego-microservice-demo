@@ -368,9 +368,8 @@ function formatDateTime(timestamp?: number): string {
 
       .page-title {
         font-size: 20px;
-        font-weight: 700;
-        color: var(--c-primary);
-        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        color: var(--color-ink-strong);
         margin: 0;
       }
     }
@@ -393,21 +392,19 @@ function formatDateTime(timestamp?: number): string {
     .info-card,
     .detail-card,
     .membership-card {
-      background: var(--bg-card);
-      border: 1px solid hsl(var(--border) / 0.6);
-      border-radius: 18px;
-      box-shadow: var(--shadow-card);
+      background: var(--color-canvas);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: 8px;
 
       .card-header {
         display: flex;
         align-items: center;
         gap: 10px;
-        color: var(--c-primary);
-        font-family: 'Inter', sans-serif;
-        font-size: 16px;
+        color: var(--color-ink-strong);
+        font-size: 14px;
         font-weight: 600;
         padding: 14px 20px;
-        border-bottom: 1px solid hsl(var(--border) / 0.6);
+        border-bottom: 1px solid var(--color-border-subtle);
       }
     }
 
@@ -429,8 +426,8 @@ function formatDateTime(timestamp?: number): string {
           font-weight: 600;
 
           :deep(.avatar-fallback) {
-            background: linear-gradient(135deg, var(--c-primary) 0%, var(--c-accent) 100%);
-            color: #fff;
+            background: var(--color-primary-soft-strong);
+            color: var(--color-primary-active);
           }
         }
 
@@ -531,21 +528,21 @@ function formatDateTime(timestamp?: number): string {
 
             .timeline-card {
               padding: 12px 16px;
-              background: var(--bg-input);
-              border: 1px solid hsl(var(--border) / 0.6);
-              border-radius: 10px;
+              background: var(--color-sunken);
+              border: 1px solid var(--color-border-subtle);
+              border-radius: 8px;
 
               h4 {
                 margin: 0 0 4px;
                 font-size: 14px;
                 font-weight: 600;
-                color: var(--c-text-main);
+                color: var(--color-ink);
               }
 
               p {
                 margin: 0;
                 font-size: 13px;
-                color: var(--c-text-sub);
+                color: var(--color-ink-muted);
               }
             }
           }
