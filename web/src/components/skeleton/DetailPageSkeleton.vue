@@ -77,7 +77,7 @@ withDefaults(defineProps<{
 const widths = ['60%', '75%', '50%', '45%', '65%', '55%', '70%']
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 @keyframes shimmer {
   0% { background-position: -400px 0; }
   100% { background-position: 400px 0; }
@@ -91,21 +91,20 @@ const widths = ['60%', '75%', '50%', '45%', '65%', '55%', '70%']
 .skeleton-bone {
   background: linear-gradient(
     90deg,
-    rgba(212, 175, 55, 0.04) 0%,
-    rgba(212, 175, 55, 0.10) 40%,
-    rgba(212, 175, 55, 0.04) 80%
+    var(--color-sunken) 0%,
+    var(--color-border-subtle) 50%,
+    var(--color-sunken) 100%
   );
   background-size: 800px 100%;
-  animation: shimmer 1.8s ease-in-out infinite;
-  border-radius: 6px;
+  animation: shimmer 1.6s ease-in-out infinite;
+  border-radius: 4px;
 }
 
 .sk-card {
-  background: linear-gradient(145deg, rgba(30, 32, 36, 0.9), rgba(20, 20, 22, 0.95));
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-  margin-bottom: 20px;
+  background: var(--color-canvas);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 8px;
+  margin-bottom: 16px;
   animation: fadeSlideIn 0.3s ease-out backwards;
   overflow: hidden;
 }
@@ -114,8 +113,8 @@ const widths = ['60%', '75%', '50%', '45%', '65%', '55%', '70%']
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 16px 20px;
-  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .sk-card-body {
@@ -133,19 +132,19 @@ const widths = ['60%', '75%', '50%', '45%', '65%', '55%', '70%']
 .sk-avatar {
   width: 100px;
   height: 100px;
-  border-radius: 50%;
+  border-radius: 9999px;
 }
 
 .sk-field {
   display: flex;
   align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--color-border-subtle);
   animation: fadeSlideIn 0.25s ease-out backwards;
+}
 
-  &:last-child {
-    border-bottom: none;
-  }
+.sk-field:last-child {
+  border-bottom: none;
 }
 
 .sk-label {

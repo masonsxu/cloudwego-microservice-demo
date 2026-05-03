@@ -4,14 +4,26 @@ import { cn } from '@/lib/utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 
 const badgeVariants = cva(
-  'inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+  'inline-flex items-center rounded-xs px-1.5 py-0.5 text-[12px] font-medium leading-tight transition-colors focus:outline-none',
   {
     variants: {
       variant: {
-        default: 'border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80',
-        secondary: 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        destructive: 'border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80',
-        outline: 'text-foreground',
+        default:
+          'bg-sunken text-[color:var(--color-ink-muted)]',
+        primary:
+          'bg-[color:var(--color-primary-soft)] text-[color:var(--color-primary-active)]',
+        success:
+          'bg-[color:var(--color-success-soft)] text-[color:var(--color-success-ink)]',
+        warning:
+          'bg-[color:var(--color-warning-soft)] text-[color:var(--color-warning-ink)]',
+        destructive:
+          'bg-[color:var(--color-danger-soft)] text-[color:var(--color-danger-ink)]',
+        info:
+          'bg-[color:var(--color-info-soft)] text-[color:var(--color-info-ink)]',
+        secondary:
+          'bg-sunken text-[color:var(--color-ink-muted)]',
+        outline:
+          'border border-default text-ink',
       },
     },
     defaultVariants: {

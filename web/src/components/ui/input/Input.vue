@@ -27,7 +27,7 @@ const attrs = useAttrs()
     :disabled="disabled"
     :placeholder="placeholder"
     :class="cn(
-      'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
+      'flex h-9 w-full rounded-sm border border-default bg-canvas px-3 py-1 text-[14px] text-ink transition-colors duration-[var(--duration-fast)] file:border-0 file:bg-transparent file:text-[14px] file:font-medium placeholder:text-[color:var(--color-ink-subtle)] hover:border-strong focus-visible:outline-none focus-visible:border-focus focus-visible:shadow-[var(--shadow-focus-ring)] disabled:cursor-not-allowed disabled:bg-sunken disabled:text-[color:var(--color-ink-disabled)]',
       props.class,
     )"
     v-bind="attrs"
