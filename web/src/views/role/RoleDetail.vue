@@ -1,32 +1,62 @@
 <template>
-  <div class="p-5">
-    <!-- Page Header -->
-    <div class="flex items-center justify-between mb-5">
-      <div class="flex items-center gap-3">
-        <Button variant="ghost" size="sm" @click="handleBack">
-          <ArrowLeft class="w-4 h-4 mr-1" />
-          {{ t('common.back') }}
-        </Button>
-        <h1 class="text-xl font-bold font-[Inter] text-primary">{{ roleDetail?.name || t('role.roleDetail') }}</h1>
-      </div>
-      <div class="flex gap-2">
-        <Button variant="outline" @click="showEditDialog = true">
-          <Pencil class="w-4 h-4 mr-1" />
-          {{ t('common.edit') }}
-        </Button>
-        <Button
-          variant="destructive"
-          :disabled="roleDetail?.is_system_role"
-          :title="roleDetail?.is_system_role ? '系统角色不可删除' : ''"
-          @click="handleDelete"
-        >
-          <Trash2 class="w-4 h-4 mr-1" />
-          {{ t('common.delete') }}
-        </Button>
-      </div>
-    </div>
+  <div class="space-y-6">
+    <!-- 标题区（DESIGN.md 详情页范式） -->
+    <header class="space-y-4 pb-5 border-b border-subtle">
+      <button
+        class="inline-flex items-center gap-1 text-[13px] text-[color:var(--color-ink-muted)] transition-colors hover:text-[color:var(--color-ink)]"
+        @click="handleBack"
+      >
+        <ArrowLeft class="h-3.5 w-3.5" />
+        {{ t('common.back') }}
+      </button>
 
-    <div class="mt-5 min-h-[300px]">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex items-center gap-3 min-w-0">
+          <span
+            class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md"
+            :class="roleDetail?.is_system_role
+              ? 'bg-[color:var(--color-warning-soft)] text-[color:var(--color-warning-ink)]'
+              : 'bg-[color:var(--color-primary-soft)] text-[color:var(--color-primary-active)]'"
+          >
+            <KeyRound class="h-5 w-5" />
+          </span>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <h1 class="text-[22px] font-semibold leading-tight tracking-[-0.012em] text-[color:var(--color-ink-strong)] truncate">
+                {{ roleDetail?.name || t('role.roleDetail') }}
+              </h1>
+              <Badge v-if="roleDetail?.is_system_role" variant="warning">{{ t('role.systemBadge') }}</Badge>
+              <Badge v-if="roleDetail" :variant="getStatusVariant(roleDetail.status)">{{ getStatusText(roleDetail.status) }}</Badge>
+            </div>
+            <p class="mt-1 text-[13px] text-[color:var(--color-ink-muted)] truncate">
+              <span v-if="roleDetail?.description">{{ roleDetail.description }}</span>
+              <span v-else class="text-[color:var(--color-ink-subtle)]">{{ t('role.noDescription') }}</span>
+              <span class="mx-2 text-[color:var(--color-ink-subtle)]">·</span>
+              <span class="tabular">{{ roleDetail?.user_count || 0 }} {{ t('role.usersUnit') }}</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <Button variant="outline" size="sm" @click="showEditDialog = true">
+            <Pencil class="h-3.5 w-3.5" />
+            {{ t('common.edit') }}
+          </Button>
+          <Button
+            variant="destructive"
+            size="sm"
+            :disabled="roleDetail?.is_system_role"
+            :title="roleDetail?.is_system_role ? t('role.systemRoleNoDelete') : ''"
+            @click="handleDelete"
+          >
+            <Trash2 class="h-3.5 w-3.5" />
+            {{ t('common.delete') }}
+          </Button>
+        </div>
+      </div>
+    </header>
+
+    <div class="min-h-[300px]">
       <DetailPageSkeleton
         v-if="initialLoading"
         :side-span="16"
@@ -44,8 +74,7 @@
             <CardHeader class="border-b border-border/60 px-5 py-3.5">
               <div class="flex items-center gap-2 text-primary font-semibold">
                 <KeyRound class="w-4 h-4" />
-                <span>基本信息</span>
-                <Badge v-if="roleDetail.is_system_role" variant="destructive" class="text-xs">系统角色</Badge>
+                <span>{{ t('role.basicInfo') }}</span>
               </div>
             </CardHeader>
             <CardContent class="p-5">
@@ -55,24 +84,8 @@
                   <p class="text-sm font-semibold text-foreground">{{ roleDetail.name }}</p>
                 </div>
                 <div class="space-y-1">
-                  <span class="text-xs text-muted-foreground">{{ t('common.status') }}</span>
-                  <p class="text-sm">
-                    <Badge :variant="roleDetail.status === 1 ? 'outline' : roleDetail.status === 2 ? 'secondary' : 'destructive'" class="text-xs" :class="roleDetail.status === 1 ? 'bg-green-500/10 border-green-500/30 text-green-500' : ''">
-                      {{ getStatusText(roleDetail.status) }}
-                    </Badge>
-                  </p>
-                </div>
-                <div class="space-y-1">
-                  <span class="text-xs text-muted-foreground">{{ t('role.isSystemRole') }}</span>
-                  <p class="text-sm">
-                    <Badge :variant="roleDetail.is_system_role ? 'destructive' : 'outline'" class="text-xs" :class="!roleDetail.is_system_role ? 'bg-green-500/10 border-green-500/30 text-green-500' : ''">
-                      {{ roleDetail.is_system_role ? t('common.yes') : t('common.no') }}
-                    </Badge>
-                  </p>
-                </div>
-                <div class="space-y-1">
                   <span class="text-xs text-muted-foreground">{{ t('role.userCount') }}</span>
-                  <p class="text-sm text-foreground">{{ roleDetail.user_count || 0 }} 人</p>
+                  <p class="text-sm text-foreground tabular">{{ roleDetail.user_count || 0 }}</p>
                 </div>
                 <div class="space-y-1 col-span-2">
                   <span class="text-xs text-muted-foreground">{{ t('role.description') }}</span>
@@ -164,7 +177,7 @@
                 <div
                   v-for="uid in roleUsers.user_ids"
                   :key="uid"
-                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md border bg-secondary text-xs font-[Source_Code_Pro] group cursor-default"
+                  class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md border bg-secondary text-xs font-mono group cursor-default"
                 >
                   <span>{{ userDisplayName(uid) }}</span>
                   <button class="opacity-50 hover:opacity-100 transition-opacity" @click="handleRemoveUser(uid)">
@@ -240,7 +253,7 @@
               </div>
               <div v-for="node in flattenMenuTree(fullMenuTree)" :key="node.id" class="flex items-center gap-3 py-1 px-2 rounded-md hover:bg-accent/50" :style="{ paddingLeft: `${(node._depth || 0) * 16 + 24}px` }">
                 <span class="flex-1 text-sm text-foreground">{{ node.name }}</span>
-                <span class="w-[140px] text-xs text-muted-foreground font-[Source_Code_Pro] truncate flex-shrink-0">{{ node.path }}</span>
+                <span class="w-[140px] text-xs text-muted-foreground font-mono truncate flex-shrink-0">{{ node.path }}</span>
                 <Select v-model="menuPermMap[node.id]">
                   <SelectTrigger class="w-[110px]" :class="{ 'text-primary font-medium': Number(menuPermMap[node.id] ?? '0') > 0 }">
                     <SelectValue />
@@ -622,6 +635,13 @@ const userDisplayName = (uid: string) => {
 
 const getStatusText = (status: number) =>
   ({ 1: t('common.active'), 2: t('common.inactive'), 3: t('common.deprecated') } as Record<number, string>)[status] || ''
+
+function getStatusVariant(status: number): 'success' | 'default' | 'destructive' {
+  const variantMap: Record<number, 'success' | 'default' | 'destructive'> = {
+    1: 'success', 2: 'default', 3: 'destructive'
+  }
+  return variantMap[status] || 'default'
+}
 
 const getPermBadgeVariant = (level: number): 'default' | 'secondary' | 'destructive' | 'outline' => {
   if (level === 0) return 'secondary'
