@@ -1,118 +1,84 @@
 <template>
-  <div class="dashboard">
-    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-5">
-      <Card class="stat-card">
-        <CardContent class="p-6">
-          <div class="flex items-center gap-5">
-            <div class="stat-icon user-icon">
-              <User class="w-7 h-7" />
-            </div>
-            <div>
-              <p class="text-3xl font-bold text-[var(--c-text-main)] font-['Inter'] mb-1">{{ stats.userCount }}</p>
-              <p class="text-sm text-[var(--c-text-sub)] m-0">{{ t('dashboard.userCount') }}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      <Card class="stat-card">
-        <CardContent class="p-6">
-          <div class="flex items-center gap-5">
-            <div class="stat-icon org-icon">
-              <Building2 class="w-7 h-7" />
-            </div>
-            <div>
-              <p class="text-3xl font-bold text-[var(--c-text-main)] font-['Inter'] mb-1">{{ stats.orgCount }}</p>
-              <p class="text-sm text-[var(--c-text-sub)] m-0">{{ t('dashboard.orgCount') }}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      <Card class="stat-card">
-        <CardContent class="p-6">
-          <div class="flex items-center gap-5">
-            <div class="stat-icon role-icon">
-              <Key class="w-7 h-7" />
-            </div>
-            <div>
-              <p class="text-3xl font-bold text-[var(--c-text-main)] font-['Inter'] mb-1">{{ stats.roleCount }}</p>
-              <p class="text-sm text-[var(--c-text-sub)] m-0">{{ t('dashboard.roleCount') }}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      <Card class="stat-card">
-        <CardContent class="p-6">
-          <div class="flex items-center gap-5">
-            <div class="stat-icon activity-icon">
-              <TrendingUp class="w-7 h-7" />
-            </div>
-            <div>
-              <p class="text-3xl font-bold text-[var(--c-text-main)] font-['Inter'] mb-1">{{ stats.activityCount }}</p>
-              <p class="text-sm text-[var(--c-text-sub)] m-0">{{ t('dashboard.recentActivity') }}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+  <div class="space-y-8">
+    <!-- 页头 -->
+    <header>
+      <h1 class="text-[28px] font-semibold leading-tight tracking-[-0.015em] text-[color:var(--color-ink-strong)]">
+        {{ greeting }}{{ authStore.username ? `，${authStore.username}` : '' }}
+      </h1>
+      <p class="mt-1.5 text-[14px] text-[color:var(--color-ink-muted)]">
+        {{ t('dashboard.welcomeDescription') }}
+      </p>
+    </header>
 
-    <div class="grid gap-5 lg:grid-cols-3">
-      <div class="lg:col-span-2">
-        <Card class="content-card">
-          <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle class="text-[var(--c-primary)] font-['Inter'] text-lg font-semibold">{{ t('dashboard.welcome') }}</CardTitle>
-            <span class="text-xs uppercase tracking-widest text-[var(--c-text-sub)]">Overview</span>
-          </CardHeader>
-          <CardContent>
-            <div>
-              <p class="text-2xl text-[var(--c-primary)] mb-2.5 font-['Inter']">{{ greeting }}</p>
-              <p class="text-[32px] text-[var(--c-text-main)] mb-5 font-semibold">{{ authStore.username }}</p>
-              <p class="text-sm text-[var(--c-text-sub)] leading-relaxed">
-                {{ t('dashboard.welcomeDescription') }}
-              </p>
+    <!-- 概览 -->
+    <section>
+      <h2 class="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--color-ink-subtle)]">
+        {{ t('dashboard.overview') }}
+      </h2>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <RouterLink
+          v-for="stat in statCards"
+          :key="stat.key"
+          :to="stat.to"
+          class="group block rounded-md border border-subtle bg-canvas p-5 transition-colors duration-[var(--duration-fast)] hover:border-strong"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 text-[color:var(--color-ink-muted)]">
+              <component :is="stat.icon" class="h-4 w-4" />
+              <span class="text-[13px] font-medium">{{ t(stat.label) }}</span>
             </div>
-          </CardContent>
-        </Card>
+            <ArrowUpRight class="h-3.5 w-3.5 text-[color:var(--color-ink-subtle)] opacity-0 transition-opacity duration-[var(--duration-fast)] group-hover:opacity-100" />
+          </div>
+
+          <div class="mt-4 flex items-baseline gap-2">
+            <span
+              v-if="!loading"
+              class="tabular text-[28px] font-semibold leading-none tracking-[-0.015em] text-[color:var(--color-ink-strong)]"
+            >
+              {{ formatNumber(stat.value) }}
+            </span>
+            <span v-else class="wb-skeleton inline-block h-7 w-20" />
+          </div>
+
+          <p class="mt-1.5 text-[12px] text-[color:var(--color-ink-subtle)]">
+            {{ t(stat.subtitle) }}
+          </p>
+        </RouterLink>
       </div>
-      <div>
-        <Card class="content-card">
-          <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle class="text-[var(--c-primary)] font-['Inter'] text-lg font-semibold">系统信息</CardTitle>
-            <span class="text-xs uppercase tracking-widest text-[var(--c-text-sub)]">System</span>
-          </CardHeader>
-          <CardContent>
-            <div>
-              <div class="flex justify-between py-3.5 border-b border-[hsl(var(--border)/0.6)]">
-                <span class="text-sm text-[var(--c-text-sub)]">框架版本</span>
-                <span class="text-sm text-[var(--c-primary)] font-semibold">Vue 3.4+</span>
-              </div>
-              <div class="flex justify-between py-3.5 border-b border-[hsl(var(--border)/0.6)]">
-                <span class="text-sm text-[var(--c-text-sub)]">UI 组件</span>
-                <span class="text-sm text-[var(--c-primary)] font-semibold">shadcn-vue</span>
-              </div>
-              <div class="flex justify-between py-3.5 border-b border-[hsl(var(--border)/0.6)]">
-                <span class="text-sm text-[var(--c-text-sub)]">状态管理</span>
-                <span class="text-sm text-[var(--c-primary)] font-semibold">Pinia</span>
-              </div>
-              <div class="flex justify-between py-3.5">
-                <span class="text-sm text-[var(--c-text-sub)]">主题</span>
-                <span class="text-sm text-[var(--c-primary)] font-semibold">CareerCompass Inspired</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+    </section>
+
+    <!-- 系统状态 -->
+    <section>
+      <h2 class="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--color-ink-subtle)]">
+        {{ t('dashboard.systemStatus') }}
+      </h2>
+      <div class="rounded-md border border-subtle bg-canvas p-5">
+        <div class="flex items-center gap-3">
+          <span class="relative flex h-2 w-2">
+            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--color-success)] opacity-60" />
+            <span class="relative inline-flex h-2 w-2 rounded-full bg-[color:var(--color-success)]" />
+          </span>
+          <span class="text-[14px] font-semibold text-ink">{{ t('dashboard.statusHealthy') }}</span>
+          <Badge variant="default" class="ml-auto">{{ t('dashboard.statusVersion', { version: 'v1.0' }) }}</Badge>
+        </div>
+        <p class="mt-3 text-[13px] text-[color:var(--color-ink-muted)]">
+          {{ t('dashboard.statusDescription') }}
+        </p>
       </div>
-    </div>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
 import { getDashboardStats } from '@/api/dashboard'
 import { toast } from 'vue-sonner'
-import { User, Building2, Key, TrendingUp } from 'lucide-vue-next'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Users, Building2, KeyRound, ArrowUpRight } from 'lucide-vue-next'
+import { Badge } from '@/components/ui/badge'
 
 const authStore = useAuthStore()
 const { t } = useI18n()
@@ -132,6 +98,37 @@ const greeting = computed(() => {
   return t('dashboard.greetingEvening')
 })
 
+const statCards = computed(() => [
+  {
+    key: 'users',
+    label: 'dashboard.userCount',
+    subtitle: 'dashboard.userCountSubtitle',
+    icon: Users,
+    value: stats.value.userCount,
+    to: '/system-settings/accounts'
+  },
+  {
+    key: 'orgs',
+    label: 'dashboard.orgCount',
+    subtitle: 'dashboard.orgCountSubtitle',
+    icon: Building2,
+    value: stats.value.orgCount,
+    to: '/system-settings/organization'
+  },
+  {
+    key: 'roles',
+    label: 'dashboard.roleCount',
+    subtitle: 'dashboard.roleCountSubtitle',
+    icon: KeyRound,
+    value: stats.value.roleCount,
+    to: '/system-settings/roles'
+  }
+])
+
+function formatNumber(value: number): string {
+  return new Intl.NumberFormat('en-US').format(value)
+}
+
 async function fetchStats() {
   loading.value = true
   try {
@@ -149,53 +146,3 @@ onMounted(() => {
   fetchStats()
 })
 </script>
-
-<style scoped lang="scss">
-.dashboard {
-  .stat-card {
-    background: var(--bg-card);
-    border: 1px solid hsl(var(--border) / 0.6);
-    border-radius: 18px;
-    box-shadow: var(--shadow-card);
-    backdrop-filter: blur(12px);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .stat-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    box-shadow: inset 0 0 0 1px hsl(var(--border) / 0.4);
-    flex-shrink: 0;
-
-    &.user-icon {
-      background: linear-gradient(135deg, var(--c-primary) 0%, #6f7fe0 100%);
-    }
-
-    &.org-icon {
-      background: linear-gradient(135deg, #ffb74d 0%, var(--c-accent) 100%);
-    }
-
-    &.role-icon {
-      background: linear-gradient(135deg, #5c6bc0 0%, var(--c-primary) 100%);
-    }
-
-    &.activity-icon {
-      background: linear-gradient(135deg, #26a69a 0%, #4dd0e1 100%);
-    }
-  }
-
-  .content-card {
-    background: var(--bg-card);
-    border: 1px solid hsl(var(--border) / 0.6);
-    border-radius: 18px;
-    box-shadow: var(--shadow-card);
-    backdrop-filter: blur(12px);
-  }
-}
-</style>
