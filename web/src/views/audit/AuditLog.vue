@@ -1,134 +1,155 @@
 <template>
-  <div class="audit-log-list">
-    <div class="page-header">
-      <div class="header-left">
-        <h1 class="page-title">{{ t('audit.title') }}</h1>
-        <p class="page-subtitle">{{ t('audit.subtitle') }}</p>
+  <div class="space-y-6">
+    <!-- 页头 -->
+    <header>
+      <h1 class="text-[22px] font-semibold leading-tight tracking-[-0.012em] text-[color:var(--color-ink-strong)]">
+        {{ t('audit.title') }}
+      </h1>
+      <p class="mt-1 text-[13px] text-[color:var(--color-ink-muted)]">
+        {{ t('audit.subtitle') }}
+      </p>
+    </header>
+
+    <!-- 统计概览 -->
+    <section>
+      <div class="grid gap-4 sm:grid-cols-3">
+        <div class="rounded-md border border-subtle bg-canvas p-4">
+          <div class="flex items-center gap-2 text-[color:var(--color-ink-muted)]">
+            <FileText class="h-4 w-4" />
+            <span class="text-[13px] font-medium">{{ t('audit.totalRecords') }}</span>
+          </div>
+          <p class="mt-3 tabular text-[24px] font-semibold leading-none text-[color:var(--color-ink-strong)]">
+            {{ formatNumber(stats.total_count) }}
+          </p>
+        </div>
+        <div class="rounded-md border border-subtle bg-canvas p-4">
+          <div class="flex items-center gap-2 text-[color:var(--color-ink-muted)]">
+            <CircleCheck class="h-4 w-4" />
+            <span class="text-[13px] font-medium">{{ t('audit.successRate') }}</span>
+          </div>
+          <p class="mt-3 tabular text-[24px] font-semibold leading-none" :class="successRate >= 95 ? 'text-[color:var(--color-success-ink)]' : 'text-[color:var(--color-warning-ink)]'">
+            {{ successRate }}%
+          </p>
+        </div>
+        <div class="rounded-md border border-subtle bg-canvas p-4">
+          <div class="flex items-center gap-2 text-[color:var(--color-ink-muted)]">
+            <Timer class="h-4 w-4" />
+            <span class="text-[13px] font-medium">{{ t('audit.avgDuration') }}</span>
+          </div>
+          <p class="mt-3 tabular text-[24px] font-semibold leading-none text-[color:var(--color-ink-strong)]">
+            {{ stats.avg_duration_ms }}<span class="ml-1 text-[14px] font-medium text-[color:var(--color-ink-subtle)]">ms</span>
+          </p>
+        </div>
       </div>
+    </section>
+
+    <!-- 工具条 -->
+    <div class="flex flex-wrap items-center gap-2">
+      <Select v-model="searchForm.action" @update:modelValue="handleSearch">
+        <SelectTrigger class="w-[160px]">
+          <SelectValue :placeholder="t('audit.allActions')" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectItem value="all">{{ t('audit.allActions') }}</SelectItem>
+            <SelectItem value="1">{{ t('audit.actionType.create') }}</SelectItem>
+            <SelectItem value="2">{{ t('audit.actionType.update') }}</SelectItem>
+            <SelectItem value="3">{{ t('audit.actionType.delete') }}</SelectItem>
+            <SelectItem value="4">{{ t('audit.actionType.login') }}</SelectItem>
+            <SelectItem value="5">{{ t('audit.actionType.logout') }}</SelectItem>
+            <SelectItem value="6">{{ t('audit.actionType.passwordChange') }}</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+
+      <Select v-model="searchForm.success" @update:modelValue="handleSearch">
+        <SelectTrigger class="w-[140px]">
+          <SelectValue :placeholder="t('audit.allStatus')" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectItem value="all">{{ t('audit.allStatus') }}</SelectItem>
+            <SelectItem value="true">{{ t('audit.success') }}</SelectItem>
+            <SelectItem value="false">{{ t('audit.failed') }}</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+
+      <Button variant="ghost" size="sm" @click="handleReset">
+        <RotateCcw class="h-3.5 w-3.5" />
+        {{ t('common.reset') }}
+      </Button>
     </div>
 
-    <div class="stats-row">
-      <div class="stat-card spotlight-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
-        <div class="stat-icon"><FileText class="w-5 h-5" /></div>
-        <div class="stat-info">
-          <span class="stat-value">{{ stats.total_count }}</span>
-          <span class="stat-label">{{ t('audit.totalRecords') }}</span>
-        </div>
-      </div>
-      <div class="stat-card spotlight-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
-        <div class="stat-icon success-icon"><CircleCheck class="w-5 h-5" /></div>
-        <div class="stat-info">
-          <span class="stat-value">{{ successRate }}%</span>
-          <span class="stat-label">{{ t('audit.successRate') }}</span>
-        </div>
-      </div>
-      <div class="stat-card spotlight-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
-        <div class="stat-icon duration-icon"><Timer class="w-5 h-5" /></div>
-        <div class="stat-info">
-          <span class="stat-value">{{ stats.avg_duration_ms }}ms</span>
-          <span class="stat-label">{{ t('audit.avgDuration') }}</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="search-section">
-      <div class="search-form">
-        <div class="form-field">
-          <Select v-model="searchForm.action" @update:modelValue="handleSearch">
-            <SelectTrigger class="w-[150px]">
-              <SelectValue :placeholder="t('audit.allActions')" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="all">{{ t('audit.allActions') }}</SelectItem>
-                <SelectItem value="1">{{ t('audit.actionType.create') }}</SelectItem>
-                <SelectItem value="2">{{ t('audit.actionType.update') }}</SelectItem>
-                <SelectItem value="3">{{ t('audit.actionType.delete') }}</SelectItem>
-                <SelectItem value="4">{{ t('audit.actionType.login') }}</SelectItem>
-                <SelectItem value="5">{{ t('audit.actionType.logout') }}</SelectItem>
-                <SelectItem value="6">{{ t('audit.actionType.passwordChange') }}</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div class="form-field">
-          <Select v-model="searchForm.success" @update:modelValue="handleSearch">
-            <SelectTrigger class="w-[130px]">
-              <SelectValue :placeholder="t('audit.allStatus')" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="all">{{ t('audit.allStatus') }}</SelectItem>
-                <SelectItem value="true">{{ t('audit.success') }}</SelectItem>
-                <SelectItem value="false">{{ t('audit.failed') }}</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div class="form-field">
-          <Button variant="default" @click="handleSearch">
-            <Search class="w-4 h-4 mr-1" />{{ t('common.search') }}
-          </Button>
-          <Button variant="outline" @click="handleReset">
-            <RotateCcw class="w-4 h-4 mr-1" />{{ t('common.reset') }}
-          </Button>
-        </div>
-      </div>
-    </div>
-
-    <div class="table-card spotlight-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
+    <!-- 表格卡片 -->
+    <div class="overflow-hidden rounded-md border border-subtle bg-canvas">
       <ListPageSkeleton v-if="initialLoading" :columns="7" :rows="10" />
       <template v-else>
-        <div class="table-body">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead class="w-[170px]">{{ t('common.createTime') }}</TableHead>
-                <TableHead class="min-w-[120px]">{{ t('audit.user') }}</TableHead>
-                <TableHead class="w-[110px] text-center">{{ t('audit.action') }}</TableHead>
-                <TableHead class="min-w-[200px]">{{ t('audit.resource') }}</TableHead>
-                <TableHead class="w-[100px] text-center">{{ t('audit.statusCode') }}</TableHead>
-                <TableHead class="w-[90px] text-center">{{ t('common.status') }}</TableHead>
-                <TableHead class="w-[140px]">{{ t('audit.clientIP') }}</TableHead>
-                <TableHead class="w-[100px] text-right">{{ t('audit.duration') }}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow v-for="row in auditLogs" :key="row.id">
-                <TableCell class="text-[var(--c-text-sub)] text-xs font-mono">{{ formatTimestamp(row.created_at) }}</TableCell>
-                <TableCell class="font-medium text-[var(--c-text-main)]">{{ row.username || row.user_id || '-' }}</TableCell>
-                <TableCell class="text-center">
-                  <Badge :variant="getActionBadgeVariant(row.action)" class="min-w-[56px] justify-center">
-                    {{ getActionText(row.action) }}
-                  </Badge>
-                </TableCell>
-                <TableCell class="font-mono text-xs text-[var(--c-text-sub)] truncate max-w-[200px]" :title="row.resource">{{ row.resource }}</TableCell>
-                <TableCell class="text-center">
-                  <span class="font-mono font-semibold text-sm" :class="getStatusCodeClass(row.status_code)">{{ row.status_code }}</span>
-                </TableCell>
-                <TableCell class="text-center">
-                  <Badge :variant="row.success ? 'default' : 'destructive'" class="text-xs">
-                    {{ row.success ? t('audit.success') : t('audit.failed') }}
-                  </Badge>
-                </TableCell>
-                <TableCell class="text-[var(--c-text-sub)] text-xs">{{ row.client_ip }}</TableCell>
-                <TableCell class="text-right">
-                  <span class="font-mono text-xs text-[var(--c-text-sub)]" :class="{ 'duration-slow': row.duration_ms >= 1000 }">
-                    {{ row.duration_ms }}ms
-                  </span>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
+        <Table>
+          <TableHeader>
+            <TableRow class="border-subtle hover:bg-transparent">
+              <TableHead class="h-10 text-[12px] font-medium uppercase tracking-[0.04em] text-[color:var(--color-ink-muted)] w-[170px]">{{ t('common.createTime') }}</TableHead>
+              <TableHead class="h-10 text-[12px] font-medium uppercase tracking-[0.04em] text-[color:var(--color-ink-muted)] w-[140px]">{{ t('audit.user') }}</TableHead>
+              <TableHead class="h-10 text-[12px] font-medium uppercase tracking-[0.04em] text-[color:var(--color-ink-muted)] w-[100px]">{{ t('audit.action') }}</TableHead>
+              <TableHead class="h-10 text-[12px] font-medium uppercase tracking-[0.04em] text-[color:var(--color-ink-muted)]">{{ t('audit.resource') }}</TableHead>
+              <TableHead class="h-10 text-[12px] font-medium uppercase tracking-[0.04em] text-[color:var(--color-ink-muted)] w-[80px] text-right">{{ t('audit.statusCode') }}</TableHead>
+              <TableHead class="h-10 text-[12px] font-medium uppercase tracking-[0.04em] text-[color:var(--color-ink-muted)] w-[90px]">{{ t('common.status') }}</TableHead>
+              <TableHead class="h-10 text-[12px] font-medium uppercase tracking-[0.04em] text-[color:var(--color-ink-muted)] w-[140px]">{{ t('audit.clientIP') }}</TableHead>
+              <TableHead class="h-10 text-[12px] font-medium uppercase tracking-[0.04em] text-[color:var(--color-ink-muted)] w-[90px] text-right">{{ t('audit.duration') }}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow
+              v-for="row in auditLogs"
+              :key="row.id"
+              class="h-11 border-subtle transition-colors duration-[var(--duration-fast)] hover:bg-sunken"
+            >
+              <TableCell class="font-mono tabular text-[12px] text-[color:var(--color-ink-muted)]">{{ formatTimestamp(row.created_at) }}</TableCell>
+              <TableCell class="font-medium text-ink">{{ row.username || row.user_id || '—' }}</TableCell>
+              <TableCell>
+                <Badge :variant="getActionBadgeVariant(row.action)">
+                  {{ getActionText(row.action) }}
+                </Badge>
+              </TableCell>
+              <TableCell class="font-mono text-[12px] text-[color:var(--color-ink-muted)] truncate max-w-[260px]" :title="row.resource">
+                {{ row.resource }}
+              </TableCell>
+              <TableCell>
+                <span class="font-mono tabular text-[13px] font-semibold text-right block" :class="getStatusCodeColorClass(row.status_code)">
+                  {{ row.status_code }}
+                </span>
+              </TableCell>
+              <TableCell>
+                <Badge :variant="row.success ? 'success' : 'destructive'">
+                  {{ row.success ? t('audit.success') : t('audit.failed') }}
+                </Badge>
+              </TableCell>
+              <TableCell class="font-mono text-[12px] text-[color:var(--color-ink-muted)]">{{ row.client_ip }}</TableCell>
+              <TableCell class="font-mono tabular text-[12px] text-right" :class="row.duration_ms >= 1000 ? 'font-semibold text-[color:var(--color-danger-ink)]' : 'text-[color:var(--color-ink-muted)]'">
+                {{ row.duration_ms }}ms
+              </TableCell>
+            </TableRow>
 
-        <div class="pagination-wrapper">
-          <div class="flex items-center gap-4">
-            <span class="text-sm text-[var(--c-text-sub)]">
-              {{ t('common.total') }}: {{ pagination.total }}
-            </span>
-            <Select v-model="paginationSizeString" @update:modelValue="loadAuditLogs">
-              <SelectTrigger class="w-[80px]">
+            <TableRow v-if="!loading && auditLogs.length === 0">
+              <TableCell colspan="8" class="h-[200px] text-center">
+                <div class="flex flex-col items-center justify-center gap-2 py-8">
+                  <FileText class="h-8 w-8 text-[color:var(--color-ink-subtle)]" />
+                  <p class="text-[14px] font-medium text-ink">{{ t('common.noData') }}</p>
+                  <p class="text-[12px] text-[color:var(--color-ink-muted)]">{{ t('audit.emptyHint') }}</p>
+                </div>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+
+        <!-- 分页 -->
+        <div class="flex items-center justify-between border-t border-subtle px-4 py-2.5">
+          <span class="tabular text-[13px] text-[color:var(--color-ink-muted)]">
+            {{ t('common.total', { total: pagination.total }) }}
+          </span>
+          <div class="flex items-center gap-2">
+            <Select v-model="paginationSizeString">
+              <SelectTrigger class="h-8 w-[80px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -139,18 +160,18 @@
               </SelectContent>
             </Select>
             <div class="flex items-center gap-1">
-              <Button variant="outline" size="sm" :disabled="pagination.page <= 1" @click="pagination.page = 1; loadAuditLogs()">
-                <ChevronsLeft class="w-4 h-4" />
+              <Button variant="outline" size="icon" :disabled="pagination.page <= 1" @click="pagination.page = 1; loadAuditLogs()">
+                <ChevronsLeft class="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="sm" :disabled="pagination.page <= 1" @click="pagination.page--; loadAuditLogs()">
-                <ChevronLeft class="w-4 h-4" />
+              <Button variant="outline" size="icon" :disabled="pagination.page <= 1" @click="pagination.page--; loadAuditLogs()">
+                <ChevronLeft class="h-4 w-4" />
               </Button>
-              <span class="px-3 text-sm">{{ pagination.page }}</span>
-              <Button variant="outline" size="sm" :disabled="pagination.page >= Math.ceil(pagination.total / pagination.size)" @click="pagination.page++; loadAuditLogs()">
-                <ChevronRight class="w-4 h-4" />
+              <span class="tabular min-w-[40px] text-center text-[13px] font-medium text-ink">{{ pagination.page }}</span>
+              <Button variant="outline" size="icon" :disabled="pagination.page >= Math.ceil(pagination.total / pagination.size)" @click="pagination.page++; loadAuditLogs()">
+                <ChevronRight class="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="sm" :disabled="pagination.page >= Math.ceil(pagination.total / pagination.size)" @click="pagination.page = Math.ceil(pagination.total / pagination.size); loadAuditLogs()">
-                <ChevronsRight class="w-4 h-4" />
+              <Button variant="outline" size="icon" :disabled="pagination.page >= Math.ceil(pagination.total / pagination.size)" @click="pagination.page = Math.ceil(pagination.total / pagination.size); loadAuditLogs()">
+                <ChevronsRight class="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -164,7 +185,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
-import { FileText, CircleCheck, Timer, Search, RotateCcw, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-vue-next'
+import { FileText, CircleCheck, Timer, RotateCcw, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-vue-next'
 import { auditApi } from '@/api/audit'
 import type { AuditLogDTO } from '@/api/audit'
 import type { AuditLogStats } from '@/types/audit'
@@ -190,7 +211,7 @@ const pagination = reactive({ page: 1, size: 20, total: 0 })
 
 const paginationSizeString = computed({
   get: () => String(pagination.size),
-  set: (val: string) => { pagination.size = Number(val) },
+  set: (val: string) => { pagination.size = Number(val); loadAuditLogs() },
 })
 
 const successRate = computed(() => {
@@ -198,17 +219,8 @@ const successRate = computed(() => {
   return Math.round((stats.value.success_count / stats.value.total_count) * 100)
 })
 
-function onMouseMove(e: MouseEvent) {
-  const el = e.currentTarget as HTMLElement
-  const rect = el.getBoundingClientRect()
-  el.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`)
-  el.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`)
-}
-
-function onMouseLeave(e: MouseEvent) {
-  const el = e.currentTarget as HTMLElement
-  el.style.removeProperty('--mouse-x')
-  el.style.removeProperty('--mouse-y')
+function formatNumber(value: number): string {
+  return new Intl.NumberFormat('en-US').format(value)
 }
 
 const loadAuditLogs = async () => {
@@ -254,27 +266,27 @@ const getActionText = (action: number) => {
   return map[action] || String(action)
 }
 
-const getActionBadgeVariant = (action: number): 'default' | 'secondary' | 'destructive' | 'outline' => {
-  const map: Record<number, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-    1: 'default',
-    2: 'secondary',
+function getActionBadgeVariant(action: number): 'success' | 'info' | 'destructive' | 'default' | 'warning' {
+  const map: Record<number, 'success' | 'info' | 'destructive' | 'default' | 'warning'> = {
+    1: 'success',
+    2: 'info',
     3: 'destructive',
     4: 'default',
-    5: 'outline',
-    6: 'default',
+    5: 'default',
+    6: 'warning',
   }
-  return map[action] || 'outline'
+  return map[action] || 'default'
 }
 
-const getStatusCodeClass = (code: number) => {
-  if (code >= 200 && code < 300) return 'status-2xx'
-  if (code >= 400 && code < 500) return 'status-4xx'
-  if (code >= 500) return 'status-5xx'
-  return ''
+function getStatusCodeColorClass(code: number): string {
+  if (code >= 200 && code < 300) return 'text-[color:var(--color-success-ink)]'
+  if (code >= 400 && code < 500) return 'text-[color:var(--color-warning-ink)]'
+  if (code >= 500) return 'text-[color:var(--color-danger-ink)]'
+  return 'text-[color:var(--color-ink-muted)]'
 }
 
 const formatTimestamp = (ts?: number) => {
-  if (!ts) return '-'
+  if (!ts) return '—'
   const d = new Date(ts)
   const pad = (n: number) => String(n).padStart(2, '0')
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
@@ -282,163 +294,3 @@ const formatTimestamp = (ts?: number) => {
 
 onMounted(() => { loadAuditLogs() })
 </script>
-
-<style scoped lang="scss">
-.audit-log-list {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 108px);
-
-  .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 28px;
-
-    .header-left {
-      .page-title {
-        font-size: 26px;
-        font-weight: 700;
-        font-family: 'Cinzel', serif;
-        background: linear-gradient(to right, #D4AF37, #F2D288, #D4AF37);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin: 0 0 6px;
-        line-height: 1.2;
-      }
-
-      .page-subtitle {
-        color: var(--c-text-sub);
-        font-size: 13px;
-        margin: 0;
-      }
-    }
-  }
-
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-bottom: 24px;
-
-    .stat-card {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 20px 24px;
-      background: var(--bg-card);
-      border: 1px solid var(--c-border-accent);
-      border-radius: 14px;
-      box-shadow: var(--shadow-card);
-
-      .stat-icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 10px;
-        background: rgba(212, 175, 55, 0.12);
-        border: 1px solid var(--c-border-accent);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--c-accent);
-        flex-shrink: 0;
-
-        &.success-icon {
-          background: rgba(103, 194, 58, 0.1);
-          border-color: rgba(103, 194, 58, 0.25);
-          color: #67C23A;
-        }
-
-        &.duration-icon {
-          background: rgba(64, 158, 255, 0.1);
-          border-color: rgba(64, 158, 255, 0.25);
-          color: #409EFF;
-        }
-      }
-
-      .stat-info {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-
-        .stat-value {
-          font-size: 24px;
-          font-weight: 700;
-          color: var(--c-text-main);
-          font-family: 'JetBrains Mono', monospace;
-          line-height: 1;
-        }
-
-        .stat-label {
-          font-size: 12px;
-          color: var(--c-text-sub);
-        }
-      }
-    }
-  }
-
-  .search-section {
-    background: var(--bg-card);
-    border: 1px solid var(--c-border-accent);
-    border-radius: 14px;
-    padding: 16px 20px;
-    margin-bottom: 20px;
-
-    .search-form {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-  }
-
-  .table-card {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    background: var(--bg-card);
-    border: 1px solid var(--c-border-accent);
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: var(--shadow-card);
-
-    .table-body {
-      flex: 1;
-      min-height: 0;
-    }
-
-    .duration-slow {
-      color: #F56C6C;
-      font-weight: 600;
-    }
-
-    .status-2xx { color: #67C23A; }
-    .status-4xx { color: #E6A23C; }
-    .status-5xx { color: #F56C6C; }
-
-    .pagination-wrapper {
-      display: flex;
-      justify-content: flex-end;
-      padding: 16px 20px;
-      border-top: 1px solid var(--c-border);
-    }
-  }
-}
-
-.spotlight-card {
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(500px circle at var(--mouse-x, -100%) var(--mouse-y, -100%),
-      rgba(212, 175, 55, 0.05), transparent 50%);
-    pointer-events: none;
-    z-index: 1;
-  }
-}
-</style>

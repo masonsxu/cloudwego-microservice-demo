@@ -444,19 +444,19 @@ const startAuthFlow = async () => {
 
 .log-success {
   .log-message {
-    color: #67c23a;
+    color: var(--color-success-ink);
   }
 }
 
 .log-error {
   .log-message {
-    color: #f56c6c;
+    color: var(--color-danger-ink);
   }
 }
 
 .log-warn {
   .log-message {
-    color: #e6a23c;
+    color: var(--color-warning-ink);
   }
 }
 

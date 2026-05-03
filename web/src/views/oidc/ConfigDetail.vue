@@ -1,163 +1,157 @@
 <template>
-  <div class="oidc-config">
-    <div class="page-header">
-      <h2>{{ t('oidc.config.title') }}</h2>
-      <div class="header-actions">
-        <Button @click="refreshData">
-          <RefreshCw class="w-4 h-4 mr-1" />
+  <div class="space-y-6">
+    <!-- 标题区（DESIGN.md 详情页范式） -->
+    <header class="flex items-start justify-between gap-4 pb-5 border-b border-subtle">
+      <div class="flex items-center gap-3 min-w-0">
+        <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-[color:var(--color-primary-soft)] text-[color:var(--color-primary-active)]">
+          <ShieldCheck class="h-5 w-5" />
+        </span>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <h1 class="text-[22px] font-semibold leading-tight tracking-[-0.012em] text-[color:var(--color-ink-strong)]">
+              {{ t('oidc.config.title') }}
+            </h1>
+            <Badge :variant="discoveryConfig ? 'success' : 'destructive'">
+              <span class="relative inline-flex h-1.5 w-1.5 mr-1 rounded-full" :class="discoveryConfig ? 'bg-[color:var(--color-success)]' : 'bg-[color:var(--color-danger)]'" />
+              {{ discoveryConfig ? t('oidc.config.discovered') : t('oidc.config.unavailable') }}
+            </Badge>
+          </div>
+          <p class="mt-1 text-[13px] text-[color:var(--color-ink-muted)] truncate">
+            {{ discoveryConfig?.issuer || t('oidc.config.noIssuer') }}
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <Button variant="outline" size="sm" @click="showJwksDialog = true">
+          <LinkIcon class="h-3.5 w-3.5" />
+          {{ t('oidc.config.viewJwks') }}
+        </Button>
+        <Button variant="outline" size="sm" @click="showDiscoveryDialog = true">
+          <FileText class="h-3.5 w-3.5" />
+          {{ t('oidc.config.viewDiscovery') }}
+        </Button>
+        <Button size="sm" @click="refreshData">
+          <RefreshCw class="h-3.5 w-3.5" :class="loading ? 'animate-spin' : ''" />
           {{ t('common.refresh') }}
         </Button>
       </div>
-    </div>
+    </header>
 
-    <div class="content-row">
-      <DetailPageSkeleton
-        v-if="initialLoading"
-        :side-span="16"
-        :main-span="8"
-        :side-cards="2"
-        :main-cards="1"
-        :show-avatar="false"
-        :side-item-counts="[8, 4]"
-        :main-item-counts="[1]"
-      />
-      <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <div class="lg:col-span-2 space-y-5">
-          <Card class="bg-card border-border/60 rounded-[18px] shadow-card">
-            <CardHeader class="border-b border-border/60 px-5 py-3.5">
-              <div class="flex items-center justify-between">
-                <span class="text-primary font-semibold">{{ t('oidc.config.providerConfig') }}</span>
-                <Badge :variant="discoveryConfig ? 'outline' : 'destructive'" class="text-xs" :class="discoveryConfig ? 'bg-green-500/10 border-green-500/30 text-green-500' : ''">
-                  {{ discoveryConfig ? t('oidc.config.discovered') : t('oidc.config.unavailable') }}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent class="p-5">
-              <div class="grid grid-cols-1 gap-3">
-                <div class="flex justify-between items-start text-sm">
-                  <span class="text-muted-foreground w-[180px] flex-shrink-0">{{ t('oidc.config.issuer') }}</span>
-                  <code class="text-xs bg-accent/50 px-2 py-0.5 rounded font-mono break-all">{{ discoveryConfig?.issuer || '-' }}</code>
-                </div>
-                <div class="flex justify-between items-start text-sm">
-                  <span class="text-muted-foreground w-[180px] flex-shrink-0">{{ t('oidc.config.authorizationEndpoint') }}</span>
-                  <code class="text-xs bg-accent/50 px-2 py-0.5 rounded font-mono break-all">{{ discoveryConfig?.authorization_endpoint || '-' }}</code>
-                </div>
-                <div class="flex justify-between items-start text-sm">
-                  <span class="text-muted-foreground w-[180px] flex-shrink-0">{{ t('oidc.config.tokenEndpoint') }}</span>
-                  <code class="text-xs bg-accent/50 px-2 py-0.5 rounded font-mono break-all">{{ discoveryConfig?.token_endpoint || '-' }}</code>
-                </div>
-                <div class="flex justify-between items-start text-sm">
-                  <span class="text-muted-foreground w-[180px] flex-shrink-0">{{ t('oidc.config.userinfoEndpoint') }}</span>
-                  <code class="text-xs bg-accent/50 px-2 py-0.5 rounded font-mono break-all">{{ discoveryConfig?.userinfo_endpoint || '-' }}</code>
-                </div>
-                <div class="flex justify-between items-start text-sm">
-                  <span class="text-muted-foreground w-[180px] flex-shrink-0">{{ t('oidc.config.jwksUri') }}</span>
-                  <code class="text-xs bg-accent/50 px-2 py-0.5 rounded font-mono break-all">{{ discoveryConfig?.jwks_uri || '-' }}</code>
-                </div>
-                <div class="flex justify-between items-start text-sm">
-                  <span class="text-muted-foreground w-[180px] flex-shrink-0">{{ t('oidc.config.revocationEndpoint') }}</span>
-                  <code class="text-xs bg-accent/50 px-2 py-0.5 rounded font-mono break-all">{{ discoveryConfig?.revocation_endpoint || '-' }}</code>
-                </div>
-                <div class="flex justify-between items-start text-sm">
-                  <span class="text-muted-foreground w-[180px] flex-shrink-0">{{ t('oidc.config.introspectionEndpoint') }}</span>
-                  <code class="text-xs bg-accent/50 px-2 py-0.5 rounded font-mono break-all">{{ discoveryConfig?.introspection_endpoint || '-' }}</code>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+    <!-- 内容区 -->
+    <DetailPageSkeleton
+      v-if="initialLoading"
+      :side-span="16"
+      :main-span="8"
+      :side-cards="2"
+      :main-cards="1"
+      :show-avatar="false"
+      :side-item-counts="[8, 4]"
+      :main-item-counts="[6]"
+    />
 
-          <Card class="bg-card border-border/60 rounded-[18px] shadow-card">
-            <CardHeader class="border-b border-border/60 px-5 py-3.5">
-              <span class="text-primary font-semibold">{{ t('oidc.config.capabilities') }}</span>
-            </CardHeader>
-            <CardContent class="p-5 space-y-3">
-              <div class="text-sm">
-                <span class="text-muted-foreground block mb-1.5">{{ t('oidc.config.responseTypes') }}</span>
-                <div class="flex flex-wrap gap-1.5">
-                  <Badge v-for="type in discoveryConfig?.response_types_supported" :key="type" variant="secondary" class="text-xs">{{ type }}</Badge>
-                </div>
-              </div>
-              <div class="text-sm">
-                <span class="text-muted-foreground block mb-1.5">{{ t('oidc.config.scopes') }}</span>
-                <div class="flex flex-wrap gap-1.5">
-                  <Badge v-for="scope in discoveryConfig?.scopes_supported" :key="scope" variant="secondary" class="text-xs">{{ scope }}</Badge>
-                </div>
-              </div>
-              <div class="text-sm">
-                <span class="text-muted-foreground block mb-1.5">{{ t('oidc.config.signingAlgorithms') }}</span>
-                <div class="flex flex-wrap gap-1.5">
-                  <Badge v-for="alg in discoveryConfig?.id_token_signing_alg_values_supported" :key="alg" variant="secondary" class="text-xs">{{ alg }}</Badge>
-                </div>
-              </div>
-              <div class="text-sm">
-                <span class="text-muted-foreground block mb-1.5">{{ t('oidc.config.authMethods') }}</span>
-                <div class="flex flex-wrap gap-1.5">
-                  <Badge v-for="method in discoveryConfig?.token_endpoint_auth_methods_supported" :key="method" variant="secondary" class="text-xs">{{ method }}</Badge>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+    <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <!-- 主区：Discovery + Capabilities -->
+      <div class="lg:col-span-2 space-y-5">
+        <section class="rounded-md border border-subtle bg-canvas">
+          <header class="flex items-center justify-between border-b border-subtle px-5 py-3">
+            <h2 class="text-[14px] font-semibold text-ink">{{ t('oidc.config.providerConfig') }}</h2>
+            <span class="text-[11px] font-medium uppercase tracking-[0.06em] text-[color:var(--color-ink-subtle)]">Discovery</span>
+          </header>
+          <dl class="divide-y divide-[color:var(--color-border-subtle)]">
+            <div v-for="row in discoveryRows" :key="row.key" class="flex items-start gap-4 px-5 py-3">
+              <dt class="w-[200px] flex-shrink-0 text-[13px] font-medium text-[color:var(--color-ink-muted)]">
+                {{ t(row.label) }}
+              </dt>
+              <dd class="flex-1 min-w-0">
+                <code v-if="row.value" class="font-mono text-[12px] text-ink break-all">{{ row.value }}</code>
+                <span v-else class="text-[color:var(--color-ink-subtle)]">—</span>
+              </dd>
+            </div>
+          </dl>
+        </section>
 
-        <div class="space-y-5">
-          <Card class="bg-card border-border/60 rounded-[18px] shadow-card">
-            <CardHeader class="border-b border-border/60 px-5 py-3.5">
-              <span class="text-primary font-semibold">{{ t('oidc.config.runtimeConfig') }}</span>
-            </CardHeader>
-            <CardContent class="p-5 space-y-3">
-              <div class="flex justify-between text-sm">
-                <span class="text-muted-foreground">{{ t('oidc.config.enabled') }}</span>
-                <Badge :variant="envConfig?.enabled ? 'outline' : 'destructive'" class="text-xs" :class="envConfig?.enabled ? 'bg-green-500/10 border-green-500/30 text-green-500' : ''">
-                  {{ envConfig?.enabled ? t('common.yes') : t('common.no') }}
-                </Badge>
-              </div>
-              <div class="flex justify-between text-sm">
-                <span class="text-muted-foreground">{{ t('oidc.config.enforcePkce') }}</span>
-                <Badge :variant="envConfig?.enforcePkce ? 'outline' : 'default'" class="text-xs" :class="envConfig?.enforcePkce ? 'bg-green-500/10 border-green-500/30 text-green-500' : ''">
-                  {{ envConfig?.enforcePkce ? t('common.yes') : t('common.no') }}
-                </Badge>
-              </div>
-              <div class="flex justify-between text-sm">
-                <span class="text-muted-foreground">{{ t('oidc.config.accessTokenLifespan') }}</span>
-                <span class="text-foreground">{{ envConfig?.accessTokenLifespan || '-' }}</span>
-              </div>
-              <div class="flex justify-between text-sm">
-                <span class="text-muted-foreground">{{ t('oidc.config.refreshTokenLifespan') }}</span>
-                <span class="text-foreground">{{ envConfig?.refreshTokenLifespan || '-' }}</span>
-              </div>
-              <div class="flex justify-between text-sm">
-                <span class="text-muted-foreground">{{ t('oidc.config.authCodeLifespan') }}</span>
-                <span class="text-foreground">{{ envConfig?.authCodeLifespan || '-' }}</span>
-              </div>
-              <div class="flex justify-between text-sm">
-                <span class="text-muted-foreground">{{ t('oidc.config.idTokenLifespan') }}</span>
-                <span class="text-foreground">{{ envConfig?.idTokenLifespan || '-' }}</span>
-              </div>
-            </CardContent>
-          </Card>
+        <section class="rounded-md border border-subtle bg-canvas">
+          <header class="flex items-center justify-between border-b border-subtle px-5 py-3">
+            <h2 class="text-[14px] font-semibold text-ink">{{ t('oidc.config.capabilities') }}</h2>
+            <span class="text-[11px] font-medium uppercase tracking-[0.06em] text-[color:var(--color-ink-subtle)]">Supports</span>
+          </header>
+          <dl class="divide-y divide-[color:var(--color-border-subtle)]">
+            <div v-for="cap in capabilityRows" :key="cap.key" class="flex items-start gap-4 px-5 py-3">
+              <dt class="w-[200px] flex-shrink-0 text-[13px] font-medium text-[color:var(--color-ink-muted)]">
+                {{ t(cap.label) }}
+              </dt>
+              <dd class="flex-1 min-w-0">
+                <div v-if="cap.values && cap.values.length" class="flex flex-wrap gap-1">
+                  <Badge v-for="value in cap.values" :key="value" variant="default">{{ value }}</Badge>
+                </div>
+                <span v-else class="text-[color:var(--color-ink-subtle)]">—</span>
+              </dd>
+            </div>
+          </dl>
+        </section>
+      </div>
 
-          <Card class="bg-card border-border/60 rounded-[18px] shadow-card">
-            <CardHeader class="border-b border-border/60 px-5 py-3.5">
-              <span class="text-primary font-semibold">{{ t('oidc.config.quickLinks') }}</span>
-            </CardHeader>
-            <CardContent class="p-5 space-y-2.5">
-              <Button variant="outline" class="w-full justify-start" @click="showJwksDialog = true">
-                <LinkIcon class="w-4 h-4 mr-2" />{{ t('oidc.config.viewJwks') }}
-              </Button>
-              <Button variant="outline" class="w-full justify-start" @click="showDiscoveryDialog = true">
-                <LinkIcon class="w-4 h-4 mr-2" />{{ t('oidc.config.viewDiscovery') }}
-              </Button>
-              <Button variant="outline" class="w-full justify-start" @click="router.push('/system-settings/oidc/integration')">
-                <FileText class="w-4 h-4 mr-2" />{{ t('oidc.config.integrationGuide') }}
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
+      <!-- 侧栏：Runtime + Quick Links -->
+      <div class="space-y-5">
+        <section class="rounded-md border border-subtle bg-canvas">
+          <header class="flex items-center justify-between border-b border-subtle px-5 py-3">
+            <h2 class="text-[14px] font-semibold text-ink">{{ t('oidc.config.runtimeConfig') }}</h2>
+            <span class="text-[11px] font-medium uppercase tracking-[0.06em] text-[color:var(--color-ink-subtle)]">Runtime</span>
+          </header>
+          <dl class="divide-y divide-[color:var(--color-border-subtle)]">
+            <div class="flex items-center justify-between px-5 py-2.5">
+              <dt class="text-[13px] text-[color:var(--color-ink-muted)]">{{ t('oidc.config.enabled') }}</dt>
+              <Badge :variant="envConfig.enabled ? 'success' : 'destructive'">
+                {{ envConfig.enabled ? t('common.yes') : t('common.no') }}
+              </Badge>
+            </div>
+            <div class="flex items-center justify-between px-5 py-2.5">
+              <dt class="text-[13px] text-[color:var(--color-ink-muted)]">{{ t('oidc.config.enforcePkce') }}</dt>
+              <Badge :variant="envConfig.enforcePkce ? 'success' : 'default'">
+                {{ envConfig.enforcePkce ? t('common.yes') : t('common.no') }}
+              </Badge>
+            </div>
+            <div class="flex items-center justify-between px-5 py-2.5">
+              <dt class="text-[13px] text-[color:var(--color-ink-muted)]">{{ t('oidc.config.accessTokenLifespan') }}</dt>
+              <span class="font-mono tabular text-[13px] text-ink">{{ envConfig.accessTokenLifespan || '—' }}</span>
+            </div>
+            <div class="flex items-center justify-between px-5 py-2.5">
+              <dt class="text-[13px] text-[color:var(--color-ink-muted)]">{{ t('oidc.config.refreshTokenLifespan') }}</dt>
+              <span class="font-mono tabular text-[13px] text-ink">{{ envConfig.refreshTokenLifespan || '—' }}</span>
+            </div>
+            <div class="flex items-center justify-between px-5 py-2.5">
+              <dt class="text-[13px] text-[color:var(--color-ink-muted)]">{{ t('oidc.config.authCodeLifespan') }}</dt>
+              <span class="font-mono tabular text-[13px] text-ink">{{ envConfig.authCodeLifespan || '—' }}</span>
+            </div>
+            <div class="flex items-center justify-between px-5 py-2.5">
+              <dt class="text-[13px] text-[color:var(--color-ink-muted)]">{{ t('oidc.config.idTokenLifespan') }}</dt>
+              <span class="font-mono tabular text-[13px] text-ink">{{ envConfig.idTokenLifespan || '—' }}</span>
+            </div>
+          </dl>
+        </section>
+
+        <section class="rounded-md border border-subtle bg-canvas">
+          <header class="border-b border-subtle px-5 py-3">
+            <h2 class="text-[14px] font-semibold text-ink">{{ t('oidc.config.quickLinks') }}</h2>
+          </header>
+          <div class="p-3 space-y-1">
+            <button
+              class="flex w-full items-center gap-2 rounded-sm px-3 py-2 text-left text-[13px] text-[color:var(--color-ink-muted)] transition-colors hover:bg-sunken hover:text-ink"
+              @click="router.push('/system-settings/oidc/integration')"
+            >
+              <FileText class="h-3.5 w-3.5 flex-shrink-0" />
+              <span class="flex-1">{{ t('oidc.config.integrationGuide') }}</span>
+              <ArrowUpRight class="h-3 w-3 text-[color:var(--color-ink-subtle)]" />
+            </button>
+          </div>
+        </section>
       </div>
     </div>
 
+    <!-- JWKS / Discovery JSON Dialog -->
     <Dialog v-model:open="showJwksDialog">
-      <DialogContent class="max-w-[70%]">
+      <DialogContent class="max-w-[720px]">
         <DialogHeader>
           <DialogTitle>{{ t('oidc.config.viewJwks') }}</DialogTitle>
         </DialogHeader>
@@ -167,7 +161,7 @@
     </Dialog>
 
     <Dialog v-model:open="showDiscoveryDialog">
-      <DialogContent class="max-w-[70%]">
+      <DialogContent class="max-w-[720px]">
         <DialogHeader>
           <DialogTitle>{{ t('oidc.config.viewDiscovery') }}</DialogTitle>
         </DialogHeader>
@@ -181,11 +175,10 @@
 import { oidcProviderApi } from '@/api/oidc'
 import DetailPageSkeleton from '@/components/skeleton/DetailPageSkeleton.vue'
 import type { OIDCDiscoveryConfig, OIDCJWKSResponse } from '@/types/oidc'
-import { RefreshCw, Link as LinkIcon, FileText } from 'lucide-vue-next'
+import { RefreshCw, Link as LinkIcon, FileText, ShieldCheck, ArrowUpRight } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { Card, CardHeader, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -209,6 +202,23 @@ const envConfig = ref({
   authCodeLifespan: '10m',
   idTokenLifespan: '30m',
 })
+
+const discoveryRows = computed(() => [
+  { key: 'issuer', label: 'oidc.config.issuer', value: discoveryConfig.value?.issuer },
+  { key: 'auth', label: 'oidc.config.authorizationEndpoint', value: discoveryConfig.value?.authorization_endpoint },
+  { key: 'token', label: 'oidc.config.tokenEndpoint', value: discoveryConfig.value?.token_endpoint },
+  { key: 'userinfo', label: 'oidc.config.userinfoEndpoint', value: discoveryConfig.value?.userinfo_endpoint },
+  { key: 'jwks', label: 'oidc.config.jwksUri', value: discoveryConfig.value?.jwks_uri },
+  { key: 'revoke', label: 'oidc.config.revocationEndpoint', value: discoveryConfig.value?.revocation_endpoint },
+  { key: 'introspect', label: 'oidc.config.introspectionEndpoint', value: discoveryConfig.value?.introspection_endpoint },
+])
+
+const capabilityRows = computed(() => [
+  { key: 'response', label: 'oidc.config.responseTypes', values: discoveryConfig.value?.response_types_supported },
+  { key: 'scopes', label: 'oidc.config.scopes', values: discoveryConfig.value?.scopes_supported },
+  { key: 'signing', label: 'oidc.config.signingAlgorithms', values: discoveryConfig.value?.id_token_signing_alg_values_supported },
+  { key: 'auth-methods', label: 'oidc.config.authMethods', values: discoveryConfig.value?.token_endpoint_auth_methods_supported },
+])
 
 const discoveryJson = computed(() => {
   if (!discoveryConfig.value) return ''
@@ -241,43 +251,17 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.oidc-config {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.page-header h2 {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--c-text-main);
-}
-
-.header-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.content-row {
-  flex: 1;
-}
-
 .json-viewer {
-  background: var(--bg-base);
+  background: var(--color-sunken);
+  border: 1px solid var(--color-border-subtle);
   border-radius: 8px;
   padding: 16px;
   overflow: auto;
   max-height: 60vh;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
+  font-family: var(--font-family-mono);
+  font-size: 12px;
   line-height: 1.6;
-  color: var(--c-text-main);
+  color: var(--color-ink);
   white-space: pre-wrap;
   word-break: break-all;
 }

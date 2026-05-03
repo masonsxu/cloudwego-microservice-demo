@@ -1,12 +1,19 @@
 <template>
-  <div class="menu-manage">
-    <div class="menu-card">
-      <div class="card-header">
-        <span class="title">{{ t('system.menuManage') }}</span>
-        <span class="meta">System</span>
-      </div>
-      <div class="card-body">
-        <p>菜单管理页面 - 待开发</p>
+  <div class="space-y-6">
+    <header>
+      <h1 class="text-[22px] font-semibold leading-tight tracking-[-0.012em] text-[color:var(--color-ink-strong)]">
+        {{ t('system.menuManage') }}
+      </h1>
+      <p class="mt-1 text-[13px] text-[color:var(--color-ink-muted)]">
+        {{ t('system.menuManageSubtitle') }}
+      </p>
+    </header>
+
+    <div class="rounded-md border border-subtle bg-canvas">
+      <div class="flex flex-col items-center justify-center gap-2 py-16">
+        <Menu class="h-8 w-8 text-[color:var(--color-ink-subtle)]" />
+        <p class="text-[14px] font-medium text-ink">{{ t('system.menuComingSoon') }}</p>
+        <p class="text-[12px] text-[color:var(--color-ink-muted)]">{{ t('system.menuComingSoonHint') }}</p>
       </div>
     </div>
   </div>
@@ -14,42 +21,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { Menu } from 'lucide-vue-next'
 
 const { t } = useI18n()
 </script>
-
-<style scoped lang="scss">
-.menu-manage {
-  .menu-card {
-    background: var(--bg-card);
-    border: 1px solid hsl(var(--border) / 0.6);
-    border-radius: 18px;
-    box-shadow: var(--shadow-card);
-    backdrop-filter: blur(12px);
-  }
-
-  .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .title {
-    color: var(--c-primary);
-    font-family: 'Inter', sans-serif;
-    font-size: 18px;
-    font-weight: 600;
-  }
-
-  .meta {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--c-text-sub);
-  }
-
-  .card-body {
-    color: var(--c-text-sub);
-  }
-}
-</style>
