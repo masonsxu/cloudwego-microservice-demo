@@ -68,7 +68,13 @@ func (am *AuditMiddlewareImpl) MiddlewareFunc() app.HandlerFunc {
 		path := string(c.Request.URI().Path())
 
 		if isAuditableRequest(method, path) {
-			requestBody = sanitizeRequestBody(c.Request.Body())
+			contentType := string(c.Request.Header.ContentType())
+			if strings.HasPrefix(contentType, "multipart/form-data") {
+				// multipart 上传含二进制流，整体记录会污染审计日志（UTF8 列写入失败）
+				requestBody = "[multipart/form-data omitted]"
+			} else {
+				requestBody = sanitizeRequestBody(c.Request.Body())
+			}
 		}
 
 		// 执行下游处理器

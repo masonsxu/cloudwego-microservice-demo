@@ -1,6 +1,7 @@
 package rustfsclient
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -202,7 +203,7 @@ func (c *logoStorageClientImpl) UploadTemporaryLogo(
 	_, err := c.s3Client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:      aws.String(bucket),
 		Key:         aws.String(objectKey),
-		Body:        strings.NewReader(string(content)),
+		Body:        bytes.NewReader(content),
 		ContentType: aws.String(mimeType),
 		// 添加对象标签：Status=temporary（临时Logo，7天后自动删除）
 		Tagging: aws.String("Status=temporary"),

@@ -152,7 +152,8 @@ func (s *logoServiceImpl) BindLogoToOrganization(
 		return nil, err
 	}
 
-	rpcOrg := orgResult.(*identity_srv.Organization)
+	rpcOrgResp := orgResult.(*identity_srv.GetOrganizationResponse)
+	rpcOrg := rpcOrgResp.GetOrganization()
 
 	// 转换响应
 	httpResp := &identity.OrganizationResponseDTO{

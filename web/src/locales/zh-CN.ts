@@ -38,6 +38,7 @@ export default {
     removeSuccess: '移除成功',
     preview: '预览',
     view: '查看',
+    replace: '更换',
     active: '活跃',
     inactive: '未激活',
     deprecated: '已弃用'

@@ -2,8 +2,8 @@
   <div class="org-logo-upload">
     <div
       class="logo-uploader"
-      @click="!disabled && !uploading && fileInputRef?.click()"
-      @keydown.enter="!disabled && !uploading && fileInputRef?.click()"
+      @click="handleUploaderClick"
+      @keydown.enter="handleUploaderClick"
       tabindex="0"
       role="button"
       :aria-disabled="disabled || uploading"
@@ -36,6 +36,15 @@
 
     <div class="logo-actions" v-if="logoUrl && !disabled">
       <Button
+        variant="outline"
+        size="sm"
+        @click="triggerFileSelect"
+        :disabled="uploading"
+      >
+        <Plus class="w-4 h-4 mr-1" />
+        {{ t('common.replace') }}
+      </Button>
+      <Button
         variant="destructive"
         size="sm"
         @click="handleRemove"
@@ -51,6 +60,21 @@
       :model-value="uploadProgress"
       class="upload-progress h-1.5"
     />
+
+    <p v-if="errorMessage" class="logo-error-tip" role="alert">
+      {{ errorMessage }}
+    </p>
+
+    <Dialog v-model:open="previewVisible">
+      <DialogContent class="max-w-[640px]">
+        <img
+          v-if="logoUrl"
+          :src="logoUrl"
+          class="w-full h-auto object-contain"
+          alt="Logo preview"
+        />
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
 
@@ -62,6 +86,7 @@ import { Plus, ZoomIn, Trash2 } from 'lucide-vue-next'
 import { organizationApi } from '@/api/organization'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
 
 interface Props {
   organizationId?: string
@@ -86,6 +111,32 @@ const { t } = useI18n()
 const uploading = ref(false)
 const uploadProgress = ref(0)
 const fileInputRef = ref<HTMLInputElement>()
+const errorMessage = ref('')
+const previewVisible = ref(false)
+let errorTimer: ReturnType<typeof setTimeout> | null = null
+
+function triggerFileSelect() {
+  if (props.disabled || uploading.value) return
+  fileInputRef.value?.click()
+}
+
+function handleUploaderClick() {
+  if (props.disabled || uploading.value) return
+  if (props.logoUrl) {
+    previewVisible.value = true
+  } else {
+    fileInputRef.value?.click()
+  }
+}
+
+function showError(msg: string) {
+  errorMessage.value = msg
+  toast.error(msg)
+  if (errorTimer) clearTimeout(errorTimer)
+  errorTimer = setTimeout(() => {
+    errorMessage.value = ''
+  }, 4000)
+}
 
 watch(() => props.logoUrl, (newVal) => {
   if (!newVal) {
@@ -96,22 +147,22 @@ watch(() => props.logoUrl, (newVal) => {
 async function onFileChange(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
+  input.value = ''
   if (!file) return
 
-  const isImage = file.type.startsWith('image/')
-  if (!isImage) {
-    toast.error(t('organization.logoFormatError'))
+  errorMessage.value = ''
+
+  if (!file.type.startsWith('image/')) {
+    showError(t('organization.logoFormatError'))
     return
   }
 
-  const isLt2M = file.size / 1024 / 1024 < 2
-  if (!isLt2M) {
-    toast.error(t('organization.logoSizeError'))
+  if (file.size / 1024 / 1024 >= 2) {
+    showError(t('organization.logoSizeError'))
     return
   }
 
   await handleUpload(file)
-  input.value = ''
 }
 
 async function handleUpload(file: File) {
@@ -245,6 +296,13 @@ function handleRemove() {
 
   .upload-progress {
     margin-top: 10px;
+  }
+
+  .logo-error-tip {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #ef4444;
+    text-align: center;
   }
 }
 </style>

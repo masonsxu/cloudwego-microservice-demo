@@ -37,7 +37,8 @@ export default {
     uploadFailed: 'Upload failed',
     removeSuccess: 'Remove successful',
     preview: 'Preview',
-    view: 'View'
+    view: 'View',
+    replace: 'Replace'
   },
 
   auth: {

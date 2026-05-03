@@ -4,6 +4,7 @@ package identity
 
 import (
 	"context"
+	"io"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/adaptor"
@@ -1065,6 +1066,14 @@ func UploadTemporaryLogo(ctx context.Context, c *app.RequestContext) {
 		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage("文件不能为空"))
 		return
 	}
+
+	// 服务端二次校验文件大小（与前端 2MB 限制保持一致，防止绕过）
+	const maxLogoSize = 2 * 1024 * 1024
+	if fileContent.Size > maxLogoSize {
+		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage("文件大小不能超过 2MB"))
+		return
+	}
+
 	file, err := fileContent.Open()
 	if err != nil {
 		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage("无法打开上传的文件"))
@@ -1072,13 +1081,22 @@ func UploadTemporaryLogo(ctx context.Context, c *app.RequestContext) {
 	}
 	defer file.Close()
 
-	fileContentByte := make([]byte, fileContent.Size)
-	_, err = file.Read(fileContentByte)
+	fileContentByte, err := io.ReadAll(file)
 	if err != nil {
 		errors.AbortWithError(c, errors.ErrInvalidParams.WithMessage("读取上传的文件失败"))
 		return
 	}
 	req.FileContent = fileContentByte
+
+	// 兜底补齐 multipart 表单字段（绕开 IDL 用 api.body 标记导致的 multipart 绑定缺失）
+	if req.FileName == nil || *req.FileName == "" {
+		formFileName := fileContent.Filename
+		req.FileName = &formFileName
+	}
+	if req.MimeType == nil || *req.MimeType == "" {
+		mimeType := fileContent.Header.Get("Content-Type")
+		req.MimeType = &mimeType
+	}
 
 	// 获取当前用户ID
 	userID, authErr := auth_context.GetCurrentUserProfileID(c)
