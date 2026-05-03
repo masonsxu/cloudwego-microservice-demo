@@ -1,7 +1,19 @@
 @import "tailwindcss";
 
+/* ============================================================
+ *  Tailwind 4 主题映射
+ *  把 variables.css 中的语义 token 注入为 Tailwind 工具类。
+ *  组件层可直接使用：
+ *    bg-canvas / bg-sunken / bg-primary / bg-primary-soft
+ *    text-ink / text-ink-muted / text-primary / text-on-primary
+ *    border-subtle / border-default / border-strong
+ *    shadow-e1 / shadow-e2 / shadow-e3
+ *    rounded-sm / rounded-md / rounded-lg / rounded-xs
+ *    font-text / font-mono
+ * ============================================================ */
+
 @theme {
-  /* shadcn-vue theme variables */
+  /* ── shadcn-vue 默认变量（保持原 ui/ 组件可用） ── */
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));
@@ -23,39 +35,95 @@
   --color-ring: hsl(var(--ring));
   --radius: var(--radius);
 
-  /* CareerCompass-inspired palette */
-  --color-bg-base: var(--bg-base);
-  --color-bg-card: var(--bg-card);
+  /* ── Workbench 表面色（bg-* 工具类） ── */
+  --color-canvas: var(--color-canvas);
+  --color-raised: var(--color-raised);
+  --color-sunken: var(--color-sunken);
+  --color-overlay: var(--color-overlay);
+  --color-inverse: var(--color-inverse);
 
-  /* Fonts */
-  --font-family-body: 'Inter', sans-serif;
-  --font-family-code: 'Source Code Pro', monospace;
+  /* ── 文字（text-ink, text-ink-muted ...）────────── */
+  --color-ink-strong: var(--color-ink-strong);
+  --color-ink: var(--color-ink);
+  --color-ink-muted: var(--color-ink-muted);
+  --color-ink-subtle: var(--color-ink-subtle);
+  --color-ink-disabled: var(--color-ink-disabled);
+  --color-on-primary: var(--color-ink-on-primary);
+
+  /* ── Brand soft（bg-primary-soft）──────────────── */
+  --color-primary-soft: var(--color-primary-soft);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-primary-active: var(--color-primary-active);
+
+  /* ── 边线 ──────────────────────────────────────── */
+  --color-border-subtle: var(--color-border-subtle);
+  --color-border-strong: var(--color-border-strong);
+
+  /* ── 语义 ──────────────────────────────────────── */
+  --color-success: var(--color-success);
+  --color-success-soft: var(--color-success-soft);
+  --color-success-ink: var(--color-success-ink);
+  --color-warning: var(--color-warning);
+  --color-warning-soft: var(--color-warning-soft);
+  --color-warning-ink: var(--color-warning-ink);
+  --color-danger: var(--color-danger);
+  --color-danger-soft: var(--color-danger-soft);
+  --color-danger-ink: var(--color-danger-ink);
+  --color-info: var(--color-info);
+  --color-info-soft: var(--color-info-soft);
+  --color-info-ink: var(--color-info-ink);
+
+  /* ── Chart 色板 ─────────────────────────────────── */
+  --color-chart-1: var(--color-chart-1);
+  --color-chart-2: var(--color-chart-2);
+  --color-chart-3: var(--color-chart-3);
+  --color-chart-4: var(--color-chart-4);
+  --color-chart-5: var(--color-chart-5);
+  --color-chart-6: var(--color-chart-6);
+  --color-chart-grid: var(--color-chart-grid);
+  --color-chart-axis: var(--color-chart-axis);
+
+  /* ── 字体族（font-text / font-mono） ─────────── */
+  --font-family-text: var(--font-family-text);
+  --font-family-display: var(--font-family-display);
+  --font-family-mono: var(--font-family-mono);
+
+  /* ── 阴影（shadow-e1/e2/e3） ─────────────────── */
+  --shadow-e1: var(--shadow-e1);
+  --shadow-e2: var(--shadow-e2);
+  --shadow-e3: var(--shadow-e3);
+
+  /* ── 圆角（rounded-sm/md/lg） ────────────────── */
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
 }
 
-/* ===== Global ===== */
+/* ============================================================
+ *  全局基础
+ * ============================================================ */
 body {
-  background-color: var(--bg-base);
-  color: var(--c-text-main);
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
   min-height: 100vh;
-  font-family: var(--font-family-body);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: var(--font-family-text);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "kern" 1, "ss01" 1;
+  transition: background-color var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out);
 }
 
-[data-theme="dark"] body {
-  background-image: radial-gradient(circle at 20% 10%, rgba(63, 81, 181, 0.25), transparent 55%),
-    radial-gradient(circle at 80% 0%, rgba(255, 152, 0, 0.18), transparent 45%),
-    linear-gradient(180deg, rgba(8, 12, 24, 0.95), rgba(10, 13, 18, 1));
-}
-
-[data-theme="light"] body {
-  background-image: radial-gradient(circle at 20% 0%, rgba(63, 81, 181, 0.08), transparent 45%),
-    radial-gradient(circle at 80% 10%, rgba(255, 152, 0, 0.08), transparent 40%);
-}
-
-/* ===== Scrollbars ===== */
+/* ============================================================
+ *  滚动条 — 中性、克制
+ * ============================================================ */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -63,78 +131,75 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(63, 81, 181, 0.35);
-  border-radius: 4px;
+  background-color: var(--color-border);
+  border: 2px solid var(--color-canvas);
+  border-radius: var(--radius-pill);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(63, 81, 181, 0.6);
+  background-color: var(--color-border-strong);
 }
 
-/* ===== Utilities ===== */
-.gold-gradient-text {
-  background: linear-gradient(to right, var(--c-primary), var(--c-accent), var(--c-primary));
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  border-color: var(--color-canvas);
 }
 
-/* Tech grid background */
-.tech-grid-bg {
-  position: relative;
+/* ============================================================
+ *  焦点环 — 替代浏览器默认 outline
+ * ============================================================ */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-ring);
+  border-radius: inherit;
 }
 
-.tech-grid-bg::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(var(--tech-grid-color) 1px, transparent 1px);
-  background-size: 32px 32px;
-  pointer-events: none;
-  z-index: 0;
+/* ============================================================
+ *  边线色工具类（避免 border-border-subtle 这样的双前缀）
+ * ============================================================ */
+.border-subtle { border-color: var(--color-border-subtle); }
+.border-default { border-color: var(--color-border); }
+.border-strong { border-color: var(--color-border-strong); }
+.border-focus { border-color: var(--color-border-focus); }
+
+.divide-subtle > * + * { border-color: var(--color-border-subtle); }
+.divide-default > * + * { border-color: var(--color-border); }
+
+/* ============================================================
+ *  数字等宽工具类
+ * ============================================================ */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 
-/* Spotlight card */
-.spotlight-card {
-  position: relative;
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+/* ============================================================
+ *  骨架扫光（shimmer）— 仅用于 skeleton 组件
+ * ============================================================ */
+@keyframes wb-skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
-.spotlight-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(520px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(63, 81, 181, 0.12), transparent 55%);
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
-  z-index: 1;
+.wb-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-sunken) 0%,
+    var(--color-border-subtle) 50%,
+    var(--color-sunken) 100%
+  );
+  background-size: 200% 100%;
+  animation: wb-skeleton-shimmer 1.6s var(--ease-in-out) infinite;
+  border-radius: var(--radius-xs);
 }
 
-.spotlight-card:hover::before {
-  opacity: 1;
-}
-
-/* Shimmer button */
-.shimmer-btn {
-  position: relative;
-  overflow: hidden;
-}
-
-.shimmer-btn::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transform: skewX(-25deg);
-  animation: shimmer-anim 3.2s infinite;
-}
-
-@keyframes shimmer-anim {
-  100% { left: 200%; }
+/* ============================================================
+ *  Selection — 用 primary-soft 替代浏览器默认蓝
+ * ============================================================ */
+::selection {
+  background-color: var(--color-primary-soft-strong);
+  color: var(--color-ink-strong);
 }

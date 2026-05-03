@@ -1,92 +1,230 @@
-/* CareerCompass-inspired base tokens */
-:root,
-[data-theme="dark"] {
-  --background: 222 22% 8%;
-  --foreground: 210 40% 98%;
-  --card: 222 18% 12%;
-  --card-foreground: 210 40% 98%;
-  --popover: 222 22% 10%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 231 48% 48%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 220 14% 18%;
-  --secondary-foreground: 210 40% 96%;
-  --muted: 220 14% 16%;
-  --muted-foreground: 215 16% 70%;
-  --accent: 30 100% 60%;
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 84.2% 60.2%;
-  --border: 220 14% 18%;
-  --input: 220 14% 16%;
-  --ring: 231 48% 48%;
-  --radius: 0.5rem;
+/* ============================================================
+ *  Workbench Design Tokens
+ *  Source of truth: /DESIGN.md
+ *  规则：组件层只引用语义 token（var(--color-xxx)），禁止硬编码 hex。
+ *  亮色为默认；暗色通过 [data-theme="dark"] 覆盖同名变量。
+ * ============================================================ */
 
-  --bg-base: hsl(var(--background));
-  --bg-surface: hsl(var(--card));
-  --bg-card: hsl(var(--card) / 0.9);
-  --bg-input: hsl(var(--input));
-  --c-primary: hsl(var(--primary));
-  --c-primary-light: #5c6bc0;
-  --c-primary-dark: #3949ab;
-  --c-accent: #ff9800;
-  --c-accent-light: #ffb74d;
-  --c-accent-dark: #ef6c00;
-  --c-accent-soft: #ffd8a6;
-  --c-text-main: hsl(var(--foreground));
-  --c-text-sub: hsl(var(--muted-foreground));
-  --c-text-muted: hsl(var(--muted-foreground) / 0.7);
-  --c-btn-bg: hsl(var(--secondary));
-  --c-highlight: #ffe9c7;
-  --c-border: hsl(var(--border) / 0.7);
-  --c-border-accent: rgba(255, 152, 0, 0.25);
-  --c-danger: #ef5350;
-  --c-success: #43a047;
-  --c-warning: #fb8c00;
-  --shadow-card: 0 24px 40px rgba(15, 23, 42, 0.35);
-  --tech-grid-color: rgba(63, 81, 181, 0.16);
+:root,
+[data-theme="light"] {
+  /* ── Brand 唯一交互色 ─────────────────────────────── */
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-primary-active: #3730a3;
+  --color-primary-soft: #eef2ff;
+  --color-primary-soft-strong: #e0e7ff;
+  --color-primary-on: #ffffff;
+  --color-ring: rgba(79, 70, 229, 0.24);
+
+  /* ── 表面 ─────────────────────────────────────────── */
+  --color-canvas: #ffffff;
+  --color-raised: #fafafa;
+  --color-sunken: #f5f5f7;
+  --color-overlay: #ffffff;
+  --color-inverse: #0a0a0b;
+
+  /* ── 文字 ─────────────────────────────────────────── */
+  --color-ink-strong: #0a0a0b;
+  --color-ink: #1f2024;
+  --color-ink-muted: #52525b;
+  --color-ink-subtle: #9ca3af;
+  --color-ink-disabled: #d4d4d8;
+  --color-ink-on-primary: #ffffff;
+  --color-ink-on-inverse: #fafafa;
+
+  /* ── 边线 ─────────────────────────────────────────── */
+  --color-border-subtle: #f1f1f3;
+  --color-border: #e4e4e7;
+  --color-border-strong: #d4d4d8;
+  --color-border-focus: #4f46e5;
+
+  /* ── 语义色 ───────────────────────────────────────── */
+  --color-success: #10b981;
+  --color-success-soft: #ecfdf5;
+  --color-success-ink: #047857;
+  --color-warning: #f59e0b;
+  --color-warning-soft: #fffbeb;
+  --color-warning-ink: #b45309;
+  --color-danger: #ef4444;
+  --color-danger-soft: #fef2f2;
+  --color-danger-ink: #b91c1c;
+  --color-info: #3b82f6;
+  --color-info-soft: #eff6ff;
+  --color-info-ink: #1d4ed8;
+
+  /* ── Chart 色板（多系列数据可视化）────────────────── */
+  --color-chart-1: #4f46e5;
+  --color-chart-2: #0ea5e9;
+  --color-chart-3: #10b981;
+  --color-chart-4: #f59e0b;
+  --color-chart-5: #ec4899;
+  --color-chart-6: #8b5cf6;
+  --color-chart-grid: #e4e4e7;
+  --color-chart-axis: #9ca3af;
+
+  /* ── 阴影 ─────────────────────────────────────────── */
+  --shadow-e1: 0 1px 2px 0 rgba(15, 23, 42, 0.04), 0 0 0 1px rgba(15, 23, 42, 0.04);
+  --shadow-e2: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+  --shadow-e3: 0 16px 40px -12px rgba(15, 23, 42, 0.18), 0 4px 12px -4px rgba(15, 23, 42, 0.08);
+  --shadow-focus-ring: 0 0 0 3px var(--color-ring);
+  --shadow-overlay-bg: rgba(15, 23, 42, 0.40);
+
+  /* ── 字体族 ───────────────────────────────────────── */
+  --font-family-text: "PingFang SC", "Source Han Sans CN", "Noto Sans CJK SC",
+    system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  --font-family-display: var(--font-family-text);
+  --font-family-mono: "JetBrains Mono", "SF Mono", "Cascadia Code",
+    "Source Code Pro", Consolas, monospace;
+
+  /* ── 圆角 ─────────────────────────────────────────── */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill: 9999px;
+  --radius-full: 9999px;
+
+  /* ── 动效 ─────────────────────────────────────────── */
+  --duration-instant: 80ms;
+  --duration-fast: 140ms;
+  --duration-base: 200ms;
+  --duration-slow: 280ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+
+  /* ── 布局 ─────────────────────────────────────────── */
+  --layout-sidebar-width: 240px;
+  --layout-sidebar-collapsed: 56px;
+  --layout-topbar-height: 56px;
+  --layout-content-max: 1440px;
+  --layout-content-px: 24px;
+  --layout-content-py: 24px;
+  --layout-table-row: 44px;
+  --layout-table-row-compact: 36px;
+
+  /* ── shadcn-vue 兼容（HSL；保持组件层 hsl(var(--primary)) 可用）── */
+  --background: 0 0% 100%;
+  --foreground: 225 8% 13%;
+  --card: 0 0% 100%;
+  --card-foreground: 225 8% 13%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 225 8% 13%;
+  --primary: 245 75% 59%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 7% 96%;
+  --secondary-foreground: 240 5% 26%;
+  --muted: 240 7% 96%;
+  --muted-foreground: 240 5% 34%;
+  --accent: 245 75% 59%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 240 5% 89%;
+  --input: 240 5% 89%;
+  --ring: 245 75% 59%;
+  --radius: 0.375rem; /* 6px = --radius-sm */
+
+  /* ── Legacy 别名（阶段 1+2 平滑过渡，阶段 5 全量改造后删除）── */
+  --bg-base: var(--color-canvas);
+  --bg-surface: var(--color-canvas);
+  --bg-card: var(--color-canvas);
+  --bg-input: var(--color-canvas);
+  --c-primary: var(--color-primary);
+  --c-primary-light: var(--color-primary-hover);
+  --c-primary-dark: var(--color-primary-active);
+  --c-accent: var(--color-primary); /* 旧橙/金 accent 全部收编为 primary */
+  --c-accent-light: var(--color-primary-hover);
+  --c-accent-dark: var(--color-primary-active);
+  --c-accent-soft: var(--color-primary-soft);
+  --c-text-main: var(--color-ink);
+  --c-text-sub: var(--color-ink-muted);
+  --c-text-muted: var(--color-ink-subtle);
+  --c-btn-bg: var(--color-canvas);
+  --c-highlight: var(--color-primary-soft);
+  --c-border: var(--color-border);
+  --c-border-accent: var(--color-border-subtle);
+  --c-danger: var(--color-danger);
+  --c-success: var(--color-success);
+  --c-warning: var(--color-warning);
+  --shadow-card: none;
+  --tech-grid-color: transparent;
 }
 
-[data-theme="light"] {
-  --background: 210 33% 96%;
-  --foreground: 222.2 84% 4.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
-  --primary: 231 48% 48%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 215.4 16.3% 46.9%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 30 100% 50%;
-  --accent-foreground: 0 0% 98%;
-  --destructive: 0 84.2% 60.2%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 231 48% 48%;
+[data-theme="dark"] {
+  --color-primary: #818cf8;
+  --color-primary-hover: #a5b4fc;
+  --color-primary-active: #c7d2fe;
+  --color-primary-soft: rgba(129, 140, 248, 0.12);
+  --color-primary-soft-strong: rgba(129, 140, 248, 0.20);
+  --color-primary-on: #0a0a0b;
+  --color-ring: rgba(129, 140, 248, 0.32);
 
-  --bg-base: hsl(var(--background));
-  --bg-surface: hsl(var(--card));
-  --bg-card: hsl(var(--card) / 0.96);
-  --bg-input: hsl(var(--input));
-  --c-primary: hsl(var(--primary));
-  --c-primary-light: #5c6bc0;
-  --c-primary-dark: #3949ab;
-  --c-accent: #ff9800;
-  --c-accent-light: #ffb74d;
-  --c-accent-dark: #ef6c00;
-  --c-accent-soft: #ffe0b2;
-  --c-text-main: hsl(var(--foreground));
-  --c-text-sub: hsl(var(--muted-foreground));
-  --c-text-muted: hsl(var(--muted-foreground) / 0.7);
-  --c-btn-bg: #ffffff;
-  --c-highlight: #fff4e5;
-  --c-border: hsl(var(--border));
-  --c-border-accent: rgba(63, 81, 181, 0.18);
-  --c-danger: #e53935;
-  --c-success: #43a047;
-  --c-warning: #fb8c00;
-  --shadow-card: 0 12px 32px rgba(15, 23, 42, 0.1);
-  --tech-grid-color: rgba(63, 81, 181, 0.08);
+  --color-canvas: #0a0a0b;
+  --color-raised: #111114;
+  --color-sunken: #16161a;
+  --color-overlay: #1c1c21;
+  --color-inverse: #fafafa;
+
+  --color-ink-strong: #fafafa;
+  --color-ink: #e4e4e7;
+  --color-ink-muted: #a1a1aa;
+  --color-ink-subtle: #71717a;
+  --color-ink-disabled: #3f3f46;
+  --color-ink-on-primary: #0a0a0b;
+  --color-ink-on-inverse: #0a0a0b;
+
+  --color-border-subtle: #1f1f23;
+  --color-border: #27272a;
+  --color-border-strong: #3f3f46;
+  --color-border-focus: #818cf8;
+
+  --color-success: #34d399;
+  --color-success-soft: rgba(52, 211, 153, 0.12);
+  --color-success-ink: #6ee7b7;
+  --color-warning: #fbbf24;
+  --color-warning-soft: rgba(251, 191, 36, 0.12);
+  --color-warning-ink: #fcd34d;
+  --color-danger: #f87171;
+  --color-danger-soft: rgba(248, 113, 113, 0.12);
+  --color-danger-ink: #fca5a5;
+  --color-info: #60a5fa;
+  --color-info-soft: rgba(96, 165, 250, 0.12);
+  --color-info-ink: #93c5fd;
+
+  --color-chart-1: #818cf8;
+  --color-chart-2: #38bdf8;
+  --color-chart-3: #34d399;
+  --color-chart-4: #fbbf24;
+  --color-chart-5: #f472b6;
+  --color-chart-6: #a78bfa;
+  --color-chart-grid: #27272a;
+  --color-chart-axis: #71717a;
+
+  --shadow-e1: 0 1px 2px 0 rgba(0, 0, 0, 0.40), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --shadow-e2: 0 4px 12px -2px rgba(0, 0, 0, 0.50), 0 2px 4px -2px rgba(0, 0, 0, 0.30);
+  --shadow-e3: 0 16px 40px -12px rgba(0, 0, 0, 0.60), 0 4px 12px -4px rgba(0, 0, 0, 0.30);
+  --shadow-overlay-bg: rgba(0, 0, 0, 0.60);
+
+  /* shadcn-vue 兼容 */
+  --background: 240 12% 4%;
+  --foreground: 0 0% 98%;
+  --card: 240 9% 7%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 8% 11%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 234 89% 74%;
+  --primary-foreground: 240 12% 4%;
+  --secondary: 240 6% 9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 6% 9%;
+  --muted-foreground: 240 5% 65%;
+  --accent: 234 89% 74%;
+  --accent-foreground: 240 12% 4%;
+  --destructive: 0 91% 71%;
+  --destructive-foreground: 240 12% 4%;
+  --border: 240 6% 15%;
+  --input: 240 6% 15%;
+  --ring: 234 89% 74%;
 }
