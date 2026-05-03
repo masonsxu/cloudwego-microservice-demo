@@ -216,10 +216,10 @@ function handleRemove() {
     position: relative;
     overflow: hidden;
     cursor: pointer;
-    border: 1px dashed rgba(212, 175, 55, 0.3);
+    border: 1px dashed var(--color-border);
     border-radius: 8px;
-    background-color: rgba(44, 46, 51, 0.3);
-    transition: all 0.3s;
+    background-color: var(--color-sunken);
+    transition: all 0.2s ease;
 
     &:hover {
       border-color: var(--c-accent);
@@ -301,7 +301,7 @@ function handleRemove() {
   .logo-error-tip {
     margin-top: 10px;
     font-size: 13px;
-    color: #ef4444;
+    color: var(--color-danger);
     text-align: center;
   }
 }

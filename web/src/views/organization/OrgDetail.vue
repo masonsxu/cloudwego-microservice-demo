@@ -1,36 +1,59 @@
 <template>
-  <div class="p-5">
-    <!-- Page Header -->
-    <div class="flex items-center justify-between mb-5">
-      <div class="flex items-center gap-3">
-        <Button variant="ghost" size="sm" @click="handleBack">
-          <ArrowLeft class="w-4 h-4 mr-1" />
-          {{ t('common.back') }}
-        </Button>
-        <h1 class="text-xl font-bold font-[Inter] text-primary">
-          {{ orgDetail?.name || t('organization.orgDetail') }}
-        </h1>
-      </div>
-      <div class="flex gap-2">
-        <Button variant="outline" @click="handleEdit">
-          <Pencil class="w-4 h-4 mr-1" />
-          {{ t('organization.editOrganization') }}
-        </Button>
-        <Button variant="destructive" @click="handleDelete">
-          <Trash2 class="w-4 h-4 mr-1" />
-          {{ t('organization.deleteOrganization') }}
-        </Button>
-      </div>
-    </div>
+  <div class="space-y-6">
+    <!-- 标题区（DESIGN.md 详情页范式） -->
+    <header class="space-y-4 pb-5 border-b border-subtle">
+      <button
+        class="inline-flex items-center gap-1 text-[13px] text-[color:var(--color-ink-muted)] transition-colors hover:text-[color:var(--color-ink)]"
+        @click="handleBack"
+      >
+        <ArrowLeft class="h-3.5 w-3.5" />
+        {{ t('common.back') }}
+      </button>
 
-    <div class="mt-5">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-[color:var(--color-primary-soft)] text-[color:var(--color-primary-active)] overflow-hidden">
+            <img v-if="orgDetail?.logo" :src="orgDetail.logo" :alt="orgDetail?.name" class="h-full w-full object-cover" />
+            <Building2 v-else class="h-5 w-5" />
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <h1 class="text-[22px] font-semibold leading-tight tracking-[-0.012em] text-[color:var(--color-ink-strong)] truncate">
+                {{ orgDetail?.name || t('organization.orgDetail') }}
+              </h1>
+              <Badge v-if="orgDetail && !orgDetail.parent_id" variant="success">{{ t('organization.root') }}</Badge>
+              <Badge v-else-if="orgDetail?.parent" variant="default">{{ orgDetail.parent.name }}</Badge>
+            </div>
+            <p class="mt-1 text-[13px] text-[color:var(--color-ink-muted)] truncate">
+              <span v-if="orgDetail?.code" class="font-mono">{{ orgDetail.code }}</span>
+              <span v-if="orgDetail?.code && orgDetail?.facility_type" class="mx-2 text-[color:var(--color-ink-subtle)]">·</span>
+              <span v-if="orgDetail?.facility_type">{{ orgDetail.facility_type }}</span>
+              <span v-if="!orgDetail?.code && !orgDetail?.facility_type" class="text-[color:var(--color-ink-subtle)]">{{ t('organization.detail') }}</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <Button variant="outline" size="sm" @click="handleEdit">
+            <Pencil class="h-3.5 w-3.5" />
+            {{ t('organization.editOrganization') }}
+          </Button>
+          <Button variant="destructive" size="sm" @click="handleDelete">
+            <Trash2 class="h-3.5 w-3.5" />
+            {{ t('organization.deleteOrganization') }}
+          </Button>
+        </div>
+      </div>
+    </header>
+
+    <div>
       <DetailPageSkeleton
         v-if="initialLoading"
         :side-span="8"
         :main-span="16"
         :side-cards="2"
         :main-cards="3"
-        :show-avatar="true"
+        :show-avatar="false"
         :side-item-counts="[3, 2]"
         :main-item-counts="[6, 4, 2]"
       />
@@ -46,12 +69,6 @@
               </div>
             </CardHeader>
             <CardContent class="p-5">
-              <div class="flex flex-col items-center mb-5">
-                <div class="w-[100px] h-[100px] rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-3xl font-semibold">
-                  <img v-if="orgDetail?.logo" :src="orgDetail.logo" class="w-full h-full rounded-full object-cover" />
-                  <Building2 v-else class="w-10 h-10" />
-                </div>
-              </div>
               <div class="space-y-3">
                 <div class="flex justify-between text-sm">
                   <span class="text-muted-foreground">{{ t('organization.name') }}</span>

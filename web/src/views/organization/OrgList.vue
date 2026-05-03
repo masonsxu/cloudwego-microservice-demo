@@ -1,156 +1,142 @@
 <template>
-  <div class="flex flex-col h-[calc(100vh-108px)]">
-    <!-- Page Header -->
-    <div class="flex justify-between items-end mb-7">
+  <div class="space-y-6">
+    <!-- 页头 -->
+    <header class="flex items-end justify-between gap-4">
       <div>
-        <h1 class="text-[26px] font-bold font-[Inter] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-1.5 leading-tight">{{ t('organization.title') }}</h1>
-        <p class="text-[13px] text-muted-foreground m-0">管理医疗机构及其层级关系</p>
+        <h1 class="text-[22px] font-semibold leading-tight tracking-[-0.012em] text-[color:var(--color-ink-strong)]">
+          {{ t('organization.title') }}
+        </h1>
+        <p class="mt-1 text-[13px] text-[color:var(--color-ink-muted)]">
+          {{ t('organization.manageOrgs') }}
+        </p>
       </div>
-      <button class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-accent text-white font-semibold text-sm border-none rounded-[10px] cursor-pointer transition-all duration-300 hover:shadow-[0_0_24px_rgba(63,81,181,0.35)] hover:-translate-y-0.5 shimmer-btn" @click="handleCreate">
-        <Plus class="w-4 h-4" />
+      <Button @click="handleCreate">
+        <Plus class="h-4 w-4" />
         {{ t('organization.createOrganization') }}
-      </button>
+      </Button>
+    </header>
+
+    <!-- 工具条 -->
+    <div class="flex flex-wrap items-center gap-2">
+      <div class="relative flex-1 min-w-[260px] max-w-[360px]">
+        <Search class="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[color:var(--color-ink-subtle)]" />
+        <Input
+          v-model="searchForm.search"
+          :placeholder="t('organization.searchPlaceholder')"
+          class="pl-9 pr-9"
+          @keyup.enter="handleSearch"
+        />
+        <button
+          v-if="searchForm.search"
+          class="absolute right-2.5 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-xs text-[color:var(--color-ink-subtle)] transition-colors hover:text-[color:var(--color-ink)]"
+          @click="searchForm.search = ''; handleSearch()"
+        >
+          <X class="h-3 w-3" />
+        </button>
+      </div>
+
+      <Select v-model="searchForm.parent_id" @update:modelValue="handleSearch">
+        <SelectTrigger class="w-[220px]">
+          <SelectValue :placeholder="t('organization.parentOrganization')" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">{{ t('common.all') }}</SelectItem>
+          <SelectItem v-for="org in flattenOrgTree(organizationTree)" :key="org.id" :value="org.id">
+            {{ org.name }}
+          </SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Button variant="ghost" size="sm" @click="handleReset">
+        <RefreshCw class="h-3.5 w-3.5" />
+        {{ t('common.reset') }}
+      </Button>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-3 gap-4 mb-6">
-      <div class="spotlight-card flex items-center gap-4 p-5 bg-card border border-border/60 rounded-[14px] shadow-card cursor-default" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
-        <div class="w-11 h-11 rounded-[10px] bg-primary/12 border border-primary/20 flex items-center justify-center text-primary flex-shrink-0">
-          <Building2 class="w-[22px] h-[22px]" />
-        </div>
-        <div class="flex flex-col gap-0.5">
-          <span class="text-2xl font-bold text-foreground font-[Source_Code_Pro] leading-none">{{ pagination.total }}</span>
-          <span class="text-xs text-muted-foreground">{{ t('organization.title') }}</span>
-        </div>
-      </div>
-      <div class="spotlight-card flex items-center gap-4 p-5 bg-card border border-border/60 rounded-[14px] shadow-card cursor-default" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
-        <div class="w-11 h-11 rounded-[10px] bg-primary/12 border border-primary/20 flex items-center justify-center text-primary flex-shrink-0">
-          <GitBranch class="w-[22px] h-[22px]" />
-        </div>
-        <div class="flex flex-col gap-0.5">
-          <span class="text-2xl font-bold text-foreground font-[Source_Code_Pro] leading-none">{{ tableData.filter(o => !o.parent_id).length }}</span>
-          <span class="text-xs text-muted-foreground">根节点组织</span>
-        </div>
-      </div>
-      <div class="spotlight-card flex items-center gap-4 p-5 bg-card border border-border/60 rounded-[14px] shadow-card cursor-default" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
-        <div class="w-11 h-11 rounded-[10px] bg-primary/12 border border-primary/20 flex items-center justify-center text-primary flex-shrink-0">
-          <User class="w-[22px] h-[22px]" />
-        </div>
-        <div class="flex flex-col gap-0.5">
-          <span class="text-2xl font-bold text-foreground font-[Source_Code_Pro] leading-none">{{ tableData.reduce((sum, o) => sum + (o.member_count || 0), 0) }}</span>
-          <span class="text-xs text-muted-foreground">总成员数</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Search and Filter -->
-    <div class="bg-card border border-border/60 rounded-[14px] px-5 py-4 mb-5">
-      <div class="flex items-center flex-wrap gap-3">
-        <div class="relative w-[280px]">
-          <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            v-model="searchForm.search"
-            :placeholder="t('organization.name') + ' / ' + t('organization.code')"
-            class="pl-9"
-            @keyup.enter="handleSearch"
-          />
-          <button v-if="searchForm.search" @click="searchForm.search = ''; handleSearch()" class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-            <X class="w-4 h-4" />
-          </button>
-        </div>
-        <div class="w-[220px]">
-          <Select v-model="searchForm.parent_id">
-            <SelectTrigger>
-              <SelectValue :placeholder="t('organization.parentOrganization')" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全部</SelectItem>
-              <template v-for="org in flattenOrgTree(organizationTree)" :key="org.id">
-                <SelectItem :value="org.id">{{ org.name }}</SelectItem>
-              </template>
-            </SelectContent>
-          </Select>
-        </div>
-        <div class="flex gap-2">
-          <Button variant="outline" @click="handleReset">
-            <RefreshCw class="w-4 h-4" />
-            {{ t('common.reset') }}
-          </Button>
-          <Button @click="handleSearch">
-            <Search class="w-4 h-4" />
-            {{ t('common.search') }}
-          </Button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Data Table -->
-    <div class="spotlight-card flex-1 min-h-0 flex flex-col bg-card border border-border/60 rounded-[14px] overflow-hidden shadow-card" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
+    <!-- 表格卡片 -->
+    <div class="overflow-hidden rounded-md border border-subtle bg-canvas">
       <ListPageSkeleton v-if="initialLoading" :columns="6" :rows="8" />
       <template v-else>
-        <div class="flex-1 min-h-0 overflow-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead class="uppercase text-xs tracking-wider">{{ t('organization.name') }}</TableHead>
-                <TableHead class="uppercase text-xs tracking-wider w-[140px]">{{ t('organization.code') }}</TableHead>
-                <TableHead class="uppercase text-xs tracking-wider">{{ t('organization.parentOrganization') }}</TableHead>
-                <TableHead class="uppercase text-xs tracking-wider w-[140px]">{{ t('organization.facilityType') }}</TableHead>
-                <TableHead class="uppercase text-xs tracking-wider w-[110px] text-center">{{ t('organization.memberCount') }}</TableHead>
-                <TableHead class="uppercase text-xs tracking-wider w-[110px] text-center">{{ t('organization.departmentCount') }}</TableHead>
-                <TableHead class="uppercase text-xs tracking-wider w-[180px] text-right">{{ t('common.actions') }}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow v-for="row in tableData" :key="row.id">
-                <TableCell>
-                  <div class="flex items-center gap-2.5">
-                    <div class="w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
-                      <Building2 class="w-3.5 h-3.5" />
-                    </div>
-                    <span class="font-medium text-foreground">{{ row.name }}</span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <code class="inline-block px-2 py-0.5 bg-primary/8 border border-primary/20 rounded-md font-[Source_Code_Pro] text-xs text-primary">{{ row.code || '-' }}</code>
-                </TableCell>
-                <TableCell>
-                  <span v-if="row.parent" class="text-muted-foreground text-[13px]">{{ row.parent.name }}</span>
-                  <Badge v-else variant="outline" class="bg-green-500/10 border-green-500/30 text-green-500 text-xs">{{ t('organization.root') }}</Badge>
-                </TableCell>
-                <TableCell>
-                  <span class="text-muted-foreground text-[13px]">{{ row.facility_type || '-' }}</span>
-                </TableCell>
-                <TableCell class="text-center">
-                  <span class="inline-block px-2.5 py-0.5 bg-primary/8 rounded-full text-sm font-semibold text-foreground">{{ row.member_count || 0 }}</span>
-                </TableCell>
-                <TableCell class="text-center">
-                  <span class="inline-block px-2.5 py-0.5 bg-primary/8 rounded-full text-sm font-semibold text-foreground">{{ row.department_count || 0 }}</span>
-                </TableCell>
-                <TableCell class="text-right">
-                  <div class="flex items-center justify-end gap-1.5">
-                    <button class="flex items-center justify-center w-[30px] h-[30px] rounded-lg border border-border bg-input cursor-pointer transition-all duration-200 text-muted-foreground hover:text-primary hover:border-primary/30 hover:bg-primary/8 hover:-translate-y-0.5" @click="handleView(row)" :title="t('common.view')">
-                      <Eye class="w-3.5 h-3.5" />
-                    </button>
-                    <button class="flex items-center justify-center w-[30px] h-[30px] rounded-lg border border-border bg-input cursor-pointer transition-all duration-200 text-muted-foreground hover:text-amber-600 hover:border-amber-500/40 hover:bg-amber-500/12 hover:-translate-y-0.5" @click="handleEdit(row)" :title="t('common.edit')">
-                      <Pencil class="w-3.5 h-3.5" />
-                    </button>
-                    <button class="flex items-center justify-center w-[30px] h-[30px] rounded-lg border border-border bg-input cursor-pointer transition-all duration-200 text-muted-foreground hover:text-red-500 hover:border-red-500/40 hover:bg-red-500/12 hover:-translate-y-0.5" @click="handleDelete(row)" :title="t('common.delete')">
-                      <Trash2 class="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
+        <Table>
+          <TableHeader>
+            <TableRow class="border-subtle hover:bg-transparent">
+              <TableHead class="h-10 text-[12px] font-medium uppercase tracking-[0.04em] text-[color:var(--color-ink-muted)]">{{ t('organization.name') }}</TableHead>
+              <TableHead class="h-10 text-[12px] font-medium uppercase tracking-[0.04em] text-[color:var(--color-ink-muted)] w-[140px]">{{ t('organization.code') }}</TableHead>
+              <TableHead class="h-10 text-[12px] font-medium uppercase tracking-[0.04em] text-[color:var(--color-ink-muted)]">{{ t('organization.parentOrganization') }}</TableHead>
+              <TableHead class="h-10 text-[12px] font-medium uppercase tracking-[0.04em] text-[color:var(--color-ink-muted)] w-[140px]">{{ t('organization.facilityType') }}</TableHead>
+              <TableHead class="h-10 text-[12px] font-medium uppercase tracking-[0.04em] text-[color:var(--color-ink-muted)] w-[100px] text-right">{{ t('organization.memberCount') }}</TableHead>
+              <TableHead class="h-10 text-[12px] font-medium uppercase tracking-[0.04em] text-[color:var(--color-ink-muted)] w-[100px] text-right">{{ t('organization.departmentCount') }}</TableHead>
+              <TableHead class="h-10 text-[12px] font-medium uppercase tracking-[0.04em] text-[color:var(--color-ink-muted)] w-[140px] text-right">{{ t('common.actions') }}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow
+              v-for="row in tableData"
+              :key="row.id"
+              class="h-11 border-subtle transition-colors duration-[var(--duration-fast)] hover:bg-sunken"
+            >
+              <TableCell>
+                <div class="flex items-center gap-2">
+                  <span class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-sm bg-[color:var(--color-primary-soft)] text-[color:var(--color-primary-active)]">
+                    <Building2 class="h-3 w-3" />
+                  </span>
+                  <span class="font-medium text-ink">{{ row.name }}</span>
+                </div>
+              </TableCell>
+              <TableCell>
+                <code v-if="row.code" class="font-mono text-[12px] text-[color:var(--color-ink-muted)]">{{ row.code }}</code>
+                <span v-else class="text-[color:var(--color-ink-subtle)]">—</span>
+              </TableCell>
+              <TableCell>
+                <span v-if="row.parent" class="text-[color:var(--color-ink-muted)]">{{ row.parent.name }}</span>
+                <Badge v-else variant="success">{{ t('organization.root') }}</Badge>
+              </TableCell>
+              <TableCell class="text-[color:var(--color-ink-muted)]">
+                {{ row.facility_type || '—' }}
+              </TableCell>
+              <TableCell class="tabular text-right text-ink">{{ row.member_count || 0 }}</TableCell>
+              <TableCell class="tabular text-right text-ink">{{ row.department_count || 0 }}</TableCell>
+              <TableCell class="text-right">
+                <div class="inline-flex items-center gap-0.5">
+                  <Button variant="ghost" size="icon" :title="t('common.view')" @click="handleView(row)">
+                    <Eye class="h-3.5 w-3.5" />
+                  </Button>
+                  <Button variant="ghost" size="icon" :title="t('common.edit')" @click="handleEdit(row)">
+                    <Pencil class="h-3.5 w-3.5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    :title="t('common.delete')"
+                    class="hover:text-[color:var(--color-danger)]"
+                    @click="handleDelete(row)"
+                  >
+                    <Trash2 class="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
 
-        <!-- Pagination -->
-        <div class="flex justify-end items-center px-5 py-4 border-t border-border">
-          <div class="flex items-center gap-4 text-sm">
-            <span class="text-muted-foreground">共 {{ pagination.total }} 条</span>
-            <Select v-model="paginationLimitString" @update:model-value="(val: string) => handleSizeChange(Number(val))">
-              <SelectTrigger class="w-[80px]">
+            <TableRow v-if="!loading && tableData.length === 0">
+              <TableCell colspan="7" class="h-[200px] text-center">
+                <div class="flex flex-col items-center justify-center gap-2 py-8">
+                  <Building2 class="h-8 w-8 text-[color:var(--color-ink-subtle)]" />
+                  <p class="text-[14px] font-medium text-ink">{{ t('common.noData') }}</p>
+                  <p class="text-[12px] text-[color:var(--color-ink-muted)]">{{ t('organization.emptyHint') }}</p>
+                </div>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+
+        <!-- 分页 -->
+        <div class="flex items-center justify-between border-t border-subtle px-4 py-2.5">
+          <span class="tabular text-[13px] text-[color:var(--color-ink-muted)]">
+            {{ t('common.total', { total: pagination.total }) }}
+          </span>
+          <div class="flex items-center gap-2">
+            <Select v-model="paginationLimitString">
+              <SelectTrigger class="h-8 w-[80px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -161,12 +147,12 @@
               </SelectContent>
             </Select>
             <div class="flex items-center gap-1">
-              <Button variant="outline" size="sm" :disabled="pagination.page <= 1" @click="handlePageChange(pagination.page - 1)">
-                <ChevronLeft class="w-4 h-4" />
+              <Button variant="outline" size="icon" :disabled="pagination.page <= 1" @click="handlePageChange(pagination.page - 1)">
+                <ChevronLeft class="h-4 w-4" />
               </Button>
-              <span class="px-3 text-sm">{{ pagination.page }}</span>
-              <Button variant="outline" size="sm" :disabled="pagination.page * pagination.limit >= pagination.total" @click="handlePageChange(pagination.page + 1)">
-                <ChevronRight class="w-4 h-4" />
+              <span class="tabular min-w-[40px] text-center text-[13px] font-medium text-ink">{{ pagination.page }}</span>
+              <Button variant="outline" size="icon" :disabled="pagination.page * pagination.limit >= pagination.total" @click="handlePageChange(pagination.page + 1)">
+                <ChevronRight class="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -174,54 +160,54 @@
       </template>
     </div>
 
-    <!-- Create/Edit Dialog -->
+    <!-- 创建/编辑对话框 -->
     <Dialog v-model:open="dialogVisible">
-      <DialogContent class="max-w-[560px]">
+      <DialogContent class="max-w-[520px]">
         <DialogHeader>
           <DialogTitle>{{ dialogMode === 'create' ? t('organization.createOrganization') : t('organization.editOrganization') }}</DialogTitle>
         </DialogHeader>
-        <div class="space-y-4 py-4">
-          <div class="space-y-2">
+        <div class="space-y-4 py-2">
+          <div class="space-y-1.5">
             <Label>{{ t('organization.name') }}</Label>
             <Input v-model="formData.name" :placeholder="t('organization.namePlaceholder')" maxlength="100" />
           </div>
-          <div class="space-y-2">
+          <div class="space-y-1.5">
             <Label>{{ t('organization.code') }}</Label>
             <Input v-model="formData.code" :placeholder="t('organization.codePlaceholder')" maxlength="50" />
           </div>
-          <div class="space-y-2">
+          <div class="space-y-1.5">
             <Label>{{ t('organization.parentOrganization') }}</Label>
             <Select v-model="formData.parent_id">
               <SelectTrigger>
                 <SelectValue :placeholder="t('organization.parentOrganizationPlaceholder')" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">无</SelectItem>
-                <template v-for="org in flattenOrgTree(organizationTree)" :key="org.id">
-                  <SelectItem :value="org.id">{{ org.name }}</SelectItem>
-                </template>
+                <SelectItem value="none">{{ t('common.none') }}</SelectItem>
+                <SelectItem v-for="org in flattenOrgTree(organizationTree)" :key="org.id" :value="org.id">
+                  {{ org.name }}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <div class="space-y-2">
+          <div class="space-y-1.5">
             <Label>{{ t('organization.facilityType') }}</Label>
             <Input v-model="formData.facility_type" :placeholder="t('organization.facilityTypePlaceholder')" maxlength="100" />
           </div>
-          <div class="space-y-2">
+          <div class="space-y-1.5">
             <Label>{{ t('organization.accreditationStatus') }}</Label>
             <Input v-model="formData.accreditation_status" :placeholder="t('organization.accreditationStatusPlaceholder')" maxlength="100" />
           </div>
-          <div class="space-y-2">
+          <div class="space-y-1.5">
             <Label>{{ t('organization.provinceCity') }}</Label>
-            <div class="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 border border-input rounded-md">
+            <div class="flex max-h-40 flex-wrap gap-2 overflow-y-auto rounded-sm border border-default bg-canvas p-2">
               <template v-for="province in provinceCityOptions" :key="province.label">
                 <template v-for="city in province.children" :key="city.label">
-                  <label class="flex items-center gap-1 text-sm">
+                  <label class="flex items-center gap-1.5 text-[13px] cursor-pointer">
                     <Checkbox
                       :checked="formDataProvinceCity.includes(city.label)"
                       @update:checked="(checked: boolean) => toggleCitySelection(checked, city.label)"
                     />
-                    <span class="text-muted-foreground">{{ province.label }} - {{ city.label }}</span>
+                    <span class="text-[color:var(--color-ink-muted)]">{{ province.label }} - {{ city.label }}</span>
                   </label>
                 </template>
               </template>
@@ -230,7 +216,7 @@
         </div>
         <DialogFooter>
           <Button variant="outline" @click="dialogVisible = false">{{ t('common.cancel') }}</Button>
-          <Button @click="handleSubmit" :disabled="submitting">{{ t('common.confirm') }}</Button>
+          <Button :disabled="submitting" @click="handleSubmit">{{ t('common.confirm') }}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -242,7 +228,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
-import { Building2, GitBranch, User, Eye, Pencil, Trash2, ChevronLeft, ChevronRight, X, RefreshCw, Search, Plus } from 'lucide-vue-next'
+import { Building2, Eye, Pencil, Trash2, ChevronLeft, ChevronRight, X, RefreshCw, Search, Plus } from 'lucide-vue-next'
 import { organizationApi } from '@/api/organization'
 import type { OrganizationDTO, CreateOrganizationRequestDTO } from '@/api/organization'
 import ListPageSkeleton from '@/components/skeleton/ListPageSkeleton.vue'
@@ -268,7 +254,7 @@ const searchForm = reactive({ search: '', parent_id: 'all' })
 const pagination = reactive({ page: 1, limit: 20, total: 0 })
 const paginationLimitString = computed({
   get: () => String(pagination.limit),
-  set: (val: string) => { pagination.limit = Number(val) },
+  set: (val: string) => { pagination.limit = Number(val); fetchData() },
 })
 const dialogVisible = ref(false)
 const dialogMode = ref<'create' | 'edit'>('create')
@@ -313,19 +299,6 @@ function flattenOrgTree(orgs: any[]): any[] {
   return result
 }
 
-function onMouseMove(e: MouseEvent) {
-  const el = e.currentTarget as HTMLElement
-  const rect = el.getBoundingClientRect()
-  el.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`)
-  el.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`)
-}
-
-function onMouseLeave(e: MouseEvent) {
-  const el = e.currentTarget as HTMLElement
-  el.style.removeProperty('--mouse-x')
-  el.style.removeProperty('--mouse-y')
-}
-
 function buildTree(orgs: OrganizationDTO[], parentId: string | null = null): any[] {
   return orgs.filter(o => o.parent_id === parentId).map(o => ({ ...o, children: buildTree(orgs, o.id || null) }))
 }
@@ -366,6 +339,7 @@ function handleEdit(row: OrganizationDTO) {
 }
 
 async function handleDelete(row: OrganizationDTO) {
+  if (!confirm(`${t('organization.name')}: ${row.name}\n${t('common.deleteConfirm')}`)) return
   try {
     if (row.id) {
       await organizationApi.deleteOrganization(row.id)
@@ -399,24 +373,5 @@ async function handleSubmit() {
 }
 
 function resetForm() { Object.assign(formData, { name: '', code: '', parent_id: 'none', facility_type: '', accreditation_status: '', province_city: [] }) }
-function handleSizeChange(size: number) { pagination.limit = size; pagination.page = 1; fetchData() }
 function handlePageChange(page: number) { pagination.page = page; fetchData() }
 </script>
-
-<style scoped>
-.spotlight-card {
-  position: relative;
-  overflow: hidden;
-}
-
-.spotlight-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(520px circle at var(--mouse-x, -100%) var(--mouse-y, -100%),
-    rgba(63, 81, 181, 0.12), transparent 55%);
-  pointer-events: none;
-  z-index: 1;
-  transition: opacity 0.3s;
-}
-</style>
