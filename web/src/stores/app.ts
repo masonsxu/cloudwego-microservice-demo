@@ -11,9 +11,9 @@ export const useAppStore = defineStore('app', () => {
   // 当前语言
   const language = ref<string>(localStorage.getItem('language') || 'zh-CN')
 
-  // 主题：dark | light
+  // 主题：dark | light（默认亮色，详见 DESIGN.md）
   const theme = ref<'dark' | 'light'>(
-    (localStorage.getItem('theme') as 'dark' | 'light') || 'dark'
+    (localStorage.getItem('theme') as 'dark' | 'light') || 'light'
   )
 
   // 切换侧边栏

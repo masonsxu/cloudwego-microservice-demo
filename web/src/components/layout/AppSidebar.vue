@@ -1,75 +1,102 @@
 <template>
-  <div class="flex flex-col h-full">
-    <div class="flex items-center justify-center p-5 border-b border-[rgba(212,175,55,0.2)]">
+  <div class="flex h-full flex-col">
+    <!-- Logo 区：与 Topbar 等高（56px） -->
+    <div
+      class="flex h-[var(--layout-topbar-height)] flex-shrink-0 items-center border-b border-subtle px-4"
+      :class="appStore.sidebarCollapsed ? 'justify-center px-0' : ''"
+    >
       <img
         v-if="appStore.theme === 'dark'"
         src="/logo-dark.svg"
         alt="Logo"
-        class="h-9 w-auto transition-all duration-300"
-        :class="{ 'h-8': appStore.sidebarCollapsed }"
+        class="h-7 w-auto"
       />
       <img
         v-else
         src="/logo-light.svg"
         alt="Logo"
-        class="h-9 w-auto transition-all duration-300"
-        :class="{ 'h-8': appStore.sidebarCollapsed }"
+        class="h-7 w-auto"
       />
     </div>
-    <nav class="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[rgba(212,175,55,0.3)] [&::-webkit-scrollbar-thumb]:rounded-sm">
+
+    <!-- 菜单 -->
+    <nav class="flex-1 overflow-y-auto py-3" :class="appStore.sidebarCollapsed ? 'px-2' : 'px-3'">
       <template v-for="item in menuList" :key="item.id">
-        <div v-if="item.children && item.children.length > 0" class="relative">
+        <!-- 父项（带子菜单） -->
+        <div v-if="item.children && item.children.length > 0" class="mb-0.5">
           <button
-            class="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-[var(--c-text-sub)] transition-colors hover:bg-[rgba(212,175,55,0.08)] hover:text-[var(--c-accent)]"
-            :class="{
-              'justify-center px-2': appStore.sidebarCollapsed,
-              'bg-[rgba(212,175,55,0.12)] text-[var(--c-accent)]': isMenuBranchActive(item)
-            }"
+            class="group flex w-full items-center gap-2.5 rounded-sm px-2.5 py-1.5 text-left text-[14px] transition-colors duration-[var(--duration-fast)]"
+            :class="[
+              appStore.sidebarCollapsed ? 'justify-center px-0' : '',
+              isMenuBranchActive(item)
+                ? 'bg-canvas text-[color:var(--color-primary)] font-semibold'
+                : 'text-[color:var(--color-ink-muted)] hover:bg-canvas hover:text-ink'
+            ]"
             @click="handleParentMenuClick(item)"
           >
-            <component :is="getIconComponent(item.icon)" v-if="item.icon" class="h-4 w-4" />
-            <span v-show="!appStore.sidebarCollapsed">{{ getMenuLabel(item.name) }}</span>
+            <component :is="getIconComponent(item.icon)" v-if="item.icon" class="h-4 w-4 flex-shrink-0" />
+            <span v-show="!appStore.sidebarCollapsed" class="flex-1 truncate">{{ getMenuLabel(item.name) }}</span>
+            <ChevronRight
+              v-show="!appStore.sidebarCollapsed && hasNavigableChildren(item)"
+              class="h-3.5 w-3.5 flex-shrink-0 text-[color:var(--color-ink-subtle)] transition-transform duration-[var(--duration-fast)]"
+              :class="isMenuExpanded(item) ? 'rotate-90' : ''"
+            />
           </button>
-          <div v-show="isMenuExpanded(item) && !appStore.sidebarCollapsed" class="bg-[rgba(0,0,0,0.1)]">
+
+          <!-- 子菜单（展开时） -->
+          <div
+            v-show="isMenuExpanded(item) && !appStore.sidebarCollapsed"
+            class="mt-0.5 space-y-0.5"
+          >
             <template v-for="child in item.children" :key="child.id">
               <RouterLink
                 v-if="getMenuRoute(child)"
                 :to="getMenuRoute(child)!"
-                class="flex items-center gap-3 pl-12 pr-4 py-2 text-sm text-[var(--c-text-sub)] transition-colors hover:bg-[rgba(212,175,55,0.08)] hover:text-[var(--c-accent)]"
-                :class="{ 'bg-[rgba(212,175,55,0.12)] text-[var(--c-accent)]': isMenuActive(child) }"
+                class="flex h-8 items-center gap-2.5 rounded-sm pl-9 pr-2.5 text-[14px] transition-colors duration-[var(--duration-fast)] relative"
+                :class="
+                  isMenuActive(child)
+                    ? 'bg-canvas text-[color:var(--color-primary)] font-semibold before:content-[\'\'] before:absolute before:left-3 before:top-2 before:bottom-2 before:w-0.5 before:rounded-pill before:bg-[color:var(--color-primary)]'
+                    : 'text-[color:var(--color-ink-muted)] hover:bg-canvas hover:text-ink'
+                "
               >
-                <component :is="getIconComponent(child.icon)" v-if="child.icon" class="h-4 w-4" />
-                <span>{{ getMenuLabel(child.name) }}</span>
+                <component :is="getIconComponent(child.icon)" v-if="child.icon" class="h-3.5 w-3.5 flex-shrink-0" />
+                <span class="truncate">{{ getMenuLabel(child.name) }}</span>
               </RouterLink>
               <div
                 v-else
-                class="flex items-center gap-3 pl-12 pr-4 py-2 text-sm text-[var(--c-text-sub)] opacity-60 cursor-not-allowed"
+                class="flex h-8 cursor-not-allowed items-center gap-2.5 pl-9 pr-2.5 text-[14px] text-[color:var(--color-ink-disabled)]"
               >
-                <component :is="getIconComponent(child.icon)" v-if="child.icon" class="h-4 w-4" />
-                <span>{{ getMenuLabel(child.name) }}</span>
+                <component :is="getIconComponent(child.icon)" v-if="child.icon" class="h-3.5 w-3.5 flex-shrink-0" />
+                <span class="truncate">{{ getMenuLabel(child.name) }}</span>
               </div>
             </template>
           </div>
         </div>
+
+        <!-- 单项（无子菜单） -->
         <RouterLink
           v-else-if="getMenuRoute(item)"
           :to="getMenuRoute(item)!"
-          class="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--c-text-sub)] transition-colors hover:bg-[rgba(212,175,55,0.08)] hover:text-[var(--c-accent)]"
-          :class="{
-            'justify-center px-2': appStore.sidebarCollapsed,
-            'bg-[rgba(212,175,55,0.12)] text-[var(--c-accent)]': isMenuActive(item)
-          }"
+          class="mb-0.5 flex h-8 items-center gap-2.5 rounded-sm px-2.5 text-[14px] transition-colors duration-[var(--duration-fast)] relative"
+          :class="[
+            appStore.sidebarCollapsed ? 'justify-center px-0' : '',
+            isMenuActive(item)
+              ? 'bg-canvas text-[color:var(--color-primary)] font-semibold' + (!appStore.sidebarCollapsed ? ' before:content-[\'\'] before:absolute before:left-0 before:top-2 before:bottom-2 before:w-0.5 before:rounded-pill before:bg-[color:var(--color-primary)]' : '')
+              : 'text-[color:var(--color-ink-muted)] hover:bg-canvas hover:text-ink'
+          ]"
         >
-          <component :is="getIconComponent(item.icon)" v-if="item.icon" class="h-4 w-4" />
-          <span v-show="!appStore.sidebarCollapsed">{{ getMenuLabel(item.name) }}</span>
+          <component :is="getIconComponent(item.icon)" v-if="item.icon" class="h-4 w-4 flex-shrink-0" />
+          <span v-show="!appStore.sidebarCollapsed" class="truncate">{{ getMenuLabel(item.name) }}</span>
         </RouterLink>
+
+        <!-- 不可访问项（占位） -->
         <div
           v-else
-          class="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--c-text-sub)] opacity-60 cursor-not-allowed"
-          :class="{ 'justify-center px-2': appStore.sidebarCollapsed }"
+          class="mb-0.5 flex h-8 cursor-not-allowed items-center gap-2.5 rounded-sm px-2.5 text-[14px] text-[color:var(--color-ink-disabled)]"
+          :class="appStore.sidebarCollapsed ? 'justify-center px-0' : ''"
         >
-          <component :is="getIconComponent(item.icon)" v-if="item.icon" class="h-4 w-4" />
-          <span v-show="!appStore.sidebarCollapsed">{{ getMenuLabel(item.name) }}</span>
+          <component :is="getIconComponent(item.icon)" v-if="item.icon" class="h-4 w-4 flex-shrink-0" />
+          <span v-show="!appStore.sidebarCollapsed" class="truncate">{{ getMenuLabel(item.name) }}</span>
         </div>
       </template>
     </nav>
@@ -82,7 +109,16 @@ import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
-import { Settings, Building2, Key, User, FileText, Menu, Network } from 'lucide-vue-next'
+import {
+  Settings,
+  Building2,
+  Key,
+  User,
+  FileText,
+  LayoutDashboard,
+  Network,
+  ChevronRight
+} from 'lucide-vue-next'
 import type { MenuNodeDTO } from '@/api/role'
 import { menuRouteMap, visibleRoutePaths } from '@/router/routes'
 import type { AppRouteMeta } from '@/router/routes'
@@ -192,7 +228,7 @@ function getIconComponent(iconName: string) {
     IconRolePermissions: Key,
     IconAccountManagement: User,
     IconAuditLogs: FileText,
-    Odometer: Menu,
+    Odometer: LayoutDashboard,
     User,
     OfficeBuilding: Building2,
     Key,
@@ -200,9 +236,9 @@ function getIconComponent(iconName: string) {
     Document: FileText,
     Connection: Network,
     Network,
-    Menu
+    Menu: LayoutDashboard
   }
 
-  return iconMap[iconName] || Menu
+  return iconMap[iconName] || LayoutDashboard
 }
 </script>

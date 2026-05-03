@@ -1,23 +1,26 @@
 <template>
-  <nav class="inline-block text-sm ml-2" aria-label="Breadcrumb">
+  <nav class="inline-flex items-center text-[14px]" aria-label="Breadcrumb">
     <BreadcrumbList class="flex items-center">
       <template v-for="(item, index) in levelList" :key="item.path">
         <BreadcrumbItem class="flex items-center">
           <span
             v-if="item.redirect === 'noRedirect' || index === levelList.length - 1"
-            class="text-[var(--c-accent)] cursor-text"
+            class="cursor-default text-[color:var(--color-ink)] font-semibold"
           >
             {{ t(String(item.title || item.name)) }}
           </span>
           <RouterLink
             v-else
             :to="resolveBreadcrumbTarget(item)"
-            class="text-[var(--c-text-sub)] cursor-pointer transition-colors hover:text-[var(--c-accent)]"
+            class="cursor-pointer text-[color:var(--color-ink-muted)] transition-colors duration-[var(--duration-fast)] hover:text-[color:var(--color-ink)]"
           >
             {{ t(String(item.title || item.name)) }}
           </RouterLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator v-if="index < levelList.length - 1" class="text-[var(--c-text-sub)]">
+        <BreadcrumbSeparator
+          v-if="index < levelList.length - 1"
+          class="mx-2 text-[color:var(--color-ink-subtle)]"
+        >
           /
         </BreadcrumbSeparator>
       </template>

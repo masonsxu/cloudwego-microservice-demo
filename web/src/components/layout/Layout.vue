@@ -1,23 +1,23 @@
 <template>
-  <div class="relative flex h-screen overflow-hidden">
-    <div class="fixed inset-0 z-0 pointer-events-none opacity-60" style="background-image: radial-gradient(var(--tech-grid-color) 1px, transparent 1px); background-size: 32px 32px; mask-image: linear-gradient(to bottom, black 0%, transparent 80%); -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 80%);" />
-
-    <div
-      class="relative z-10 overflow-hidden transition-all duration-300 ease-in-out"
+  <div class="flex h-screen w-full overflow-hidden bg-canvas text-ink">
+    <aside
+      class="flex-shrink-0 overflow-hidden bg-sunken border-r border-subtle transition-[width] duration-200 ease-out"
       :style="{ width: sidebarWidth }"
-      style="background: var(--bg-card); border-right: 1px solid var(--c-border-accent); backdrop-filter: blur(8px);"
     >
       <AppSidebar />
-    </div>
-    <div class="flex flex-col flex-1 overflow-hidden">
+    </aside>
+
+    <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
       <header
-        class="relative z-10 flex h-[60px] items-center"
-        style="background: var(--bg-card); border-bottom: 1px solid var(--c-border-accent); backdrop-filter: blur(8px);"
+        class="flex-shrink-0 flex h-[var(--layout-topbar-height)] items-center bg-canvas border-b border-subtle"
       >
         <AppHeader />
       </header>
-      <main class="relative z-10 flex-1 overflow-y-auto p-6 bg-transparent">
-        <router-view />
+
+      <main class="flex-1 overflow-y-auto bg-canvas">
+        <div class="mx-auto w-full max-w-[var(--layout-content-max)] px-[var(--layout-content-px)] py-[var(--layout-content-py)]">
+          <router-view />
+        </div>
       </main>
     </div>
   </div>
@@ -31,7 +31,7 @@ import AppSidebar from './AppSidebar.vue'
 
 const appStore = useAppStore()
 
-const sidebarWidth = computed(() => {
-  return appStore.sidebarCollapsed ? '64px' : '240px'
-})
+const sidebarWidth = computed(() =>
+  appStore.sidebarCollapsed ? 'var(--layout-sidebar-collapsed)' : 'var(--layout-sidebar-width)'
+)
 </script>

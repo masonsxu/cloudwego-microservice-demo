@@ -1,41 +1,53 @@
 <template>
-  <div class="flex h-[60px] w-full items-center justify-between px-5">
-    <div class="flex items-center gap-5">
+  <div class="flex h-full w-full items-center justify-between gap-4 px-[var(--layout-content-px)]">
+    <!-- 左：折叠按钮 + 面包屑 -->
+    <div class="flex items-center gap-3 min-w-0 flex-1">
       <button
-        class="text-[var(--c-accent)] transition-transform hover:scale-110 cursor-pointer"
+        class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-sm text-[color:var(--color-ink-muted)] transition-colors duration-[var(--duration-fast)] hover:bg-sunken hover:text-ink"
+        :title="appStore.sidebarCollapsed ? t('common.expandSidebar') : t('common.collapseSidebar')"
         @click="toggleSidebar"
       >
-        <PanelLeftClose v-if="!appStore.sidebarCollapsed" class="h-5 w-5" />
-        <PanelLeftOpen v-else class="h-5 w-5" />
+        <PanelLeftClose v-if="!appStore.sidebarCollapsed" class="h-4 w-4" />
+        <PanelLeftOpen v-else class="h-4 w-4" />
       </button>
       <AppBreadcrumb />
     </div>
-    <div class="flex items-center gap-5">
-      <!-- 主题切换 -->
-      <button class="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--c-border-accent)] bg-transparent text-[var(--c-text-sub)] transition-all hover:border-[var(--c-accent)] hover:bg-[rgba(212,175,55,0.08)] hover:text-[var(--c-accent)] cursor-pointer p-0" @click="appStore.toggleTheme" :title="appStore.theme === 'dark' ? '切换浅色模式' : '切换深色模式'">
-        <svg v-if="appStore.theme === 'dark'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
-          <circle cx="12" cy="12" r="5"/>
-          <line x1="12" y1="1" x2="12" y2="3"/>
-          <line x1="12" y1="21" x2="12" y2="23"/>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-          <line x1="1" y1="12" x2="3" y2="12"/>
-          <line x1="21" y1="12" x2="23" y2="12"/>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-        </svg>
-        <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-        </svg>
+
+    <!-- 中：全局搜索 omnibar（⌘K 占位，搜索功能后续实装） -->
+    <button
+      class="hidden md:flex h-8 w-[280px] items-center gap-2 rounded-sm bg-sunken px-3 text-[13px] text-[color:var(--color-ink-subtle)] transition-colors duration-[var(--duration-fast)] hover:text-[color:var(--color-ink-muted)]"
+      :title="t('common.searchPlaceholder')"
+      @click="handleSearchClick"
+    >
+      <Search class="h-3.5 w-3.5 flex-shrink-0" />
+      <span class="flex-1 text-left truncate">{{ t('common.searchPlaceholder') }}</span>
+      <kbd
+        class="inline-flex h-5 items-center gap-0.5 rounded-xs border border-default bg-canvas px-1.5 text-[11px] font-medium text-[color:var(--color-ink-muted)]"
+      >
+        <span>⌘</span>
+        <span>K</span>
+      </kbd>
+    </button>
+
+    <!-- 右：主题 / 语言 / 用户 -->
+    <div class="flex items-center gap-1 flex-shrink-0">
+      <button
+        class="flex h-8 w-8 items-center justify-center rounded-sm text-[color:var(--color-ink-muted)] transition-colors duration-[var(--duration-fast)] hover:bg-sunken hover:text-ink"
+        :title="appStore.theme === 'dark' ? t('common.switchToLight') : t('common.switchToDark')"
+        @click="appStore.toggleTheme"
+      >
+        <Sun v-if="appStore.theme === 'dark'" class="h-4 w-4" />
+        <Moon v-else class="h-4 w-4" />
       </button>
 
-      <!-- 语言切换 -->
       <DropdownMenu>
-        <DropdownMenuTrigger class="flex items-center gap-2 text-[var(--c-text-sub)] transition-colors hover:text-[var(--c-accent)] cursor-pointer">
+        <DropdownMenuTrigger
+          class="flex h-8 items-center gap-1.5 rounded-sm px-2 text-[13px] text-[color:var(--color-ink-muted)] transition-colors duration-[var(--duration-fast)] hover:bg-sunken hover:text-ink"
+        >
           <Languages class="h-4 w-4" />
-          <span>{{ currentLanguage }}</span>
+          <span class="hidden sm:inline">{{ currentLanguage }}</span>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="end" class="min-w-[140px]">
           <DropdownMenuItem @select="handleLanguageCommand('zh-CN')">
             简体中文
           </DropdownMenuItem>
@@ -45,24 +57,29 @@
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <!-- 用户菜单 -->
       <DropdownMenu>
-        <DropdownMenuTrigger class="flex items-center gap-2 text-[var(--c-text-sub)] transition-colors hover:text-[var(--c-accent)] cursor-pointer">
-          <User class="h-4 w-4" />
-          <span>{{ authStore.username }}</span>
+        <DropdownMenuTrigger
+          class="flex h-8 items-center gap-2 rounded-sm pl-1.5 pr-2 text-[13px] text-[color:var(--color-ink)] transition-colors duration-[var(--duration-fast)] hover:bg-sunken"
+        >
+          <span
+            class="flex h-6 w-6 items-center justify-center rounded-full bg-[color:var(--color-primary-soft-strong)] text-[11px] font-semibold text-[color:var(--color-primary-active)]"
+          >
+            {{ usernameInitial }}
+          </span>
+          <span class="hidden sm:inline max-w-[120px] truncate">{{ authStore.username }}</span>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="end" class="min-w-[180px]">
           <DropdownMenuItem @select="handleUserCommand('profile')">
-            <User class="h-4 w-4" />
+            <User class="mr-2 h-4 w-4" />
             {{ t('common.edit') }}
           </DropdownMenuItem>
           <DropdownMenuItem @select="handleUserCommand('password')">
-            <Lock class="h-4 w-4" />
+            <Lock class="mr-2 h-4 w-4" />
             {{ t('auth.changePassword') }}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem @select="handleUserCommand('logout')">
-            <LogOut class="h-4 w-4" />
+          <DropdownMenuItem class="text-[color:var(--color-danger)]" @select="handleUserCommand('logout')">
+            <LogOut class="mr-2 h-4 w-4" />
             {{ t('auth.logout') }}
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -76,15 +93,15 @@
         <DialogTitle>{{ t('auth.changePassword') }}</DialogTitle>
       </DialogHeader>
       <div class="space-y-4 py-4">
-        <div class="space-y-2">
+        <div class="space-y-1.5">
           <Label>{{ t('auth.oldPassword') }}</Label>
           <Input v-model="passwordForm.oldPassword" type="password" :placeholder="t('auth.oldPassword')" />
         </div>
-        <div class="space-y-2">
+        <div class="space-y-1.5">
           <Label>{{ t('auth.newPassword') }}</Label>
           <Input v-model="passwordForm.newPassword" type="password" :placeholder="t('auth.newPassword')" />
         </div>
-        <div class="space-y-2">
+        <div class="space-y-1.5">
           <Label>{{ t('auth.confirmPassword') }}</Label>
           <Input v-model="passwordForm.confirmPassword" type="password" :placeholder="t('auth.confirmPassword')" />
         </div>
@@ -105,7 +122,17 @@ import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { PanelLeftClose, PanelLeftOpen, Languages, User, Lock, LogOut } from 'lucide-vue-next'
+import {
+  PanelLeftClose,
+  PanelLeftOpen,
+  Languages,
+  User,
+  Lock,
+  LogOut,
+  Sun,
+  Moon,
+  Search
+} from 'lucide-vue-next'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -133,7 +160,12 @@ const passwordForm = reactive({
 })
 
 const currentLanguage = computed(() => {
-  return locale.value === 'zh-CN' ? '简体中文' : 'English'
+  return locale.value === 'zh-CN' ? '简中' : 'EN'
+})
+
+const usernameInitial = computed(() => {
+  const name = authStore.username || ''
+  return name.charAt(0).toUpperCase() || '?'
 })
 
 function toggleSidebar() {
@@ -143,6 +175,10 @@ function toggleSidebar() {
 function handleLanguageCommand(command: string) {
   appStore.setLanguage(command)
   locale.value = command
+}
+
+function handleSearchClick() {
+  toast.info(t('common.searchComingSoon'))
 }
 
 function resetPasswordForm() {
