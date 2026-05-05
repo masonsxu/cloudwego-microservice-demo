@@ -3,4 +3,5 @@ go 1.25.0
 use (
 	./gateway
 	./rpc/identity_srv
+	./rpc/policy_srv
 )

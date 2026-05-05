@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+package policy_srv;
+
+option go_package = "github.com/masonsxu/cloudwego-microservice-demo/rpc/policy-srv/kitex_gen/policy_srv";
+
+// Subject 权限检查的主体（谁在操作）
+message Subject {
+  string user_id = 1;           // sub (UUID)
+  string tenant = 2;            // tenant = OrganizationID
+  repeated string roles = 3;    // 角色 code 列表
+  map<string, string> attributes = 4;  // 业务侧注入的额外属性（部门等）
+}
+
+// CheckRequest 单点权限检查请求
+message CheckRequest {
+  Subject subject = 1;
+  string action = 2;            // e.g. "read", "write", "approve"
+  string resource = 3;          // e.g. "patient:7a3e..." 或 "patient.*"
+  map<string, string> resource_attributes = 4;  // 资源属性（owner_id 等）
+}
+
+// CheckResponse 单点权限检查响应
+message CheckResponse {
+  bool allowed = 1;
+  string reason = 2;            // 拒绝原因（仅 debug）
+  string data_scope_hint = 3;   // 数据范围提示（可选）
+}
+
+// BatchCheckRequest 批量权限检查请求
+message BatchCheckRequest {
+  Subject subject = 1;
+  repeated CheckItem items = 2;
+}
+
+message CheckItem {
+  string action = 1;
+  string resource = 2;
+  map<string, string> resource_attributes = 3;
+}
+
+// BatchCheckResponse 批量权限检查响应
+message BatchCheckResponse {
+  repeated CheckResult results = 1;
+}
+
+message CheckResult {
+  string action = 1;
+  string resource = 2;
+  bool allowed = 3;
+  string reason = 4;
+}
+
+// ListPermissionsRequest 查询主体所有权限
+message ListPermissionsRequest {
+  Subject subject = 1;
+}
+
+// ListPermissionsResponse 查询主体所有权限响应
+message ListPermissionsResponse {
+  repeated PermissionItem permissions = 1;
+}
+
+message PermissionItem {
+  string resource = 1;
+  string action = 2;
+  string data_scope = 3;
+}
+
+// UpsertPolicyRequest 策略创建/更新请求
+message UpsertPolicyRequest {
+  string ptype = 1;    // p / g / g2
+  repeated string rule = 2;  // 策略规则项
+}
+
+// UpsertPolicyResponse 策略创建/更新响应
+message UpsertPolicyResponse {
+  bool success = 1;
+}
+
+// DeletePolicyRequest 策略删除请求
+message DeletePolicyRequest {
+  string ptype = 1;    // p / g / g2
+  repeated string rule = 2;  // 策略规则项
+}
+
+// DeletePolicyResponse 策略删除响应
+message DeletePolicyResponse {
+  bool success = 1;
+}
+
+// ReloadPoliciesRequest 策略重载请求
+message ReloadPoliciesRequest {}
+
+// ReloadPoliciesResponse 策略重载响应
+message ReloadPoliciesResponse {
+  bool success = 1;
+  int32 policy_count = 2;
+  int32 grouping_policy_count = 3;
+  int32 role_inheritance_count = 4;
+}

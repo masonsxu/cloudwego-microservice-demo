@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # =============================================================================
-# 构建本地开发用的容器镜像（identity-srv、gateway）
+# 构建本地开发用的容器镜像（identity-srv、gateway、policy-srv）
 # =============================================================================
-# 用法：./scripts/build-images.sh [identity|gateway|all]
+# 用法：./scripts/build-images.sh [identity|gateway|policy|all]
 #
 # 镜像构建后可被 podman kube play docker/pod.yml 直接引用
 # （pod.yml 中已设置 imagePullPolicy: IfNotPresent 优先使用本地镜像）
@@ -29,16 +29,25 @@ build_gateway() {
         "${ROOT_DIR}"
 }
 
+build_policy() {
+    echo "==> 构建 policy-srv:latest"
+    podman build \
+        -f "${ROOT_DIR}/rpc/policy_srv/docker/Dockerfile" \
+        -t policy-srv:latest \
+        "${ROOT_DIR}/rpc/policy_srv"
+}
+
 case "${TARGET}" in
     identity) build_identity ;;
     gateway)  build_gateway ;;
-    all)      build_identity; build_gateway ;;
+    policy)   build_policy ;;
+    all)      build_identity; build_gateway; build_policy ;;
     *)
-        echo "ERROR: 未知目标 '${TARGET}'，支持：identity | gateway | all" >&2
+        echo "ERROR: 未知目标 '${TARGET}'，支持：identity | gateway | policy | all" >&2
         exit 1
         ;;
 esac
 
 echo
 echo "==> 完成，本地镜像列表："
-podman images | grep -E "^(localhost/)?(identity-srv|gateway)\s" || true
+podman images | grep -E "^(localhost/)?(identity-srv|gateway|policy-srv)\s" || true
