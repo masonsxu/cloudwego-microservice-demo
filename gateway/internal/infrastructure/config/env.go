@@ -260,6 +260,8 @@ func mapJWTEnvVars(v *viper.Viper) {
 		return value == "true"
 	})
 	mapToViper(v, "JWT_SIGNING_KEY", "middleware.jwt.signing_key", nil)
+	mapToViper(v, "JWT_PRIV_KEY_PATH", "middleware.jwt.priv_key_path", nil)
+	mapToViper(v, "JWT_PUB_KEY_PATH", "middleware.jwt.pub_key_path", nil)
 	mapToViper(v, "JWT_TIMEOUT", "middleware.jwt.timeout", func(value string) interface{} {
 		return parseDurationWithDefault(value, 30*time.Minute)
 	})

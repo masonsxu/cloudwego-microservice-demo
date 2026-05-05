@@ -76,6 +76,8 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("middleware.casbin.superadmin_subjects", []string{"role:superadmin", "username:superadmin"})
 	v.SetDefault("middleware.casbin.menu_mapping_file", "menu.yaml")
 	v.SetDefault("middleware.jwt.signing_key", "")
+	v.SetDefault("middleware.jwt.priv_key_path", "./config/keys/private.pem")
+	v.SetDefault("middleware.jwt.pub_key_path", "./config/keys/public.pem")
 	v.SetDefault("middleware.jwt.timeout", 30*time.Minute)
 	v.SetDefault("middleware.jwt.max_refresh", 7*24*time.Hour)
 	v.SetDefault("middleware.jwt.identity_key", "identity")
@@ -88,6 +90,7 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("middleware.jwt.send_authorization", false)
 	// JWT 跳过认证的路径列表（默认跳过健康检查、指标、OIDC 公开端点、登录/刷新）
 	v.SetDefault("middleware.jwt.skip_paths", []string{
+		"/.well-known/jwks.json",
 		"/.well-known/openid-configuration",
 		"/keys",
 		"/oauth/token",

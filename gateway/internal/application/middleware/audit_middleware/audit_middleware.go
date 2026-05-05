@@ -318,7 +318,7 @@ func (am *AuditMiddlewareImpl) fillUserInfoFromJWT(c *app.RequestContext, req *i
 		req.Username = &v
 	}
 
-	if v, ok := claims[middleware.OrganizationID].(string); ok {
+	if v, ok := claims[middleware.Tenant].(string); ok {
 		req.OrganizationID = &v
 	}
 }

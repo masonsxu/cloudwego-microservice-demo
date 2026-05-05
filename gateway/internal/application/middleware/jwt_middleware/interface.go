@@ -17,6 +17,9 @@ type JWTMiddlewareService interface {
 	LoginHandler(ctx context.Context, c *app.RequestContext)
 	LogoutHandler(ctx context.Context, c *app.RequestContext)
 	RefreshHandler(ctx context.Context, c *app.RequestContext)
+
+	// JWKSHandler 返回 JWKS 端点 handler
+	JWKSHandler() app.HandlerFunc
 }
 
 // TokenCacheService Token缓存服务接口（直接使用redis包的接口）

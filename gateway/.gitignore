@@ -34,3 +34,6 @@ _testmain.go
 /output
 *.local.yml
 dumped_hertz_remote_config.json
+!config/keys/example_*.pem
+config/keys/private.pem
+config/keys/public.pem
