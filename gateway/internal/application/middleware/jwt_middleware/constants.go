@@ -1,32 +1,20 @@
 // Package middleware 提供认证中间件实现
-// 基于 github.com/hertz-contrib/jwt 实现高性能JWT认证
+// 基于 github.com/hertz-contrib/jwt 实现 RS256 JWT 认证
 package middleware
 
-// JWT claims 中的键名定义
+// JWT claims 中的键名定义（目标态 schema，仅稳定身份字段）
 const (
-	// IdentityKey 表示用户ID (改为使用新的字段名)
-	IdentityKey = "userProfileID"
+	// IdentityKey 用户唯一标识，映射 OIDC sub
+	IdentityKey = "sub"
 
-	// OrganizationID 表示组织ID
-	OrganizationID = "organizationID"
-
-	// DepartmentIDs 表示部门ID列表（多部门模式）
-	DepartmentIDs = "departmentIDs"
-
-	// Username 表示用户名
+	// Username 用户名，展示用
 	Username = "username"
 
-	// Status 表示用户状态
-	Status = "status"
+	// Tenant 租户标识，= OrganizationID（单值）
+	Tenant = "tenant"
 
-	// RoleIDs 表示角色ID列表（多角色模式）
-	RoleIDs = "roleIDs"
-
-	// CorePermission 表示核心权限
-	CorePermission = "corePermission"
-
-	// DataScope 表示数据范围（self/dept/org）
-	DataScope = "dataScope"
+	// Roles 角色 code 列表（不是 role ID）
+	Roles = "roles"
 )
 
 // Context中存储登录用户信息的键名

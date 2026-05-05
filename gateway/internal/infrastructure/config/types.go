@@ -113,14 +113,16 @@ type OIDCConfig struct {
 }
 
 // JWTConfig 身份验证配置
-// 相关环境变量：JWT_ENABLED, JWT_SIGNING_KEY, JWT_TIMEOUT, JWT_MAX_REFRESH, JWT_IDENTITY_KEY,
-// JWT_REALM, JWT_TOKEN_LOOKUP, JWT_TOKEN_HEAD_NAME, JWT_SEND_AUTHORIZATION, JWT_SKIP_PATHS,
-// JWT_COOKIE_SEND_COOKIE, JWT_COOKIE_COOKIE_NAME, JWT_COOKIE_COOKIE_DOMAIN, JWT_COOKIE_COOKIE_PATH,
-// JWT_COOKIE_COOKIE_MAX_AGE, JWT_COOKIE_COOKIE_SAME_SITE, JWT_COOKIE_SECURE_COOKIE, JWT_COOKIE_HTTP_ONLY
+// 相关环境变量：JWT_ENABLED, JWT_PRIV_KEY_PATH, JWT_PUB_KEY_PATH, JWT_TIMEOUT, JWT_MAX_REFRESH,
+// JWT_IDENTITY_KEY, JWT_REALM, JWT_TOKEN_LOOKUP, JWT_TOKEN_HEAD_NAME, JWT_SEND_AUTHORIZATION,
+// JWT_SKIP_PATHS, JWT_COOKIE_SEND_COOKIE, JWT_COOKIE_COOKIE_NAME, JWT_COOKIE_COOKIE_DOMAIN,
+// JWT_COOKIE_COOKIE_PATH, JWT_COOKIE_COOKIE_MAX_AGE, JWT_COOKIE_COOKIE_SAME_SITE,
+// JWT_COOKIE_SECURE_COOKIE, JWT_COOKIE_HTTP_ONLY
 // 用于配置 JWT 认证和 Cookie 相关设置
 type JWTConfig struct {
 	Realm             string        `mapstructure:"realm"`              // 认证领域
-	SigningKey        string        `mapstructure:"signing_key"`        // HS265 密钥
+	PrivKeyPath       string        `mapstructure:"priv_key_path"`      // RS256 私钥文件路径
+	PubKeyPath        string        `mapstructure:"pub_key_path"`       // RS256 公钥文件路径
 	Timeout           time.Duration `mapstructure:"timeout"`            // access-token 有效期(秒)
 	MaxRefresh        time.Duration `mapstructure:"max_refresh"`        // refresh-token 有效期(秒)
 	IdentityKey       string        `mapstructure:"identity_key"`       // JWT中存储用户标识的键

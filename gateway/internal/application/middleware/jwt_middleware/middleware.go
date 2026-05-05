@@ -183,3 +183,8 @@ func (m *JWTMiddlewareImpl) LogoutHandler(ctx context.Context, c *app.RequestCon
 func (m *JWTMiddlewareImpl) RefreshHandler(ctx context.Context, c *app.RequestContext) {
 	m.mw.RefreshHandler(ctx, c)
 }
+
+// JWKSHandler 返回 JWKS 端点 handler
+func (m *JWTMiddlewareImpl) JWKSHandler() app.HandlerFunc {
+	return JWKSHandler(m.jwtConfig.PubKeyPath)
+}

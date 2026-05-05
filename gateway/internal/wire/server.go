@@ -108,6 +108,9 @@ func (r *HandlerRegistry) RegisterHandlers() {
 	identityHandler.SetOIDCService(r.oidcService)
 	permissionHandler.SetPermissionService(r.permissionService)
 
+	// 注册 JWKS 端点（JWT RS256 公钥，无需认证）
+	r.server.GET("/.well-known/jwks.json", r.middlewares.JWTMiddleware.JWKSHandler())
+
 	zl := r.logger.Unwrap()
 	zl.Info().Msg("Handler dependencies registered successfully")
 }
