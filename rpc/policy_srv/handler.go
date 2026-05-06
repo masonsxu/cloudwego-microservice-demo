@@ -44,7 +44,11 @@ func (s *PolicyServiceImpl) UpsertPolicy(
 	ctx context.Context,
 	req *pb.UpsertPolicyRequest,
 ) (*pb.UpsertPolicyResponse, error) {
-	return &pb.UpsertPolicyResponse{Success: false}, nil
+	ok, err := s.enforcer.AddPolicyRule(req.GetPtype(), req.GetRule())
+	if err != nil {
+		return &pb.UpsertPolicyResponse{Success: false}, err
+	}
+	return &pb.UpsertPolicyResponse{Success: ok}, nil
 }
 
 // DeletePolicy 策略删除
@@ -52,7 +56,11 @@ func (s *PolicyServiceImpl) DeletePolicy(
 	ctx context.Context,
 	req *pb.DeletePolicyRequest,
 ) (*pb.DeletePolicyResponse, error) {
-	return &pb.DeletePolicyResponse{Success: false}, nil
+	ok, err := s.enforcer.RemovePolicyRule(req.GetPtype(), req.GetRule())
+	if err != nil {
+		return &pb.DeletePolicyResponse{Success: false}, err
+	}
+	return &pb.DeletePolicyResponse{Success: ok}, nil
 }
 
 // ReloadPolicies 策略重载

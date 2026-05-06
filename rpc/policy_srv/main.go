@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/cloudwego/kitex/pkg/klog"
 
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/policy-srv/kitex_gen/policy_srv/policyservice"
@@ -15,6 +17,11 @@ func main() {
 	defer cleanup()
 
 	container.StartHealthCheck()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	container.Enforcer.StartAutoReload(ctx)
+	defer container.Enforcer.Stop()
 
 	serviceImpl := NewPolicyServiceImpl(container.Decision, container.Enforcer)
 	svr := policyservice.NewServer(serviceImpl, container.ServerOptions.Options...)

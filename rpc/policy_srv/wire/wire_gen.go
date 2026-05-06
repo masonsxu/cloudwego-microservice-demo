@@ -39,19 +39,27 @@ func InitializeApp() (*AppContainer, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	serverOptions, err := ProvideServerOptions(configConfig, registry, logger)
+	provider, cleanup, err := ProvideOtelProvider(configConfig)
 	if err != nil {
+		return nil, nil, err
+	}
+	serverOptions, err := ProvideServerOptions(configConfig, registry, provider, logger)
+	if err != nil {
+		cleanup()
 		return nil, nil, err
 	}
 	sqlDB, err := ProvideSQLDB(db)
 	if err != nil {
+		cleanup()
 		return nil, nil, err
 	}
 	appContainer, err := NewAppContainer(configConfig, logger, db, decisionService, enforcerService, serverOptions, sqlDB)
 	if err != nil {
+		cleanup()
 		return nil, nil, err
 	}
 	return appContainer, func() {
+		cleanup()
 	}, nil
 }
 
@@ -71,6 +79,7 @@ var ApplicationSet = wire.NewSet(
 
 // ServerSet 服务器配置
 var ServerSet = wire.NewSet(
+	ProvideOtelProvider,
 	ProvideEtcdRegistry,
 	ProvideServerOptions,
 )
@@ -84,10 +93,9 @@ var AllSet = wire.NewSet(
 )
 
 // 确保类型被导入
-var _ *zerolog.Logger
-
-var _ *gorm.DB
-
-var _ *logic.EnforcerService
-
-var _ *logic.DecisionService
+var (
+	_ *zerolog.Logger
+	_ *gorm.DB
+	_ *logic.EnforcerService
+	_ *logic.DecisionService
+)

@@ -27,6 +27,7 @@ var ApplicationSet = wire.NewSet(
 
 // ServerSet 服务器配置
 var ServerSet = wire.NewSet(
+	ProvideOtelProvider,
 	ProvideEtcdRegistry,
 	ProvideServerOptions,
 )
