@@ -64,17 +64,6 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("middleware.oidc.id_token_lifespan", 30*time.Minute)
 	v.SetDefault("middleware.oidc.enforce_pkce", true)
 	v.SetDefault("middleware.oidc.consent_page_url", "")
-	v.SetDefault("middleware.casbin.enabled", true)
-	v.SetDefault("middleware.casbin.model_path", "./config/casbin_model.conf")
-	v.SetDefault("middleware.casbin.log_enabled", false)
-	v.SetDefault("middleware.casbin.sync_interval", 300)
-	v.SetDefault("middleware.casbin.skip_extra_paths", []string{
-		"/favicon.ico",
-		"/api/v1/permission/menu/upload",
-	})
-	v.SetDefault("middleware.casbin.superadmin_bypass_enabled", true)
-	v.SetDefault("middleware.casbin.superadmin_subjects", []string{"role:superadmin", "username:superadmin"})
-	v.SetDefault("middleware.casbin.menu_mapping_file", "menu.yaml")
 	v.SetDefault("middleware.jwt.signing_key", "")
 	v.SetDefault("middleware.jwt.priv_key_path", "./config/keys/private.pem")
 	v.SetDefault("middleware.jwt.pub_key_path", "./config/keys/public.pem")

@@ -73,7 +73,6 @@ type MiddlewareConfig struct {
 	RateLimit    RateLimitConfig    `mapstructure:"rate_limit"`
 	JWT          JWTConfig          `mapstructure:"jwt"`
 	OIDC         OIDCConfig         `mapstructure:"oidc"`
-	Casbin       CasbinConfig       `mapstructure:"casbin"`
 	AuthZ        AuthZConfig        `mapstructure:"authz"`
 	ErrorHandler ErrorHandlerConfig `mapstructure:"error_handler"`
 }
@@ -147,22 +146,6 @@ type CookieConfig struct {
 	CookieSameSite string        `mapstructure:"cookie_same_site"` // Cookie SameSite 策略
 	SecureCookie   bool          `mapstructure:"secure_cookie"`    // 是否仅通过 HTTPS 发送 Cookie
 	CookieHTTPOnly bool          `mapstructure:"cookie_http_only"` // 防止 JavaScript 访问（防 XSS 攻击）
-}
-
-// CasbinConfig Casbin 授权配置
-// 相关环境变量：CASBIN_ENABLED, CASBIN_MODEL_PATH, CASBIN_LOG_ENABLED,
-// CASBIN_SYNC_INTERVAL, CASBIN_SKIP_EXTRA_PATHS, CASBIN_SKIP_PATHS（兼容旧变量），
-// CASBIN_SUPERADMIN_BYPASS_ENABLED, CASBIN_SUPERADMIN_SUBJECTS, CASBIN_MENU_MAPPING_FILE
-// 注意：CASBIN_SKIP_PATHS 为兼容项，推荐使用 CASBIN_SKIP_EXTRA_PATHS。
-type CasbinConfig struct {
-	Enabled                 bool     `mapstructure:"enabled"`
-	ModelPath               string   `mapstructure:"model_path"`
-	LogEnabled              bool     `mapstructure:"log_enabled"`
-	SyncInterval            int      `mapstructure:"sync_interval"`
-	SkipExtraPaths          []string `mapstructure:"skip_extra_paths"`
-	SuperAdminBypassEnabled bool     `mapstructure:"superadmin_bypass_enabled"`
-	SuperAdminSubjects      []string `mapstructure:"superadmin_subjects"`
-	MenuMappingFile         string   `mapstructure:"menu_mapping_file"`
 }
 
 // AuthZConfig 路由级 ACL 配置（替代 Casbin，对应 authz_middleware）
