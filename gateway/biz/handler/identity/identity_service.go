@@ -462,22 +462,6 @@ func ListUsers(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	// 获取当前权限
-	permission, authErr := auth_context.GetCurrentPermission(c)
-	if !authErr {
-		errors.AbortWithError(c, errors.ErrJWTValidationFail)
-		return
-	}
-
-	if permission == "view_own_hospital" {
-		organizationID, authErr := auth_context.GetCurrentOrganizationID(c)
-		if !authErr {
-			errors.AbortWithError(c, errors.ErrJWTValidationFail)
-			return
-		}
-		req.OrganizationID = &organizationID
-	}
-
 	// 调用业务服务层
 	resp, err := identityService.ListUsers(ctx, &req)
 	if err != nil {
