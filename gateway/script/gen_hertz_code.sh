@@ -5,7 +5,6 @@
 # 使用方法:
 #   ./gen_hertz_code.sh                 # 生成所有服务代码（详细模式）
 #   ./gen_hertz_code.sh identity        # 仅生成identity服务代码（详细模式）
-#   ./gen_hertz_code.sh permission      # 仅生成permission服务代码（详细模式）
 #   ./gen_hertz_code.sh oidc            # 仅生成oidc服务代码（详细模式）
 #   ./gen_hertz_code.sh identity --silent  # 生成identity服务代码（静默模式）
 
@@ -104,7 +103,7 @@ generate_all() {
     print_info "开始生成所有服务代码..."
 
     # 检查所有IDL文件是否存在
-    local services=("identity" "permission" "oidc")
+    local services=("identity" "oidc")
 
     for service in "${services[@]}"; do
         local idl_file="$HTTP_IDL_ROOT/$service/${service}_service.proto"
@@ -136,12 +135,12 @@ main() {
     # 根据参数决定执行方式
     if [ -n "$SERVICE_NAME" ]; then
         case "$SERVICE_NAME" in
-            identity|permission|oidc)
+            identity|oidc)
                 generate_service "$SERVICE_NAME"
                 ;;
             *)
                 print_error "未知服务: $SERVICE_NAME"
-                echo "使用方法: $0 [identity|permission]"
+                echo "使用方法: $0 [identity|oidc]"
                 exit 1
                 ;;
         esac

@@ -7,7 +7,6 @@ import (
 
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/http_base"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/identity"
-	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/permission"
 	identityConv "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/identity"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/common"
 	identitycli "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/client/identity_cli"
@@ -71,13 +70,6 @@ func (s *authServiceImpl) Login(
 		httpResp.Memberships = []*identity.UserMembershipDTO{}
 	}
 
-	// 构建权限信息 - 从RPC响应中直接获取
-	if rpcResp.MenuTree != nil {
-		httpResp.MenuTree = s.assembler.Auth().ToHTTPMenuTree(rpcResp.MenuTree)
-	} else {
-		httpResp.MenuTree = []*permission.MenuNodeDTO{}
-	}
-
 	if len(rpcResp.RoleIDs) > 0 {
 		httpResp.RoleIDs = make([]string, len(rpcResp.RoleIDs))
 		copy(httpResp.RoleIDs, rpcResp.RoleIDs)
@@ -85,26 +77,11 @@ func (s *authServiceImpl) Login(
 		httpResp.RoleIDs = []string{}
 	}
 
-	// 处理菜单权限信息
-	if rpcResp.Permissions != nil {
-		httpResp.Permissions = s.assembler.Auth().ToHTTPMenuPermissions(rpcResp.Permissions)
-	} else {
-		httpResp.Permissions = []*permission.MenuPermissionDTO{}
-	}
-
 	// 处理角色详情信息
 	if rpcResp.RoleDetails != nil {
 		httpResp.Roles = s.assembler.Auth().ToHTTPRoleInfos(rpcResp.RoleDetails)
 	} else {
 		httpResp.Roles = []*identity.RoleInfoDTO{}
-	}
-
-	// 处理权限信息（现在是枚举类型）- 提取最高权限级别返回
-	if len(rpcResp.Permissions) > 0 &&
-		rpcResp.Permissions[0].Permission != nil {
-		permLevel := *rpcResp.Permissions[0].Permission
-		// 使用枚举的字符串表示
-		return httpResp, Permission(permLevel.String()), nil
 	}
 
 	return httpResp, "", nil

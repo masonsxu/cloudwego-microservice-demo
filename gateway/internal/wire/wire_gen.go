@@ -9,7 +9,6 @@ package wire
 import (
 	"github.com/google/wire"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/identity"
-	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/permission"
 )
 
 // Injectors from wire.go:
@@ -40,16 +39,7 @@ func InitializeApp() (*AppContainer, func(), error) {
 	logoService := ProvideLogoService(identityClient, assembler, logger)
 	auditLogService := ProvideAuditLogService(identityClient, assembler, logger)
 	service := ProvideIdentityService(authService, userService, membershipService, organizationService, departmentService, logoService, auditLogService)
-	iPermissionAssembler := permission.NewPermissionAssembler()
-	iRoleAssembler := permission.NewRoleAssembler(iPermissionAssembler)
-	iUserRoleAssembler := permission.NewUserRoleAssembler()
-	iMenuAssembler := permission.NewMenuAssembler()
-	permissionAssembler := permission.NewPermissionAggregateAssembler(iRoleAssembler, iPermissionAssembler, iUserRoleAssembler, iMenuAssembler)
-	roleDefinitionService := ProvideRoleDefinitionService(identityClient, permissionAssembler, logger)
-	userRoleAssignmentService := ProvideUserRoleAssignmentService(identityClient, permissionAssembler, logger)
-	menuService := ProvideMenuService(identityClient, permissionAssembler, logger)
-	permissionService := ProvidePermissionService(roleDefinitionService, userRoleAssignmentService, menuService)
-	serviceContainer := NewServiceContainer(service, permissionService)
+	serviceContainer := NewServiceContainer(service)
 	traceMiddlewareService := ProvideTraceMiddleware(logger)
 	corsMiddlewareService := ProvideCORSMiddleware(configuration, logger)
 	errorHandlerMiddlewareService := ProvideErrorHandlerMiddleware(configuration, logger)

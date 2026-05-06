@@ -10,10 +10,8 @@ import (
 	"github.com/hertz-contrib/requestid"
 
 	identityHandler "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/handler/identity"
-	permissionHandler "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/handler/permission"
 	identityService "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/identity"
 	oidcService "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/oidc"
-	permissionService "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/permission"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/otel"
 )
@@ -44,13 +42,12 @@ func ProvideServerFactory(cfg *config.Configuration, tracer *otel.Tracer, provid
 // HandlerRegistry Handler 注册器
 // 负责将依赖注入到 Handler 层并注册中间件
 type HandlerRegistry struct {
-	server            *server.Hertz
-	tracer            *otel.Tracer
-	middlewares       *MiddlewareContainer
-	identityService   identityService.Service
-	permissionService permissionService.Service
-	oidcService       oidcService.Service
-	logger            *hertzZerolog.Logger
+	server          *server.Hertz
+	tracer          *otel.Tracer
+	middlewares     *MiddlewareContainer
+	identityService identityService.Service
+	oidcService     oidcService.Service
+	logger          *hertzZerolog.Logger
 }
 
 // ProvideHandlerRegistry 提供 Handler 注册器
@@ -63,13 +60,12 @@ func ProvideHandlerRegistry(
 	logger *hertzZerolog.Logger,
 ) *HandlerRegistry {
 	return &HandlerRegistry{
-		server:            factory.Server(),
-		tracer:            tracer,
-		middlewares:       middlewares,
-		identityService:   services.IdentityService,
-		permissionService: services.PermissionService,
-		oidcService:       oidcSvc,
-		logger:            logger,
+		server:          factory.Server(),
+		tracer:          tracer,
+		middlewares:     middlewares,
+		identityService: services.IdentityService,
+		oidcService:     oidcSvc,
+		logger:          logger,
 	}
 }
 
@@ -102,7 +98,6 @@ func (r *HandlerRegistry) RegisterHandlers() {
 	// 设置 Handler 层的服务依赖
 	identityHandler.SetIdentityService(r.identityService, r.middlewares.JWTMiddleware)
 	identityHandler.SetOIDCService(r.oidcService)
-	permissionHandler.SetPermissionService(r.permissionService)
 
 	// 注册 JWKS 端点（JWT RS256 公钥，无需认证）
 	r.server.GET("/.well-known/jwks.json", r.middlewares.JWTMiddleware.JWKSHandler())

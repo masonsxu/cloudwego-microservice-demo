@@ -2,7 +2,6 @@ package identity
 
 import (
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/identity"
-	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/permission"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/common"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 )
@@ -37,8 +36,7 @@ func (a *authAssembler) ToHTTPLoginResponse(
 
 	return &identity.LoginResponseDTO{
 		UserProfile: NewUserAssembler().ToHTTPUserProfile(rpc.UserProfile),
-		// PermissionInfo 将由上层服务设置
-		// TokenInfo 将由上层服务设置
+		// TokenInfo 由 jwt_middleware 在签发后回填
 	}
 }
 
@@ -81,83 +79,6 @@ func (a *authAssembler) ToRPCForcePasswordChangeRequest(
 	return &identity_srv.ForcePasswordChangeRequest{
 		UserID: dto.UserID,
 	}
-}
-
-// ToHTTPMenuTree converts RPC MenuNode array to HTTP MenuNodeDTO array
-func (a *authAssembler) ToHTTPMenuTree(
-	rpcMenuNodes []*identity_srv.MenuNode,
-) []*permission.MenuNodeDTO {
-	if rpcMenuNodes == nil {
-		return nil
-	}
-
-	result := make([]*permission.MenuNodeDTO, 0, len(rpcMenuNodes))
-	for _, rpcNode := range rpcMenuNodes {
-		if rpcNode != nil {
-			httpNode := a.convertMenuNode(rpcNode)
-			if httpNode != nil {
-				result = append(result, httpNode)
-			}
-		}
-	}
-
-	return result
-}
-
-// convertMenuNode converts a single RPC MenuNode to HTTP MenuNodeDTO
-func (a *authAssembler) convertMenuNode(rpcNode *identity_srv.MenuNode) *permission.MenuNodeDTO {
-	if rpcNode == nil {
-		return nil
-	}
-
-	httpNode := &permission.MenuNodeDTO{
-		Name:      common.CopyStringPtr(rpcNode.Name),
-		Id:        common.CopyStringPtr(rpcNode.Id),
-		Path:      common.CopyStringPtr(rpcNode.Path),
-		Icon:      common.CopyStringPtr(rpcNode.Icon),
-		Component: common.CopyStringPtr(rpcNode.Component),
-	}
-
-	// 递归处理子菜单
-	if len(rpcNode.Children) > 0 {
-		httpNode.Children = make([]*permission.MenuNodeDTO, 0, len(rpcNode.Children))
-		for _, childRpcNode := range rpcNode.Children {
-			if childRpcNode != nil {
-				childHttpNode := a.convertMenuNode(childRpcNode)
-				if childHttpNode != nil {
-					httpNode.Children = append(httpNode.Children, childHttpNode)
-				}
-			}
-		}
-	}
-
-	return httpNode
-}
-
-// ToHTTPMenuPermissions converts RPC MenuPermission array to HTTP MenuPermissionDTO array
-func (a *authAssembler) ToHTTPMenuPermissions(
-	rpcPermissions []*identity_srv.MenuPermission,
-) []*permission.MenuPermissionDTO {
-	if rpcPermissions == nil {
-		return nil
-	}
-
-	result := make([]*permission.MenuPermissionDTO, 0, len(rpcPermissions))
-	for _, rpcPerm := range rpcPermissions {
-		if rpcPerm != nil {
-			httpPerm := &permission.MenuPermissionDTO{
-				MenuID: common.CopyStringPtr(rpcPerm.MenuID),
-			}
-			if rpcPerm.Permission != nil {
-				permLevel := permission.PermissionLevel(*rpcPerm.Permission)
-				httpPerm.Permission = &permLevel
-			}
-
-			result = append(result, httpPerm)
-		}
-	}
-
-	return result
 }
 
 // ToHTTPRoleInfos converts RPC RoleDefinition array to HTTP RoleInfoDTO array
