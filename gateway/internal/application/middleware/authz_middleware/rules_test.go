@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -172,4 +174,29 @@ func TestSplitHeader(t *testing.T) {
 	assert.Equal(t, []string{"admin", "doctor"}, splitHeader(" admin , doctor "))
 	assert.Equal(t, []string{"admin"}, splitHeader("admin,,"))
 	assert.Empty(t, splitHeader(",,,"))
+}
+
+// TestLoadRulesFromFile_DefaultRulesYAML 验证仓库内默认 authz_rules.yaml 能被正确解析。
+//
+// 防止 commit 时 YAML 语法 / 端点格式错误未被发现。
+func TestLoadRulesFromFile_DefaultRulesYAML(t *testing.T) {
+	// 测试在 internal/application/middleware/authz_middleware/，默认 yaml 在 gateway/config/
+	cwd, err := os.Getwd()
+	require.NoError(t, err)
+
+	yamlPath := filepath.Join(cwd, "..", "..", "..", "..", "config", "authz_rules.yaml")
+	if _, err := os.Stat(yamlPath); err != nil {
+		t.Skipf("默认 authz_rules.yaml 不存在（%s），跳过：%v", yamlPath, err)
+	}
+
+	rules, err := LoadRulesFromFile(yamlPath)
+	require.NoError(t, err)
+	assert.Equal(t, DefaultAllow, rules.Default)
+	assert.NotEmpty(t, rules.Public)
+	// /healthz 应在 public 列表中
+	assert.True(t, rules.MatchPublic("GET", "/healthz"))
+	// 登录端点应公开
+	assert.True(t, rules.MatchPublic("POST", "/api/v1/identity/auth/login"))
+	// JWKS 应公开
+	assert.True(t, rules.MatchPublic("GET", "/.well-known/jwks.json"))
 }

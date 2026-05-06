@@ -190,6 +190,9 @@ func mapMiddlewareEnvVars(v *viper.Viper) {
 	// Casbin 配置映射
 	mapCasbinEnvVars(v)
 
+	// AuthZ 路由级 ACL 配置映射
+	mapAuthZEnvVars(v)
+
 	// 错误处理中间件配置映射
 	mapErrorHandlerEnvVars(v)
 }
@@ -398,6 +401,16 @@ func mapCasbinEnvVars(v *viper.Viper) {
 		},
 	)
 	mapToViper(v, "CASBIN_MENU_MAPPING_FILE", "middleware.casbin.menu_mapping_file", nil)
+}
+
+// mapAuthZEnvVars 映射路由级 ACL（authz_middleware）相关环境变量
+//
+// 环境变量：AUTHZ_ENABLED, AUTHZ_RULES_FILE
+func mapAuthZEnvVars(v *viper.Viper) {
+	mapToViper(v, "AUTHZ_ENABLED", "middleware.authz.enabled", func(value string) interface{} {
+		return value == "true"
+	})
+	mapToViper(v, "AUTHZ_RULES_FILE", "middleware.authz.rules_file", nil)
 }
 
 // mapLogEnvVars 映射日志相关环境变量

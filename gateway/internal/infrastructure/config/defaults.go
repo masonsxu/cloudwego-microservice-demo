@@ -143,6 +143,12 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("middleware.error_handler.enable_error_metrics", false)
 	v.SetDefault("middleware.error_handler.error_response_timeout", 5000)
 
+	// AuthZ 中间件（路由级 ACL）默认配置
+	// 路径相对工作目录，本地从 gateway/ 启动，容器 WORKDIR=/app；两端都拷贝
+	// gateway/config/ → ./config/，因此默认相对路径在两个场景下都成立。
+	v.SetDefault("middleware.authz.enabled", true)
+	v.SetDefault("middleware.authz.rules_file", "./config/authz_rules.yaml")
+
 	// Redis 默认值
 	v.SetDefault("redis.address", "localhost:6379")
 	v.SetDefault("redis.password", "")

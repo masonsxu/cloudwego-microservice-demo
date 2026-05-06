@@ -1,0 +1,49 @@
+# 网关路由级 ACL（authz_middleware）默认规则
+#
+# 提案 §5.4：仅支持「path 精确 + 角色 OR」粒度，禁止任何领域字段
+# （部门、数据范围、用户名白名单等）。需要更细粒度时走 PDP（policy_srv）。
+#
+# 字段说明：
+#   default       - 未匹配任一规则时的默认行为：allow（已认证即放行）/ deny（白名单）
+#   public        - 完全公开，无需身份；与 jwt_middleware.skip_paths 必须保持一致
+#   authenticated - 仅需任意已认证身份即放行（与 default=allow 等价，主要做白名单文档）
+#   roles         - path 前缀级角色门禁，require 之间为 OR 关系
+#
+# Endpoint 格式："METHOD /path"，METHOD 可用 *（任意方法）。
+
+default: allow
+
+public:
+  # 健康检查 / 监控
+  - "GET  /healthz"
+  - "GET  /health"
+  - "GET  /ping"
+  - "GET  /metrics"
+
+  # OIDC discovery / JWKS（公开密钥与 metadata）
+  - "GET  /.well-known/jwks.json"
+  - "GET  /.well-known/openid-configuration"
+  - "GET  /keys"
+
+  # 登录 / 刷新 / 登出端点（认证才能换 token，自身不能要求已认证）
+  - "POST /api/v1/identity/auth/login"
+  - "POST /api/v1/identity/auth/refresh"
+  - "POST /api/v1/identity/auth/logout"
+
+  # OIDC OAuth2 端点
+  - "POST /oauth/token"
+  - "POST /oauth/introspect"
+  - "POST /revoke"
+  - "GET  /authorize"
+  - "POST /authorize"
+  - "GET  /authorize/callback"
+  - "GET  /userinfo"
+  - "GET  /login"
+
+# 显式声明仅需认证（不写也可以，default=allow 兜底；仅做白名单文档）
+authenticated: []
+
+# 角色门禁占位：当前演进阶段保持空集，所有路径走 default=allow。
+# Phase 4/5 PDP 接入后会逐步把管理类前缀（如 /api/v1/admin/、/api/v1/identity/users/）
+# 从这里挪到 PDP 决策；本网关只负责「能不能进这个模块」级别的粗粒度。
+roles: []
