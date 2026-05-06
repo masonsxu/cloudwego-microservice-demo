@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	fileadapter "github.com/casbin/casbin/v2/persist/file-adapter"
+	fileadapter "github.com/casbin/casbin/v3/persist/file-adapter"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 
