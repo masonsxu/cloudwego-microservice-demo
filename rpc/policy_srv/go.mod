@@ -12,6 +12,7 @@ require (
 	github.com/kitex-contrib/registry-etcd v0.3.0
 	github.com/rs/zerolog v1.35.1
 	github.com/spf13/viper v1.21.0
+	github.com/stretchr/testify v1.11.1
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.31.1
@@ -25,6 +26,7 @@ require (
 	github.com/bytedance/sonic/loader v0.5.0 // indirect
 	github.com/casbin/casbin/v3 v3.8.1 // indirect
 	github.com/casbin/govaluate v1.10.0 // indirect
+	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.6 // indirect
 	github.com/cloudwego/configmanager v0.2.3 // indirect
 	github.com/cloudwego/dynamicgo v0.8.0 // indirect
@@ -80,7 +82,6 @@ require (
 	github.com/spf13/afero v1.15.0 // indirect
 	github.com/spf13/cast v1.10.0 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
-	github.com/stretchr/testify v1.11.1 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/tidwall/gjson v1.17.3 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
@@ -90,10 +91,19 @@ require (
 	go.etcd.io/etcd/client/pkg/v3 v3.6.2 // indirect
 	go.etcd.io/etcd/client/v3 v3.6.2 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
+	go.opentelemetry.io/contrib/instrumentation/runtime v0.62.0 // indirect
+	go.opentelemetry.io/contrib/propagators/b3 v1.20.0 // indirect
+	go.opentelemetry.io/contrib/propagators/ot v1.25.0 // indirect
 	go.opentelemetry.io/otel v1.37.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlpmetric v0.42.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v0.42.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.34.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.34.0 // indirect
 	go.opentelemetry.io/otel/metric v1.37.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.37.0 // indirect
+	go.opentelemetry.io/otel/sdk/metric v1.37.0 // indirect
 	go.opentelemetry.io/otel/trace v1.37.0 // indirect
+	go.opentelemetry.io/proto/otlp v1.5.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
