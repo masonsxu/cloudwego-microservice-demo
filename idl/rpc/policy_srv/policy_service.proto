@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package policy_srv;
+
+option go_package = "github.com/masonsxu/cloudwego-microservice-demo/rpc/policy-srv/kitex_gen/policy_srv";
+
+import "rpc/policy_srv/policy_model.proto";
+
+service PolicyService {
+  // 单点权限决策
+  rpc Check(CheckRequest) returns (CheckResponse);
+
+  // 批量权限决策（一个请求决多个 action/resource 对）
+  rpc BatchCheck(BatchCheckRequest) returns (BatchCheckResponse);
+
+  // 查询主体能做的所有操作（前端菜单/按钮渲染用）
+  rpc ListPermissions(ListPermissionsRequest) returns (ListPermissionsResponse);
+
+  // 策略管理（管理后台使用）
+  rpc UpsertPolicy(UpsertPolicyRequest) returns (UpsertPolicyResponse);
+  rpc DeletePolicy(DeletePolicyRequest) returns (DeletePolicyResponse);
+
+  // 策略重载（从 DB 重新加载全部策略到内存）
+  rpc ReloadPolicies(ReloadPoliciesRequest) returns (ReloadPoliciesResponse);
+}

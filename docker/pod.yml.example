@@ -648,3 +648,90 @@ spec:
     - name: http
       port: 8080
       targetPort: 8080
+
+---
+# -----------------------------------------------------------------------------
+# Deployment：policy-srv PDP 权限决策服务
+# -----------------------------------------------------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: policy-srv
+  labels:
+    app: policy-srv
+    app.kubernetes.io/part-of: cloudwego-scaffold
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: policy-srv
+  template:
+    metadata:
+      labels:
+        app: policy-srv
+    spec:
+      containers:
+        - name: policy-srv
+          image: policy-srv:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8892
+              protocol: TCP
+            - containerPort: 10001
+              protocol: TCP
+          env:
+            - name: DB_HOST
+              value: "postgres"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudwego-secrets
+                  key: POSTGRES_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudwego-secrets
+                  key: POSTGRES_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: cloudwego-secrets
+                  key: POSTGRES_DB
+            - name: DB_SSLMODE
+              value: "disable"
+            - name: ETCD_ADDRESS
+              value: "etcd:2379"
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 10001
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: 10001
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+---
+# -----------------------------------------------------------------------------
+# Service：policy-srv
+# -----------------------------------------------------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: policy-srv
+spec:
+  selector:
+    app: policy-srv
+  ports:
+    - name: rpc
+      port: 8892
+      targetPort: 8892
