@@ -44,6 +44,7 @@ func setupServer(t *testing.T, buf *bytes.Buffer, useRequestID bool) *server.Her
 
 func parseLog(t *testing.T, buf *bytes.Buffer) map[string]any {
 	t.Helper()
+
 	out := strings.TrimSpace(buf.String())
 	require.NotEmpty(t, out, "expected access log output")
 
@@ -55,6 +56,7 @@ func parseLog(t *testing.T, buf *bytes.Buffer) map[string]any {
 
 func TestAccessLog_LogsCoreFields(t *testing.T) {
 	var buf bytes.Buffer
+
 	h := setupServer(t, &buf, false)
 
 	w := ut.PerformRequest(
@@ -78,6 +80,7 @@ func TestAccessLog_LogsCoreFields(t *testing.T) {
 
 func TestAccessLog_OmitsUserIDWhenAbsent(t *testing.T) {
 	var buf bytes.Buffer
+
 	h := setupServer(t, &buf, false)
 
 	w := ut.PerformRequest(h.Engine, "GET", "/foo", nil)
@@ -90,6 +93,7 @@ func TestAccessLog_OmitsUserIDWhenAbsent(t *testing.T) {
 
 func TestAccessLog_PicksUpRequestID(t *testing.T) {
 	var buf bytes.Buffer
+
 	h := setupServer(t, &buf, true)
 
 	w := ut.PerformRequest(h.Engine, "GET", "/foo", nil)
@@ -103,6 +107,7 @@ func TestAccessLog_PicksUpRequestID(t *testing.T) {
 
 func TestAccessLog_RecordsErrorStatus(t *testing.T) {
 	var buf bytes.Buffer
+
 	h := setupServer(t, &buf, false)
 
 	w := ut.PerformRequest(h.Engine, "GET", "/server-error", nil)

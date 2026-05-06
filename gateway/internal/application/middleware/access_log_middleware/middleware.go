@@ -31,7 +31,9 @@ func NewAccessLogMiddleware(logger *zerolog.Logger) *AccessLogMiddlewareImpl {
 func (m *AccessLogMiddlewareImpl) MiddlewareFunc() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
 		start := time.Now()
+
 		c.Next(ctx)
+
 		duration := time.Since(start)
 
 		evt := tracelog.Event(ctx, m.logger.Info()).
@@ -45,7 +47,7 @@ func (m *AccessLogMiddlewareImpl) MiddlewareFunc() app.HandlerFunc {
 			evt = evt.Str("request_id", reqID)
 		}
 
-		if uid := string(c.Request.Header.Get(jwtmw.HeaderUserID)); uid != "" {
+		if uid := c.Request.Header.Get(jwtmw.HeaderUserID); uid != "" {
 			evt = evt.Str("user_id", uid)
 		}
 

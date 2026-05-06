@@ -96,8 +96,8 @@ func (m *AuthZMiddlewareImpl) MiddlewareFunc() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
 		method := string(c.Request.Method())
 		path := string(c.Request.URI().Path())
-		userID := string(c.Request.Header.Get(jwtmw.HeaderUserID))
-		userRoles := splitHeader(string(c.Request.Header.Get(jwtmw.HeaderUserRoles)))
+		userID := c.Request.Header.Get(jwtmw.HeaderUserID)
+		userRoles := splitHeader(c.Request.Header.Get(jwtmw.HeaderUserRoles))
 
 		decision := Decide(m.rules, method, path, userID, userRoles)
 

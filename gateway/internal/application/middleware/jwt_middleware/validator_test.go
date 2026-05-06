@@ -25,10 +25,10 @@ func TestInjectIdentityHeaders_AllFields(t *testing.T) {
 
 	injectIdentityHeaders(ctx, claims)
 
-	assert.Equal(t, "user-123", string(ctx.Request.Header.Get(HeaderUserID)))
-	assert.Equal(t, "alice", string(ctx.Request.Header.Get(HeaderUserName)))
-	assert.Equal(t, "org-456", string(ctx.Request.Header.Get(HeaderTenantID)))
-	assert.Equal(t, "admin,doctor", string(ctx.Request.Header.Get(HeaderUserRoles)))
+	assert.Equal(t, "user-123", ctx.Request.Header.Get(HeaderUserID))
+	assert.Equal(t, "alice", ctx.Request.Header.Get(HeaderUserName))
+	assert.Equal(t, "org-456", ctx.Request.Header.Get(HeaderTenantID))
+	assert.Equal(t, "admin,doctor", ctx.Request.Header.Get(HeaderUserRoles))
 }
 
 func TestInjectIdentityHeaders_NilClaims(t *testing.T) {
@@ -37,10 +37,10 @@ func TestInjectIdentityHeaders_NilClaims(t *testing.T) {
 
 	injectIdentityHeaders(ctx, nil)
 
-	assert.Empty(t, string(ctx.Request.Header.Get(HeaderUserID)))
-	assert.Empty(t, string(ctx.Request.Header.Get(HeaderUserName)))
-	assert.Empty(t, string(ctx.Request.Header.Get(HeaderTenantID)))
-	assert.Empty(t, string(ctx.Request.Header.Get(HeaderUserRoles)))
+	assert.Empty(t, ctx.Request.Header.Get(HeaderUserID))
+	assert.Empty(t, ctx.Request.Header.Get(HeaderUserName))
+	assert.Empty(t, ctx.Request.Header.Get(HeaderTenantID))
+	assert.Empty(t, ctx.Request.Header.Get(HeaderUserRoles))
 }
 
 func TestInjectIdentityHeaders_PartialFields(t *testing.T) {
@@ -54,10 +54,10 @@ func TestInjectIdentityHeaders_PartialFields(t *testing.T) {
 
 	injectIdentityHeaders(ctx, claims)
 
-	assert.Equal(t, "user-only", string(ctx.Request.Header.Get(HeaderUserID)))
-	assert.Empty(t, string(ctx.Request.Header.Get(HeaderUserName)))
-	assert.Empty(t, string(ctx.Request.Header.Get(HeaderTenantID)))
-	assert.Empty(t, string(ctx.Request.Header.Get(HeaderUserRoles)))
+	assert.Equal(t, "user-only", ctx.Request.Header.Get(HeaderUserID))
+	assert.Empty(t, ctx.Request.Header.Get(HeaderUserName))
+	assert.Empty(t, ctx.Request.Header.Get(HeaderTenantID))
+	assert.Empty(t, ctx.Request.Header.Get(HeaderUserRoles))
 }
 
 func TestInjectIdentityHeaders_EmptyStringNotInjected(t *testing.T) {
@@ -74,10 +74,10 @@ func TestInjectIdentityHeaders_EmptyStringNotInjected(t *testing.T) {
 
 	injectIdentityHeaders(ctx, claims)
 
-	assert.Empty(t, string(ctx.Request.Header.Get(HeaderUserID)))
-	assert.Empty(t, string(ctx.Request.Header.Get(HeaderUserName)))
-	assert.Empty(t, string(ctx.Request.Header.Get(HeaderTenantID)))
-	assert.Empty(t, string(ctx.Request.Header.Get(HeaderUserRoles)))
+	assert.Empty(t, ctx.Request.Header.Get(HeaderUserID))
+	assert.Empty(t, ctx.Request.Header.Get(HeaderUserName))
+	assert.Empty(t, ctx.Request.Header.Get(HeaderTenantID))
+	assert.Empty(t, ctx.Request.Header.Get(HeaderUserRoles))
 }
 
 func TestInjectIdentityHeaders_SingleRole(t *testing.T) {
@@ -90,5 +90,5 @@ func TestInjectIdentityHeaders_SingleRole(t *testing.T) {
 
 	injectIdentityHeaders(ctx, claims)
 
-	assert.Equal(t, "admin", string(ctx.Request.Header.Get(HeaderUserRoles)))
+	assert.Equal(t, "admin", ctx.Request.Header.Get(HeaderUserRoles))
 }

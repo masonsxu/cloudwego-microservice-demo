@@ -5,6 +5,7 @@ import (
 	"github.com/google/wire"
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
 
+	//nolint:revive // module path 已固定，import 行长度无法压缩到 120
 	accesslogmw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/access_log_middleware"
 	authzmw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/authz_middleware"
 	corsmdw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/cors_middleware"

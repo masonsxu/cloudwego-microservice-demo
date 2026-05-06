@@ -79,9 +79,9 @@ func TestParseRules_BadEndpointFormat(t *testing.T) {
 
 func TestParseRules_RoleRulesValidation(t *testing.T) {
 	cases := []struct {
-		name    string
-		yaml    string
-		errSub  string
+		name   string
+		yaml   string
+		errSub string
 	}{
 		{
 			name:   "missing prefix",
