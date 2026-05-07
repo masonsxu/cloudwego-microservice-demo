@@ -64,17 +64,6 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("middleware.oidc.id_token_lifespan", 30*time.Minute)
 	v.SetDefault("middleware.oidc.enforce_pkce", true)
 	v.SetDefault("middleware.oidc.consent_page_url", "")
-	v.SetDefault("middleware.casbin.enabled", true)
-	v.SetDefault("middleware.casbin.model_path", "./config/casbin_model.conf")
-	v.SetDefault("middleware.casbin.log_enabled", false)
-	v.SetDefault("middleware.casbin.sync_interval", 300)
-	v.SetDefault("middleware.casbin.skip_extra_paths", []string{
-		"/favicon.ico",
-		"/api/v1/permission/menu/upload",
-	})
-	v.SetDefault("middleware.casbin.superadmin_bypass_enabled", true)
-	v.SetDefault("middleware.casbin.superadmin_subjects", []string{"role:superadmin", "username:superadmin"})
-	v.SetDefault("middleware.casbin.menu_mapping_file", "menu.yaml")
 	v.SetDefault("middleware.jwt.signing_key", "")
 	v.SetDefault("middleware.jwt.priv_key_path", "./config/keys/private.pem")
 	v.SetDefault("middleware.jwt.pub_key_path", "./config/keys/public.pem")
@@ -142,6 +131,12 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("middleware.error_handler.max_stack_trace_size", 4096)
 	v.SetDefault("middleware.error_handler.enable_error_metrics", false)
 	v.SetDefault("middleware.error_handler.error_response_timeout", 5000)
+
+	// AuthZ 中间件（路由级 ACL）默认配置
+	// 路径相对工作目录，本地从 gateway/ 启动，容器 WORKDIR=/app；两端都拷贝
+	// gateway/config/ → ./config/，因此默认相对路径在两个场景下都成立。
+	v.SetDefault("middleware.authz.enabled", true)
+	v.SetDefault("middleware.authz.rules_file", "./config/authz_rules.yaml")
 
 	// Redis 默认值
 	v.SetDefault("redis.address", "localhost:6379")

@@ -7,7 +7,6 @@ option go_package = "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz
 import "base/api.proto";
 import "google/protobuf/struct.proto";
 import "http/base/base.proto";
-import "http/permission/permission_model.proto";
 
 message LoginRequestDTO {
   optional string username = 1 [(api.body) = "username", (api.vd) = "@:len($) > 0; msg:'用户名不能为空'", (api.go_tag) = "json:\"username\""];
@@ -32,11 +31,9 @@ message RoleInfoDTO {
 message LoginResponseDTO {
   optional http_base.BaseResponseDTO baseResp = 1 [(api.go_tag) = "json:\"base_resp\""];
   optional UserProfileDTO userProfile = 2 [(api.go_tag) = "json:\"user_profile\""];
-  repeated permission.MenuNodeDTO menuTree = 3 [(api.go_tag) = "json:\"menu_tree\""];
   optional http_base.TokenInfoDTO tokenInfo = 4 [(api.go_tag) = "json:\"token_info\""];
   repeated UserMembershipDTO memberships = 5 [(api.go_tag) = "json:\"memberships,omitempty\""];
   repeated string roleIDs = 6 [(api.go_tag) = "json:\"role_ids,omitempty\""];
-  repeated permission.MenuPermissionDTO permissions = 7 [(api.go_tag) = "json:\"permissions,omitempty\""];
   repeated RoleInfoDTO roles = 8 [(api.go_tag) = "json:\"roles,omitempty\""];
 }
 

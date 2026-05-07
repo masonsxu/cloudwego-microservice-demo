@@ -7,10 +7,8 @@ import (
 	"github.com/zitadel/oidc/v3/pkg/op"
 
 	identityassembler "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/identity"
-	permissionConv "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/permission"
 	identityservice "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/identity"
 	oidcservice "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/oidc"
-	permissionservice "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/permission"
 	identitycli "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/client/identity_cli"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/oidcstore"
@@ -27,15 +25,10 @@ var DomainServiceSet = wire.NewSet(
 	ProvideLogoService,
 	ProvideAuditLogService,
 
-	ProvideRoleDefinitionService,
-	ProvideUserRoleAssignmentService,
-	ProvideMenuService,
-
 	ProvideOIDCStorage,
 	ProvideOIDCService,
 
 	ProvideIdentityService,
-	ProvidePermissionService,
 )
 
 // ProvideAuthService 提供身份认证服务
@@ -101,32 +94,6 @@ func ProvideAuditLogService(
 	return identityservice.NewAuditLogService(identityClient, assembler, logger)
 }
 
-// ProvideRoleDefinitionService 提供角色定义服务
-func ProvideRoleDefinitionService(
-	identityClient identitycli.IdentityClient,
-	assembler permissionConv.Assembler,
-	logger *hertzZerolog.Logger,
-) permissionservice.RoleDefinitionService {
-	return permissionservice.NewRoleDefinitionService(identityClient, assembler, logger)
-}
-
-// ProvideUserRoleAssignmentService 提供用户角色分配服务
-func ProvideUserRoleAssignmentService(
-	identityClient identitycli.IdentityClient,
-	assembler permissionConv.Assembler,
-	logger *hertzZerolog.Logger,
-) permissionservice.UserRoleAssignmentService {
-	return permissionservice.NewUserRoleAssignmentService(identityClient, assembler, logger)
-}
-
-func ProvideMenuService(
-	identityClient identitycli.IdentityClient,
-	assembler permissionConv.Assembler,
-	logger *hertzZerolog.Logger,
-) permissionservice.MenuService {
-	return permissionservice.NewMenuService(identityClient, assembler, logger)
-}
-
 // ProvideIdentityService 提供统一身份管理服务
 func ProvideIdentityService(
 	authService identityservice.AuthService,
@@ -145,19 +112,6 @@ func ProvideIdentityService(
 		deptService,
 		logoService,
 		auditLogService,
-	)
-}
-
-// ProvidePermissionService 提供统一权限管理服务
-func ProvidePermissionService(
-	roleDefinitionService permissionservice.RoleDefinitionService,
-	userRoleAssignmentService permissionservice.UserRoleAssignmentService,
-	menuService permissionservice.MenuService,
-) permissionservice.Service {
-	return permissionservice.NewService(
-		roleDefinitionService,
-		userRoleAssignmentService,
-		menuService,
 	)
 }
 

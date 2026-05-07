@@ -2,8 +2,6 @@
 package wire
 
 import (
-	"context"
-
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/google/wire"
 	"github.com/hertz-contrib/etag"
@@ -12,10 +10,8 @@ import (
 	"github.com/hertz-contrib/requestid"
 
 	identityHandler "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/handler/identity"
-	permissionHandler "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/handler/permission"
 	identityService "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/identity"
 	oidcService "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/oidc"
-	permissionService "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/permission"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/otel"
 )
@@ -46,13 +42,12 @@ func ProvideServerFactory(cfg *config.Configuration, tracer *otel.Tracer, provid
 // HandlerRegistry Handler 注册器
 // 负责将依赖注入到 Handler 层并注册中间件
 type HandlerRegistry struct {
-	server            *server.Hertz
-	tracer            *otel.Tracer
-	middlewares       *MiddlewareContainer
-	identityService   identityService.Service
-	permissionService permissionService.Service
-	oidcService       oidcService.Service
-	logger            *hertzZerolog.Logger
+	server          *server.Hertz
+	tracer          *otel.Tracer
+	middlewares     *MiddlewareContainer
+	identityService identityService.Service
+	oidcService     oidcService.Service
+	logger          *hertzZerolog.Logger
 }
 
 // ProvideHandlerRegistry 提供 Handler 注册器
@@ -65,35 +60,32 @@ func ProvideHandlerRegistry(
 	logger *hertzZerolog.Logger,
 ) *HandlerRegistry {
 	return &HandlerRegistry{
-		server:            factory.Server(),
-		tracer:            tracer,
-		middlewares:       middlewares,
-		identityService:   services.IdentityService,
-		permissionService: services.PermissionService,
-		oidcService:       oidcSvc,
-		logger:            logger,
+		server:          factory.Server(),
+		tracer:          tracer,
+		middlewares:     middlewares,
+		identityService: services.IdentityService,
+		oidcService:     oidcSvc,
+		logger:          logger,
 	}
 }
 
 // RegisterMiddlewares 注册全局中间件
+//
+// 链路顺序（提案 §5.3）：
+//
+//	hertztracing → requestid → response → trace → cors → error
+//	  → jwt → authz → access_log → etag
 func (r *HandlerRegistry) RegisterMiddlewares() {
-	if r.middlewares.PolicySyncService != nil {
-		if err := r.middlewares.PolicySyncService.Start(context.Background()); err != nil {
-			zl := r.logger.Unwrap()
-			zl.Warn().Err(err).Msg("Failed to start policy sync service")
-		}
-	}
-
 	r.server.Use(
 		hertztracing.ServerMiddleware(r.tracer.Config), // 追踪：最先执行，生成/提取追踪信息
 		requestid.New(), // RequestID：生成和传递请求ID
 		r.middlewares.ResponseHeaderMiddleware.MiddlewareFunc(), // 响应头：添加标准 HTTP Date 头部
-		r.middlewares.TraceMiddleware.MiddlewareFunc(),          // 追踪：最先执行，生成/提取追踪信息
+		r.middlewares.TraceMiddleware.MiddlewareFunc(),          // 追踪：将追踪上下文绑定到日志
 		r.middlewares.CORSMiddleware.MiddlewareFunc(),           // 跨域：处理预检，避免被后续中间件拦截
 		r.middlewares.ErrorHandlerMiddleware.MiddlewareFunc(),   // 错误处理：后续所有错误均由其捕获
-		r.middlewares.JWTMiddleware.MiddlewareFunc(),            // 认证：解析用户身份，存入上下文
-		r.middlewares.CasbinMiddleware.MiddlewareFunc(),         // 权限：基于 Casbin RBAC 进行权限校验
-		r.middlewares.AuditMiddleware.MiddlewareFunc(),          // 审计：记录写操作和认证事件
+		r.middlewares.JWTMiddleware.MiddlewareFunc(),            // 认证：解析身份并注入 X-User-* header
+		r.middlewares.AuthZMiddleware.MiddlewareFunc(),          // 粗粒度授权：路由级 ACL（YAML 驱动）
+		r.middlewares.AccessLogMiddleware.MiddlewareFunc(),      // 访问日志：method/path/status/duration/user_id
 		etag.New(), // ETag：计算和验证 ETag
 	)
 
@@ -106,7 +98,6 @@ func (r *HandlerRegistry) RegisterHandlers() {
 	// 设置 Handler 层的服务依赖
 	identityHandler.SetIdentityService(r.identityService, r.middlewares.JWTMiddleware)
 	identityHandler.SetOIDCService(r.oidcService)
-	permissionHandler.SetPermissionService(r.permissionService)
 
 	// 注册 JWKS 端点（JWT RS256 公钥，无需认证）
 	r.server.GET("/.well-known/jwks.json", r.middlewares.JWTMiddleware.JWKSHandler())

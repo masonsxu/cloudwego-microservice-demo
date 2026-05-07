@@ -58,8 +58,6 @@ WORKDIR /app
 # 拷贝二进制 + 运行时所需配置
 COPY --from=builder /build/gateway/hertz_service .
 COPY --from=builder /build/gateway/config/ ./config/
-# CASBIN_MENU_MAPPING_FILE 默认相对路径 menu.yaml（位于项目根，直接从构建上下文拷贝）
-COPY menu.yaml ./menu.yaml
 
 RUN mkdir -p /app/logs && chown -R appuser:appuser /app
 

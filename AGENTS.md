@@ -248,38 +248,39 @@ internal/
 ├── domain/service/      # 领域服务（编排 RPC 调用，实现业务流程）
 ├── infrastructure/      # 基础设施
 │   ├── client/          # Kitex RPC 客户端
-│   ├── redis/           # Redis 缓存（JWT Token、Casbin 策略）
+│   ├── redis/           # Redis 缓存（JWT Token 黑名单）
 │   └── otel/            # OpenTelemetry 配置
 └── wire/                # 依赖注入
 ```
 
-**中间件执行顺序**：OpenTelemetry → RequestID → ResponseHeader → Trace → CORS → ErrorHandler → JWT → Casbin → ETag
+**中间件执行顺序**（Phase 3 重构后）：OpenTelemetry → RequestID → ResponseHeader → Trace → CORS → ErrorHandler → JWT → AuthZ → AccessLog → ETag
 
-### Casbin 权限排障与实现约定（新增）
+### 网关授权（authz_middleware）实现约定
 
-为避免再次出现“白名单外全部 403 / superadmin 被拒绝”，涉及 Casbin 的改动需遵循以下约定：
+Phase 3 已下线 Casbin 中间件与 audit_middleware；网关授权统一收敛到
+`authz_middleware`，规则由 `gateway/config/authz_rules.yaml` 驱动。约束：
 
-1. **同步必须是闭环**
-   - `SyncPolicies` 不能只返回计数，必须可回传并装载 `p/g/g2` 明细。
-   - gateway 同步必须执行：`ClearPolicy` + `AddPolicies` + `AddGroupingPolicies` + `AddNamedGroupingPolicies("g2")`。
+1. **不持有领域字段**
+   - YAML 仅支持 `public` / `authenticated` / `roles`（path 前缀 + 角色 OR）。
+   - 严禁出现部门、数据范围、用户名白名单等领域字段；超过此粒度的需求一律
+     走 PDP（policy_srv），不写在 YAML、不写在网关 handler。
 
-2. **生命周期必须接线**
-   - `PolicySyncService` 必须接入 wire 注入链。
-   - 服务启动时执行 `Start`，进程退出时执行 `Stop`。
+2. **身份契约统一在 header**
+   - jwt_middleware 验签通过后注入 `X-User-Id` / `X-User-Name` / `X-Tenant-Id`
+     / `X-User-Roles`，authz / access_log / 未来业务 SDK 都从 header 取，
+     禁止再次解析 JWT。
 
-3. **资源标识必须对齐**
-   - gateway 鉴权资源优先使用 `path -> menu:<id>` 映射，不直接依赖原始 path。
-   - 新增受保护 API 时，必须同步补充映射或确保已有通配映射覆盖。
+3. **public 列表必须与 jwt skip_paths 对齐**
+   - jwt 跳过的路径如未在 authz public 中声明，会被默认 default 行为接管，
+     已认证才放行——登录、刷新、健康检查等公开端点会被卡住。
 
-4. **动作与主体必须兼容历史策略**
-   - action 匹配需兼容 `p.act = "*"`。
-   - 主体检查需同时覆盖 `role:<uuid>` 与通过 g 关系解析出的 `role:<code>`。
+4. **default 策略**
+   - 默认 `default: allow`：未匹配规则的路径已认证即放行，迁移友好。
+   - 生产环境推荐 `default: deny`：YAML 必须显式覆盖所有合法路径，安全更紧。
 
-5. **排障顺序固定为四步**
-   - 先看同步是否加载 p/g/g2；
-   - 再看 resource 是否映射为 `menu:*`；
-   - 再看 action 是否命中 `*`；
-   - 最后看 subject 是否覆盖 uuid/code 双通道。
+5. **配置加载失败=进程退出**
+   - `ProvideAuthZRules` 在启动期读取 YAML 并 panic 失败，避免运行时静默
+     放行所有请求。
 
 ### IDL-First 开发流程
 
@@ -345,7 +346,7 @@ Logo 存储有两个端点：
 | `scripts/build-images.sh` | 构建 identity-srv / gateway 容器镜像，配合 podman kube play 使用 |
 | `idl/` | Thrift IDL 接口定义（修改此处触发代码生成） |
 | `rpc/identity_srv/pkg/errno/` | 错误码定义和转换工具 |
-| `gateway/config/casbin_model.conf` | Casbin RBAC 模型配置 |
+| `gateway/config/authz_rules.yaml` | 网关路由级 ACL 规则（authz_middleware） |
 
 ## 文档索引
 
@@ -359,7 +360,7 @@ Logo 存储有两个端点：
 | `docs/01-快速入门/配置参考.md` | 环境变量配置、数据库/Redis/JWT/S3 参数、多环境配置差异 |
 | `docs/03-部署运维/部署指南.md` | Docker 部署、生产环境配置、服务端口、部署检查清单 |
 | `docs/03-部署运维/故障排查.md` | 服务启动失败、代码生成报错、运行时异常、Docker 问题、性能排查 |
-| `docs/04-权限管理/权限管理设计.md` | Casbin RBAC 策略、角色权限设计、API 权限配置、策略同步机制 |
+| `docs/04-权限管理/重构提案-网关边界与权限模型.md` | 当前权益模型重构提案（已 Phase 1-3 落地，Casbin/audit 已下线，网关授权由 authz_middleware 承载） |
 | `docs/06-UI设计/配色规范.md` | UI 配色规范（精简版，给非工程同事）；完整设计 token 见仓库根 `DESIGN.md` |
 | `web/开发规范.md` | 前端开发规范：API 客户端、样式、页面加载状态（骨架屏）、i18n |
 | `docs/02-开发规范/测试指南.md` | 分层测试策略、覆盖率目标、测试编写规范、测试运行方式 |

@@ -5,7 +5,6 @@ import (
 	"github.com/google/wire"
 
 	identityassembler "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/identity"
-	permasm "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/assembler/permission"
 )
 
 // ApplicationSet 应用层依赖注入集合
@@ -20,13 +19,6 @@ var ApplicationSet = wire.NewSet(
 	identityassembler.NewLogoAssembler,
 	identityassembler.NewAuditLogAssembler,
 
-	// 权限相关 assembler
-	permasm.NewPermissionAssembler,
-	permasm.NewRoleAssembler,
-	permasm.NewUserRoleAssembler,
-	permasm.NewMenuAssembler,
-
 	// 聚合 assembler
 	identityassembler.NewIdentityAggregateAssembler,
-	permasm.NewPermissionAggregateAssembler,
 )

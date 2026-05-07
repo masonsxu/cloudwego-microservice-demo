@@ -73,7 +73,7 @@ type MiddlewareConfig struct {
 	RateLimit    RateLimitConfig    `mapstructure:"rate_limit"`
 	JWT          JWTConfig          `mapstructure:"jwt"`
 	OIDC         OIDCConfig         `mapstructure:"oidc"`
-	Casbin       CasbinConfig       `mapstructure:"casbin"`
+	AuthZ        AuthZConfig        `mapstructure:"authz"`
 	ErrorHandler ErrorHandlerConfig `mapstructure:"error_handler"`
 }
 
@@ -148,20 +148,15 @@ type CookieConfig struct {
 	CookieHTTPOnly bool          `mapstructure:"cookie_http_only"` // 防止 JavaScript 访问（防 XSS 攻击）
 }
 
-// CasbinConfig Casbin 授权配置
-// 相关环境变量：CASBIN_ENABLED, CASBIN_MODEL_PATH, CASBIN_LOG_ENABLED,
-// CASBIN_SYNC_INTERVAL, CASBIN_SKIP_EXTRA_PATHS, CASBIN_SKIP_PATHS（兼容旧变量），
-// CASBIN_SUPERADMIN_BYPASS_ENABLED, CASBIN_SUPERADMIN_SUBJECTS, CASBIN_MENU_MAPPING_FILE
-// 注意：CASBIN_SKIP_PATHS 为兼容项，推荐使用 CASBIN_SKIP_EXTRA_PATHS。
-type CasbinConfig struct {
-	Enabled                 bool     `mapstructure:"enabled"`
-	ModelPath               string   `mapstructure:"model_path"`
-	LogEnabled              bool     `mapstructure:"log_enabled"`
-	SyncInterval            int      `mapstructure:"sync_interval"`
-	SkipExtraPaths          []string `mapstructure:"skip_extra_paths"`
-	SuperAdminBypassEnabled bool     `mapstructure:"superadmin_bypass_enabled"`
-	SuperAdminSubjects      []string `mapstructure:"superadmin_subjects"`
-	MenuMappingFile         string   `mapstructure:"menu_mapping_file"`
+// AuthZConfig 路由级 ACL 配置（替代 Casbin，对应 authz_middleware）
+// 相关环境变量：AUTHZ_ENABLED, AUTHZ_RULES_FILE
+//
+// Enabled=false 时跳过路由级 ACL，所有已认证请求直接放行；用于本地调试或紧急
+// 关闭策略校验。RulesFile 是 YAML 文件路径，相对路径相对于进程工作目录解析
+// （容器中 WORKDIR=/app）。
+type AuthZConfig struct {
+	Enabled   bool   `mapstructure:"enabled"`
+	RulesFile string `mapstructure:"rules_file"`
 }
 
 // LogConfig 日志配置

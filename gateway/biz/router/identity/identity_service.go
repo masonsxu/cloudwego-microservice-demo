@@ -18,8 +18,6 @@ func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
 	root.GET("/authorize", append(_oidcauthorizeMw(), identity.OIDCAuthorize)...)
-	root.GET("/authorize/callback", append(_oidcauthorizeMw(), identity.OIDCAuthorizeCallback)...)
-	root.GET("/login", append(_oidcauthorizeMw(), identity.OIDCLogin)...)
 	root.GET("/keys", append(_getoidcjwksMw(), identity.GetOIDCJWKS)...)
 	root.POST("/revoke", append(_oidcrevoketokenMw(), identity.OIDCRevokeToken)...)
 	root.GET("/userinfo", append(_oidcuserinfoMw(), identity.OIDCUserinfo)...)

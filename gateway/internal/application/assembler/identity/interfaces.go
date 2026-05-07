@@ -3,7 +3,6 @@ package identity
 import (
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/http_base"
 	identityModel "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/identity"
-	permissionModel "github.com/masonsxu/cloudwego-microservice-demo/gateway/biz/model/permission"
 	core "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/core"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/identity_srv"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/kitex_gen/rpc_base"
@@ -38,8 +37,6 @@ type IAuthAssembler interface {
 	ToRPCForcePasswordChangeRequest(
 		*identityModel.ForcePasswordChangeRequestDTO,
 	) *identity_srv.ForcePasswordChangeRequest
-	ToHTTPMenuTree([]*identity_srv.MenuNode) []*permissionModel.MenuNodeDTO
-	ToHTTPMenuPermissions([]*identity_srv.MenuPermission) []*permissionModel.MenuPermissionDTO
 	ToHTTPRoleInfos([]*identity_srv.RoleDefinition) []*identityModel.RoleInfoDTO
 }
 

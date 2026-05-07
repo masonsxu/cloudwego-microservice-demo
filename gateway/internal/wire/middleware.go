@@ -2,22 +2,18 @@
 package wire
 
 import (
-	"os"
-	"strings"
-
 	"github.com/google/wire"
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
-	"github.com/rs/zerolog"
 
-	auditmdw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/audit_middleware"
-	casbnmw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/casbin_middleware"
+	//nolint:revive // module path 已固定，import 行长度无法压缩到 120
+	accesslogmw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/access_log_middleware"
+	authzmw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/authz_middleware"
 	corsmdw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/cors_middleware"
 	errormw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/error_middleware"
 	jwtmdw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/jwt_middleware"
 	respmw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/response_middleware"
 	tracemdw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/trace_middleware"
 	identityService "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/domain/service/identity"
-	identitycli "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/client/identity_cli"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/config"
 	"github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/infrastructure/redis"
 )
@@ -29,10 +25,9 @@ var MiddlewareSet = wire.NewSet(
 	ProvideErrorHandlerMiddleware,
 	ProvideJWTMiddleware,
 	ProvideResponseHeaderMiddleware,
-	ProvideCasbinConfig,
-	ProvideCasbinMiddleware,
-	ProvidePolicySyncService,
-	ProvideAuditMiddleware,
+	ProvideAuthZRules,
+	ProvideAuthZMiddleware,
+	ProvideAccessLogMiddleware,
 	NewMiddlewareContainer,
 )
 
@@ -44,9 +39,8 @@ type MiddlewareContainer struct {
 	ErrorHandlerMiddleware   errormw.ErrorHandlerMiddlewareService
 	JWTMiddleware            jwtmdw.JWTMiddlewareService
 	ResponseHeaderMiddleware respmw.ResponseHeaderMiddlewareService
-	CasbinMiddleware         *casbnmw.CasbinMiddleware
-	PolicySyncService        *casbnmw.PolicySyncService
-	AuditMiddleware          auditmdw.AuditMiddlewareService
+	AuthZMiddleware          authzmw.AuthZMiddlewareService
+	AccessLogMiddleware      accesslogmw.AccessLogMiddlewareService
 }
 
 // NewMiddlewareContainer 创建中间件容器
@@ -56,9 +50,8 @@ func NewMiddlewareContainer(
 	errorHandlerMiddleware errormw.ErrorHandlerMiddlewareService,
 	jwtMiddleware jwtmdw.JWTMiddlewareService,
 	responseHeaderMiddleware respmw.ResponseHeaderMiddlewareService,
-	casbinMiddleware *casbnmw.CasbinMiddleware,
-	policySyncService *casbnmw.PolicySyncService,
-	auditMiddleware auditmdw.AuditMiddlewareService,
+	authzMiddleware authzmw.AuthZMiddlewareService,
+	accessLogMiddleware accesslogmw.AccessLogMiddlewareService,
 ) *MiddlewareContainer {
 	return &MiddlewareContainer{
 		TraceMiddleware:          traceMiddleware,
@@ -66,9 +59,8 @@ func NewMiddlewareContainer(
 		ErrorHandlerMiddleware:   errorHandlerMiddleware,
 		JWTMiddleware:            jwtMiddleware,
 		ResponseHeaderMiddleware: responseHeaderMiddleware,
-		CasbinMiddleware:         casbinMiddleware,
-		PolicySyncService:        policySyncService,
-		AuditMiddleware:          auditMiddleware,
+		AuthZMiddleware:          authzMiddleware,
+		AccessLogMiddleware:      accessLogMiddleware,
 	}
 }
 
@@ -134,109 +126,60 @@ func ProvideResponseHeaderMiddleware() respmw.ResponseHeaderMiddlewareService {
 	return respmw.NewResponseHeaderMiddleware()
 }
 
-// ProvideCasbinConfig 提供 Casbin 配置
-// 从统一配置中组装 Casbin 中间件配置，同时合并 JWT 跳过路径
-func ProvideCasbinConfig(cfg *config.Configuration) *casbnmw.Config {
-	casbinCfg := &cfg.Middleware.Casbin
-	jwtSkipPaths := cfg.Middleware.JWT.SkipPaths
-
-	// Casbin 跳过集合 = JWT 跳过路径 + Casbin 额外跳过路径
-	mergedSkipPaths := make([]string, 0, len(jwtSkipPaths)+len(casbinCfg.SkipExtraPaths))
-	seen := make(map[string]struct{}, len(jwtSkipPaths)+len(casbinCfg.SkipExtraPaths))
-
-	for _, p := range jwtSkipPaths {
-		t := strings.TrimSpace(p)
-		if t == "" {
-			continue
-		}
-
-		if _, ok := seen[t]; !ok {
-			seen[t] = struct{}{}
-			mergedSkipPaths = append(mergedSkipPaths, t)
-		}
-	}
-
-	for _, p := range casbinCfg.SkipExtraPaths {
-		t := strings.TrimSpace(p)
-		if t == "" {
-			continue
-		}
-
-		if _, ok := seen[t]; !ok {
-			seen[t] = struct{}{}
-			mergedSkipPaths = append(mergedSkipPaths, t)
-		}
-	}
-
-	// 兼容旧 CASBIN_SKIP_PATHS 环境变量（deprecated）
-	legacySkipPaths := os.Getenv("CASBIN_SKIP_PATHS")
-	if legacySkipPaths != "" && len(casbinCfg.SkipExtraPaths) == 0 {
-		parts := strings.Split(legacySkipPaths, ",")
-		for _, p := range parts {
-			t := strings.TrimSpace(p)
-			if t == "" {
-				continue
-			}
-
-			if _, ok := seen[t]; !ok {
-				seen[t] = struct{}{}
-				mergedSkipPaths = append(mergedSkipPaths, t)
-			}
-		}
-	}
-
-	return &casbnmw.Config{
-		Enabled:                 casbinCfg.Enabled,
-		ModelPath:               casbinCfg.ModelPath,
-		LogEnabled:              casbinCfg.LogEnabled,
-		SyncInterval:            casbinCfg.SyncInterval,
-		SkipPaths:               mergedSkipPaths,
-		SuperAdminBypassEnabled: casbinCfg.SuperAdminBypassEnabled,
-		SuperAdminSubjects:      casbinCfg.SuperAdminSubjects,
-		MenuMappingFile:         casbinCfg.MenuMappingFile,
-	}
-}
-
-// ProvideCasbinMiddleware 提供 Casbin 权限中间件
-// 使用内存 Adapter，策略通过 RPC 从 Identity Service 同步
-func ProvideCasbinMiddleware(
-	casbinConfig *casbnmw.Config,
+// ProvideAuthZRules 加载路由级 ACL 规则
+//
+// 失败时（文件不存在 / YAML 语法错误）panic，让进程在启动期就暴露问题，
+// 避免运行时静默放行所有请求。
+func ProvideAuthZRules(
+	cfg *config.Configuration,
 	logger *hertzZerolog.Logger,
-) *casbnmw.CasbinMiddleware {
-	// 创建一个标准输出的 zerolog.Logger
-	zlogger := zerolog.New(zerolog.NewConsoleWriter()).With().Timestamp().Logger()
-
-	// 使用新的 ProvideCasbinMiddleware，不再需要数据库连接
-	middleware := casbnmw.ProvideCasbinMiddleware(casbinConfig, &zlogger)
-
+) *authzmw.Rules {
 	zl := logger.Unwrap()
-	zl.Info().Msg("Casbin middleware created successfully (memory adapter)")
 
-	return middleware
+	rulesFile := cfg.Middleware.AuthZ.RulesFile
+	if rulesFile == "" {
+		zl.Error().Msg("AUTHZ_RULES_FILE 未配置")
+		panic("authz rules_file is empty")
+	}
+
+	rules, err := authzmw.LoadRulesFromFile(rulesFile)
+	if err != nil {
+		zl.Error().Err(err).Str("rules_file", rulesFile).Msg("Failed to load authz rules")
+		panic(err)
+	}
+
+	zl.Info().
+		Str("rules_file", rulesFile).
+		Int("public", len(rules.Public)).
+		Int("authenticated", len(rules.Authenticated)).
+		Int("roles", len(rules.Roles)).
+		Str("default", string(rules.Default)).
+		Msg("AuthZ rules loaded")
+
+	return rules
 }
 
-// ProvidePolicySyncService 提供 Casbin 策略同步服务
-func ProvidePolicySyncService(
-	casbinConfig *casbnmw.Config,
-	casbinMiddleware *casbnmw.CasbinMiddleware,
-	identityClient identitycli.IdentityClient,
+// ProvideAuthZMiddleware 提供路由级 ACL 中间件
+func ProvideAuthZMiddleware(
+	rules *authzmw.Rules,
 	logger *hertzZerolog.Logger,
-) *casbnmw.PolicySyncService {
-	zlogger := logger.Unwrap()
-	return casbnmw.ProvidePolicySyncService(casbinConfig, casbinMiddleware, identityClient, &zlogger)
-}
-
-// ProvideAuditMiddleware 提供审计日志中间件
-// 自动记录写操作和认证事件的审计日志
-func ProvideAuditMiddleware(
-	identityClient identitycli.IdentityClient,
-	jwtConfig *config.JWTConfig,
-	logger *hertzZerolog.Logger,
-) auditmdw.AuditMiddlewareService {
+) authzmw.AuthZMiddlewareService {
 	zl := logger.Unwrap()
-	middleware := auditmdw.NewAuditMiddleware(identityClient, &zl, jwtConfig.Cookie.CookieName)
+	mw := authzmw.NewAuthZMiddleware(rules, &zl)
 
-	zl.Info().Msg("Audit middleware created successfully")
+	zl.Info().Msg("AuthZ middleware created successfully")
 
-	return middleware
+	return mw
+}
+
+// ProvideAccessLogMiddleware 提供访问日志中间件
+func ProvideAccessLogMiddleware(
+	logger *hertzZerolog.Logger,
+) accesslogmw.AccessLogMiddlewareService {
+	zl := logger.Unwrap()
+	mw := accesslogmw.NewAccessLogMiddleware(&zl)
+
+	zl.Info().Msg("Access log middleware created successfully")
+
+	return mw
 }

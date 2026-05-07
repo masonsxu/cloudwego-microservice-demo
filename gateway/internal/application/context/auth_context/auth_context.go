@@ -7,6 +7,10 @@ import (
 )
 
 // AuthContext 统一的认证上下文管理器（目标态：仅稳定身份字段）
+//
+// 字段对照提案 §5.1 token claims 最小集：sub / username / tenant / roles。
+// 任何业务字段（部门、数据范围、权限码等）一律不再持有，决策应通过 PDP
+// （policy_srv）在业务系统侧完成。
 type AuthContext struct {
 	claims *http_base.JWTClaimsDTO
 }
@@ -112,58 +116,4 @@ func GetCurrentTenant(c *app.RequestContext) (string, bool) {
 	}
 
 	return "", false
-}
-
-// ---- 向后兼容存根（Phase 3 删除 casbin_middleware 时一并移除） ----
-
-// GetRoleIDs 获取角色ID列表（目标态等价于 GetRoles，存根保持编译兼容）
-func (ac *AuthContext) GetRoleIDs() []string {
-	return ac.GetRoles()
-}
-
-// GetCurrentRoleIDs 直接从请求上下文获取当前角色ID列表
-func GetCurrentRoleIDs(c *app.RequestContext) []string {
-	if authCtx, exists := GetAuthContext(c); exists {
-		return authCtx.GetRoleIDs()
-	}
-
-	return nil
-}
-
-// GetDepartmentIDs 获取部门ID列表（目标态已废弃，Phase 3 删除）
-func (ac *AuthContext) GetDepartmentIDs() []string {
-	return nil
-}
-
-// GetCurrentDepartmentIDs 直接从请求上下文获取当前部门ID列表（Phase 3 删除）
-func GetCurrentDepartmentIDs(c *app.RequestContext) []string {
-	return nil
-}
-
-// GetDataScope 获取数据范围（Phase 3 删除）
-func (ac *AuthContext) GetDataScope() string {
-	return ""
-}
-
-// GetCurrentDataScope 直接从请求上下文获取当前数据范围（Phase 3 删除）
-func GetCurrentDataScope(c *app.RequestContext) string {
-	return ""
-}
-
-// SetDataScope 设置数据范围到请求上下文（Phase 3 删除）
-func SetDataScope(c *app.RequestContext, dataScope string) {}
-
-// GetCurrentRoleID 获取角色ID（Phase 3 删除）
-func GetCurrentRoleID(c *app.RequestContext) (string, bool) {
-	roleIDs := GetCurrentRoleIDs(c)
-	if len(roleIDs) > 0 {
-		return roleIDs[0], true
-	}
-
-	return "", false
-}
-
-// GetCurrentPermission 获取权限（Phase 3 删除，过渡期返回空字符串 + true 避免 ListUsers abort）
-func GetCurrentPermission(c *app.RequestContext) (string, bool) {
-	return "", true
 }
