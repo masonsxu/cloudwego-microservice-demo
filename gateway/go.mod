@@ -4,7 +4,6 @@ go 1.25.0
 
 require (
 	github.com/bytedance/gopkg v0.1.3
-	github.com/casbin/casbin/v2 v2.135.0
 	github.com/cloudwego/hertz v0.10.4
 	github.com/cloudwego/kitex v0.16.1
 	github.com/go-jose/go-jose/v4 v4.1.3
@@ -20,7 +19,7 @@ require (
 	github.com/kitex-contrib/registry-etcd v0.3.0
 	github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv v0.0.0-00010101000000-000000000000
 	github.com/redis/go-redis/v9 v9.18.0
-	github.com/rs/zerolog v1.34.0
+	github.com/rs/zerolog v1.35.1
 	github.com/spf13/viper v1.21.0
 	github.com/swaggo/http-swagger v1.3.4
 	github.com/swaggo/swag v1.16.6
@@ -33,11 +32,15 @@ require (
 )
 
 require (
+	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
+	github.com/masonsxu/cloudwego-microservice-demo/rpc/policy-srv v0.0.0-00010101000000-000000000000 // indirect
+)
+
+require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.10.0 // indirect
 	github.com/bytedance/sonic v1.15.0 // indirect
 	github.com/bytedance/sonic/loader v0.5.0 // indirect
-	github.com/casbin/govaluate v1.10.0 // indirect
 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.6 // indirect
@@ -84,6 +87,7 @@ require (
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
+	github.com/masonsxu/cloudwego-microservice-demo/iamclient v0.0.0-00010101000000-000000000000
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
@@ -99,7 +103,7 @@ require (
 	github.com/spf13/afero v1.15.0 // indirect
 	github.com/spf13/cast v1.10.0 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
-	github.com/stretchr/testify v1.11.1 // indirect
+	github.com/stretchr/testify v1.11.1
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/swaggo/files v1.0.1 // indirect
 	github.com/tidwall/gjson v1.18.0 // indirect
@@ -145,3 +149,7 @@ replace (
 	github.com/hertz-contrib/obs-opentelemetry/tracing => github.com/masonsxu/obs-opentelemetry/tracing v0.3.1-fix-datarace
 	github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv => ../rpc/identity_srv
 )
+
+replace github.com/masonsxu/cloudwego-microservice-demo/iamclient => ../iamclient
+
+replace github.com/masonsxu/cloudwego-microservice-demo/rpc/policy-srv => ../rpc/policy_srv

@@ -5,11 +5,12 @@ import (
 	"github.com/google/wire"
 	hertzZerolog "github.com/hertz-contrib/logger/zerolog"
 
-	//nolint:revive // module path 已固定，import 行长度无法压缩到 120
+	//nolint:revive,lll // module path 已固定，import 行长度无法压缩到 120
 	accesslogmw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/access_log_middleware"
 	authzmw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/authz_middleware"
 	corsmdw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/cors_middleware"
 	errormw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/error_middleware"
+	identitymw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/identity_propagation_middleware" //nolint:revive,lll // module path 已固定，import 行长度无法压缩到 120
 	jwtmdw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/jwt_middleware"
 	respmw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/response_middleware"
 	tracemdw "github.com/masonsxu/cloudwego-microservice-demo/gateway/internal/application/middleware/trace_middleware"
@@ -27,6 +28,7 @@ var MiddlewareSet = wire.NewSet(
 	ProvideResponseHeaderMiddleware,
 	ProvideAuthZRules,
 	ProvideAuthZMiddleware,
+	ProvideIdentityPropagationMiddleware,
 	ProvideAccessLogMiddleware,
 	NewMiddlewareContainer,
 )
@@ -34,13 +36,14 @@ var MiddlewareSet = wire.NewSet(
 // MiddlewareContainer 中间件容器
 // 统一管理所有中间件实例
 type MiddlewareContainer struct {
-	TraceMiddleware          tracemdw.TraceMiddlewareService
-	CORSMiddleware           corsmdw.CORSMiddlewareService
-	ErrorHandlerMiddleware   errormw.ErrorHandlerMiddlewareService
-	JWTMiddleware            jwtmdw.JWTMiddlewareService
-	ResponseHeaderMiddleware respmw.ResponseHeaderMiddlewareService
-	AuthZMiddleware          authzmw.AuthZMiddlewareService
-	AccessLogMiddleware      accesslogmw.AccessLogMiddlewareService
+	TraceMiddleware               tracemdw.TraceMiddlewareService
+	CORSMiddleware                corsmdw.CORSMiddlewareService
+	ErrorHandlerMiddleware        errormw.ErrorHandlerMiddlewareService
+	JWTMiddleware                 jwtmdw.JWTMiddlewareService
+	ResponseHeaderMiddleware      respmw.ResponseHeaderMiddlewareService
+	AuthZMiddleware               authzmw.AuthZMiddlewareService
+	IdentityPropagationMiddleware identitymw.IdentityPropagationService
+	AccessLogMiddleware           accesslogmw.AccessLogMiddlewareService
 }
 
 // NewMiddlewareContainer 创建中间件容器
@@ -51,16 +54,18 @@ func NewMiddlewareContainer(
 	jwtMiddleware jwtmdw.JWTMiddlewareService,
 	responseHeaderMiddleware respmw.ResponseHeaderMiddlewareService,
 	authzMiddleware authzmw.AuthZMiddlewareService,
+	identityPropagationMiddleware identitymw.IdentityPropagationService,
 	accessLogMiddleware accesslogmw.AccessLogMiddlewareService,
 ) *MiddlewareContainer {
 	return &MiddlewareContainer{
-		TraceMiddleware:          traceMiddleware,
-		CORSMiddleware:           corsMiddleware,
-		ErrorHandlerMiddleware:   errorHandlerMiddleware,
-		JWTMiddleware:            jwtMiddleware,
-		ResponseHeaderMiddleware: responseHeaderMiddleware,
-		AuthZMiddleware:          authzMiddleware,
-		AccessLogMiddleware:      accessLogMiddleware,
+		TraceMiddleware:               traceMiddleware,
+		CORSMiddleware:                corsMiddleware,
+		ErrorHandlerMiddleware:        errorHandlerMiddleware,
+		JWTMiddleware:                 jwtMiddleware,
+		ResponseHeaderMiddleware:      responseHeaderMiddleware,
+		AuthZMiddleware:               authzMiddleware,
+		IdentityPropagationMiddleware: identityPropagationMiddleware,
+		AccessLogMiddleware:           accessLogMiddleware,
 	}
 }
 
@@ -180,6 +185,21 @@ func ProvideAccessLogMiddleware(
 	mw := accesslogmw.NewAccessLogMiddleware(&zl)
 
 	zl.Info().Msg("Access log middleware created successfully")
+
+	return mw
+}
+
+// ProvideIdentityPropagationMiddleware 提供身份传播中间件
+//
+// 把 jwt_middleware 注入的 X-User-* HTTP header 镜像到 Kitex metainfo 持久值，
+// 让下游 RPC 服务（identity_srv 等）能用 iamclient.Client.SubjectFromContext 还原 Subject。
+func ProvideIdentityPropagationMiddleware(
+	logger *hertzZerolog.Logger,
+) identitymw.IdentityPropagationService {
+	zl := logger.Unwrap()
+	mw := identitymw.NewIdentityPropagation()
+
+	zl.Info().Msg("Identity propagation middleware created successfully")
 
 	return mw
 }
