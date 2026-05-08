@@ -2,6 +2,10 @@ package errno
 
 // 业务错误定义
 var (
+	// 系统级通用错误
+	ErrUnauthenticated  = NewErrNo(ErrorCodeUnauthenticated, "未认证")
+	ErrPermissionDenied = NewErrNo(ErrorCodePermissionDenied, "权限不足")
+
 	// 通用业务错误
 	ErrInvalidParams   = NewErrNo(ErrorCodeInvalidParams, "参数错误")
 	ErrOperationFailed = NewErrNo(ErrorCodeOperationFailed, "操作失败")

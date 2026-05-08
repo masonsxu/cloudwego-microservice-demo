@@ -72,10 +72,6 @@ service IdentityService {
   rpc HasMenuPermission(HasMenuPermissionRequest) returns (HasMenuPermissionResponse);
   rpc GetUserMenuPermissions(GetUserMenuPermissionsRequest) returns (GetUserMenuPermissionsResponse);
 
-  rpc CheckPermission(CheckPermissionRequest) returns (CheckPermissionResponse);
-  rpc SyncPolicies(SyncPoliciesRequest) returns (SyncPoliciesResponse);
-  rpc GetUserDataScope(GetUserDataScopeRequest) returns (GetUserDataScopeResponse);
-
   rpc CreateAuditLog(CreateAuditLogRequest) returns (CreateAuditLogResponse);
   rpc ListAuditLogs(ListAuditLogsRequest) returns (ListAuditLogsResponse);
 }
@@ -623,52 +619,6 @@ message GetUserMenuPermissionsResponse {
   repeated MenuPermission permissions = 1;
   optional string userID = 2;
   repeated string roleIDs = 3;
-}
-
-message CheckPermissionRequest {
-  optional string userID = 1;
-  repeated string roleIDs = 2;
-  repeated string departmentIDs = 3;
-  optional string resource = 4;
-  optional string action = 5;
-}
-
-message CheckPermissionResponse {
-  optional bool allowed = 1;
-  optional string dataScope = 2;
-  optional string userID = 3;
-  optional string resource = 4;
-  optional string action = 5;
-}
-
-message SyncPoliciesRequest {}
-
-message CasbinPolicyRule {
-  repeated string values = 1;
-}
-
-message SyncPoliciesResponse {
-  optional bool success = 1;
-  optional int32 rolePolicyCount = 2;
-  optional int32 userRoleBindingCount = 3;
-  optional int32 roleInheritanceCount = 4;
-  optional string message = 5;
-  repeated CasbinPolicyRule policies = 6;
-  repeated CasbinPolicyRule groupingPolicies = 7;
-  repeated CasbinPolicyRule roleInheritancePolicies = 8;
-}
-
-message GetUserDataScopeRequest {
-  optional string userID = 1;
-  optional string resource = 2;
-  optional string action = 3;
-}
-
-message GetUserDataScopeResponse {
-  optional string dataScope = 1;
-  optional string userID = 2;
-  optional string resource = 3;
-  optional string action = 4;
 }
 
 message CreateAuditLogRequest {

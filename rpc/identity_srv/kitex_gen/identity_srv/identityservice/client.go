@@ -65,9 +65,6 @@ type Client interface {
 	GetRoleMenuPermissions(ctx context.Context, Req *identity_srv.GetRoleMenuPermissionsRequest, callOptions ...callopt.Option) (r *identity_srv.GetRoleMenuPermissionsResponse, err error)
 	HasMenuPermission(ctx context.Context, Req *identity_srv.HasMenuPermissionRequest, callOptions ...callopt.Option) (r *identity_srv.HasMenuPermissionResponse, err error)
 	GetUserMenuPermissions(ctx context.Context, Req *identity_srv.GetUserMenuPermissionsRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserMenuPermissionsResponse, err error)
-	CheckPermission(ctx context.Context, Req *identity_srv.CheckPermissionRequest, callOptions ...callopt.Option) (r *identity_srv.CheckPermissionResponse, err error)
-	SyncPolicies(ctx context.Context, Req *identity_srv.SyncPoliciesRequest, callOptions ...callopt.Option) (r *identity_srv.SyncPoliciesResponse, err error)
-	GetUserDataScope(ctx context.Context, Req *identity_srv.GetUserDataScopeRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserDataScopeResponse, err error)
 	CreateAuditLog(ctx context.Context, Req *identity_srv.CreateAuditLogRequest, callOptions ...callopt.Option) (r *identity_srv.CreateAuditLogResponse, err error)
 	ListAuditLogs(ctx context.Context, Req *identity_srv.ListAuditLogsRequest, callOptions ...callopt.Option) (r *identity_srv.ListAuditLogsResponse, err error)
 }
@@ -369,21 +366,6 @@ func (p *kIdentityServiceClient) HasMenuPermission(ctx context.Context, Req *ide
 func (p *kIdentityServiceClient) GetUserMenuPermissions(ctx context.Context, Req *identity_srv.GetUserMenuPermissionsRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserMenuPermissionsResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.GetUserMenuPermissions(ctx, Req)
-}
-
-func (p *kIdentityServiceClient) CheckPermission(ctx context.Context, Req *identity_srv.CheckPermissionRequest, callOptions ...callopt.Option) (r *identity_srv.CheckPermissionResponse, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.CheckPermission(ctx, Req)
-}
-
-func (p *kIdentityServiceClient) SyncPolicies(ctx context.Context, Req *identity_srv.SyncPoliciesRequest, callOptions ...callopt.Option) (r *identity_srv.SyncPoliciesResponse, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.SyncPolicies(ctx, Req)
-}
-
-func (p *kIdentityServiceClient) GetUserDataScope(ctx context.Context, Req *identity_srv.GetUserDataScopeRequest, callOptions ...callopt.Option) (r *identity_srv.GetUserDataScopeResponse, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetUserDataScope(ctx, Req)
 }
 
 func (p *kIdentityServiceClient) CreateAuditLog(ctx context.Context, Req *identity_srv.CreateAuditLogRequest, callOptions ...callopt.Option) (r *identity_srv.CreateAuditLogResponse, err error) {

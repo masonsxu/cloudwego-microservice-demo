@@ -6,7 +6,6 @@ import (
 	roleAssignLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/assignment"
 	auditLogLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/auditlog"
 	authenticationLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/authentication"
-	casbinLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/casbin"
 	roleDefLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/definition"
 	departmentLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/department"
 	logoLogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/logo"
@@ -63,13 +62,6 @@ type Impl struct {
 	menuLogic.MenuLogic
 
 	// ============================================================================
-	// Casbin 权限管理 - 基于 Casbin RBAC 引擎
-	// ============================================================================
-
-	// Casbin 权限服务
-	casbinLogic.Service
-
-	// ============================================================================
 	// 审计日志 - 记录系统操作
 	// ============================================================================
 
@@ -79,7 +71,7 @@ type Impl struct {
 
 // NewLogicImpl 创建业务逻辑层实例
 // 基于新的DAL架构和模块化设计，初始化所有业务逻辑模块
-func NewLogicImpl(dal dal.DAL, cfg *config.Config, casbinService casbinLogic.Service) Logic {
+func NewLogicImpl(dal dal.DAL, cfg *config.Config) Logic {
 	// 创建转换器实例
 	conv := converter.NewConverter()
 
@@ -164,13 +156,6 @@ func NewLogicImpl(dal dal.DAL, cfg *config.Config, casbinService casbinLogic.Ser
 		MenuLogic: menuLogicImpl,
 
 		// ============================================================================
-		// Casbin 权限管理初始化 - 使用 Casbin RBAC 引擎
-		// ============================================================================
-
-		// Casbin 权限服务
-		Service: casbinService,
-
-		// ============================================================================
 		// 审计日志初始化
 		// ============================================================================
 
@@ -179,6 +164,6 @@ func NewLogicImpl(dal dal.DAL, cfg *config.Config, casbinService casbinLogic.Ser
 }
 
 // NewLogic 创建业务逻辑层实例（工厂函数）
-func NewLogic(dal dal.DAL, cfg *config.Config, casbinService casbinLogic.Service) Logic {
-	return NewLogicImpl(dal, cfg, casbinService)
+func NewLogic(dal dal.DAL, cfg *config.Config) Logic {
+	return NewLogicImpl(dal, cfg)
 }

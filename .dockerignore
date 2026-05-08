@@ -91,23 +91,13 @@ integration_test.go
 # =============================================================================
 # RPC 服务特定忽略规则
 # =============================================================================
-# 注意：保留 rpc/*/kitex_gen/ 因为 api_gateway 依赖它们
-# 但忽略 RPC 服务的其他源代码和配置
+# Phase 4b 之后：identity_srv 与 gateway 都使用项目根作为构建上下文，
+# 故不再排除 rpc/identity_srv、rpc/policy_srv、iamclient 的源码。
+# 各模块本地的 .dockerignore 仍可独立约束子目录构建。
 
-# identity_srv - 忽略除 kitex_gen 外的所有文件
-rpc/identity_srv/*.go
-rpc/identity_srv/*.sh
-rpc/identity_srv/*.md
-rpc/identity_srv/*.yaml
-rpc/identity_srv/biz/
-rpc/identity_srv/config/
-rpc/identity_srv/docker/
-rpc/identity_srv/internal/
-rpc/identity_srv/models/
+# RPC 服务运行时产物（不进入构建上下文）
 rpc/identity_srv/output/
-rpc/identity_srv/pkg/
-rpc/identity_srv/script/
-rpc/identity_srv/wire/
+rpc/policy_srv/output/
 
 # =============================================================================
 # API Gateway - 保留所有必要文件

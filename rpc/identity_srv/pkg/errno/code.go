@@ -23,6 +23,10 @@ package errno
 // CCC: 具体错误编码 (3位)
 // 错误码定义
 const (
+	// 系统级通用错误 (100xxx)
+	ErrorCodeUnauthenticated  = 100001 // 未认证（请求缺少身份信息）
+	ErrorCodePermissionDenied = 100002 // 权限不足（PDP 决策为拒绝）
+
 	// 通用业务错误 (200xxx)
 	ErrorCodeInvalidParams   = 200100 // 参数错误
 	ErrorCodeOperationFailed = 200101 // 操作失败（通用）

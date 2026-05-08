@@ -18,7 +18,7 @@ build_identity() {
     podman build \
         -f "${ROOT_DIR}/rpc/identity_srv/docker/Dockerfile" \
         -t identity-srv:latest \
-        "${ROOT_DIR}/rpc/identity_srv"
+        "${ROOT_DIR}"
 }
 
 build_gateway() {
