@@ -1,11 +1,12 @@
 # =============================================================================
 # gateway HTTP 网关镜像
 # =============================================================================
-# 构建命令（必须在项目根目录执行，因为 gateway 通过 replace 引用 ../rpc/identity_srv）：
+# 构建命令（必须在项目根目录执行，因为 gateway 通过 replace 引用同 monorepo
+# 内的 rpc/identity_srv、rpc/policy_srv 与 iamclient 模块）：
 #   podman build -f gateway/docker/Dockerfile -t gateway:latest .
 #
 # 说明：
-#   - 构建上下文必须是项目根，才能同时拷贝 gateway/ 和 rpc/identity_srv/
+#   - 构建上下文必须是项目根，才能同时拷贝 gateway/、iamclient/、rpc/identity_srv/、rpc/policy_srv/
 #   - GOWORK=off 禁用 workspace，由 go.mod 中的 replace 指令解析模块路径
 #   - swag init 在容器内执行，宿主机不需要预先生成 docs/
 # =============================================================================
@@ -25,14 +26,18 @@ WORKDIR /build
 
 # 利用层缓存：先拷 go.mod/go.sum 下载依赖（保留相对路径，让 replace 能解析）
 COPY rpc/identity_srv/go.mod rpc/identity_srv/go.sum ./rpc/identity_srv/
+COPY rpc/policy_srv/go.mod rpc/policy_srv/go.sum ./rpc/policy_srv/
+COPY iamclient/go.mod iamclient/go.sum ./iamclient/
 COPY gateway/go.mod gateway/go.sum ./gateway/
 RUN cd gateway && go mod download
 
 # 安装 swag（构建期工具，不进入运行镜像）
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 
-# 复制全部源码（含 replace 指向的 rpc/identity_srv）
+# 复制全部源码（含 replace 指向的 rpc/identity_srv、rpc/policy_srv、iamclient）
 COPY rpc/identity_srv/ ./rpc/identity_srv/
+COPY rpc/policy_srv/ ./rpc/policy_srv/
+COPY iamclient/ ./iamclient/
 COPY gateway/ ./gateway/
 
 WORKDIR /build/gateway

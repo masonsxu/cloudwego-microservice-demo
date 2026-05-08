@@ -71,21 +71,22 @@ func ProvideHandlerRegistry(
 
 // RegisterMiddlewares 注册全局中间件
 //
-// 链路顺序（提案 §5.3）：
+// 链路顺序（提案 §5.3 + Phase 4）：
 //
 //	hertztracing → requestid → response → trace → cors → error
-//	  → jwt → authz → access_log → etag
+//	  → jwt → authz → identity_propagation → access_log → etag
 func (r *HandlerRegistry) RegisterMiddlewares() {
 	r.server.Use(
 		hertztracing.ServerMiddleware(r.tracer.Config), // 追踪：最先执行，生成/提取追踪信息
 		requestid.New(), // RequestID：生成和传递请求ID
-		r.middlewares.ResponseHeaderMiddleware.MiddlewareFunc(), // 响应头：添加标准 HTTP Date 头部
-		r.middlewares.TraceMiddleware.MiddlewareFunc(),          // 追踪：将追踪上下文绑定到日志
-		r.middlewares.CORSMiddleware.MiddlewareFunc(),           // 跨域：处理预检，避免被后续中间件拦截
-		r.middlewares.ErrorHandlerMiddleware.MiddlewareFunc(),   // 错误处理：后续所有错误均由其捕获
-		r.middlewares.JWTMiddleware.MiddlewareFunc(),            // 认证：解析身份并注入 X-User-* header
-		r.middlewares.AuthZMiddleware.MiddlewareFunc(),          // 粗粒度授权：路由级 ACL（YAML 驱动）
-		r.middlewares.AccessLogMiddleware.MiddlewareFunc(),      // 访问日志：method/path/status/duration/user_id
+		r.middlewares.ResponseHeaderMiddleware.MiddlewareFunc(),      // 响应头：添加标准 HTTP Date 头部
+		r.middlewares.TraceMiddleware.MiddlewareFunc(),               // 追踪：将追踪上下文绑定到日志
+		r.middlewares.CORSMiddleware.MiddlewareFunc(),                // 跨域：处理预检，避免被后续中间件拦截
+		r.middlewares.ErrorHandlerMiddleware.MiddlewareFunc(),        // 错误处理：后续所有错误均由其捕获
+		r.middlewares.JWTMiddleware.MiddlewareFunc(),                 // 认证：解析身份并注入 X-User-* header
+		r.middlewares.AuthZMiddleware.MiddlewareFunc(),               // 粗粒度授权：路由级 ACL（YAML 驱动）
+		r.middlewares.IdentityPropagationMiddleware.MiddlewareFunc(), // 身份透传：HTTP header → Kitex metainfo
+		r.middlewares.AccessLogMiddleware.MiddlewareFunc(),           // 访问日志：method/path/status/duration/user_id
 		etag.New(), // ETag：计算和验证 ETag
 	)
 
