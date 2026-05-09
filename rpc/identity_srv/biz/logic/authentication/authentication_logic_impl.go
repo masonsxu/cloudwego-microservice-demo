@@ -137,24 +137,55 @@ func (l *LogicImpl) Login(
 	}
 
 	resp.MenuTree = menuResp.MenuTree
+	// 默认先填 UUID 兜底，下方拿到 RoleDefinition 后会重写为 role code（提案 §5.1）
 	resp.RoleIDs = menuResp.RoleIDs
 	resp.Permissions = permissions.Permissions
 
-	// 获取角色详情
-	if len(menuResp.RoleIDs) > 0 {
-		roleModels, err := l.dal.RoleDefinition().BatchGetByIDs(ctx, menuResp.RoleIDs)
-		if err != nil {
-			tracelog.Ctx(ctx).Warn().
-				Err(err).
-				Str("user_id", userID).
-				Msg("获取角色详情失败")
-			// 非致命错误，不影响登录流程
-		} else {
-			resp.RoleDetails = l.converter.RoleDefinition().ModelsToThrift(roleModels)
+	// 获取角色详情，并把 LoginResponse.roleIDs 替换为 role code 列表
+	// 提案 §5.1：JWT roles claim 必须是 role code（可读、跨服务稳定），不是 UUID
+	l.populateRoleDetailsAndCodes(ctx, resp, menuResp.RoleIDs, userID)
+
+	return resp, nil
+}
+
+// populateRoleDetailsAndCodes 拉取 RoleDefinition 详情，填充 resp.RoleDetails，
+// 并把 resp.RoleIDs 从 UUID 列表覆盖为 role code 列表。
+//
+// 失败路径（DAL 报错或 code 全空）保持 resp.RoleIDs 为 UUID 兜底——PDP 可能因
+// 匹配不到 role code 而拒绝，但不影响登录响应本身返回。
+func (l *LogicImpl) populateRoleDetailsAndCodes(
+	ctx context.Context,
+	resp *identity_srv.LoginResponse,
+	roleIDs []string,
+	userID string,
+) {
+	if len(roleIDs) == 0 {
+		return
+	}
+
+	roleModels, err := l.dal.RoleDefinition().BatchGetByIDs(ctx, roleIDs)
+	if err != nil {
+		tracelog.Ctx(ctx).Warn().
+			Err(err).
+			Str("user_id", userID).
+			Msg("获取角色详情失败")
+
+		return
+	}
+
+	resp.RoleDetails = l.converter.RoleDefinition().ModelsToThrift(roleModels)
+
+	roleCodes := make([]string, 0, len(roleModels))
+
+	for _, m := range roleModels {
+		if m != nil && m.RoleCode != "" {
+			roleCodes = append(roleCodes, m.RoleCode)
 		}
 	}
 
-	return resp, nil
+	if len(roleCodes) > 0 {
+		resp.RoleIDs = roleCodes
+	}
 }
 
 // ChangePassword 修改用户密码

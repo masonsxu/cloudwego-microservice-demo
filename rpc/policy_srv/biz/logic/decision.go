@@ -40,6 +40,7 @@ func (s *DecisionService) Check(ctx context.Context, req *pb.CheckRequest) (*pb.
 
 		if ok {
 			allowed = true
+
 			if compareDataScope(scope, maxScope) > 0 {
 				maxScope = scope
 			}
@@ -52,6 +53,7 @@ func (s *DecisionService) Check(ctx context.Context, req *pb.CheckRequest) (*pb.
 		if err != nil {
 			return nil, fmt.Errorf("enforce user binding failed: %w", err)
 		}
+
 		if ok {
 			allowed = true
 			maxScope = scope
@@ -133,6 +135,7 @@ func (s *DecisionService) ListPermissions(
 		if seen[key] {
 			continue
 		}
+
 		seen[key] = true
 
 		items = append(items, &pb.PermissionItem{

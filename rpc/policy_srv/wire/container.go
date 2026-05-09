@@ -52,6 +52,7 @@ func NewAppContainer(
 func (c *AppContainer) StartHealthCheck() {
 	go func() {
 		c.Logger.Info().Str("addr", c.healthSrv.Addr).Msg("健康检查服务启动")
+
 		if err := c.healthSrv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			c.Logger.Error().Err(err).Msg("健康检查服务错误")
 		}
@@ -70,13 +71,16 @@ func createHealthServer(cfg *config.Config, logger *zerolog.Logger, sqlDB *sql.D
 		if err := sqlDB.Ping(); err != nil {
 			w.WriteHeader(http.StatusServiceUnavailable)
 			_, _ = w.Write([]byte("DB ping failed"))
+
 			return
 		}
+
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("OK"))
 	})
 
 	addr := fmt.Sprintf("%s:%d", cfg.HealthCheck.Host, cfg.HealthCheck.Port)
+
 	return &http.Server{
 		Addr:         addr,
 		Handler:      mux,

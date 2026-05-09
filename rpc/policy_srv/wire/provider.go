@@ -36,8 +36,10 @@ func ProvideSQLDB(db *gorm.DB) (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	if err := sqlDB.Ping(); err != nil {
 		return nil, err
 	}
+
 	return sqlDB, nil
 }
