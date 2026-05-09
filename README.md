@@ -17,10 +17,10 @@
 
 - **API 网关**: Hertz 作为统一流量入口
 - **RPC 微服务**: Kitex 构建高性能 RPC 服务
-- **权限管理**: Casbin RBAC 权限引擎
+- **权限管理**: 三层模型——网关 ACL（粗粒度）+ 独立 PDP 服务 `policy_srv`（细粒度，Casbin RBAC + ABAC）+ iamclient SDK
 - **整洁架构**: 业务逻辑、数据处理与框架分离
 - **依赖注入**: Google Wire 编译时依赖注入
-- **用户认证**: JWT Token 认证
+- **用户认证**: JWT (RS256) + JWKS 动态密钥分发
 - **可观测性**: OpenTelemetry 链路追踪
 
 ## 架构设计
@@ -46,13 +46,14 @@ graph TD
             direction LR
             MW_CORS(CORS):::sub
             MW_Trace(Trace):::sub
-            MW_Log(AccessLog):::sub
+            MW_Resp(ResponseHeader):::sub
+            MW_Error(ErrorHandler):::sub
             MW_JWT(JWT Auth):::sub
-            MW_Casbin(Casbin RBAC):::sub
-            MW_Error(Error Handle):::sub
-            MW_Resp(Response):::sub
+            MW_AuthZ(AuthZ ACL):::sub
+            MW_IDProp(Identity Propagate):::sub
+            MW_Log(AccessLog):::sub
             
-            MW_CORS --> MW_Trace --> MW_Log --> MW_JWT --> MW_Casbin --> MW_Error --> MW_Resp
+            MW_CORS --> MW_Trace --> MW_Resp --> MW_Error --> MW_JWT --> MW_AuthZ --> MW_IDProp --> MW_Log
         end
         
         subgraph GW_Components [分层架构]
@@ -67,11 +68,12 @@ graph TD
     end
 
     %% RPC 服务层
-    subgraph RPC_Layer [RPC 服务层 - Kitex :8891]
+    subgraph RPC_Layer [RPC 服务层 - Kitex]
         direction TB
-        IdentitySRV[("🛡️ Identity Service")]:::highlight
+        IdentitySRV[("🛡️ Identity Service<br/>:8891")]:::highlight
+        PolicySRV[("⚖️ Policy Service<br/>(PDP) :8892")]:::highlight
         
-        subgraph Modules [业务模块]
+        subgraph Modules [Identity 业务模块]
             direction LR
             Mod_User(User):::sub
             Mod_Org(Org):::sub
@@ -109,22 +111,27 @@ graph TD
     
     IdentitySRV --> Modules
     Modules --> RPC_Components
+    IdentitySRV ==>|iamclient SDK<br/>PDP 决策| PolicySRV
     
     RPC_Components --> DB
     RPC_Components --> Redis
     RPC_Components --> S3
+    PolicySRV --> DB
     
     Gateway -.->|服务发现| Etcd
     IdentitySRV -.->|服务注册| Etcd
+    PolicySRV -.->|服务注册| Etcd
     
     Gateway -.->|Trace| Jaeger
     IdentitySRV -.->|Trace| Jaeger
+    PolicySRV -.->|Trace| Jaeger
 ```
 
 **关键设计决策**：
-- **星型拓扑**: 所有 RPC 调用由网关发起，服务间不直接调用
-- **IDL-First**: Thrift 作为接口定义语言
+- **星型拓扑**: 所有客户端流量由网关统一进入；服务间不直接调用，PDP 通过 SDK 调用
+- **IDL-First**: Thrift / Proto 作为接口定义语言
 - **编译时依赖注入**: Google Wire 完成依赖注入
+- **权限三层模型**: 认证 (JWT 签名) / 粗粒度授权 (网关 YAML ACL) / 细粒度授权 (业务系统调 PDP)，详见 [`docs/04-权限管理/权限管理设计.md`](docs/04-权限管理/权限管理设计.md)
 
 ## 技术栈
 
@@ -136,7 +143,7 @@ graph TD
 | 数据库 | PostgreSQL + [GORM](https://gorm.io/) |
 | 服务发现 | etcd |
 | 缓存 | Redis |
-| 权限引擎 | [Casbin](https://casbin.org/) |
+| 权限引擎 | [Casbin](https://casbin.org/)（在 PDP 服务 `policy_srv` 内部使用） |
 | 依赖注入 | [Google Wire](https://github.com/google/wire) |
 | 可观测性 | [OpenTelemetry](https://opentelemetry.io/) |
 
@@ -249,7 +256,9 @@ go tool cover -html=coverage.out
 
 | 模块 | 覆盖率 | 状态 |
 |------|--------|------|
-| middleware/casbin_middleware | 9.2% | ⚠️ |
+| middleware/jwt_middleware | 87.0%+ | ✅ |
+| middleware/identity_propagation_middleware | 100% | ✅ |
+| middleware/authz_middleware | 90%+ | ✅ |
 | infrastructure/redis | 6.7% | ⚠️ |
 | 其他包 | 0.0% | ❌ |
 

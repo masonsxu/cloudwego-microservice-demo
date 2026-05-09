@@ -20,6 +20,11 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	if err := container.Enforcer.SeedDefaultsIfEmpty(ctx); err != nil {
+		klog.Fatalf("写入默认策略失败: %v", err)
+	}
+
 	container.Enforcer.StartAutoReload(ctx)
 	defer container.Enforcer.Stop()
 
@@ -27,6 +32,7 @@ func main() {
 	svr := policyservice.NewServer(serviceImpl, container.ServerOptions.Options...)
 
 	klog.Infof("Policy service 启动于 %s", container.ServerOptions.Addr.String())
+
 	if err := svr.Run(); err != nil {
 		klog.Fatalf("服务异常退出: %v", err)
 	}

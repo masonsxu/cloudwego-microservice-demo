@@ -33,6 +33,7 @@ func loadDotEnvFile(v *viper.Viper) {
 		if _, err := os.Stat(envPath); err == nil {
 			v.SetConfigFile(envPath)
 			_ = v.ReadInConfig()
+
 			return
 		}
 	}

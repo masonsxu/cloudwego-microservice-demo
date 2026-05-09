@@ -48,6 +48,7 @@ func (s *PolicyServiceImpl) UpsertPolicy(
 	if err != nil {
 		return &pb.UpsertPolicyResponse{Success: false}, err
 	}
+
 	return &pb.UpsertPolicyResponse{Success: ok}, nil
 }
 
@@ -60,6 +61,7 @@ func (s *PolicyServiceImpl) DeletePolicy(
 	if err != nil {
 		return &pb.DeletePolicyResponse{Success: false}, err
 	}
+
 	return &pb.DeletePolicyResponse{Success: ok}, nil
 }
 
@@ -73,6 +75,7 @@ func (s *PolicyServiceImpl) ReloadPolicies(
 	}
 
 	p, g, g2 := s.enforcer.GetPolicyCount()
+
 	return &pb.ReloadPoliciesResponse{
 		Success:              true,
 		PolicyCount:          int32(p),

@@ -165,7 +165,27 @@ if err := subject.MustCheck(ctx, "read", "patient:"+id,
 约定：**资源属性永远由业务侧从自己的领域 DB 读取后传入**，不在 token / Subject
 中携带，也不让网关来填——网关无知于业务领域。
 
-## 4. 缓存语义
+## 4. `Decision.DataScopeHint` 语义
+
+PDP 决策返回的 `Decision.DataScopeHint`（即 `CheckResponse.data_scope_hint`）
+表示命中策略允许的最大数据范围。可选枚举：
+
+| 值 | 含义 | 业务侧典型处理 |
+|---|---|---|
+| `self` | 仅自己创建/拥有的数据 | `WHERE owner_id = :user_id` |
+| `dept` | 本部门 + 下级部门数据 | `WHERE department_id IN :user_dept_ids` |
+| `org` | 本组织（tenant）内全部数据 | `WHERE tenant_id = :user_tenant` |
+| `all` | 跨 tenant 任意数据（仅 superadmin 通配策略产生） | 不附加范围过滤 |
+| `""`（空串） | 拒绝（`Allowed=false`），无意义 | 不应读到 |
+
+注意点：
+- 多策略命中时，PDP 返回 `self < dept < org < all` 中**最大档**；
+- 业务侧消费时建议显式 `switch` 全部档级，落到 `default` 分支应当 fail-closed
+  地兜底为 `self`（最小权限）而不是放行；
+- `all` 仅在策略表写入了 superadmin 通配规则（`p, role:superadmin, *, *, *, all`）
+  且主体命中时才会出现，普通业务策略不应签发 `all`。
+
+## 5. 缓存语义
 
 - **默认开启**：LRU + TTL，单 key 30s 内复用同一条决策。
 - **Key**：`(jti | user_id+roles, tenant, action, resource, sorted resource_attrs)`。
@@ -175,7 +195,7 @@ if err := subject.MustCheck(ctx, "read", "patient:"+id,
 - **不主动失效**：当前版本不订阅策略变更通知，TTL 内可能命中策略变更前的旧决策。
   可接受范围：30 秒。后续如引入 etcd watch，可在 SDK 内部 invalidate。
 
-## 5. 错误处理建议
+## 6. 错误处理建议
 
 ```go
 err := subject.MustCheck(ctx, action, resource)
@@ -198,7 +218,7 @@ default:
 **铁律**：PDP 不可达时，业务侧绝不允许"宽松降级"放行。失败即拒绝（fail-closed），
 让 SRE 看到错误而非让权限漏洞静默生效。
 
-## 6. 测试 Subject 不调真实 PDP
+## 7. 测试 Subject 不调真实 PDP
 
 `Subject.client` 是私有字段，不能手工构造。测试中用 `iamclient.NewForTest` 风格
 （暂未提供）目前的做法是：
@@ -209,7 +229,7 @@ default:
 > 后续若有需要，会补 `iamclient.NewWithPolicyClient(cli policyservice.Client)`
 > 测试构造器，让业务可以注入 fake policy client。
 
-## 7. 反模式（提案 §3）
+## 8. 反模式（提案 §3）
 
 | ❌ 反例 | ✅ 正例 |
 |---|---|
@@ -219,7 +239,7 @@ default:
 | handler 里 `if username == "superadmin"` 白名单 | 在 PDP 策略里写 `p, role:superadmin, *, *, *, all` |
 | 每次都先 `ListPermissions` 自己判断 | 每个具体动作 `Check(action, resource)` |
 
-## 8. 相关文档
+## 9. 相关文档
 
 - 总设计：`docs/04-权限管理/重构提案-网关边界与权限模型.md`
 - PDP 服务：`rpc/policy_srv/`

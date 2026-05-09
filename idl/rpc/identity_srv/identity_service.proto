@@ -93,6 +93,8 @@ message LoginResponse {
   optional UserProfile userProfile = 1;
   repeated UserMembership memberships = 2;
   repeated MenuNode menuTree = 3;
+  // TODO(roleCodes-rename): 字段名为历史命名，实际内容为 role code 列表（提案 §5.1）。
+  // 字段保留以避免破坏现有 kitex_gen / 网关代码兼容性，2027 年视情况批量改名。
   repeated string roleIDs = 4;
   repeated MenuPermission permissions = 5;
   repeated RoleDefinition roleDetails = 6;
