@@ -164,8 +164,10 @@ func (s *EnforcerService) GetPolicyCount() (int, int, int) {
 // 即可在首次启动时打通 PDP 决策链路（提案 §14 Phase 4b 后的前置遗漏 #2）。
 //
 // 行为说明：
-//   - 仅在所有策略表（p / g / g2）都为空时写入，避免污染已有数据；
+//   - 仅在所有策略表（p / g / g2）都为空时尝试写入，避免污染已有数据；
 //   - 通过 SyncedEnforcer.AddPolicy 写入，会自动持久化到 GORM adapter；
+//   - 多副本启动竞争时，AddPolicy 可能因 GORM adapter 唯一索引冲突返回 error。
+//     此时 LoadPolicy 重新从 DB 拉取，若发现规则已被其它副本写入，则视为幂等成功；
 //   - 单测路径（newEnforcerWithAdapter + 文件 adapter）不会调用本方法，
 //     测试逻辑保持原样。
 func (s *EnforcerService) SeedDefaultsIfEmpty(_ context.Context) error {
@@ -187,6 +189,18 @@ func (s *EnforcerService) SeedDefaultsIfEmpty(_ context.Context) error {
 
 	added, err := s.enforcer.AddPolicy(rule...)
 	if err != nil {
+		// 多副本启动竞争：另一个副本可能刚刚写入了同一条规则，触发 GORM adapter
+		// 唯一索引冲突。重新加载 DB 后若发现规则已存在，则幂等返回成功。
+		if reloadErr := s.enforcer.LoadPolicy(); reloadErr == nil {
+			if has, hasErr := s.enforcer.HasPolicy(rule...); hasErr == nil && has {
+				s.logger.Info().
+					Err(err).
+					Msg("写入种子策略时发生冲突，但规则已存在（推测由其它副本写入），视为成功")
+
+				return nil
+			}
+		}
+
 		return fmt.Errorf("写入 superadmin 默认策略失败: %w", err)
 	}
 
@@ -297,12 +311,14 @@ func (s *EnforcerService) enforcerEx(sub, dom, obj, act string) (bool, string, e
 		return false, "", nil
 	}
 
-	// 主体集合：sub 自身 + 通过 g 关系映射到的角色
-	// 容量预估为 sub 自身 + 单 dom 与全 dom 各取 4 个角色，避免线性扩容（prealloc）
-	roles := make([]string, 0, 1+8)
+	// 主体集合：sub 自身 + 通过 g 关系映射到的角色（dom 域 + 全域 *）
+	domRoles := s.enforcer.GetRolesForUserInDomain(sub, dom)
+	wildcardRoles := s.enforcer.GetRolesForUserInDomain(sub, "*")
+
+	roles := make([]string, 0, 1+len(domRoles)+len(wildcardRoles))
 	roles = append(roles, sub)
-	roles = append(roles, s.enforcer.GetRolesForUserInDomain(sub, dom)...)
-	roles = append(roles, s.enforcer.GetRolesForUserInDomain(sub, "*")...)
+	roles = append(roles, domRoles...)
+	roles = append(roles, wildcardRoles...)
 
 	if len(roles) == 0 {
 		return false, "", nil

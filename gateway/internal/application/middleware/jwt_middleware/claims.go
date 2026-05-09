@@ -138,7 +138,8 @@ func buildUserDataMap(loginResp *identity.LoginResponseDTO) map[string]interface
 		}
 	}
 
-	// loginResp.RoleIDs 字段名为历史命名，内容为 role code 列表（提案 §5.1，Phase 5 已修正）
+	// TODO(roleCodes-rename): loginResp.RoleIDs 字段名为历史命名，内容为 role code 列表
+	// （提案 §5.1，Phase 5 已修正语义）。2027 年 IDL 改名时一并替换。
 	if len(loginResp.RoleIDs) > 0 {
 		userData[Roles] = loginResp.RoleIDs
 	}

@@ -137,40 +137,43 @@ func (l *LogicImpl) Login(
 	}
 
 	resp.MenuTree = menuResp.MenuTree
-	// 默认先填 UUID 兜底，下方拿到 RoleDefinition 后会重写为 role code（提案 §5.1）
-	resp.RoleIDs = menuResp.RoleIDs
 	resp.Permissions = permissions.Permissions
 
-	// 获取角色详情，并把 LoginResponse.roleIDs 替换为 role code 列表
-	// 提案 §5.1：JWT roles claim 必须是 role code（可读、跨服务稳定），不是 UUID
-	l.populateRoleDetailsAndCodes(ctx, resp, menuResp.RoleIDs, userID)
+	// 获取角色详情，并把 LoginResponse.roleIDs 设置为 role code 列表
+	// 提案 §5.1：JWT roles claim 必须是 role code（可读、跨服务稳定），不是 UUID。
+	// 失败 fail-fast：登录链路必须保证 token 中的 roles 与 PDP 策略可对齐，
+	// 否则用户会拿到"能登录但所有授权动作 403"的悬空 token。
+	if err := l.populateRoleDetailsAndCodes(ctx, resp, menuResp.RoleIDs, userID); err != nil {
+		return nil, err
+	}
 
 	return resp, nil
 }
 
 // populateRoleDetailsAndCodes 拉取 RoleDefinition 详情，填充 resp.RoleDetails，
-// 并把 resp.RoleIDs 从 UUID 列表覆盖为 role code 列表。
+// 并把 resp.RoleIDs 设置为 role code 列表。
 //
-// 失败路径（DAL 报错或 code 全空）保持 resp.RoleIDs 为 UUID 兜底——PDP 可能因
-// 匹配不到 role code 而拒绝，但不影响登录响应本身返回。
+// 任一失败（DAL 报错 / 拿不到任何 role code）即返回错误，让登录链路 fail-fast：
+// JWT 中 roles claim 必须是 role code 才能与 PDP 策略匹配，否则会出现登录成功
+// 但所有授权动作被拒的悬空 token，比直接拒绝登录更难排查。
 func (l *LogicImpl) populateRoleDetailsAndCodes(
 	ctx context.Context,
 	resp *identity_srv.LoginResponse,
 	roleIDs []string,
 	userID string,
-) {
+) error {
 	if len(roleIDs) == 0 {
-		return
+		return nil
 	}
 
 	roleModels, err := l.dal.RoleDefinition().BatchGetByIDs(ctx, roleIDs)
 	if err != nil {
-		tracelog.Ctx(ctx).Warn().
+		tracelog.Ctx(ctx).Error().
 			Err(err).
 			Str("user_id", userID).
-			Msg("获取角色详情失败")
+			Msg("获取角色详情失败，登录中止")
 
-		return
+		return errno.ErrOperationFailed.WithMessage("获取角色详情失败: " + err.Error())
 	}
 
 	resp.RoleDetails = l.converter.RoleDefinition().ModelsToThrift(roleModels)
@@ -183,9 +186,18 @@ func (l *LogicImpl) populateRoleDetailsAndCodes(
 		}
 	}
 
-	if len(roleCodes) > 0 {
-		resp.RoleIDs = roleCodes
+	if len(roleCodes) == 0 {
+		tracelog.Ctx(ctx).Error().
+			Str("user_id", userID).
+			Strs("role_ids", roleIDs).
+			Msg("角色详情中未找到任何有效 role code，登录中止")
+
+		return errno.ErrNoActiveRoles.WithMessage("用户角色缺少有效 role code，无法签发 token")
 	}
+
+	resp.RoleIDs = roleCodes
+
+	return nil
 }
 
 // ChangePassword 修改用户密码
