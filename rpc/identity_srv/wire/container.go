@@ -6,6 +6,7 @@ import (
 	"github.com/rs/zerolog"
 	"gorm.io/gorm"
 
+	"github.com/masonsxu/cloudwego-microservice-demo/iamclient"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/config"
 )
@@ -17,6 +18,7 @@ type AppContainer struct {
 	Logger            *zerolog.Logger
 	DB                *gorm.DB
 	Logic             logic.Logic
+	IAMClient         *iamclient.Client
 	ServerOptions     *ServerOptions
 	HealthCheckServer *HealthCheckServer
 }
@@ -27,6 +29,7 @@ func NewAppContainer(
 	logger *zerolog.Logger,
 	db *gorm.DB,
 	logicImpl logic.Logic,
+	iamCli *iamclient.Client,
 	serverOpts *ServerOptions,
 	healthServer *HealthCheckServer,
 ) *AppContainer {
@@ -37,6 +40,7 @@ func NewAppContainer(
 		Logger:            logger,
 		DB:                db,
 		Logic:             logicImpl,
+		IAMClient:         iamCli,
 		ServerOptions:     serverOpts,
 		HealthCheckServer: healthServer,
 	}

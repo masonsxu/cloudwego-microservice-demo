@@ -173,21 +173,3 @@ func (r *RoleDefinition) GenerateRoleCode() string {
 
 	return "role:" + normalized
 }
-
-// GetCasbinSubject 获取用于 Casbin 策略的主体标识
-func (r *RoleDefinition) GetCasbinSubject() string {
-	if r.RoleCode != "" {
-		return r.RoleCode
-	}
-
-	return "role:" + r.ID.String()
-}
-
-// GetCasbinDomain 获取用于 Casbin 策略的域标识
-func (r *RoleDefinition) GetCasbinDomain() string {
-	if r.DepartmentID != nil {
-		return "dept:" + r.DepartmentID.String()
-	}
-
-	return "*" // 全院通用
-}

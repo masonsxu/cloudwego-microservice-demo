@@ -39,10 +39,9 @@ var LogicSet = wire.NewSet(
 	logic.NewLogicImpl,
 )
 
-// CasbinSet Casbin 权限管理 Provider 集合
-var CasbinSet = wire.NewSet(
-	ProvideCasbinRepository,
-	ProvideCasbinService,
+// IAMClientSet IAM 客户端 Provider 集合（PDP 决策入口）
+var IAMClientSet = wire.NewSet(
+	ProvideIAMClient,
 )
 
 // ApplicationSet 完整应用 Provider 集合
@@ -51,8 +50,8 @@ var ApplicationSet = wire.NewSet(
 	InfrastructureSet,
 	ConverterSet,
 	DALSet,
-	CasbinSet,
 	LogicSet,
+	IAMClientSet,
 )
 
 // AllSet 所有依赖注入集合

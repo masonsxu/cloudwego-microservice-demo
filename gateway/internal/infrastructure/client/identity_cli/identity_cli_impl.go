@@ -214,8 +214,6 @@ func buildRetryPolicies() map[string]retry.Policy {
 		"GetRoleMenuPermissions": backupPolicy(200),
 		"HasMenuPermission":      backupPolicy(100),
 		"GetUserMenuPermissions": backupPolicy(200),
-		"CheckPermission":        backupPolicy(100),
-		"GetUserDataScope":       backupPolicy(200),
 
 		// 注意：以下方法为非幂等操作，不配置重试
 		// CreateUser, DeleteUser, ChangeUserStatus, UnlockUser
@@ -226,6 +224,6 @@ func buildRetryPolicies() map[string]retry.Policy {
 		// UploadTemporaryLogo, DeleteOrganizationLogo, BindLogoToOrganization
 		// CreateRoleDefinition, DeleteRoleDefinition
 		// AssignRoleToUser, RevokeRoleFromUser, BatchBindUsersToRole
-		// UploadMenu, ConfigureRoleMenus, SyncPolicies
+		// UploadMenu, ConfigureRoleMenus
 	}
 }

@@ -4,8 +4,7 @@ import (
 	"github.com/rs/zerolog"
 	"gorm.io/gorm"
 
-	casbindal "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/dal/casbin"
-	casbinlogic "github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/biz/logic/casbin"
+	"github.com/masonsxu/cloudwego-microservice-demo/iamclient"
 	"github.com/masonsxu/cloudwego-microservice-demo/rpc/identity-srv/config"
 )
 
@@ -79,18 +78,20 @@ func ProvideLoggerWithOptions(cfg *config.Config) (*zerolog.Logger, error) {
 	return ProvideLogger(cfg)
 }
 
-// =============================================================================
-// Casbin Provider Functions - Casbin 权限管理依赖提供者
-// =============================================================================
+// ProvideIAMClient 提供 IAM 客户端（PDP 决策入口）
+//
+// identity_srv 自身作为业务系统接入 iamclient，吃自家狗粮：
+// 管理动作 RPC 入口通过 SubjectFromContext + MustCheck 调 policy_srv 决策。
+//
+// 失败时返回错误，让进程在启动期暴露问题（etcd 不可达、policy_srv 注册名错配等）。
+func ProvideIAMClient(cfg *config.Config) (*iamclient.Client, func(), error) {
+	cli, err := iamclient.New(iamclient.Config{
+		EtcdEndpoints: []string{cfg.Etcd.Address},
+		CallerService: cfg.Server.Name,
+	})
+	if err != nil {
+		return nil, nil, err
+	}
 
-// ProvideCasbinRepository 提供 Casbin 策略同步仓储
-// 使用 GORM Adapter 持久化策略到数据库
-func ProvideCasbinRepository(db *gorm.DB, logger *zerolog.Logger) (casbindal.PolicySyncRepository, error) {
-	return casbindal.NewPolicySyncRepository(db, logger)
-}
-
-// ProvideCasbinService 提供 Casbin 权限服务
-// 封装策略同步、权限检查等业务逻辑
-func ProvideCasbinService(repo casbindal.PolicySyncRepository, logger *zerolog.Logger) casbinlogic.Service {
-	return casbinlogic.NewService(repo, logger)
+	return cli, func() { _ = cli.Close() }, nil
 }

@@ -34,18 +34,19 @@ func InitializeApp() (*AppContainer, func(), error) {
 		return nil, nil, err
 	}
 	dalDAL := dal.NewDALImpl(db)
-	policySyncRepository, err := ProvideCasbinRepository(db, logger)
+	logicLogic := logic.NewLogicImpl(dalDAL, configConfig)
+	iamCli, iamCleanup, err := ProvideIAMClient(configConfig)
 	if err != nil {
 		return nil, nil, err
 	}
-	service := ProvideCasbinService(policySyncRepository, logger)
-	logicLogic := logic.NewLogicImpl(dalDAL, configConfig, service)
 	provider, cleanup, err := ProvideOtelProvider(configConfig)
 	if err != nil {
+		iamCleanup()
 		return nil, nil, err
 	}
 	registry, err := ProvideEtcdRegistry(configConfig)
 	if err != nil {
+		iamCleanup()
 		cleanup()
 		return nil, nil, err
 	}
@@ -53,17 +54,20 @@ func InitializeApp() (*AppContainer, func(), error) {
 	error2 := ProvideKitexLogger(configConfig)
 	serverOptions, err := ProvideServerOptions(configConfig, provider, registry, metaInfoMiddleware, error2)
 	if err != nil {
+		iamCleanup()
 		cleanup()
 		return nil, nil, err
 	}
 	sqlDB, err := ProvideSQLDB(db)
 	if err != nil {
+		iamCleanup()
 		cleanup()
 		return nil, nil, err
 	}
 	healthCheckServer := ProvideHealthCheckServer(configConfig, sqlDB)
-	appContainer := NewAppContainer(configConfig, logger, db, logicLogic, serverOptions, healthCheckServer)
+	appContainer := NewAppContainer(configConfig, logger, db, logicLogic, iamCli, serverOptions, healthCheckServer)
 	return appContainer, func() {
+		iamCleanup()
 		cleanup()
 	}, nil
 }
@@ -98,11 +102,8 @@ var DALSet = wire.NewSet(dal.NewDALImpl)
 // LogicSet 业务逻辑层 Provider 集合
 var LogicSet = wire.NewSet(logic.NewLogicImpl)
 
-// CasbinSet Casbin 权限管理 Provider 集合
-var CasbinSet = wire.NewSet(
-	ProvideCasbinRepository,
-	ProvideCasbinService,
-)
+// IAMClientSet IAM 客户端 Provider 集合（PDP 决策入口）
+var IAMClientSet = wire.NewSet(ProvideIAMClient)
 
 // ApplicationSet 完整应用 Provider 集合
 // 包含业务逻辑相关的所有依赖
@@ -110,8 +111,8 @@ var ApplicationSet = wire.NewSet(
 	InfrastructureSet,
 	ConverterSet,
 	DALSet,
-	CasbinSet,
 	LogicSet,
+	IAMClientSet,
 )
 
 // AllSet 所有依赖注入集合
